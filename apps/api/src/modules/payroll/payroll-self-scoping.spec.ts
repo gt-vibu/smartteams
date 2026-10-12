@@ -153,6 +153,30 @@ describe('PayrollService.ledger self-scoping', () => {
     expect(ledgerFilter(tx).employeeId).toBeUndefined();
   });
 
+  it('explains that federated all-employee reads need the dedicated grant', async () => {
+    const { tx, service } = setup();
+    await expect(
+      service.ledger(
+        context(['payroll.ledger.read'], {
+          accessMode: 'FEDERATION' as AccessMode,
+          actor: { type: 'FEDERATION_CLIENT', clientId: 'blizbooks' },
+        }),
+      ),
+    ).rejects.toThrow('payroll.ledger.read.all');
+    expect(tx.payrollLineItem.findMany).not.toHaveBeenCalled();
+  });
+
+  it('allows a federated client with the dedicated grant to read all employee ledger lines', async () => {
+    const { tx, service } = setup();
+    await service.ledger(
+      context(['payroll.ledger.read', 'payroll.ledger.read.all'], {
+        accessMode: 'FEDERATION' as AccessMode,
+        actor: { type: 'FEDERATION_CLIENT', clientId: 'blizbooks' },
+      }),
+    );
+    expect(ledgerFilter(tx).employeeId).toBeUndefined();
+  });
+
   it('only ever returns released and locked runs', async () => {
     const { tx, service } = setup();
     await service.ledger(context(['*']));

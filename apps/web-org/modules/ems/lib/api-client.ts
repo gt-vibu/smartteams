@@ -54,21 +54,30 @@ export async function apiRequest(path: string, options: RequestOptions): Promise
 
 /** Downloads a response incrementally where the browser supports file streams. */
 export async function apiDownload(path: string, filename: string): Promise<void> {
-  type FileHandle = { createWritable: () => Promise<{ write: (chunk: Uint8Array) => Promise<void>; close: () => Promise<void> }> };
-  const picker = (window as Window & { showSaveFilePicker?: (options: { suggestedName: string }) => Promise<FileHandle> }).showSaveFilePicker;
-    // Open the picker synchronously from the click so browsers keep user activation. Resolve it
-    // before starting the export, avoiding an unhandled picker-cancellation rejection mid-stream.
-    let fileHandle: FileHandle | null = null;
-    if (picker) {
-      try {
-        fileHandle = await picker({ suggestedName: filename });
-      } catch (error) {
-        if (error instanceof DOMException && error.name === 'AbortError') return;
-        throw error;
-      }
+  type FileHandle = {
+    createWritable: () => Promise<{
+      write: (chunk: Uint8Array) => Promise<void>;
+      close: () => Promise<void>;
+    }>;
+  };
+  const picker = (
+    window as Window & {
+      showSaveFilePicker?: (options: { suggestedName: string }) => Promise<FileHandle>;
     }
+  ).showSaveFilePicker;
+  // Open the picker synchronously from the click so browsers keep user activation. Resolve it
+  // before starting the export, avoiding an unhandled picker-cancellation rejection mid-stream.
+  let fileHandle: FileHandle | null = null;
+  if (picker) {
+    try {
+      fileHandle = await picker({ suggestedName: filename });
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') return;
+      throw error;
+    }
+  }
   let response = await send(path, { method: 'GET', timeoutMs: 120_000 });
-  if (response.status === 401 && isRefreshable(path) && await refreshSession())
+  if (response.status === 401 && isRefreshable(path) && (await refreshSession()))
     response = await send(path, { method: 'GET', timeoutMs: 120_000 });
   if (!response.ok) {
     await read(response, path);
@@ -225,7 +234,15 @@ function errorMessage(payload: unknown, status: number, path: string): string {
     return isRefreshable(path)
       ? 'Your session has ended. Please sign in again.'
       : 'Invalid email or password.';
-  if (status === 403) return 'You are not authorized to perform this action.';
+  if (status === 403) {
+    if (
+      isRecord(payload) &&
+      payload.code === 'OUTSIDE_GEOFENCE' &&
+      /\/attendance\/check-(ins|outs)$/.test(path)
+    )
+      return 'You must be inside an allowed attendance location to check in or check out.';
+    return 'You are not authorized to perform this action.';
+  }
   if (status === 429) return 'Too many attempts. Please wait a moment and try again.';
   if (isRecord(payload)) {
     const detail = payload.detail ?? payload.message;

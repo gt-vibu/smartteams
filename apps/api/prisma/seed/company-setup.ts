@@ -260,6 +260,7 @@ async function main() {
       create: {
         organizationId: orgId,
         name: 'Standard payroll',
+        isDefault: true,
         effectiveFrom: effectiveDate,
         payrollDayBasis: 30,
         basePercentage: 50,

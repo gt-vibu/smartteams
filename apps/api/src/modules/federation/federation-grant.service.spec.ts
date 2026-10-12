@@ -1,6 +1,11 @@
 import { capabilityForScope, effectiveFederationPermissions } from './federation-grant.service';
+import { FEDERATION_GRANTABLE_SCOPES } from './federation-scope.catalog';
 
 describe('federation capability mapping', () => {
+  it('exposes the all-employee payroll ledger permission for explicit grants', () => {
+    expect(FEDERATION_GRANTABLE_SCOPES).toContain('payroll.ledger.read.all');
+  });
+
   it('maps workforce scopes to their organization capability', () => {
     expect(capabilityForScope('employees.write')).toBe('employees');
     expect(capabilityForScope('employees.documents.read')).toBe('employees');

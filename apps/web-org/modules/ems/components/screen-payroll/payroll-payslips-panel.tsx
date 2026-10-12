@@ -117,8 +117,8 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
 
   return (
     <div className="space-y-2">
-      <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center sm:justify-end">
-        <span className="col-span-2 text-[11px] text-muted-foreground sm:mr-auto sm:col-span-1">Annual statement (Form 16 Part B)</span>
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <span className="text-[11px] text-muted-foreground">Annual statement (Form 16 Part B)</span>
         {[thisYear, thisYear - 1].map((year) => (
           <Button
             disabled={busy !== null}
@@ -127,7 +127,6 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
             size="sm"
             type="button"
             variant="outline"
-            className="w-full sm:w-auto"
           >
             FY {year}-{String((year + 1) % 100).padStart(2, '0')}
           </Button>
@@ -142,15 +141,15 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
         const expanded = expandedId === payslip.id;
         return (
           <div className="rounded-lg border border-border bg-card" key={payslip.id}>
-            <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
               <div>
                 <p className="text-xs font-bold text-foreground">{periodLabel(payslip)}</p>
                 <p className="mt-0.5 text-[10px] text-muted-foreground">
                   {payslip.issuedAt ? `Issued ${formatDate(payslip.issuedAt)}` : 'Not issued yet'}
                 </p>
               </div>
-              <div className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 sm:flex sm:w-auto sm:gap-4">
-                <div className="text-left sm:text-right">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+                <div className="text-right">
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Net</p>
                   <p className="font-mono text-sm font-bold text-foreground">
                     {formatMoney(payslip.totals.netAmount, payslip.run.currencyCode ?? 'INR')}
@@ -167,7 +166,6 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
                   }
                   size="sm"
                   type="button"
-                  className="whitespace-nowrap"
                 >
                   {busy === payslip.id ? 'Preparing…' : 'Download PDF'}
                 </Button>
@@ -176,7 +174,6 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
                   size="sm"
                   type="button"
                   variant="outline"
-                  className="col-span-2 justify-self-start whitespace-nowrap sm:col-span-1"
                 >
                   {expanded ? 'Hide' : 'Breakdown'}
                 </Button>

@@ -182,6 +182,7 @@ Federated approval decisions must include `decidedByExternalEmployeeId` alongsid
 | `PUT` | `/v1/federation/payroll/policy` | **Salary Policy Config**: Saves the canonical payroll policy. SmartTeams remains the source of truth. |
 | `GET` | `/v1/federation/payroll/statutory-rules` | **Statutory Rules**: Reads jurisdiction-specific EPF, ESIC, and professional-tax rule snapshots. |
 | `POST` | `/v1/federation/payroll/statutory-rules` | **Statutory Rule Config**: Saves an effective-dated rule; values must be reviewed for the organization's jurisdiction. |
+| `PUT` | `/v1/federation/payroll/statutory-rules/{id}` | **Statutory Rule Update**: Updates an existing effective-dated rule, including rates, thresholds, and wage ceilings. |
 | `GET` | `/v1/federation/payroll/profile` | **Employee Salary Profile**: Reads gross salary, employee payroll toggles, structure preview, and assigned components. |
 | `POST` | `/v1/federation/payroll/profile` | **Employee Salary Profile Config**: Saves gross salary and employee-level payroll/statutory toggles. |
 | `POST` | `/v1/federation/payroll/preview` | **Payroll Preview**: Calculates the original salary structure, 30-day proration, statutory deductions, and net estimate without a local BlizBooks calculation. |

@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import {
-  LoadingIndicator,
   Badge,
   Button,
   Dialog,
@@ -18,7 +17,6 @@ import {
 } from '@smarteam/ui';
 import type { PayComponentDefinition } from '@smarteam/contracts';
 import type { CompensationState } from '../../hooks/use-compensation';
-import { LIMITS, codeProblem, textProblem } from '@smarteam/contracts';
 
 /**
  * The organisation's pay-component catalogue.
@@ -73,7 +71,9 @@ export function ComponentCatalogPanel({ compensation }: { compensation: Compensa
       </div>
 
       {compensation.componentsLoading && (
-        <LoadingIndicator variant="panel" label="Loading components" className="py-10 text-center text-xs text-muted-foreground" />
+        <p className="py-10 text-center text-xs text-muted-foreground" role="status">
+          Loading components...
+        </p>
       )}
 
       {!compensation.componentsLoading && compensation.componentsError && (
@@ -198,8 +198,6 @@ function CreateComponentDialog({
                 Code
               </Label>
               <Input
-                maxLength={LIMITS.code}
-                problem={codeProblem(code, 'Component code', LIMITS.code)}
                 disabled={compensation.saving}
                 id="component-code"
                 onChange={(event) => setCode(event.target.value)}
@@ -211,8 +209,6 @@ function CreateComponentDialog({
                 Name
               </Label>
               <Input
-                maxLength={LIMITS.title}
-                problem={textProblem(name, 'Component name', LIMITS.title, 2)}
                 disabled={compensation.saving}
                 id="component-name"
                 onChange={(event) => setName(event.target.value)}

@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Input } from '@smarteam/ui';
 import { formatDateRange, formatMoney } from '@smarteam/contracts';
 import type { PayrollAdminState } from '../../hooks/use-payroll-admin';
-import { useDebouncedValue } from '../../hooks/use-debounced-value';
 
 /**
  * What each employee was actually paid, from released payslips.
@@ -15,7 +14,6 @@ import { useDebouncedValue } from '../../hooks/use-debounced-value';
  */
 export function PayrollEmployeePayPanel({ admin }: { admin: PayrollAdminState }) {
   const [search, setSearch] = useState('');
-  const query = useDebouncedValue(search.trim()).toLowerCase();
 
   if (admin.payslipsUnavailable) {
     return (
@@ -31,6 +29,7 @@ export function PayrollEmployeePayPanel({ admin }: { admin: PayrollAdminState })
     );
   }
 
+  const query = search.trim().toLowerCase();
   const rows = admin.payslips.filter(
     (slip) =>
       !query ||
@@ -46,7 +45,6 @@ export function PayrollEmployeePayPanel({ admin }: { admin: PayrollAdminState })
         <Input
           className="w-full min-w-0 sm:w-52"
           onChange={(event) => setSearch(event.target.value)}
-          aria-label="Search name or employee ID"
           placeholder="Search name or employee ID"
           value={search}
         />
@@ -90,19 +88,19 @@ export function PayrollEmployeePayPanel({ admin }: { admin: PayrollAdminState })
                   </td>
                   <td
                     data-label="Gross"
-                    className="px-4 py-2.5 text-right tabular-nums text-muted-foreground"
+                    className="px-4 py-2.5 text-right font-mono text-muted-foreground"
                   >
                     {formatMoney(slip.totals.grossAmount)}
                   </td>
                   <td
                     data-label="Deductions"
-                    className="px-4 py-2.5 text-right tabular-nums text-muted-foreground"
+                    className="px-4 py-2.5 text-right font-mono text-muted-foreground"
                   >
                     {formatMoney(slip.totals.deductionAmount)}
                   </td>
                   <td
                     data-label="Net"
-                    className="px-4 py-2.5 text-right tabular-nums font-bold text-foreground"
+                    className="px-4 py-2.5 text-right font-mono font-bold text-foreground"
                   >
                     {formatMoney(slip.totals.netAmount)}
                   </td>

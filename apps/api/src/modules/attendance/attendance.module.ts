@@ -15,7 +15,7 @@ import { AttendanceLateService } from './attendance-late.service';
   imports: [QueueModule],
   // Work week first: its fixed path must win over the attendance controller's `:id` routes.
   controllers: [AttendanceWorkWeekController, AttendanceLateController, AttendanceController],
-  exports: [AttendanceService, WebauthnService],
+  exports: [AttendanceService, AttendanceWorkWeekService, WebauthnService],
   providers: [
     AttendanceService,
     AttendanceLocationService,

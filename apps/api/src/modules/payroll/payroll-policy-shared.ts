@@ -2,7 +2,6 @@ import { type DomainContext } from '../../common/context/domain-context';
 import { ConflictError } from '../../common/errors/domain-error';
 import { type TenantTransaction } from '../../infrastructure/database/tenant-database.service';
 import { dateOnly, toEmployeePolicyData, type EmployeePolicyInput } from './payroll-policy.types';
-import { resolveEmployeePayrollAssignment } from './payroll-assignment-rules';
 
 /**
  * Payroll policy pieces used by more than one of the services below.
@@ -17,9 +16,6 @@ export async function saveEmployeePolicyInTransaction(
   input: EmployeePolicyInput,
 ) {
   const effectiveFrom = dateOnly(input.effectiveFrom);
-  const assignment = input.payrollEnabled
-    ? await resolveEmployeePayrollAssignment(tx, context, input.employeeId, effectiveFrom, input.payrollPolicyId)
-    : { payrollPolicyId: null, assignmentSource: 'ORGANIZATION_DEFAULT', assignmentRuleId: null };
   let effectiveTo = input.effectiveTo ? dateOnly(input.effectiveTo) : null;
   if (effectiveTo && effectiveTo < effectiveFrom)
     throw new ConflictError('Employee policy end must not precede its start');
@@ -51,6 +47,22 @@ export async function saveEmployeePolicyInTransaction(
       },
     },
   });
+  const payrollPolicyId = input.payrollEnabled
+    ? (input.payrollPolicyId ?? existing?.payrollPolicyId ?? undefined)
+    : undefined;
+  if (payrollPolicyId) {
+    const selected = await tx.payrollPolicy.findFirst({
+      where: {
+        id: payrollPolicyId,
+        organizationId: context.organizationId,
+        effectiveFrom: { lte: effectiveFrom },
+        OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveFrom } }],
+      },
+      select: { id: true },
+    });
+    if (!selected)
+      throw new ConflictError('Selected payroll policy is unavailable for the effective date');
+  }
   const overlap = await tx.employeePayrollPolicy.findFirst({
     where: {
       organizationId: context.organizationId,
@@ -64,15 +76,14 @@ export async function saveEmployeePolicyInTransaction(
   return existing
     ? tx.employeePayrollPolicy.update({
         where: { id: existing.id },
-        data: { ...toEmployeePolicyData(input, effectiveTo), ...assignment },
+        data: toEmployeePolicyData({ ...input, payrollPolicyId }, effectiveTo),
       })
     : tx.employeePayrollPolicy.create({
         data: {
           organizationId: context.organizationId,
           employeeId: input.employeeId,
           effectiveFrom,
-          ...toEmployeePolicyData(input, effectiveTo),
-          ...assignment,
+          ...toEmployeePolicyData({ ...input, payrollPolicyId }, effectiveTo),
         },
       });
 }

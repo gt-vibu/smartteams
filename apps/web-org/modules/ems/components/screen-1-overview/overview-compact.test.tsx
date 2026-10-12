@@ -28,13 +28,13 @@ vi.mock('../screen-4-calendar/screen-4-calendar', () => ({
 }));
 vi.mock('../layout/botanical-cover', () => ({ BotanicalCover: () => null }));
 
-let modules = new Set<string>();
+let explicit = new Set<string>();
 vi.mock('../../hooks/use-auth', () => ({
-  useAuth: () => ({ canAccessModule: (module: string) => modules.has(module) }),
+  useAuth: () => ({ hasExplicitPermission: (key: string) => explicit.has(key) }),
 }));
 
 beforeEach(() => {
-  modules = new Set();
+  explicit = new Set();
 });
 
 const ALL = ['profile-card', 'activities', 'approvals', 'dashboard', 'leave', 'attendance'];
@@ -56,11 +56,14 @@ describe('OverviewCompact', () => {
     expect(onScreen()).toEqual(['activities']);
   });
 
-  it('has one strip, and it marks the section on screen', () => {
-    renderAt('Dashboard');
+  it('has one strip, and it marks the selected section on screen', () => {
+    renderAt('Activities');
     expect(screen.getAllByRole('tablist')).toHaveLength(1);
-    expect(screen.getByRole('tab', { name: 'Dashboard' })).toHaveAttribute('aria-selected', 'true');
-    expect(onScreen()).toEqual(['dashboard']);
+    expect(screen.getByRole('tab', { name: 'Activities' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(onScreen()).toEqual(['activities']);
   });
 
   it('keeps module previews out of the strip — the bottom bar already opens those', () => {
@@ -69,15 +72,18 @@ describe('OverviewCompact', () => {
     expect(tabs).toEqual(['Profile', 'Activities', 'Dashboard']);
   });
 
-  it('offers Approvals where the navigation does — to someone who approves as themselves', () => {
-    modules = new Set(['approvals']);
-    renderAt('Profile');
-    expect(screen.getByRole('tab', { name: 'Approvals' })).toBeInTheDocument();
-  });
+  it.each(['leave.requests.decide', 'attendance.corrections.decide', 'timesheets.decide'])(
+    'offers Approvals to a manager holding %s',
+    (key) => {
+      explicit = new Set([key]);
+      renderAt('Profile');
+      expect(screen.getByRole('tab', { name: 'Approvals' })).toBeInTheDocument();
+    },
+  );
 
-  it('does not offer Approvals to an HR role deciding from its own workspace', () => {
-    // HR holds the decide permissions; checking those put Approvals in their employee workspace.
-    modules = new Set(['time-off', 'attendance', 'timesheet']);
+  it('does not offer Approvals for keys the catalogue does not have', () => {
+    // These were the keys checked here, and no role holds them, so no manager ever saw the tab.
+    explicit = new Set(['leave.approve', 'attendance.approve']);
     renderAt('Profile');
     expect(screen.queryByRole('tab', { name: 'Approvals' })).not.toBeInTheDocument();
   });

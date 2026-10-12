@@ -12,55 +12,30 @@ import {
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
-import { ApprovalInboxQueryDto } from '../approvals/approval-inbox.dto';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
-import { LeaveAttachmentsService } from './leave-attachments.service';
-import { LeaveCalendarService } from './leave-calendar.service';
 import {
   LeaveAdjustmentDto,
   LeaveBalanceQueryDto,
   LeaveCalendarQueryDto,
   LeaveCancelDto,
-  LeavePolicyAssignmentDto,
+  LeaveDecisionDto,
+  LeaveRequestDto,
   LeaveRequestQueryDto,
+  LeavePolicyAssignmentDto,
+  LeaveTypeDto,
+  LeaveTypeUpdateDto,
 } from './leave.dto';
 import { LeaveService } from './leave.service';
+import { LeaveCalendarService } from './leave-calendar.service';
 
-import {
-  NativeLeaveDecisionDto,
-  LeaveDateAvailabilityDto,
-  NativeLeaveRequestDto,
-  NativeLeaveTypeDto,
-  NativeLeaveTypeUpdateDto,
-} from './leave-native.dto';
 @Controller('v1/organizations/:organizationId/leave')
 @UseGuards(NativeJwtGuard)
 export class LeaveController {
-  @Post('requests/date-availability') dateAvailability(
-    @Param('organizationId') organizationId: string,
-    @Body() body: LeaveDateAvailabilityDto,
-    @Req() request: Request & { user: NativeRequestUser },
-  ) {
-    return this.contexts
-      .native(request.user.userId, organizationId)
-      .then((context) => this.leave.dateAvailability(context, body.from, body.to));
-  }
   constructor(
     private readonly leave: LeaveService,
     private readonly contexts: DomainContextFactory,
     private readonly calendarService: LeaveCalendarService,
-    private readonly attachments: LeaveAttachmentsService,
   ) {}
-  @Post('requests/:requestId/attachments/:fileId/download') downloadAttachment(
-    @Param('organizationId') organizationId: string,
-    @Param('requestId', ParseUUIDPipe) requestId: string,
-    @Param('fileId', ParseUUIDPipe) fileId: string,
-    @Req() request: Request & { user: NativeRequestUser },
-  ) {
-    return this.contexts
-      .native(request.user.userId, organizationId)
-      .then((context) => this.attachments.download(context, requestId, fileId));
-  }
 
   /**
    * Leave requests, balances and the approval inbox.
@@ -77,24 +52,10 @@ export class LeaveController {
   ) {
     return this.contexts.native(request.user.userId, organizationId).then((context) =>
       this.leave.listRequests(context, query.employeeId, {
-        status: query.status,
-        search: query.search,
-        departmentId: query.departmentId,
-        from: query.from,
-        to: query.to,
         ...(query.cursor ? { cursor: query.cursor } : {}),
         ...(query.limit ? { limit: query.limit } : {}),
       }),
     );
-  }
-
-  @Get('requests/summary') requestSummary(
-    @Param('organizationId') organizationId: string,
-    @Req() request: Request & { user: NativeRequestUser },
-  ) {
-    return this.contexts
-      .native(request.user.userId, organizationId)
-      .then((context) => this.leave.adminSummary(context));
   }
 
   /** Who is off between two dates, among the people the caller works with. */
@@ -111,22 +72,11 @@ export class LeaveController {
   /** Requests awaiting the signed-in user's decision. */
   @Get('requests/inbox') requestInbox(
     @Param('organizationId') organizationId: string,
-    @Query() query: ApprovalInboxQueryDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
-      .then((context) => this.leave.listPendingApprovals(context, request.user.userId, query));
-  }
-
-  @Get('balances/page') balancePage(
-    @Param('organizationId') organizationId: string,
-    @Query() query: LeaveBalanceQueryDto,
-    @Req() request: Request & { user: NativeRequestUser },
-  ) {
-    return this.contexts
-      .native(request.user.userId, organizationId)
-      .then((context) => this.leave.listBalancePage(context, query));
+      .then((context) => this.leave.listPendingApprovals(context, request.user.userId));
   }
 
   @Get('balances') balances(
@@ -149,7 +99,7 @@ export class LeaveController {
   }
   @Post('types') createType(
     @Param('organizationId') organizationId: string,
-    @Body() body: NativeLeaveTypeDto,
+    @Body() body: LeaveTypeDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -159,7 +109,7 @@ export class LeaveController {
   @Patch('types/:typeId') updateType(
     @Param('organizationId') organizationId: string,
     @Param('typeId', ParseUUIDPipe) typeId: string,
-    @Body() body: NativeLeaveTypeUpdateDto,
+    @Body() body: LeaveTypeUpdateDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -187,26 +137,17 @@ export class LeaveController {
   }
   @Post('requests') request(
     @Param('organizationId') organizationId: string,
-    @Body() body: NativeLeaveRequestDto,
+    @Body() body: LeaveRequestDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.leave.createRequest(context, { ...body, source: 'NATIVE' }));
   }
-  @Post('requests/preview') preview(
-    @Param('organizationId') organizationId: string,
-    @Body() body: NativeLeaveRequestDto,
-    @Req() request: Request & { user: NativeRequestUser },
-  ) {
-    return this.contexts
-      .native(request.user.userId, organizationId)
-      .then((context) => this.leave.previewRequest(context, body));
-  }
   @Post('requests/:requestId/decision') decision(
     @Param('organizationId') organizationId: string,
     @Param('requestId') requestId: string,
-    @Body() body: NativeLeaveDecisionDto,
+    @Body() body: LeaveDecisionDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts

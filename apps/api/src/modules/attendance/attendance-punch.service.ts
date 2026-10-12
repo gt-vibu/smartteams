@@ -1,7 +1,8 @@
-import { attendanceLeaveUnits } from './attendance-leave-units';
-import { Injectable } from '@nestjs/common';
-import { employeeNameSearch } from '../employees/employee-name-search';
-import { AttendanceLocationService } from './attendance-location.service';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import {
+  AttendanceLocationService,
+  validateAttendanceCoordinates,
+} from './attendance-location.service';
 import {
   AttendancePunchType,
   AttendanceStatus,
@@ -11,7 +12,12 @@ import {
 } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { branchForPunch } from './attendance-branch';
-import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
+import {
+  ConflictError,
+  DomainError,
+  ForbiddenDomainError,
+  NotFoundError,
+} from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
@@ -82,6 +88,7 @@ export class AttendancePunchService {
    */
   async punch(context: DomainContext, type: AttendancePunchType, input: PunchInput) {
     requirePermission(context, 'attendance.write');
+    validateAttendanceCoordinates(input);
     if (
       input.dayStatus &&
       !new Set<AttendanceDayStatus>([
@@ -94,6 +101,8 @@ export class AttendancePunchService {
     }
     return this.database.run(context, async (tx) => {
       const actsForOthers = canActForAllEmployees(context, 'attendance.read.all');
+      if (input.manualEntry && !actsForOthers)
+        throw new ForbiddenDomainError('Manual attendance requires management access');
       const employeeId = await resolveActingEmployeeId(
         tx,
         context,
@@ -104,15 +113,29 @@ export class AttendancePunchService {
         where: { id: employeeId, organizationId: context.organizationId },
         include: {
           branchAssignments: {
-            where: { isPrimary: true, endsOn: null },
+            where: {
+              startsOn: { lte: new Date() },
+              OR: [{ endsOn: null }, { endsOn: { gte: new Date() } }],
+            },
             orderBy: { startsOn: 'desc' },
-            take: 1,
           },
         },
       });
       if (!employee || employee.status !== 'ACTIVE') throw new NotFoundError('Active employee');
       let branchId =
-        input.branchId ?? employee.primaryBranchId ?? employee.branchAssignments[0]?.branchId;
+        input.branchId ??
+        context.branchId ??
+        employee.primaryBranchId ??
+        employee.branchAssignments.find((assignment) => assignment.isPrimary)?.branchId;
+      if (context.branchId && branchId !== context.branchId)
+        throw new ForbiddenDomainError('Attendance is restricted to the active branch');
+      if (
+        context.accessMode === 'FEDERATION' &&
+        branchId &&
+        employee.primaryBranchId !== branchId &&
+        !employee.branchAssignments.some((assignment) => assignment.branchId === branchId)
+      )
+        throw new ForbiddenDomainError('Employee is not assigned to this attendance branch');
       const settings = await tx.organizationSettings.findUniqueOrThrow({
         where: { organizationId: context.organizationId },
       });
@@ -129,9 +152,13 @@ export class AttendancePunchService {
       // minutes of clock drift are allowed. Native only: the federation contract is frozen.
       if (context.accessMode === 'NATIVE' && occurredAt.getTime() > now.getTime() + 5 * 60_000)
         throw new ConflictError('A punch cannot be recorded for a time that has not happened yet.');
-      const workDate = actsForOthers
+      const managedCapture =
+        context.accessMode === 'FEDERATION'
+          ? Boolean(input.manualEntry || input.capturedByUserId)
+          : actsForOthers;
+      const workDate = managedCapture
         ? new Date(input.workDate)
-        : new Date(workDateInTimeZone(now, organization.timezone));
+        : new Date(workDateInTimeZone(occurredAt, organization.timezone));
       if (context.accessMode === 'NATIVE')
         branchId = await branchForPunch(
           tx,
@@ -145,7 +172,21 @@ export class AttendancePunchService {
             where: { id: branchId, organizationId: context.organizationId },
           })
         : undefined;
-      const mode = branch?.geofenceMode ?? settings.geofenceMode;
+      if (branchId && !branch) throw new NotFoundError('Branch');
+      const mode = employee.geofenceMode ?? branch?.geofenceMode ?? settings.geofenceMode;
+      const requireGps = branch?.requireGps ?? settings.requireGps;
+      // Federation is the transport for ordinary BlizBooks self captures as well as imports.
+      // Its broad tenant permission alone must not bypass location enforcement.
+      if (
+        !managedCapture &&
+        (requireGps || mode === GeofenceMode.REQUIRED) &&
+        (input.latitude === undefined || input.longitude === undefined)
+      )
+        throw new DomainError(
+          'GPS_REQUIRED',
+          'Location is required for check-in and check-out. Enable location access and try again.',
+          HttpStatus.BAD_REQUEST,
+        );
       const biometricMode = branch?.biometricVerificationMode ?? settings.biometricVerificationMode;
       const geofence = await this.locations.evaluateGeofence(
         tx,
@@ -155,6 +196,12 @@ export class AttendancePunchService {
         input.longitude,
         mode,
       );
+      if (!managedCapture && mode === GeofenceMode.REQUIRED && geofence.isWithin !== true)
+        throw new DomainError(
+          'OUTSIDE_GEOFENCE',
+          'You must be inside an allowed attendance location to check in or check out.',
+          HttpStatus.FORBIDDEN,
+        );
       let webauthnCredentialId: string | undefined;
       if (input.webauthnCredentialId) {
         const credentialSelector = isUuid(input.webauthnCredentialId)
@@ -346,11 +393,8 @@ export class AttendancePunchService {
   async list(
     context: DomainContext,
     filters: {
-      search?: string;
       employeeId?: string;
       branchId?: string;
-      departmentId?: string;
-      dayStatus?: AttendanceDayStatus;
       from?: string;
       to?: string;
       cursor?: string;
@@ -358,6 +402,15 @@ export class AttendancePunchService {
     },
   ) {
     requirePermission(context, 'attendance.read');
+    if (
+      context.accessMode !== 'FEDERATION' &&
+      context.branchId &&
+      filters.branchId &&
+      context.branchId !== filters.branchId
+    )
+      throw new ForbiddenDomainError('Attendance is restricted to the active branch');
+    // Federation's context already contains the resolved internal branch ID.
+    const branchId = context.branchId ?? filters.branchId;
     return this.database.run(context, async (tx) => {
       let employeeId = filters.employeeId;
       if (!canReadAllEmployees(context, 'attendance.read.all')) {
@@ -372,31 +425,14 @@ export class AttendancePunchService {
       }
       const cursorId = filters.cursor ? decodeAttendanceCursor(filters.cursor) : undefined;
       const limit = Math.min(filters.limit ?? 100, 500);
-      if (context.branchId && filters.branchId && context.branchId !== filters.branchId)
-        throw new ConflictError('Choose a branch within your attendance access');
-      const search = employeeNameSearch(filters.search);
-      const organization = await tx.organization.findUniqueOrThrow({
-        where: { id: context.organizationId },
-        select: { timezone: true },
-      });
-      // Attendance records describe elapsed days. Do not return future leave placeholders as
-      // zero-minute attendance rows; approved leave remains visible in the leave/calendar views.
-      const today = workDateInTimeZone(new Date(), organization.timezone);
-      const throughDate = filters.to && filters.to < today ? filters.to : today;
-      if (filters.from && filters.from > throughDate)
-        return { records: [], nextCursor: undefined };
       const records = await tx.attendanceRecord.findMany({
         where: {
           organizationId: context.organizationId,
           employeeId,
-          branchId: context.branchId ?? filters.branchId,
-          ...(filters.dayStatus ? { dayStatus: filters.dayStatus } : {}),
-          ...((filters.departmentId || search)
-            ? { employee: { ...(search ?? {}), ...(filters.departmentId ? { departmentId: filters.departmentId } : {}) } }
-            : {}),
+          branchId,
           workDate: {
             gte: filters.from ? new Date(filters.from) : undefined,
-            lte: new Date(throughDate),
+            lte: filters.to ? new Date(filters.to) : undefined,
           },
         },
         include: {
@@ -420,20 +456,9 @@ export class AttendancePunchService {
       });
       const hasNextPage = records.length > limit;
       const page = records.slice(0, limit);
-      const leave =
-        context.accessMode === 'NATIVE'
-          ? await attendanceLeaveUnits(tx, context.organizationId, page)
-          : null;
       return {
         records: page.map((record) => ({
           ...toRecordDto(record),
-          ...(leave
-            ? {
-                leaveUnits:
-                  leave.get(`${record.employeeId}:${record.workDate.toISOString().slice(0, 10)}`) ??
-                  0,
-              }
-            : {}),
           externalEmployeeId: record.employee.externalId,
           employee: record.employee,
           punches: record.punches.map((punch) => toPunchDto(punch)),

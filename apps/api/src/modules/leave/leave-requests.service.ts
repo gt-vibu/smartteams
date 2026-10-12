@@ -1,28 +1,28 @@
-import { listLeaveRequests, type LeaveListFilters } from './leave-request-list';
-import { validateLeaveSession } from './leave-units';
-import { Injectable } from '@nestjs/common';
 import { formatDateRange } from '@smarteam/contracts';
-import { requirePermission, type DomainContext } from '../../common/context/domain-context';
-import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
+import { Injectable } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma/client';
 import type { AccessMode } from '../../generated/prisma/enums';
-import { LeaveBalanceTransactionType, LeaveRequestStatus } from '../../generated/prisma/enums';
+import { LeaveBalanceTransactionType } from '../../generated/prisma/enums';
+import { LeaveRequestStatus } from '../../generated/prisma/enums';
+import { requirePermission, type DomainContext } from '../../common/context/domain-context';
+import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
-import {
-  assertResolvableApprovers,
-  canApprove,
-  type ApprovalAuthorizationCache,
-} from '../approvals/approval-authorization';
-import { systemApprovalContext } from '../approvals/approval-automation';
-import { approvalInboxPage, type InboxPagination } from '../approvals/approval-inbox-page';
-import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { resolveActingEmployeeId } from '../employees/employee-scope';
+import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
+import { assertResolvableApprovers, canApprove } from '../approvals/approval-authorization';
 import { describeDays, notify, requesterRouting, stepApprovers } from '../notifications/notify';
-import { shouldAutoApproveLeave } from './leave-automation';
-import { leaveCalendarDays, ledger, provisionBalance } from './leave-balance-ops';
-import { LeaveDecisionsService } from './leave-decisions.service';
-import { dateOnly, employeeScope, leavePeriod, toRequestDto } from './leave-shared';
+import {
+  canReadAllEmployees,
+  decodeLeaveCursor,
+  dateOnly,
+  employeeScope,
+  encodeLeaveCursor,
+  leavePeriod,
+  selfEmployee,
+  toRequestDto,
+} from './leave-shared';
+import { ledger, provisionBalance, workingDays } from './leave-balance-ops';
 
 /**
  * Raising leave requests, and the two lists that show them.
@@ -41,9 +41,34 @@ export type LeaveRequestInput = {
   branchId?: string;
   externalId?: string;
   attachmentIds?: string[];
-  session?: 'FULL_DAY' | 'FIRST_HALF' | 'SECOND_HALF';
   source: AccessMode;
 };
+
+/**
+ * What the approver wrote on each decided request, latest decision first, for the app only: the
+ * requester is told why, and a partner integration's response keeps the shape it had.
+ */
+async function decisionComments(
+  tx: Prisma.TransactionClient,
+  context: DomainContext,
+  requests: ReadonlyArray<{ id: string }>,
+) {
+  if (context.accessMode !== 'NATIVE' || requests.length === 0) return null;
+  const decided = await tx.leaveApproval.findMany({
+    where: {
+      organizationId: context.organizationId,
+      leaveRequestId: { in: requests.map((request) => request.id) },
+      comment: { not: null },
+      decidedAt: { not: null },
+    },
+    orderBy: { decidedAt: 'desc' },
+    select: { leaveRequestId: true, comment: true },
+  });
+  const latest = new Map<string, string>();
+  for (const row of decided)
+    if (row.comment && !latest.has(row.leaveRequestId)) latest.set(row.leaveRequestId, row.comment);
+  return latest;
+}
 
 @Injectable()
 export class LeaveRequestsService {
@@ -53,177 +78,121 @@ export class LeaveRequestsService {
     private readonly outbox: OutboxService,
   ) {}
 
-  listRequests(
+  async listRequests(
     context: DomainContext,
     requestedEmployeeId?: string,
-    pagination: LeaveListFilters = {},
+    pagination: { cursor?: string; limit?: number } = {},
   ) {
-    return listLeaveRequests(this.database, context, requestedEmployeeId, pagination);
-  }
-
-  /** Tenant-scoped aggregates for the leave overview cards (never derived from the current page). */
-  async adminSummary(context: DomainContext) {
-    requirePermission(context, 'leave.requests.read.all');
-    const now = new Date();
-    const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
-    const nextMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
-    const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-    const tomorrow = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000);
+    requirePermission(context, 'leave.requests.read');
     return this.database.run(context, async (tx) => {
-      const base = {
-        organizationId: context.organizationId,
-        ...(context.branchId ? { branchId: context.branchId } : {}),
-      };
-      const [pending, approvedThisMonth, onLeaveToday, requestedDays] = await Promise.all([
-        tx.leaveRequest.count({ where: { ...base, status: LeaveRequestStatus.PENDING } }),
-        tx.leaveRequest.count({
-          where: { ...base, status: LeaveRequestStatus.APPROVED, startDate: { lt: nextMonth }, endDate: { gte: monthStart } },
-        }),
-        tx.leaveRequest.groupBy({
-          by: ['employeeId'],
-          where: {
-            ...base,
-            status: LeaveRequestStatus.APPROVED,
-            startDate: { lt: tomorrow },
-            endDate: { gte: todayStart },
-          },
-        }),
-        tx.leaveRequest.aggregate({
-          where: {
-            ...base,
-            status: LeaveRequestStatus.APPROVED,
-            startDate: { lt: nextMonth },
-            endDate: { gte: monthStart },
-          },
-          _sum: { requestedDays: true },
-        }),
-      ]);
+      let employeeId = requestedEmployeeId;
+      if (!canReadAllEmployees(context, 'leave.requests.read.all')) {
+        const self = await selfEmployee(tx, context);
+        if (!self) return { requests: [], nextCursor: undefined };
+        if (employeeId && employeeId !== self.id)
+          throw new ConflictError('Employees may only read their own leave requests');
+        employeeId = self.id;
+      }
+      const cursorId = pagination.cursor ? decodeLeaveCursor(pagination.cursor) : undefined;
+      const limit = Math.min(pagination.limit ?? 100, 500);
+      const requests = await tx.leaveRequest.findMany({
+        where: {
+          organizationId: context.organizationId,
+          employeeId,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
+        ...(cursorId ? { cursor: { id: cursorId }, skip: 1 } : {}),
+        orderBy: [{ startDate: 'desc' }, { id: 'desc' }],
+        take: limit + 1,
+        include: { employee: { select: { externalId: true } } },
+      });
+      const hasNextPage = requests.length > limit;
+      const page = requests.slice(0, limit);
+      const comments = await decisionComments(tx, context, page);
       return {
-        pending,
-        approvedThisMonth,
-        employeesOnLeaveToday: onLeaveToday.length,
-        approvedDaysTouchingMonth: Number(requestedDays._sum.requestedDays ?? 0),
-        month: monthStart.toISOString().slice(0, 7),
-        asOf: todayStart.toISOString().slice(0, 10),
+        requests: page.map(({ employee, ...request }) => ({
+          ...request,
+          externalEmployeeId: employee.externalId,
+          ...(comments ? { decisionComment: comments.get(request.id) ?? null } : {}),
+        })),
+        nextCursor: hasNextPage ? encodeLeaveCursor(page.at(-1)?.id) : undefined,
       };
     });
   }
 
-  async listPendingApprovals(
-    context: DomainContext,
-    approverUserId: string,
-    pagination?: InboxPagination,
-  ) {
+  async listPendingApprovals(context: DomainContext, approverUserId: string) {
     requirePermission(context, 'leave.requests.read');
-    return this.database.run(
-      context,
-      async (tx) => {
-        const authorizationCache: ApprovalAuthorizationCache = new Map();
-        const page = await approvalInboxPage(
-          (cursor, take) =>
-            tx.leaveRequest.findMany({
-              ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
-              where: {
-                organizationId: context.organizationId,
-                status: LeaveRequestStatus.PENDING,
-                ...(context.branchId ? { branchId: context.branchId } : {}),
-              },
-              include: {
-                files: {
-                  where: { status: 'AVAILABLE', deletedAt: null },
-                  select: { id: true, originalName: true, contentType: true, byteSize: true },
-                },
-                leaveType: { select: { id: true, code: true, name: true, paid: true } },
-                employee: {
-                  select: {
-                    id: true,
-                    externalId: true,
-                    employeeNumber: true,
-                    firstName: true,
-                    lastName: true,
-                    userId: true,
-                    manager: { select: { userId: true } },
-                  },
-                },
-                branch: { select: { id: true, code: true, name: true } },
-                approvals: true,
-                approvalPolicy: { include: { steps: { orderBy: { stepNumber: 'asc' } } } },
-              },
-              orderBy: [{ submittedAt: 'asc' }, { id: 'asc' }],
-              take,
-            }),
-          async (request) => {
-            const pendingStep = request.approvalPolicy?.steps.find(
-              (step) =>
-                !request.approvals.some((approval) => approval.stepNumber === step.stepNumber),
-            );
-            if (!pendingStep) return false;
-            return await canApprove(
-              tx,
-              context.organizationId,
-              approverUserId,
-              request.employee.manager?.userId,
-              pendingStep.approverType,
-              pendingStep.roleId,
-              pendingStep.approverUserId,
-              request.branchId ?? context.branchId,
-              request.employee.userId,
-              authorizationCache,
-            );
+    return this.database.run(context, async (tx) => {
+      const requests = await tx.leaveRequest.findMany({
+        where: {
+          organizationId: context.organizationId,
+          status: LeaveRequestStatus.PENDING,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
+        include: {
+          leaveType: { select: { id: true, code: true, name: true, paid: true } },
+          employee: {
+            select: {
+              id: true,
+              externalId: true,
+              employeeNumber: true,
+              firstName: true,
+              lastName: true,
+              userId: true,
+              manager: { select: { userId: true } },
+            },
           },
-          pagination,
+          branch: { select: { id: true, code: true, name: true } },
+          approvals: true,
+          approvalPolicy: { include: { steps: { orderBy: { stepNumber: 'asc' } } } },
+        },
+        orderBy: [{ submittedAt: 'asc' }, { id: 'asc' }],
+        take: 500,
+      });
+      const items = [];
+      for (const request of requests) {
+        const pendingStep = request.approvalPolicy?.steps.find(
+          (step) => !request.approvals.some((approval) => approval.stepNumber === step.stepNumber),
         );
-        const items = [];
-        for (const request of page.items) {
-          const pendingStep = request.approvalPolicy!.steps.find(
-            (step) =>
-              !request.approvals.some((approval) => approval.stepNumber === step.stepNumber),
-          )!;
-          const holidaysInRange = await tx.holiday.findMany({
-            where: {
-              organizationId: context.organizationId,
-              holidayDate: { gte: request.startDate, lte: request.endDate },
-            },
-            select: { name: true },
-          });
-          const warningReason =
-            holidaysInRange.length > 0
-              ? `Includes holiday: ${holidaysInRange.map((h) => h.name).join(', ')}`
-              : null;
-
-          items.push({
-            ...toRequestDto(request),
-            externalEmployeeId: request.employee.externalId,
-            warningReason,
-            employee: {
-              id: request.employee.id,
-              externalId: request.employee.externalId,
-              employeeNumber: request.employee.employeeNumber,
-              firstName: request.employee.firstName,
-              lastName: request.employee.lastName,
-            },
-            branch: request.branch,
-            leaveType: request.leaveType,
-            reason: request.reason,
-            submittedAt: request.submittedAt,
-            attachments: request.files.map((file) => ({
-              id: file.id,
-              name: file.originalName,
-              contentType: file.contentType,
-              byteSize: file.byteSize.toString(),
-            })),
-            currentStep: {
-              stepNumber: pendingStep.stepNumber,
-              approverType: pendingStep.approverType,
-              roleId: pendingStep.roleId,
-              approverUserId: pendingStep.approverUserId,
-            },
-          });
-        }
-        return { requests: items, nextCursor: page.nextCursor };
-      },
-      { timeout: 30000 },
-    );
+        if (
+          !pendingStep ||
+          !(await canApprove(
+            tx,
+            context.organizationId,
+            approverUserId,
+            request.employee.manager?.userId,
+            pendingStep.approverType,
+            pendingStep.roleId,
+            pendingStep.approverUserId,
+            request.branchId ?? context.branchId,
+            request.employee.userId,
+          ))
+        )
+          continue;
+        items.push({
+          ...toRequestDto(request),
+          externalEmployeeId: request.employee.externalId,
+          employee: {
+            id: request.employee.id,
+            externalId: request.employee.externalId,
+            employeeNumber: request.employee.employeeNumber,
+            firstName: request.employee.firstName,
+            lastName: request.employee.lastName,
+          },
+          branch: request.branch,
+          leaveType: request.leaveType,
+          reason: request.reason,
+          submittedAt: request.submittedAt,
+          currentStep: {
+            stepNumber: pendingStep.stepNumber,
+            approverType: pendingStep.approverType,
+            roleId: pendingStep.roleId,
+            approverUserId: pendingStep.approverUserId,
+          },
+        });
+      }
+      return { requests: items };
+    });
   }
 
   async createRequest(context: DomainContext, input: LeaveRequestInput) {
@@ -232,7 +201,6 @@ export class LeaveRequestsService {
       const start = dateOnly(input.startDate);
       const end = dateOnly(input.endDate);
       if (end < start) throw new ConflictError('Leave end date must not precede start date');
-      const units = validateLeaveSession(input.session, start, end);
       // `leave.requests.write` is a self-service permission, so the employee a request is booked
       // against comes from the session unless the caller can see everyone's leave.
       const employeeId = await resolveActingEmployeeId(
@@ -260,13 +228,6 @@ export class LeaveRequestsService {
       ]);
       if (!employee) throw new NotFoundError('Active employee');
       if (!type) throw new NotFoundError('Leave type');
-      if (
-        input.source === 'NATIVE' &&
-        end > leavePeriod(start, settings.leaveYearStartMonth).periodEnd
-      )
-        throw new ConflictError(
-          'Split this request at the end of the leave year; each year uses its own balance.',
-        );
       // One day cannot be taken off twice: a request touching a day already asked for or
       // granted is refused, whichever type it was. Native requests only; what federation
       // partners may send is a frozen contract.
@@ -300,9 +261,7 @@ export class LeaveRequestsService {
         }))
       )
         throw new NotFoundError('Branch');
-      if (input.source === 'NATIVE')
-        await tx.$queryRaw`SELECT id FROM payroll_runs WHERE organization_id = ${context.organizationId}::uuid AND period_start <= ${end} AND period_end >= ${start} FOR UPDATE`;
-      const calendar = await leaveCalendarDays(
+      const days = await workingDays(
         tx,
         context.organizationId,
         branchId,
@@ -312,16 +271,6 @@ export class LeaveRequestsService {
         employee.id,
         type.sandwichOffDays,
       );
-      const chargedDates = calendar.filter((day) => day.counted).map((day) => day.date);
-      if (
-        input.source === 'NATIVE' &&
-        (calendar[0]?.reason !== 'Working day' ||
-          calendar[calendar.length - 1]?.reason !== 'Working day')
-      )
-        throw new ConflictError(
-          'Start and end dates must be working days, excluding holidays and weekly days off.',
-        );
-      const days = chargedDates.length * units;
       if (days <= 0) throw new ConflictError('Leave request must contain at least one working day');
       if (type.requiresAttachment && !input.attachmentIds?.length)
         throw new ConflictError('This leave type requires supporting attachment');
@@ -334,7 +283,6 @@ export class LeaveRequestsService {
             purpose: 'LEAVE_ATTACHMENT',
             status: 'AVAILABLE',
             deletedAt: null,
-            leaveRequestId: null,
           },
         });
         if (count !== input.attachmentIds.length)
@@ -381,25 +329,14 @@ export class LeaveRequestsService {
         throw new ConflictError(
           'Configure a default leave approval policy before submitting leave requests',
         );
-      const automaticallyApproved = await shouldAutoApproveLeave(tx, context.organizationId, {
-        source: input.source,
+      await assertResolvableApprovers(
+        tx,
+        context.organizationId,
         branchId,
-        employeeId: employee.id,
-        leaveTypeId: type.id,
-        start,
-        end,
-        days,
-        automation: policy.automation,
-      });
-      if (!automaticallyApproved)
-        await assertResolvableApprovers(
-          tx,
-          context.organizationId,
-          branchId,
-          employee.manager?.userId,
-          employee.userId,
-          policy.steps,
-        );
+        employee.manager?.userId,
+        employee.userId,
+        policy.steps,
+      );
       const request = await tx.leaveRequest.create({
         data: {
           organizationId: context.organizationId,
@@ -410,8 +347,6 @@ export class LeaveRequestsService {
           startDate: start,
           endDate: end,
           requestedDays: new Prisma.Decimal(days),
-          session: input.session ?? 'FULL_DAY',
-          ...(input.source === 'NATIVE' ? { chargedDates } : {}),
           reason: input.reason,
           status: LeaveRequestStatus.PENDING,
           sourceAccessMode: input.source,
@@ -419,24 +354,11 @@ export class LeaveRequestsService {
           submittedAt: new Date(),
         },
       });
-      if (input.attachmentIds?.length) {
-        const attached = await tx.fileObject.updateMany({
-          where: {
-            id: { in: input.attachmentIds },
-            organizationId: context.organizationId,
-            employeeId: employee.id,
-            purpose: 'LEAVE_ATTACHMENT',
-            status: 'AVAILABLE',
-            deletedAt: null,
-            leaveRequestId: null,
-          },
+      if (input.attachmentIds?.length)
+        await tx.fileObject.updateMany({
+          where: { id: { in: input.attachmentIds }, organizationId: context.organizationId },
           data: { leaveRequestId: request.id },
         });
-        if (attached.count !== input.attachmentIds.length)
-          throw new ConflictError(
-            'An attachment was already used. Upload a separate copy for this request.',
-          );
-      }
       const reserved = await tx.leaveBalance.updateMany({
         where: { id: balance.id, availableAmount: { gte: days } },
         data: {
@@ -473,14 +395,6 @@ export class LeaveRequestsService {
         },
         tx,
       );
-      if (automaticallyApproved)
-        return new LeaveDecisionsService(this.database, this.audit).decideInTransaction(
-          tx,
-          systemApprovalContext(context),
-          request.id,
-          'APPROVED',
-          `Automatically approved — ${policy.name} (${policy.id})`,
-        );
       // Whoever can decide the first step hears about it now.
       const firstStep = policy.steps[0];
       if (firstStep) {

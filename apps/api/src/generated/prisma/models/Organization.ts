@@ -28,10 +28,12 @@ export type AggregateOrganization = {
 
 export type OrganizationAvgAggregateOutputType = {
   version: number | null
+  employeeNumberSequence: number | null
 }
 
 export type OrganizationSumAggregateOutputType = {
   version: number | null
+  employeeNumberSequence: number | null
 }
 
 export type OrganizationMinAggregateOutputType = {
@@ -50,6 +52,7 @@ export type OrganizationMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   version: number | null
+  employeeNumberSequence: number | null
 }
 
 export type OrganizationMaxAggregateOutputType = {
@@ -68,6 +71,7 @@ export type OrganizationMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   version: number | null
+  employeeNumberSequence: number | null
 }
 
 export type OrganizationCountAggregateOutputType = {
@@ -86,16 +90,19 @@ export type OrganizationCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   version: number
+  employeeNumberSequence: number
   _all: number
 }
 
 
 export type OrganizationAvgAggregateInputType = {
   version?: true
+  employeeNumberSequence?: true
 }
 
 export type OrganizationSumAggregateInputType = {
   version?: true
+  employeeNumberSequence?: true
 }
 
 export type OrganizationMinAggregateInputType = {
@@ -114,6 +121,7 @@ export type OrganizationMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   version?: true
+  employeeNumberSequence?: true
 }
 
 export type OrganizationMaxAggregateInputType = {
@@ -132,6 +140,7 @@ export type OrganizationMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   version?: true
+  employeeNumberSequence?: true
 }
 
 export type OrganizationCountAggregateInputType = {
@@ -150,6 +159,7 @@ export type OrganizationCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   version?: true
+  employeeNumberSequence?: true
   _all?: true
 }
 
@@ -255,6 +265,7 @@ export type OrganizationGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   version: number
+  employeeNumberSequence: number
   _count: OrganizationCountAggregateOutputType | null
   _avg: OrganizationAvgAggregateOutputType | null
   _sum: OrganizationSumAggregateOutputType | null
@@ -296,10 +307,10 @@ export type OrganizationWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   version?: Prisma.IntFilter<"Organization"> | number
+  employeeNumberSequence?: Prisma.IntFilter<"Organization"> | number
   settings?: Prisma.XOR<Prisma.OrganizationSettingsNullableScalarRelationFilter, Prisma.OrganizationSettingsWhereInput> | null
   payrollPolicies?: Prisma.PayrollPolicyListRelationFilter
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentListRelationFilter
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleListRelationFilter
   statutoryRules?: Prisma.PayrollStatutoryRuleListRelationFilter
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyListRelationFilter
   salaryAdvances?: Prisma.SalaryAdvanceListRelationFilter
@@ -370,7 +381,6 @@ export type OrganizationWhereInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryListRelationFilter
   outboxEvents?: Prisma.OutboxEventListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
-  workflowDrafts?: Prisma.WorkflowDraftListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   approvalDelegations?: Prisma.ApprovalDelegationListRelationFilter
   resignations?: Prisma.EmployeeResignationListRelationFilter
@@ -400,10 +410,10 @@ export type OrganizationOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
   settings?: Prisma.OrganizationSettingsOrderByWithRelationInput
   payrollPolicies?: Prisma.PayrollPolicyOrderByRelationAggregateInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentOrderByRelationAggregateInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleOrderByRelationAggregateInput
   statutoryRules?: Prisma.PayrollStatutoryRuleOrderByRelationAggregateInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyOrderByRelationAggregateInput
   salaryAdvances?: Prisma.SalaryAdvanceOrderByRelationAggregateInput
@@ -474,7 +484,6 @@ export type OrganizationOrderByWithRelationInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryOrderByRelationAggregateInput
   outboxEvents?: Prisma.OutboxEventOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
-  workflowDrafts?: Prisma.WorkflowDraftOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   approvalDelegations?: Prisma.ApprovalDelegationOrderByRelationAggregateInput
   resignations?: Prisma.EmployeeResignationOrderByRelationAggregateInput
@@ -508,10 +517,10 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   version?: Prisma.IntFilter<"Organization"> | number
+  employeeNumberSequence?: Prisma.IntFilter<"Organization"> | number
   settings?: Prisma.XOR<Prisma.OrganizationSettingsNullableScalarRelationFilter, Prisma.OrganizationSettingsWhereInput> | null
   payrollPolicies?: Prisma.PayrollPolicyListRelationFilter
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentListRelationFilter
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleListRelationFilter
   statutoryRules?: Prisma.PayrollStatutoryRuleListRelationFilter
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyListRelationFilter
   salaryAdvances?: Prisma.SalaryAdvanceListRelationFilter
@@ -582,7 +591,6 @@ export type OrganizationWhereUniqueInput = Prisma.AtLeast<{
   webhookDeliveries?: Prisma.WebhookDeliveryListRelationFilter
   outboxEvents?: Prisma.OutboxEventListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
-  workflowDrafts?: Prisma.WorkflowDraftListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   approvalDelegations?: Prisma.ApprovalDelegationListRelationFilter
   resignations?: Prisma.EmployeeResignationListRelationFilter
@@ -612,6 +620,7 @@ export type OrganizationOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
   _count?: Prisma.OrganizationCountOrderByAggregateInput
   _avg?: Prisma.OrganizationAvgOrderByAggregateInput
   _max?: Prisma.OrganizationMaxOrderByAggregateInput
@@ -638,6 +647,7 @@ export type OrganizationScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Organization"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Organization"> | Date | string
   version?: Prisma.IntWithAggregatesFilter<"Organization"> | number
+  employeeNumberSequence?: Prisma.IntWithAggregatesFilter<"Organization"> | number
 }
 
 export type OrganizationCreateInput = {
@@ -654,10 +664,10 @@ export type OrganizationCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -728,7 +738,6 @@ export type OrganizationCreateInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -758,10 +767,10 @@ export type OrganizationUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -832,7 +841,6 @@ export type OrganizationUncheckedCreateInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -858,10 +866,10 @@ export type OrganizationUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -932,7 +940,6 @@ export type OrganizationUpdateInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -962,10 +969,10 @@ export type OrganizationUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1036,7 +1043,6 @@ export type OrganizationUncheckedUpdateInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -1064,6 +1070,7 @@ export type OrganizationCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
 }
 
 export type OrganizationUpdateManyMutationInput = {
@@ -1080,6 +1087,7 @@ export type OrganizationUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type OrganizationUncheckedUpdateManyInput = {
@@ -1098,6 +1106,7 @@ export type OrganizationUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type OrganizationScalarRelationFilter = {
@@ -1141,10 +1150,12 @@ export type OrganizationCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
 }
 
 export type OrganizationAvgOrderByAggregateInput = {
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
 }
 
 export type OrganizationMaxOrderByAggregateInput = {
@@ -1163,6 +1174,7 @@ export type OrganizationMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
 }
 
 export type OrganizationMinOrderByAggregateInput = {
@@ -1181,10 +1193,12 @@ export type OrganizationMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
 }
 
 export type OrganizationSumOrderByAggregateInput = {
   version?: Prisma.SortOrder
+  employeeNumberSequence?: Prisma.SortOrder
 }
 
 export type OrganizationCreateNestedOneWithoutAttendanceApprovalsInput = {
@@ -1227,48 +1241,6 @@ export type OrganizationUpdateOneRequiredWithoutApprovalDelegationsNestedInput =
   upsert?: Prisma.OrganizationUpsertWithoutApprovalDelegationsInput
   connect?: Prisma.OrganizationWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutApprovalDelegationsInput, Prisma.OrganizationUpdateWithoutApprovalDelegationsInput>, Prisma.OrganizationUncheckedUpdateWithoutApprovalDelegationsInput>
-}
-
-export type OrganizationCreateNestedOneWithoutEmployeePayrollPoliciesInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeePayrollPoliciesInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeePayrollPoliciesInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-}
-
-export type OrganizationUpdateOneRequiredWithoutEmployeePayrollPoliciesNestedInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeePayrollPoliciesInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeePayrollPoliciesInput
-  upsert?: Prisma.OrganizationUpsertWithoutEmployeePayrollPoliciesInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUpdateWithoutEmployeePayrollPoliciesInput>, Prisma.OrganizationUncheckedUpdateWithoutEmployeePayrollPoliciesInput>
-}
-
-export type OrganizationCreateNestedOneWithoutEmployeeStatutoryProfilesInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryProfilesInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeeStatutoryProfilesInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-}
-
-export type OrganizationUpdateOneRequiredWithoutEmployeeStatutoryProfilesNestedInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryProfilesInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeeStatutoryProfilesInput
-  upsert?: Prisma.OrganizationUpsertWithoutEmployeeStatutoryProfilesInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUpdateWithoutEmployeeStatutoryProfilesInput>, Prisma.OrganizationUncheckedUpdateWithoutEmployeeStatutoryProfilesInput>
-}
-
-export type OrganizationCreateNestedOneWithoutEmployeeStatutoryRecordsInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryRecordsInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeeStatutoryRecordsInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-}
-
-export type OrganizationUpdateOneRequiredWithoutEmployeeStatutoryRecordsNestedInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryRecordsInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeeStatutoryRecordsInput
-  upsert?: Prisma.OrganizationUpsertWithoutEmployeeStatutoryRecordsInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUpdateWithoutEmployeeStatutoryRecordsInput>, Prisma.OrganizationUncheckedUpdateWithoutEmployeeStatutoryRecordsInput>
 }
 
 export type OrganizationCreateNestedOneWithoutIdempotencyRecordsInput = {
@@ -1911,20 +1883,6 @@ export type OrganizationUpdateOneRequiredWithoutPayrollPoliciesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutPayrollPoliciesInput, Prisma.OrganizationUpdateWithoutPayrollPoliciesInput>, Prisma.OrganizationUncheckedUpdateWithoutPayrollPoliciesInput>
 }
 
-export type OrganizationCreateNestedOneWithoutPayrollPolicyAssignmentRulesInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutPayrollPolicyAssignmentRulesInput, Prisma.OrganizationUncheckedCreateWithoutPayrollPolicyAssignmentRulesInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutPayrollPolicyAssignmentRulesInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-}
-
-export type OrganizationUpdateOneRequiredWithoutPayrollPolicyAssignmentRulesNestedInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutPayrollPolicyAssignmentRulesInput, Prisma.OrganizationUncheckedCreateWithoutPayrollPolicyAssignmentRulesInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutPayrollPolicyAssignmentRulesInput
-  upsert?: Prisma.OrganizationUpsertWithoutPayrollPolicyAssignmentRulesInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutPayrollPolicyAssignmentRulesInput, Prisma.OrganizationUpdateWithoutPayrollPolicyAssignmentRulesInput>, Prisma.OrganizationUncheckedUpdateWithoutPayrollPolicyAssignmentRulesInput>
-}
-
 export type OrganizationCreateNestedOneWithoutPayrollPolicyComponentsInput = {
   create?: Prisma.XOR<Prisma.OrganizationCreateWithoutPayrollPolicyComponentsInput, Prisma.OrganizationUncheckedCreateWithoutPayrollPolicyComponentsInput>
   connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutPayrollPolicyComponentsInput
@@ -2097,20 +2055,6 @@ export type OrganizationUpdateOneRequiredWithoutUserRolesNestedInput = {
 
 export type EnumOrganizationStatusFieldUpdateOperationsInput = {
   set?: $Enums.OrganizationStatus
-}
-
-export type OrganizationCreateNestedOneWithoutWorkflowDraftsInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutWorkflowDraftsInput, Prisma.OrganizationUncheckedCreateWithoutWorkflowDraftsInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutWorkflowDraftsInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-}
-
-export type OrganizationUpdateOneRequiredWithoutWorkflowDraftsNestedInput = {
-  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutWorkflowDraftsInput, Prisma.OrganizationUncheckedCreateWithoutWorkflowDraftsInput>
-  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutWorkflowDraftsInput
-  upsert?: Prisma.OrganizationUpsertWithoutWorkflowDraftsInput
-  connect?: Prisma.OrganizationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutWorkflowDraftsInput, Prisma.OrganizationUpdateWithoutWorkflowDraftsInput>, Prisma.OrganizationUncheckedUpdateWithoutWorkflowDraftsInput>
 }
 
 export type OrganizationCreateNestedOneWithoutSettingsInput = {
@@ -2379,6 +2323,48 @@ export type OrganizationUpdateOneRequiredWithoutCompensationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutCompensationsInput, Prisma.OrganizationUpdateWithoutCompensationsInput>, Prisma.OrganizationUncheckedUpdateWithoutCompensationsInput>
 }
 
+export type OrganizationCreateNestedOneWithoutEmployeePayrollPoliciesInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeePayrollPoliciesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeePayrollPoliciesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutEmployeePayrollPoliciesNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeePayrollPoliciesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeePayrollPoliciesInput
+  upsert?: Prisma.OrganizationUpsertWithoutEmployeePayrollPoliciesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUpdateWithoutEmployeePayrollPoliciesInput>, Prisma.OrganizationUncheckedUpdateWithoutEmployeePayrollPoliciesInput>
+}
+
+export type OrganizationCreateNestedOneWithoutEmployeeStatutoryProfilesInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryProfilesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeeStatutoryProfilesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutEmployeeStatutoryProfilesNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryProfilesInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeeStatutoryProfilesInput
+  upsert?: Prisma.OrganizationUpsertWithoutEmployeeStatutoryProfilesInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUpdateWithoutEmployeeStatutoryProfilesInput>, Prisma.OrganizationUncheckedUpdateWithoutEmployeeStatutoryProfilesInput>
+}
+
+export type OrganizationCreateNestedOneWithoutEmployeeStatutoryRecordsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryRecordsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeeStatutoryRecordsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+}
+
+export type OrganizationUpdateOneRequiredWithoutEmployeeStatutoryRecordsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryRecordsInput>
+  connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutEmployeeStatutoryRecordsInput
+  upsert?: Prisma.OrganizationUpsertWithoutEmployeeStatutoryRecordsInput
+  connect?: Prisma.OrganizationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUpdateToOneWithWhereWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUpdateWithoutEmployeeStatutoryRecordsInput>, Prisma.OrganizationUncheckedUpdateWithoutEmployeeStatutoryRecordsInput>
+}
+
 export type OrganizationCreateNestedOneWithoutPayComponentsInput = {
   create?: Prisma.XOR<Prisma.OrganizationCreateWithoutPayComponentsInput, Prisma.OrganizationUncheckedCreateWithoutPayComponentsInput>
   connectOrCreate?: Prisma.OrganizationCreateOrConnectWithoutPayComponentsInput
@@ -2477,10 +2463,10 @@ export type OrganizationCreateWithoutAttendanceApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -2550,7 +2536,6 @@ export type OrganizationCreateWithoutAttendanceApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -2580,10 +2565,10 @@ export type OrganizationUncheckedCreateWithoutAttendanceApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -2653,7 +2638,6 @@ export type OrganizationUncheckedCreateWithoutAttendanceApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -2695,10 +2679,10 @@ export type OrganizationUpdateWithoutAttendanceApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -2768,7 +2752,6 @@ export type OrganizationUpdateWithoutAttendanceApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -2798,10 +2781,10 @@ export type OrganizationUncheckedUpdateWithoutAttendanceApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -2871,7 +2854,6 @@ export type OrganizationUncheckedUpdateWithoutAttendanceApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -2897,10 +2879,10 @@ export type OrganizationCreateWithoutLeaveApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -2970,7 +2952,6 @@ export type OrganizationCreateWithoutLeaveApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -3000,10 +2981,10 @@ export type OrganizationUncheckedCreateWithoutLeaveApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -3073,7 +3054,6 @@ export type OrganizationUncheckedCreateWithoutLeaveApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -3115,10 +3095,10 @@ export type OrganizationUpdateWithoutLeaveApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -3188,7 +3168,6 @@ export type OrganizationUpdateWithoutLeaveApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -3218,10 +3197,10 @@ export type OrganizationUncheckedUpdateWithoutLeaveApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -3291,7 +3270,6 @@ export type OrganizationUncheckedUpdateWithoutLeaveApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -3317,10 +3295,10 @@ export type OrganizationCreateWithoutApprovalDelegationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -3391,7 +3369,6 @@ export type OrganizationCreateWithoutApprovalDelegationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
   compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
@@ -3420,10 +3397,10 @@ export type OrganizationUncheckedCreateWithoutApprovalDelegationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -3494,7 +3471,6 @@ export type OrganizationUncheckedCreateWithoutApprovalDelegationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
   compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
@@ -3535,10 +3511,10 @@ export type OrganizationUpdateWithoutApprovalDelegationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -3609,7 +3585,6 @@ export type OrganizationUpdateWithoutApprovalDelegationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
   compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
@@ -3638,10 +3613,10 @@ export type OrganizationUncheckedUpdateWithoutApprovalDelegationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -3712,1268 +3687,7 @@ export type OrganizationUncheckedUpdateWithoutApprovalDelegationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
-  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
-  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
-  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
-}
-
-export type OrganizationCreateWithoutEmployeePayrollPoliciesInput = {
-  id?: string
-  name: string
-  slug: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string
-  currencyCode: string
-  locale?: string
-  deactivatedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  version?: number
-  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
-  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
-  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
-  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
-  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
-  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
-  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
-  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
-  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
-  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
-  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
-  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
-  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
-  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
-  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
-  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
-  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
-  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
-  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
-  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
-  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
-  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
-  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
-  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
-  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
-  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
-  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
-  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
-  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
-  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
-  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
-  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
-  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
-  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
-  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
-  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
-  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
-  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
-  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
-  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
-  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
-  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
-  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
-  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
-  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
-  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
-  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
-  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
-  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
-  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
-  logoFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationLogoInput
-  coverFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationCoverInput
-}
-
-export type OrganizationUncheckedCreateWithoutEmployeePayrollPoliciesInput = {
-  id?: string
-  name: string
-  slug: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string
-  currencyCode: string
-  locale?: string
-  logoFileId?: string | null
-  coverFileId?: string | null
-  deactivatedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  version?: number
-  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
-  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
-  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
-  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
-  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
-  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
-  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
-  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
-  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
-  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
-  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
-  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
-  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
-  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
-  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
-  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
-  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
-  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
-  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
-}
-
-export type OrganizationCreateOrConnectWithoutEmployeePayrollPoliciesInput = {
-  where: Prisma.OrganizationWhereUniqueInput
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeePayrollPoliciesInput>
-}
-
-export type OrganizationUpsertWithoutEmployeePayrollPoliciesInput = {
-  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeePayrollPoliciesInput>
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeePayrollPoliciesInput>
-  where?: Prisma.OrganizationWhereInput
-}
-
-export type OrganizationUpdateToOneWithWhereWithoutEmployeePayrollPoliciesInput = {
-  where?: Prisma.OrganizationWhereInput
-  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeePayrollPoliciesInput>
-}
-
-export type OrganizationUpdateWithoutEmployeePayrollPoliciesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
-  locale?: Prisma.StringFieldUpdateOperationsInput | string
-  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  version?: Prisma.IntFieldUpdateOperationsInput | number
-  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
-  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
-  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
-  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
-  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
-  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
-  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
-  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
-  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
-  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
-  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
-  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
-  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
-  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
-  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
-  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
-  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
-  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
-  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
-  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
-  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
-  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
-  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
-  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
-  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
-  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
-  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
-  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
-  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
-  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
-  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
-  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
-  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
-  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
-  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
-  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
-  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
-  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
-  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
-  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
-  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
-  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
-  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
-  logoFile?: Prisma.FileObjectUpdateOneWithoutOrganizationLogoNestedInput
-  coverFile?: Prisma.FileObjectUpdateOneWithoutOrganizationCoverNestedInput
-}
-
-export type OrganizationUncheckedUpdateWithoutEmployeePayrollPoliciesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
-  locale?: Prisma.StringFieldUpdateOperationsInput | string
-  logoFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  coverFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  version?: Prisma.IntFieldUpdateOperationsInput | number
-  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
-  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
-  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
-  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
-  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
-  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
-  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
-  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
-  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
-  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
-  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
-  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
-  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
-  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
-  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
-  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
-  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
-  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
-  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
-}
-
-export type OrganizationCreateWithoutEmployeeStatutoryProfilesInput = {
-  id?: string
-  name: string
-  slug: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string
-  currencyCode: string
-  locale?: string
-  deactivatedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  version?: number
-  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
-  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
-  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
-  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
-  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
-  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
-  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
-  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
-  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
-  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
-  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
-  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
-  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
-  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
-  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
-  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
-  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
-  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
-  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
-  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
-  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
-  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
-  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
-  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
-  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
-  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
-  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
-  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
-  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
-  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
-  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
-  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
-  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
-  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
-  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
-  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
-  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
-  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
-  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
-  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
-  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
-  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
-  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
-  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
-  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
-  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
-  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
-  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
-  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
-  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
-  logoFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationLogoInput
-  coverFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationCoverInput
-}
-
-export type OrganizationUncheckedCreateWithoutEmployeeStatutoryProfilesInput = {
-  id?: string
-  name: string
-  slug: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string
-  currencyCode: string
-  locale?: string
-  logoFileId?: string | null
-  coverFileId?: string | null
-  deactivatedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  version?: number
-  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
-  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
-  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
-  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
-  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
-  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
-  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
-  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
-  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
-  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
-  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
-  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
-  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
-  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
-  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
-  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
-  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
-  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
-}
-
-export type OrganizationCreateOrConnectWithoutEmployeeStatutoryProfilesInput = {
-  where: Prisma.OrganizationWhereUniqueInput
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryProfilesInput>
-}
-
-export type OrganizationUpsertWithoutEmployeeStatutoryProfilesInput = {
-  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeeStatutoryProfilesInput>
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryProfilesInput>
-  where?: Prisma.OrganizationWhereInput
-}
-
-export type OrganizationUpdateToOneWithWhereWithoutEmployeeStatutoryProfilesInput = {
-  where?: Prisma.OrganizationWhereInput
-  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeeStatutoryProfilesInput>
-}
-
-export type OrganizationUpdateWithoutEmployeeStatutoryProfilesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
-  locale?: Prisma.StringFieldUpdateOperationsInput | string
-  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  version?: Prisma.IntFieldUpdateOperationsInput | number
-  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
-  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
-  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
-  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
-  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
-  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
-  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
-  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
-  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
-  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
-  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
-  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
-  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
-  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
-  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
-  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
-  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
-  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
-  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
-  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
-  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
-  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
-  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
-  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
-  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
-  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
-  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
-  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
-  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
-  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
-  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
-  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
-  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
-  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
-  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
-  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
-  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
-  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
-  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
-  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
-  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
-  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
-  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
-  logoFile?: Prisma.FileObjectUpdateOneWithoutOrganizationLogoNestedInput
-  coverFile?: Prisma.FileObjectUpdateOneWithoutOrganizationCoverNestedInput
-}
-
-export type OrganizationUncheckedUpdateWithoutEmployeeStatutoryProfilesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
-  locale?: Prisma.StringFieldUpdateOperationsInput | string
-  logoFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  coverFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  version?: Prisma.IntFieldUpdateOperationsInput | number
-  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
-  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
-  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
-  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
-  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
-  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
-  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
-  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
-  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
-  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
-  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
-  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
-  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
-  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
-  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
-  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
-  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
-  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
-}
-
-export type OrganizationCreateWithoutEmployeeStatutoryRecordsInput = {
-  id?: string
-  name: string
-  slug: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string
-  currencyCode: string
-  locale?: string
-  deactivatedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  version?: number
-  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
-  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
-  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
-  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
-  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
-  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
-  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
-  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
-  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
-  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
-  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
-  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
-  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
-  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
-  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
-  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
-  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
-  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
-  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
-  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
-  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
-  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
-  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
-  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
-  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
-  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
-  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
-  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
-  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
-  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
-  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
-  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
-  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
-  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
-  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
-  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
-  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
-  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
-  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
-  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
-  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
-  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
-  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
-  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
-  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
-  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
-  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
-  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
-  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
-  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
-  logoFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationLogoInput
-  coverFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationCoverInput
-}
-
-export type OrganizationUncheckedCreateWithoutEmployeeStatutoryRecordsInput = {
-  id?: string
-  name: string
-  slug: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string
-  currencyCode: string
-  locale?: string
-  logoFileId?: string | null
-  coverFileId?: string | null
-  deactivatedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  version?: number
-  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
-  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
-  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
-  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
-  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
-  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
-  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
-  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
-  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
-  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
-  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
-  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
-  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
-  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
-  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
-  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
-  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
-  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
-}
-
-export type OrganizationCreateOrConnectWithoutEmployeeStatutoryRecordsInput = {
-  where: Prisma.OrganizationWhereUniqueInput
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryRecordsInput>
-}
-
-export type OrganizationUpsertWithoutEmployeeStatutoryRecordsInput = {
-  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeeStatutoryRecordsInput>
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryRecordsInput>
-  where?: Prisma.OrganizationWhereInput
-}
-
-export type OrganizationUpdateToOneWithWhereWithoutEmployeeStatutoryRecordsInput = {
-  where?: Prisma.OrganizationWhereInput
-  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeeStatutoryRecordsInput>
-}
-
-export type OrganizationUpdateWithoutEmployeeStatutoryRecordsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
-  locale?: Prisma.StringFieldUpdateOperationsInput | string
-  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  version?: Prisma.IntFieldUpdateOperationsInput | number
-  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
-  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
-  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
-  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
-  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
-  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
-  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
-  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
-  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
-  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
-  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
-  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
-  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
-  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
-  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
-  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
-  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
-  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
-  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
-  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
-  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
-  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
-  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
-  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
-  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
-  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
-  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
-  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
-  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
-  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
-  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
-  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
-  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
-  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
-  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
-  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
-  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
-  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
-  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
-  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
-  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
-  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
-  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
-  logoFile?: Prisma.FileObjectUpdateOneWithoutOrganizationLogoNestedInput
-  coverFile?: Prisma.FileObjectUpdateOneWithoutOrganizationCoverNestedInput
-}
-
-export type OrganizationUncheckedUpdateWithoutEmployeeStatutoryRecordsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
-  locale?: Prisma.StringFieldUpdateOperationsInput | string
-  logoFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  coverFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  version?: Prisma.IntFieldUpdateOperationsInput | number
-  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
-  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
-  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
-  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
-  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
-  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
-  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
-  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
-  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
-  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
-  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
-  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
-  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
-  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
-  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
   compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
   leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -4997,10 +3711,10 @@ export type OrganizationCreateWithoutIdempotencyRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -5070,7 +3784,6 @@ export type OrganizationCreateWithoutIdempotencyRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -5100,10 +3813,10 @@ export type OrganizationUncheckedCreateWithoutIdempotencyRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -5173,7 +3886,6 @@ export type OrganizationUncheckedCreateWithoutIdempotencyRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -5215,10 +3927,10 @@ export type OrganizationUpdateWithoutIdempotencyRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -5288,7 +4000,6 @@ export type OrganizationUpdateWithoutIdempotencyRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -5318,10 +4029,10 @@ export type OrganizationUncheckedUpdateWithoutIdempotencyRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -5391,7 +4102,6 @@ export type OrganizationUncheckedUpdateWithoutIdempotencyRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -5417,10 +4127,10 @@ export type OrganizationCreateWithoutRequestRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -5490,7 +4200,6 @@ export type OrganizationCreateWithoutRequestRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -5520,10 +4229,10 @@ export type OrganizationUncheckedCreateWithoutRequestRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -5593,7 +4302,6 @@ export type OrganizationUncheckedCreateWithoutRequestRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -5635,10 +4343,10 @@ export type OrganizationUpdateWithoutRequestRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -5708,7 +4416,6 @@ export type OrganizationUpdateWithoutRequestRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -5738,10 +4445,10 @@ export type OrganizationUncheckedUpdateWithoutRequestRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -5811,7 +4518,6 @@ export type OrganizationUncheckedUpdateWithoutRequestRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -5837,10 +4543,10 @@ export type OrganizationCreateWithoutWebhookSubscriptionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -5910,7 +4616,6 @@ export type OrganizationCreateWithoutWebhookSubscriptionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -5940,10 +4645,10 @@ export type OrganizationUncheckedCreateWithoutWebhookSubscriptionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6013,7 +4718,6 @@ export type OrganizationUncheckedCreateWithoutWebhookSubscriptionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6055,10 +4759,10 @@ export type OrganizationUpdateWithoutWebhookSubscriptionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -6128,7 +4832,6 @@ export type OrganizationUpdateWithoutWebhookSubscriptionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -6158,10 +4861,10 @@ export type OrganizationUncheckedUpdateWithoutWebhookSubscriptionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -6231,7 +4934,6 @@ export type OrganizationUncheckedUpdateWithoutWebhookSubscriptionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -6257,10 +4959,10 @@ export type OrganizationCreateWithoutOutboxEventsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -6330,7 +5032,6 @@ export type OrganizationCreateWithoutOutboxEventsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -6360,10 +5061,10 @@ export type OrganizationUncheckedCreateWithoutOutboxEventsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6433,7 +5134,6 @@ export type OrganizationUncheckedCreateWithoutOutboxEventsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6475,10 +5175,10 @@ export type OrganizationUpdateWithoutOutboxEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -6548,7 +5248,6 @@ export type OrganizationUpdateWithoutOutboxEventsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -6578,10 +5277,10 @@ export type OrganizationUncheckedUpdateWithoutOutboxEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -6651,7 +5350,6 @@ export type OrganizationUncheckedUpdateWithoutOutboxEventsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -6677,10 +5375,10 @@ export type OrganizationCreateWithoutWebhookDeliveriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -6750,7 +5448,6 @@ export type OrganizationCreateWithoutWebhookDeliveriesInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -6780,10 +5477,10 @@ export type OrganizationUncheckedCreateWithoutWebhookDeliveriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6853,7 +5550,6 @@ export type OrganizationUncheckedCreateWithoutWebhookDeliveriesInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -6895,10 +5591,10 @@ export type OrganizationUpdateWithoutWebhookDeliveriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -6968,7 +5664,6 @@ export type OrganizationUpdateWithoutWebhookDeliveriesInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -6998,10 +5693,10 @@ export type OrganizationUncheckedUpdateWithoutWebhookDeliveriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7071,7 +5766,6 @@ export type OrganizationUncheckedUpdateWithoutWebhookDeliveriesInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7097,10 +5791,10 @@ export type OrganizationCreateWithoutAuditLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -7170,7 +5864,6 @@ export type OrganizationCreateWithoutAuditLogsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -7200,10 +5893,10 @@ export type OrganizationUncheckedCreateWithoutAuditLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -7273,7 +5966,6 @@ export type OrganizationUncheckedCreateWithoutAuditLogsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -7315,10 +6007,10 @@ export type OrganizationUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -7388,7 +6080,6 @@ export type OrganizationUpdateWithoutAuditLogsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -7418,10 +6109,10 @@ export type OrganizationUncheckedUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7491,7 +6182,6 @@ export type OrganizationUncheckedUpdateWithoutAuditLogsInput = {
   webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7517,10 +6207,10 @@ export type OrganizationCreateWithoutResignationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -7591,7 +6281,6 @@ export type OrganizationCreateWithoutResignationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
@@ -7620,10 +6309,10 @@ export type OrganizationUncheckedCreateWithoutResignationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -7694,7 +6383,6 @@ export type OrganizationUncheckedCreateWithoutResignationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
@@ -7735,10 +6423,10 @@ export type OrganizationUpdateWithoutResignationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -7809,7 +6497,6 @@ export type OrganizationUpdateWithoutResignationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
@@ -7838,10 +6525,10 @@ export type OrganizationUncheckedUpdateWithoutResignationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7912,7 +6599,6 @@ export type OrganizationUncheckedUpdateWithoutResignationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -7937,10 +6623,10 @@ export type OrganizationCreateWithoutHomeFederationClientsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -8011,7 +6697,6 @@ export type OrganizationCreateWithoutHomeFederationClientsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -8040,10 +6725,10 @@ export type OrganizationUncheckedCreateWithoutHomeFederationClientsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8114,7 +6799,6 @@ export type OrganizationUncheckedCreateWithoutHomeFederationClientsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8155,10 +6839,10 @@ export type OrganizationUpdateWithoutHomeFederationClientsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -8229,7 +6913,6 @@ export type OrganizationUpdateWithoutHomeFederationClientsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -8258,10 +6941,10 @@ export type OrganizationUncheckedUpdateWithoutHomeFederationClientsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -8332,7 +7015,6 @@ export type OrganizationUncheckedUpdateWithoutHomeFederationClientsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -8357,10 +7039,10 @@ export type OrganizationCreateWithoutFederationGrantsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -8430,7 +7112,6 @@ export type OrganizationCreateWithoutFederationGrantsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -8460,10 +7141,10 @@ export type OrganizationUncheckedCreateWithoutFederationGrantsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8533,7 +7214,6 @@ export type OrganizationUncheckedCreateWithoutFederationGrantsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8575,10 +7255,10 @@ export type OrganizationUpdateWithoutFederationGrantsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -8648,7 +7328,6 @@ export type OrganizationUpdateWithoutFederationGrantsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -8678,10 +7357,10 @@ export type OrganizationUncheckedUpdateWithoutFederationGrantsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -8751,7 +7430,6 @@ export type OrganizationUncheckedUpdateWithoutFederationGrantsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -8777,10 +7455,10 @@ export type OrganizationCreateWithoutOrganizationCapabilitiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -8850,7 +7528,6 @@ export type OrganizationCreateWithoutOrganizationCapabilitiesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -8880,10 +7557,10 @@ export type OrganizationUncheckedCreateWithoutOrganizationCapabilitiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8953,7 +7630,6 @@ export type OrganizationUncheckedCreateWithoutOrganizationCapabilitiesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -8995,10 +7671,10 @@ export type OrganizationUpdateWithoutOrganizationCapabilitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -9068,7 +7744,6 @@ export type OrganizationUpdateWithoutOrganizationCapabilitiesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -9098,10 +7773,10 @@ export type OrganizationUncheckedUpdateWithoutOrganizationCapabilitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -9171,7 +7846,6 @@ export type OrganizationUncheckedUpdateWithoutOrganizationCapabilitiesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -9197,10 +7871,10 @@ export type OrganizationCreateWithoutExternalIdMappingsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -9270,7 +7944,6 @@ export type OrganizationCreateWithoutExternalIdMappingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -9300,10 +7973,10 @@ export type OrganizationUncheckedCreateWithoutExternalIdMappingsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -9373,7 +8046,6 @@ export type OrganizationUncheckedCreateWithoutExternalIdMappingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -9415,10 +8087,10 @@ export type OrganizationUpdateWithoutExternalIdMappingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -9488,7 +8160,6 @@ export type OrganizationUpdateWithoutExternalIdMappingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -9518,10 +8189,10 @@ export type OrganizationUncheckedUpdateWithoutExternalIdMappingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -9591,7 +8262,6 @@ export type OrganizationUncheckedUpdateWithoutExternalIdMappingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -9617,10 +8287,10 @@ export type OrganizationCreateWithoutFilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -9690,7 +8360,6 @@ export type OrganizationCreateWithoutFilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -9720,10 +8389,10 @@ export type OrganizationUncheckedCreateWithoutFilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -9793,7 +8462,6 @@ export type OrganizationUncheckedCreateWithoutFilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -9824,10 +8492,10 @@ export type OrganizationCreateWithoutLogoFileInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -9898,7 +8566,6 @@ export type OrganizationCreateWithoutLogoFileInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -9926,10 +8593,10 @@ export type OrganizationUncheckedCreateWithoutLogoFileInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10000,7 +8667,6 @@ export type OrganizationUncheckedCreateWithoutLogoFileInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10036,10 +8702,10 @@ export type OrganizationCreateWithoutCoverFileInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -10110,7 +8776,6 @@ export type OrganizationCreateWithoutCoverFileInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -10138,10 +8803,10 @@ export type OrganizationUncheckedCreateWithoutCoverFileInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10212,7 +8877,6 @@ export type OrganizationUncheckedCreateWithoutCoverFileInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10259,10 +8923,10 @@ export type OrganizationUpdateWithoutFilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -10332,7 +8996,6 @@ export type OrganizationUpdateWithoutFilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -10362,10 +9025,10 @@ export type OrganizationUncheckedUpdateWithoutFilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -10435,7 +9098,6 @@ export type OrganizationUncheckedUpdateWithoutFilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -10482,6 +9144,7 @@ export type OrganizationScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Organization"> | Date | string
   version?: Prisma.IntFilter<"Organization"> | number
+  employeeNumberSequence?: Prisma.IntFilter<"Organization"> | number
 }
 
 export type OrganizationUpsertWithWhereUniqueWithoutCoverFileInput = {
@@ -10514,10 +9177,10 @@ export type OrganizationCreateWithoutCompOffCreditsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -10588,7 +9251,6 @@ export type OrganizationCreateWithoutCompOffCreditsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -10617,10 +9279,10 @@ export type OrganizationUncheckedCreateWithoutCompOffCreditsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10691,7 +9353,6 @@ export type OrganizationUncheckedCreateWithoutCompOffCreditsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -10732,10 +9393,10 @@ export type OrganizationUpdateWithoutCompOffCreditsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -10806,7 +9467,6 @@ export type OrganizationUpdateWithoutCompOffCreditsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -10835,10 +9495,10 @@ export type OrganizationUncheckedUpdateWithoutCompOffCreditsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -10909,7 +9569,6 @@ export type OrganizationUncheckedUpdateWithoutCompOffCreditsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -10934,10 +9593,10 @@ export type OrganizationCreateWithoutLeaveEncashmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -11008,7 +9667,6 @@ export type OrganizationCreateWithoutLeaveEncashmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -11037,10 +9695,10 @@ export type OrganizationUncheckedCreateWithoutLeaveEncashmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11111,7 +9769,6 @@ export type OrganizationUncheckedCreateWithoutLeaveEncashmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11152,10 +9809,10 @@ export type OrganizationUpdateWithoutLeaveEncashmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -11226,7 +9883,6 @@ export type OrganizationUpdateWithoutLeaveEncashmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -11255,10 +9911,10 @@ export type OrganizationUncheckedUpdateWithoutLeaveEncashmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -11329,7 +9985,6 @@ export type OrganizationUncheckedUpdateWithoutLeaveEncashmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -11354,10 +10009,10 @@ export type OrganizationCreateWithoutCustomFieldDefinitionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -11428,7 +10083,6 @@ export type OrganizationCreateWithoutCustomFieldDefinitionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -11457,10 +10111,10 @@ export type OrganizationUncheckedCreateWithoutCustomFieldDefinitionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11531,7 +10185,6 @@ export type OrganizationUncheckedCreateWithoutCustomFieldDefinitionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11572,10 +10225,10 @@ export type OrganizationUpdateWithoutCustomFieldDefinitionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -11646,7 +10299,6 @@ export type OrganizationUpdateWithoutCustomFieldDefinitionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -11675,10 +10327,10 @@ export type OrganizationUncheckedUpdateWithoutCustomFieldDefinitionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -11749,7 +10401,6 @@ export type OrganizationUncheckedUpdateWithoutCustomFieldDefinitionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -11774,10 +10425,10 @@ export type OrganizationCreateWithoutInvitationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -11847,7 +10498,6 @@ export type OrganizationCreateWithoutInvitationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -11877,10 +10527,10 @@ export type OrganizationUncheckedCreateWithoutInvitationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11950,7 +10600,6 @@ export type OrganizationUncheckedCreateWithoutInvitationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -11992,10 +10641,10 @@ export type OrganizationUpdateWithoutInvitationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -12065,7 +10714,6 @@ export type OrganizationUpdateWithoutInvitationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -12095,10 +10743,10 @@ export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -12168,7 +10816,6 @@ export type OrganizationUncheckedUpdateWithoutInvitationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -12194,10 +10841,10 @@ export type OrganizationCreateWithoutEmployeeAccessCodesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -12267,7 +10914,6 @@ export type OrganizationCreateWithoutEmployeeAccessCodesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -12297,10 +10943,10 @@ export type OrganizationUncheckedCreateWithoutEmployeeAccessCodesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -12370,7 +11016,6 @@ export type OrganizationUncheckedCreateWithoutEmployeeAccessCodesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -12412,10 +11057,10 @@ export type OrganizationUpdateWithoutEmployeeAccessCodesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -12485,7 +11130,6 @@ export type OrganizationUpdateWithoutEmployeeAccessCodesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -12515,10 +11159,10 @@ export type OrganizationUncheckedUpdateWithoutEmployeeAccessCodesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -12588,7 +11232,6 @@ export type OrganizationUncheckedUpdateWithoutEmployeeAccessCodesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -12614,10 +11257,10 @@ export type OrganizationCreateWithoutUsersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -12687,7 +11330,6 @@ export type OrganizationCreateWithoutUsersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -12717,10 +11359,10 @@ export type OrganizationUncheckedCreateWithoutUsersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -12790,7 +11432,6 @@ export type OrganizationUncheckedCreateWithoutUsersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -12832,10 +11473,10 @@ export type OrganizationUpdateWithoutUsersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -12905,7 +11546,6 @@ export type OrganizationUpdateWithoutUsersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -12935,10 +11575,10 @@ export type OrganizationUncheckedUpdateWithoutUsersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -13008,7 +11648,6 @@ export type OrganizationUncheckedUpdateWithoutUsersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -13034,10 +11673,10 @@ export type OrganizationCreateWithoutSessionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -13107,7 +11746,6 @@ export type OrganizationCreateWithoutSessionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -13137,10 +11775,10 @@ export type OrganizationUncheckedCreateWithoutSessionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -13210,7 +11848,6 @@ export type OrganizationUncheckedCreateWithoutSessionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -13252,10 +11889,10 @@ export type OrganizationUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -13325,7 +11962,6 @@ export type OrganizationUpdateWithoutSessionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -13355,10 +11991,10 @@ export type OrganizationUncheckedUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -13428,7 +12064,6 @@ export type OrganizationUncheckedUpdateWithoutSessionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -13454,10 +12089,10 @@ export type OrganizationCreateWithoutNotificationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -13528,7 +12163,6 @@ export type OrganizationCreateWithoutNotificationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
   compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
@@ -13557,10 +12191,10 @@ export type OrganizationUncheckedCreateWithoutNotificationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -13631,7 +12265,6 @@ export type OrganizationUncheckedCreateWithoutNotificationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
   compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
@@ -13672,10 +12305,10 @@ export type OrganizationUpdateWithoutNotificationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -13746,7 +12379,6 @@ export type OrganizationUpdateWithoutNotificationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
   compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
@@ -13775,10 +12407,10 @@ export type OrganizationUncheckedUpdateWithoutNotificationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -13849,7 +12481,6 @@ export type OrganizationUncheckedUpdateWithoutNotificationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
   compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -13874,10 +12505,10 @@ export type OrganizationCreateWithoutAttendanceRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -13947,7 +12578,6 @@ export type OrganizationCreateWithoutAttendanceRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -13977,10 +12607,10 @@ export type OrganizationUncheckedCreateWithoutAttendanceRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14050,7 +12680,6 @@ export type OrganizationUncheckedCreateWithoutAttendanceRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14092,10 +12721,10 @@ export type OrganizationUpdateWithoutAttendanceRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -14165,7 +12794,6 @@ export type OrganizationUpdateWithoutAttendanceRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -14195,10 +12823,10 @@ export type OrganizationUncheckedUpdateWithoutAttendanceRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14268,7 +12896,6 @@ export type OrganizationUncheckedUpdateWithoutAttendanceRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14294,10 +12921,10 @@ export type OrganizationCreateWithoutAttendancePunchesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -14367,7 +12994,6 @@ export type OrganizationCreateWithoutAttendancePunchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -14397,10 +13023,10 @@ export type OrganizationUncheckedCreateWithoutAttendancePunchesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14470,7 +13096,6 @@ export type OrganizationUncheckedCreateWithoutAttendancePunchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14512,10 +13137,10 @@ export type OrganizationUpdateWithoutAttendancePunchesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -14585,7 +13210,6 @@ export type OrganizationUpdateWithoutAttendancePunchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -14615,10 +13239,10 @@ export type OrganizationUncheckedUpdateWithoutAttendancePunchesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14688,7 +13312,6 @@ export type OrganizationUncheckedUpdateWithoutAttendancePunchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -14714,10 +13337,10 @@ export type OrganizationCreateWithoutAttendanceCorrectionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -14787,7 +13410,6 @@ export type OrganizationCreateWithoutAttendanceCorrectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -14817,10 +13439,10 @@ export type OrganizationUncheckedCreateWithoutAttendanceCorrectionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14890,7 +13512,6 @@ export type OrganizationUncheckedCreateWithoutAttendanceCorrectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -14932,10 +13553,10 @@ export type OrganizationUpdateWithoutAttendanceCorrectionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -15005,7 +13626,6 @@ export type OrganizationUpdateWithoutAttendanceCorrectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -15035,10 +13655,10 @@ export type OrganizationUncheckedUpdateWithoutAttendanceCorrectionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15108,7 +13728,6 @@ export type OrganizationUncheckedUpdateWithoutAttendanceCorrectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15134,10 +13753,10 @@ export type OrganizationCreateWithoutHolidaysInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -15207,7 +13826,6 @@ export type OrganizationCreateWithoutHolidaysInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -15237,10 +13855,10 @@ export type OrganizationUncheckedCreateWithoutHolidaysInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15310,7 +13928,6 @@ export type OrganizationUncheckedCreateWithoutHolidaysInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15352,10 +13969,10 @@ export type OrganizationUpdateWithoutHolidaysInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -15425,7 +14042,6 @@ export type OrganizationUpdateWithoutHolidaysInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -15455,10 +14071,10 @@ export type OrganizationUncheckedUpdateWithoutHolidaysInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15528,7 +14144,6 @@ export type OrganizationUncheckedUpdateWithoutHolidaysInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15554,10 +14169,10 @@ export type OrganizationCreateWithoutHolidaySelectionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -15627,7 +14242,6 @@ export type OrganizationCreateWithoutHolidaySelectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -15657,10 +14271,10 @@ export type OrganizationUncheckedCreateWithoutHolidaySelectionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15730,7 +14344,6 @@ export type OrganizationUncheckedCreateWithoutHolidaySelectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -15772,10 +14385,10 @@ export type OrganizationUpdateWithoutHolidaySelectionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -15845,7 +14458,6 @@ export type OrganizationUpdateWithoutHolidaySelectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -15875,10 +14487,10 @@ export type OrganizationUncheckedUpdateWithoutHolidaySelectionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15948,7 +14560,6 @@ export type OrganizationUncheckedUpdateWithoutHolidaySelectionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -15974,10 +14585,10 @@ export type OrganizationCreateWithoutLeaveTypesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -16047,7 +14658,6 @@ export type OrganizationCreateWithoutLeaveTypesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -16077,10 +14687,10 @@ export type OrganizationUncheckedCreateWithoutLeaveTypesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16150,7 +14760,6 @@ export type OrganizationUncheckedCreateWithoutLeaveTypesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16192,10 +14801,10 @@ export type OrganizationUpdateWithoutLeaveTypesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -16265,7 +14874,6 @@ export type OrganizationUpdateWithoutLeaveTypesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -16295,10 +14903,10 @@ export type OrganizationUncheckedUpdateWithoutLeaveTypesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -16368,7 +14976,6 @@ export type OrganizationUncheckedUpdateWithoutLeaveTypesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -16394,10 +15001,10 @@ export type OrganizationCreateWithoutLeavePolicyAssignmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -16467,7 +15074,6 @@ export type OrganizationCreateWithoutLeavePolicyAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -16497,10 +15103,10 @@ export type OrganizationUncheckedCreateWithoutLeavePolicyAssignmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16570,7 +15176,6 @@ export type OrganizationUncheckedCreateWithoutLeavePolicyAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16612,10 +15217,10 @@ export type OrganizationUpdateWithoutLeavePolicyAssignmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -16685,7 +15290,6 @@ export type OrganizationUpdateWithoutLeavePolicyAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -16715,10 +15319,10 @@ export type OrganizationUncheckedUpdateWithoutLeavePolicyAssignmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -16788,7 +15392,6 @@ export type OrganizationUncheckedUpdateWithoutLeavePolicyAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -16814,10 +15417,10 @@ export type OrganizationCreateWithoutLeaveBalancesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -16887,7 +15490,6 @@ export type OrganizationCreateWithoutLeaveBalancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -16917,10 +15519,10 @@ export type OrganizationUncheckedCreateWithoutLeaveBalancesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -16990,7 +15592,6 @@ export type OrganizationUncheckedCreateWithoutLeaveBalancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17032,10 +15633,10 @@ export type OrganizationUpdateWithoutLeaveBalancesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -17105,7 +15706,6 @@ export type OrganizationUpdateWithoutLeaveBalancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -17135,10 +15735,10 @@ export type OrganizationUncheckedUpdateWithoutLeaveBalancesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -17208,7 +15808,6 @@ export type OrganizationUncheckedUpdateWithoutLeaveBalancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -17234,10 +15833,10 @@ export type OrganizationCreateWithoutLeaveBalanceTransactionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -17307,7 +15906,6 @@ export type OrganizationCreateWithoutLeaveBalanceTransactionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -17337,10 +15935,10 @@ export type OrganizationUncheckedCreateWithoutLeaveBalanceTransactionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17410,7 +16008,6 @@ export type OrganizationUncheckedCreateWithoutLeaveBalanceTransactionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17452,10 +16049,10 @@ export type OrganizationUpdateWithoutLeaveBalanceTransactionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -17525,7 +16122,6 @@ export type OrganizationUpdateWithoutLeaveBalanceTransactionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -17555,10 +16151,10 @@ export type OrganizationUncheckedUpdateWithoutLeaveBalanceTransactionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -17628,7 +16224,6 @@ export type OrganizationUncheckedUpdateWithoutLeaveBalanceTransactionsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -17654,10 +16249,10 @@ export type OrganizationCreateWithoutLeaveRequestsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -17727,7 +16322,6 @@ export type OrganizationCreateWithoutLeaveRequestsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -17757,10 +16351,10 @@ export type OrganizationUncheckedCreateWithoutLeaveRequestsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17830,7 +16424,6 @@ export type OrganizationUncheckedCreateWithoutLeaveRequestsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -17872,10 +16465,10 @@ export type OrganizationUpdateWithoutLeaveRequestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -17945,7 +16538,6 @@ export type OrganizationUpdateWithoutLeaveRequestsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -17975,10 +16567,10 @@ export type OrganizationUncheckedUpdateWithoutLeaveRequestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18048,7 +16640,6 @@ export type OrganizationUncheckedUpdateWithoutLeaveRequestsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18074,10 +16665,10 @@ export type OrganizationCreateWithoutShiftsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -18147,7 +16738,6 @@ export type OrganizationCreateWithoutShiftsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -18177,10 +16767,10 @@ export type OrganizationUncheckedCreateWithoutShiftsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18250,7 +16840,6 @@ export type OrganizationUncheckedCreateWithoutShiftsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18292,10 +16881,10 @@ export type OrganizationUpdateWithoutShiftsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -18365,7 +16954,6 @@ export type OrganizationUpdateWithoutShiftsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -18395,10 +16983,10 @@ export type OrganizationUncheckedUpdateWithoutShiftsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18468,7 +17056,6 @@ export type OrganizationUncheckedUpdateWithoutShiftsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18494,10 +17081,10 @@ export type OrganizationCreateWithoutShiftAssignmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -18567,7 +17154,6 @@ export type OrganizationCreateWithoutShiftAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -18597,10 +17183,10 @@ export type OrganizationUncheckedCreateWithoutShiftAssignmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18670,7 +17256,6 @@ export type OrganizationUncheckedCreateWithoutShiftAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -18712,10 +17297,10 @@ export type OrganizationUpdateWithoutShiftAssignmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -18785,7 +17370,6 @@ export type OrganizationUpdateWithoutShiftAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -18815,10 +17399,10 @@ export type OrganizationUncheckedUpdateWithoutShiftAssignmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18888,7 +17472,6 @@ export type OrganizationUncheckedUpdateWithoutShiftAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -18914,10 +17497,10 @@ export type OrganizationCreateWithoutTimesheetPeriodsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -18987,7 +17570,6 @@ export type OrganizationCreateWithoutTimesheetPeriodsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -19017,10 +17599,10 @@ export type OrganizationUncheckedCreateWithoutTimesheetPeriodsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19090,7 +17672,6 @@ export type OrganizationUncheckedCreateWithoutTimesheetPeriodsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19132,10 +17713,10 @@ export type OrganizationUpdateWithoutTimesheetPeriodsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -19205,7 +17786,6 @@ export type OrganizationUpdateWithoutTimesheetPeriodsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -19235,10 +17815,10 @@ export type OrganizationUncheckedUpdateWithoutTimesheetPeriodsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19308,7 +17888,6 @@ export type OrganizationUncheckedUpdateWithoutTimesheetPeriodsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19334,10 +17913,10 @@ export type OrganizationCreateWithoutTimesheetsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -19407,7 +17986,6 @@ export type OrganizationCreateWithoutTimesheetsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -19437,10 +18015,10 @@ export type OrganizationUncheckedCreateWithoutTimesheetsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19510,7 +18088,6 @@ export type OrganizationUncheckedCreateWithoutTimesheetsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19552,10 +18129,10 @@ export type OrganizationUpdateWithoutTimesheetsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -19625,7 +18202,6 @@ export type OrganizationUpdateWithoutTimesheetsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -19655,10 +18231,10 @@ export type OrganizationUncheckedUpdateWithoutTimesheetsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19728,7 +18304,6 @@ export type OrganizationUncheckedUpdateWithoutTimesheetsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -19754,10 +18329,10 @@ export type OrganizationCreateWithoutTimesheetEntriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -19827,7 +18402,6 @@ export type OrganizationCreateWithoutTimesheetEntriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -19857,10 +18431,10 @@ export type OrganizationUncheckedCreateWithoutTimesheetEntriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19930,7 +18504,6 @@ export type OrganizationUncheckedCreateWithoutTimesheetEntriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -19972,10 +18545,10 @@ export type OrganizationUpdateWithoutTimesheetEntriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -20045,7 +18618,6 @@ export type OrganizationUpdateWithoutTimesheetEntriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -20075,10 +18647,10 @@ export type OrganizationUncheckedUpdateWithoutTimesheetEntriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20148,7 +18720,6 @@ export type OrganizationUncheckedUpdateWithoutTimesheetEntriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20174,10 +18745,10 @@ export type OrganizationCreateWithoutTimesheetApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -20247,7 +18818,6 @@ export type OrganizationCreateWithoutTimesheetApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -20277,10 +18847,10 @@ export type OrganizationUncheckedCreateWithoutTimesheetApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20350,7 +18920,6 @@ export type OrganizationUncheckedCreateWithoutTimesheetApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20392,10 +18961,10 @@ export type OrganizationUpdateWithoutTimesheetApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -20465,7 +19034,6 @@ export type OrganizationUpdateWithoutTimesheetApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -20495,10 +19063,10 @@ export type OrganizationUncheckedUpdateWithoutTimesheetApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20568,7 +19136,6 @@ export type OrganizationUncheckedUpdateWithoutTimesheetApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20594,10 +19161,10 @@ export type OrganizationCreateWithoutAttendanceHolidayReviewsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -20667,7 +19234,6 @@ export type OrganizationCreateWithoutAttendanceHolidayReviewsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -20697,10 +19263,10 @@ export type OrganizationUncheckedCreateWithoutAttendanceHolidayReviewsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20770,7 +19336,6 @@ export type OrganizationUncheckedCreateWithoutAttendanceHolidayReviewsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -20812,10 +19377,10 @@ export type OrganizationUpdateWithoutAttendanceHolidayReviewsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -20885,7 +19450,6 @@ export type OrganizationUpdateWithoutAttendanceHolidayReviewsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -20915,10 +19479,10 @@ export type OrganizationUncheckedUpdateWithoutAttendanceHolidayReviewsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -20988,7 +19552,6 @@ export type OrganizationUncheckedUpdateWithoutAttendanceHolidayReviewsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21014,10 +19577,10 @@ export type OrganizationCreateWithoutPayrollRunsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -21087,7 +19650,6 @@ export type OrganizationCreateWithoutPayrollRunsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -21117,10 +19679,10 @@ export type OrganizationUncheckedCreateWithoutPayrollRunsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21190,7 +19752,6 @@ export type OrganizationUncheckedCreateWithoutPayrollRunsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21232,10 +19793,10 @@ export type OrganizationUpdateWithoutPayrollRunsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -21305,7 +19866,6 @@ export type OrganizationUpdateWithoutPayrollRunsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -21335,10 +19895,10 @@ export type OrganizationUncheckedUpdateWithoutPayrollRunsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21408,7 +19968,6 @@ export type OrganizationUncheckedUpdateWithoutPayrollRunsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -21434,9 +19993,9 @@ export type OrganizationCreateWithoutPayrollPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -21507,7 +20066,6 @@ export type OrganizationCreateWithoutPayrollPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -21537,9 +20095,9 @@ export type OrganizationUncheckedCreateWithoutPayrollPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21610,7 +20168,6 @@ export type OrganizationUncheckedCreateWithoutPayrollPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -21652,9 +20209,9 @@ export type OrganizationUpdateWithoutPayrollPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -21725,7 +20282,6 @@ export type OrganizationUpdateWithoutPayrollPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -21755,428 +20311,8 @@ export type OrganizationUncheckedUpdateWithoutPayrollPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
-  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
-  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
-  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
-  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
-  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
-  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
-  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
-  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
-  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
-  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
-  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
-  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
-  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
-  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
-  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
-  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
-}
-
-export type OrganizationCreateWithoutPayrollPolicyAssignmentRulesInput = {
-  id?: string
-  name: string
-  slug: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string
-  currencyCode: string
-  locale?: string
-  deactivatedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  version?: number
-  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
-  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
-  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
-  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
-  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
-  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
-  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
-  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
-  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
-  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
-  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
-  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
-  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
-  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
-  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
-  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
-  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
-  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
-  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
-  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
-  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
-  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
-  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
-  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
-  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
-  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
-  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
-  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
-  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
-  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
-  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
-  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
-  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
-  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
-  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
-  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
-  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
-  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
-  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
-  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
-  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
-  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
-  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
-  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
-  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
-  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
-  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
-  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
-  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
-  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
-  logoFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationLogoInput
-  coverFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationCoverInput
-}
-
-export type OrganizationUncheckedCreateWithoutPayrollPolicyAssignmentRulesInput = {
-  id?: string
-  name: string
-  slug: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string
-  currencyCode: string
-  locale?: string
-  logoFileId?: string | null
-  coverFileId?: string | null
-  deactivatedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  version?: number
-  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
-  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
-  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
-  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
-  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
-  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
-  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
-  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
-  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
-  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
-  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
-  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
-  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
-  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
-  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
-  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
-  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
-  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
-}
-
-export type OrganizationCreateOrConnectWithoutPayrollPolicyAssignmentRulesInput = {
-  where: Prisma.OrganizationWhereUniqueInput
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutPayrollPolicyAssignmentRulesInput, Prisma.OrganizationUncheckedCreateWithoutPayrollPolicyAssignmentRulesInput>
-}
-
-export type OrganizationUpsertWithoutPayrollPolicyAssignmentRulesInput = {
-  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutPayrollPolicyAssignmentRulesInput, Prisma.OrganizationUncheckedUpdateWithoutPayrollPolicyAssignmentRulesInput>
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutPayrollPolicyAssignmentRulesInput, Prisma.OrganizationUncheckedCreateWithoutPayrollPolicyAssignmentRulesInput>
-  where?: Prisma.OrganizationWhereInput
-}
-
-export type OrganizationUpdateToOneWithWhereWithoutPayrollPolicyAssignmentRulesInput = {
-  where?: Prisma.OrganizationWhereInput
-  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutPayrollPolicyAssignmentRulesInput, Prisma.OrganizationUncheckedUpdateWithoutPayrollPolicyAssignmentRulesInput>
-}
-
-export type OrganizationUpdateWithoutPayrollPolicyAssignmentRulesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
-  locale?: Prisma.StringFieldUpdateOperationsInput | string
-  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  version?: Prisma.IntFieldUpdateOperationsInput | number
-  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
-  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
-  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
-  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
-  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
-  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
-  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
-  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
-  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
-  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
-  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
-  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
-  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
-  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
-  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
-  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
-  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
-  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
-  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
-  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
-  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
-  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
-  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
-  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
-  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
-  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
-  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
-  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
-  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
-  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
-  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
-  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
-  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
-  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
-  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
-  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
-  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
-  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
-  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
-  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
-  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
-  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
-  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
-  logoFile?: Prisma.FileObjectUpdateOneWithoutOrganizationLogoNestedInput
-  coverFile?: Prisma.FileObjectUpdateOneWithoutOrganizationCoverNestedInput
-}
-
-export type OrganizationUncheckedUpdateWithoutPayrollPolicyAssignmentRulesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
-  locale?: Prisma.StringFieldUpdateOperationsInput | string
-  logoFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  coverFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  version?: Prisma.IntFieldUpdateOperationsInput | number
-  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
-  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -22248,7 +20384,6 @@ export type OrganizationUncheckedUpdateWithoutPayrollPolicyAssignmentRulesInput 
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -22274,9 +20409,9 @@ export type OrganizationCreateWithoutPayrollPolicyComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -22347,7 +20482,6 @@ export type OrganizationCreateWithoutPayrollPolicyComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -22377,9 +20511,9 @@ export type OrganizationUncheckedCreateWithoutPayrollPolicyComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -22450,7 +20584,6 @@ export type OrganizationUncheckedCreateWithoutPayrollPolicyComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -22492,9 +20625,9 @@ export type OrganizationUpdateWithoutPayrollPolicyComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -22565,7 +20698,6 @@ export type OrganizationUpdateWithoutPayrollPolicyComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -22595,9 +20727,9 @@ export type OrganizationUncheckedUpdateWithoutPayrollPolicyComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -22668,7 +20800,6 @@ export type OrganizationUncheckedUpdateWithoutPayrollPolicyComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -22694,10 +20825,10 @@ export type OrganizationCreateWithoutStatutoryRulesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
@@ -22767,7 +20898,6 @@ export type OrganizationCreateWithoutStatutoryRulesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -22797,10 +20927,10 @@ export type OrganizationUncheckedCreateWithoutStatutoryRulesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
@@ -22870,7 +21000,6 @@ export type OrganizationUncheckedCreateWithoutStatutoryRulesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -22912,10 +21041,10 @@ export type OrganizationUpdateWithoutStatutoryRulesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
@@ -22985,7 +21114,6 @@ export type OrganizationUpdateWithoutStatutoryRulesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -23015,10 +21143,10 @@ export type OrganizationUncheckedUpdateWithoutStatutoryRulesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23088,7 +21216,6 @@ export type OrganizationUncheckedUpdateWithoutStatutoryRulesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23114,10 +21241,10 @@ export type OrganizationCreateWithoutPayrollLineItemsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -23187,7 +21314,6 @@ export type OrganizationCreateWithoutPayrollLineItemsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -23217,10 +21343,10 @@ export type OrganizationUncheckedCreateWithoutPayrollLineItemsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -23290,7 +21416,6 @@ export type OrganizationUncheckedCreateWithoutPayrollLineItemsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -23332,10 +21457,10 @@ export type OrganizationUpdateWithoutPayrollLineItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -23405,7 +21530,6 @@ export type OrganizationUpdateWithoutPayrollLineItemsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -23435,10 +21559,10 @@ export type OrganizationUncheckedUpdateWithoutPayrollLineItemsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23508,7 +21632,6 @@ export type OrganizationUncheckedUpdateWithoutPayrollLineItemsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23534,10 +21657,10 @@ export type OrganizationCreateWithoutSalaryAdvancesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
@@ -23607,7 +21730,6 @@ export type OrganizationCreateWithoutSalaryAdvancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -23637,10 +21759,10 @@ export type OrganizationUncheckedCreateWithoutSalaryAdvancesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
@@ -23710,7 +21832,6 @@ export type OrganizationUncheckedCreateWithoutSalaryAdvancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -23752,10 +21873,10 @@ export type OrganizationUpdateWithoutSalaryAdvancesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
@@ -23825,7 +21946,6 @@ export type OrganizationUpdateWithoutSalaryAdvancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -23855,10 +21975,10 @@ export type OrganizationUncheckedUpdateWithoutSalaryAdvancesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23928,7 +22048,6 @@ export type OrganizationUncheckedUpdateWithoutSalaryAdvancesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -23954,10 +22073,10 @@ export type OrganizationCreateWithoutAdvanceRecoveriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -24027,7 +22146,6 @@ export type OrganizationCreateWithoutAdvanceRecoveriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -24057,10 +22175,10 @@ export type OrganizationUncheckedCreateWithoutAdvanceRecoveriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24130,7 +22248,6 @@ export type OrganizationUncheckedCreateWithoutAdvanceRecoveriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24172,10 +22289,10 @@ export type OrganizationUpdateWithoutAdvanceRecoveriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -24245,7 +22362,6 @@ export type OrganizationUpdateWithoutAdvanceRecoveriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -24275,10 +22391,10 @@ export type OrganizationUncheckedUpdateWithoutAdvanceRecoveriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24348,7 +22464,6 @@ export type OrganizationUncheckedUpdateWithoutAdvanceRecoveriesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24374,10 +22489,10 @@ export type OrganizationCreateWithoutPayrollPaymentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -24447,7 +22562,6 @@ export type OrganizationCreateWithoutPayrollPaymentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -24477,10 +22591,10 @@ export type OrganizationUncheckedCreateWithoutPayrollPaymentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24550,7 +22664,6 @@ export type OrganizationUncheckedCreateWithoutPayrollPaymentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24592,10 +22705,10 @@ export type OrganizationUpdateWithoutPayrollPaymentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -24665,7 +22778,6 @@ export type OrganizationUpdateWithoutPayrollPaymentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -24695,10 +22807,10 @@ export type OrganizationUncheckedUpdateWithoutPayrollPaymentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24768,7 +22880,6 @@ export type OrganizationUncheckedUpdateWithoutPayrollPaymentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -24794,10 +22905,10 @@ export type OrganizationCreateWithoutPayrollLineItemComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -24867,7 +22978,6 @@ export type OrganizationCreateWithoutPayrollLineItemComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -24897,10 +23007,10 @@ export type OrganizationUncheckedCreateWithoutPayrollLineItemComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -24970,7 +23080,6 @@ export type OrganizationUncheckedCreateWithoutPayrollLineItemComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25012,10 +23121,10 @@ export type OrganizationUpdateWithoutPayrollLineItemComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -25085,7 +23194,6 @@ export type OrganizationUpdateWithoutPayrollLineItemComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -25115,10 +23223,10 @@ export type OrganizationUncheckedUpdateWithoutPayrollLineItemComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25188,7 +23296,6 @@ export type OrganizationUncheckedUpdateWithoutPayrollLineItemComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25214,10 +23321,10 @@ export type OrganizationCreateWithoutPayrollAdjustmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -25287,7 +23394,6 @@ export type OrganizationCreateWithoutPayrollAdjustmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -25317,10 +23423,10 @@ export type OrganizationUncheckedCreateWithoutPayrollAdjustmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25390,7 +23496,6 @@ export type OrganizationUncheckedCreateWithoutPayrollAdjustmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25432,10 +23537,10 @@ export type OrganizationUpdateWithoutPayrollAdjustmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -25505,7 +23610,6 @@ export type OrganizationUpdateWithoutPayrollAdjustmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -25535,10 +23639,10 @@ export type OrganizationUncheckedUpdateWithoutPayrollAdjustmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25608,7 +23712,6 @@ export type OrganizationUncheckedUpdateWithoutPayrollAdjustmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -25634,10 +23737,10 @@ export type OrganizationCreateWithoutPayrollApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -25707,7 +23810,6 @@ export type OrganizationCreateWithoutPayrollApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -25737,10 +23839,10 @@ export type OrganizationUncheckedCreateWithoutPayrollApprovalsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25810,7 +23912,6 @@ export type OrganizationUncheckedCreateWithoutPayrollApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -25852,10 +23953,10 @@ export type OrganizationUpdateWithoutPayrollApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -25925,7 +24026,6 @@ export type OrganizationUpdateWithoutPayrollApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -25955,10 +24055,10 @@ export type OrganizationUncheckedUpdateWithoutPayrollApprovalsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26028,7 +24128,6 @@ export type OrganizationUncheckedUpdateWithoutPayrollApprovalsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26054,10 +24153,10 @@ export type OrganizationCreateWithoutPayslipsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -26127,7 +24226,6 @@ export type OrganizationCreateWithoutPayslipsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -26157,10 +24255,10 @@ export type OrganizationUncheckedCreateWithoutPayslipsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -26230,7 +24328,6 @@ export type OrganizationUncheckedCreateWithoutPayslipsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -26272,10 +24369,10 @@ export type OrganizationUpdateWithoutPayslipsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -26345,7 +24442,6 @@ export type OrganizationUpdateWithoutPayslipsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -26375,10 +24471,10 @@ export type OrganizationUncheckedUpdateWithoutPayslipsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26448,7 +24544,6 @@ export type OrganizationUncheckedUpdateWithoutPayslipsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26474,10 +24569,10 @@ export type OrganizationCreateWithoutRolesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -26547,7 +24642,6 @@ export type OrganizationCreateWithoutRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -26577,10 +24671,10 @@ export type OrganizationUncheckedCreateWithoutRolesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -26650,7 +24744,6 @@ export type OrganizationUncheckedCreateWithoutRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -26692,10 +24785,10 @@ export type OrganizationUpdateWithoutRolesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -26765,7 +24858,6 @@ export type OrganizationUpdateWithoutRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -26795,10 +24887,10 @@ export type OrganizationUncheckedUpdateWithoutRolesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26868,7 +24960,6 @@ export type OrganizationUncheckedUpdateWithoutRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -26894,10 +24985,10 @@ export type OrganizationCreateWithoutUserRolesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -26967,7 +25058,6 @@ export type OrganizationCreateWithoutUserRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -26997,10 +25087,10 @@ export type OrganizationUncheckedCreateWithoutUserRolesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -27070,7 +25160,6 @@ export type OrganizationUncheckedCreateWithoutUserRolesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -27112,10 +25201,10 @@ export type OrganizationUpdateWithoutUserRolesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -27131,427 +25220,6 @@ export type OrganizationUpdateWithoutUserRolesInput = {
   approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
   roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
-  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
-  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
-  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
-  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
-  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
-  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
-  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
-  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
-  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
-  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
-  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
-  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
-  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
-  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
-  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
-  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
-  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
-  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
-  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
-  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
-  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
-  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
-  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
-  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
-  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
-  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
-  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
-  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
-  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
-  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
-  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
-  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
-  logoFile?: Prisma.FileObjectUpdateOneWithoutOrganizationLogoNestedInput
-  coverFile?: Prisma.FileObjectUpdateOneWithoutOrganizationCoverNestedInput
-}
-
-export type OrganizationUncheckedUpdateWithoutUserRolesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
-  locale?: Prisma.StringFieldUpdateOperationsInput | string
-  logoFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  coverFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  version?: Prisma.IntFieldUpdateOperationsInput | number
-  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
-  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
-  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
-  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
-  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
-  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
-  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
-  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
-  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
-  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
-  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
-  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
-  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
-  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
-  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
-  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
-  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
-  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
-  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
-  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
-}
-
-export type OrganizationCreateWithoutWorkflowDraftsInput = {
-  id?: string
-  name: string
-  slug: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string
-  currencyCode: string
-  locale?: string
-  deactivatedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  version?: number
-  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
-  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
-  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
-  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
-  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
-  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
-  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
-  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
-  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
-  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
-  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
-  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
-  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
-  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
-  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
-  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
-  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
-  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
-  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
-  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
-  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
-  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
-  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
-  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
-  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
-  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
-  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
-  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
-  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
-  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
-  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
-  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
-  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
-  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
-  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
-  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
-  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
-  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
-  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
-  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
-  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
-  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
-  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
-  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
-  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
-  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
-  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
-  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
-  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
-  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
-  logoFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationLogoInput
-  coverFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationCoverInput
-}
-
-export type OrganizationUncheckedCreateWithoutWorkflowDraftsInput = {
-  id?: string
-  name: string
-  slug: string
-  source: $Enums.OrganizationSource
-  externalId?: string | null
-  status?: $Enums.OrganizationStatus
-  timezone?: string
-  currencyCode: string
-  locale?: string
-  logoFileId?: string | null
-  coverFileId?: string | null
-  deactivatedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  version?: number
-  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
-  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
-  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
-  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
-  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
-  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
-  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
-  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
-  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
-  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
-  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
-  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
-  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
-  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
-  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
-  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
-  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
-  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
-  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
-  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
-  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
-  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
-  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
-  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
-  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
-  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
-  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
-  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
-  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
-  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
-  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
-  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
-  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
-  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
-  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
-}
-
-export type OrganizationCreateOrConnectWithoutWorkflowDraftsInput = {
-  where: Prisma.OrganizationWhereUniqueInput
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutWorkflowDraftsInput, Prisma.OrganizationUncheckedCreateWithoutWorkflowDraftsInput>
-}
-
-export type OrganizationUpsertWithoutWorkflowDraftsInput = {
-  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutWorkflowDraftsInput, Prisma.OrganizationUncheckedUpdateWithoutWorkflowDraftsInput>
-  create: Prisma.XOR<Prisma.OrganizationCreateWithoutWorkflowDraftsInput, Prisma.OrganizationUncheckedCreateWithoutWorkflowDraftsInput>
-  where?: Prisma.OrganizationWhereInput
-}
-
-export type OrganizationUpdateToOneWithWhereWithoutWorkflowDraftsInput = {
-  where?: Prisma.OrganizationWhereInput
-  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutWorkflowDraftsInput, Prisma.OrganizationUncheckedUpdateWithoutWorkflowDraftsInput>
-}
-
-export type OrganizationUpdateWithoutWorkflowDraftsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.StringFieldUpdateOperationsInput | string
-  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
-  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
-  locale?: Prisma.StringFieldUpdateOperationsInput | string
-  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  version?: Prisma.IntFieldUpdateOperationsInput | number
-  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
-  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
-  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
-  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
-  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
-  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
-  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
-  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
-  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
-  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
-  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
-  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
-  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
-  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
-  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
-  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
-  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
-  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
   employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
   employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
@@ -27619,7 +25287,7 @@ export type OrganizationUpdateWithoutWorkflowDraftsInput = {
   coverFile?: Prisma.FileObjectUpdateOneWithoutOrganizationCoverNestedInput
 }
 
-export type OrganizationUncheckedUpdateWithoutWorkflowDraftsInput = {
+export type OrganizationUncheckedUpdateWithoutUserRolesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
@@ -27635,10 +25303,10 @@ export type OrganizationUncheckedUpdateWithoutWorkflowDraftsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -27654,7 +25322,6 @@ export type OrganizationUncheckedUpdateWithoutWorkflowDraftsInput = {
   approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
   roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
-  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
   employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
   employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -27734,9 +25401,9 @@ export type OrganizationCreateWithoutSettingsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -27807,7 +25474,6 @@ export type OrganizationCreateWithoutSettingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -27837,9 +25503,9 @@ export type OrganizationUncheckedCreateWithoutSettingsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -27910,7 +25576,6 @@ export type OrganizationUncheckedCreateWithoutSettingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -27952,9 +25617,9 @@ export type OrganizationUpdateWithoutSettingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -28025,7 +25690,6 @@ export type OrganizationUpdateWithoutSettingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -28055,9 +25719,9 @@ export type OrganizationUncheckedUpdateWithoutSettingsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28128,7 +25792,6 @@ export type OrganizationUncheckedUpdateWithoutSettingsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28154,10 +25817,10 @@ export type OrganizationCreateWithoutPayrollCalendarsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -28227,7 +25890,6 @@ export type OrganizationCreateWithoutPayrollCalendarsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -28257,10 +25919,10 @@ export type OrganizationUncheckedCreateWithoutPayrollCalendarsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -28330,7 +25992,6 @@ export type OrganizationUncheckedCreateWithoutPayrollCalendarsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -28372,10 +26033,10 @@ export type OrganizationUpdateWithoutPayrollCalendarsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -28445,7 +26106,6 @@ export type OrganizationUpdateWithoutPayrollCalendarsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -28475,10 +26135,10 @@ export type OrganizationUncheckedUpdateWithoutPayrollCalendarsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28548,7 +26208,6 @@ export type OrganizationUncheckedUpdateWithoutPayrollCalendarsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28574,10 +26233,10 @@ export type OrganizationCreateWithoutApprovalPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -28647,7 +26306,6 @@ export type OrganizationCreateWithoutApprovalPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -28677,10 +26335,10 @@ export type OrganizationUncheckedCreateWithoutApprovalPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -28750,7 +26408,6 @@ export type OrganizationUncheckedCreateWithoutApprovalPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -28792,10 +26449,10 @@ export type OrganizationUpdateWithoutApprovalPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -28865,7 +26522,6 @@ export type OrganizationUpdateWithoutApprovalPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -28895,10 +26551,10 @@ export type OrganizationUncheckedUpdateWithoutApprovalPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28968,7 +26624,6 @@ export type OrganizationUncheckedUpdateWithoutApprovalPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -28994,10 +26649,10 @@ export type OrganizationCreateWithoutApprovalPolicyStepsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -29067,7 +26722,6 @@ export type OrganizationCreateWithoutApprovalPolicyStepsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -29097,10 +26751,10 @@ export type OrganizationUncheckedCreateWithoutApprovalPolicyStepsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -29170,7 +26824,6 @@ export type OrganizationUncheckedCreateWithoutApprovalPolicyStepsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -29212,10 +26865,10 @@ export type OrganizationUpdateWithoutApprovalPolicyStepsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -29285,7 +26938,6 @@ export type OrganizationUpdateWithoutApprovalPolicyStepsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -29315,10 +26967,10 @@ export type OrganizationUncheckedUpdateWithoutApprovalPolicyStepsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -29388,7 +27040,6 @@ export type OrganizationUncheckedUpdateWithoutApprovalPolicyStepsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -29414,10 +27065,10 @@ export type OrganizationCreateWithoutBranchesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -29487,7 +27138,6 @@ export type OrganizationCreateWithoutBranchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -29517,10 +27167,10 @@ export type OrganizationUncheckedCreateWithoutBranchesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -29590,7 +27240,6 @@ export type OrganizationUncheckedCreateWithoutBranchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -29632,10 +27281,10 @@ export type OrganizationUpdateWithoutBranchesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -29705,7 +27354,6 @@ export type OrganizationUpdateWithoutBranchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -29735,10 +27383,10 @@ export type OrganizationUncheckedUpdateWithoutBranchesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -29808,7 +27456,6 @@ export type OrganizationUncheckedUpdateWithoutBranchesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -29834,10 +27481,10 @@ export type OrganizationCreateWithoutWorkLocationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -29907,7 +27554,6 @@ export type OrganizationCreateWithoutWorkLocationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -29937,10 +27583,10 @@ export type OrganizationUncheckedCreateWithoutWorkLocationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30010,7 +27656,6 @@ export type OrganizationUncheckedCreateWithoutWorkLocationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30052,10 +27697,10 @@ export type OrganizationUpdateWithoutWorkLocationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -30125,7 +27770,6 @@ export type OrganizationUpdateWithoutWorkLocationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -30155,10 +27799,10 @@ export type OrganizationUncheckedUpdateWithoutWorkLocationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30228,7 +27872,6 @@ export type OrganizationUncheckedUpdateWithoutWorkLocationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30254,10 +27897,10 @@ export type OrganizationCreateWithoutSourceChangesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -30327,7 +27970,6 @@ export type OrganizationCreateWithoutSourceChangesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -30357,10 +27999,10 @@ export type OrganizationUncheckedCreateWithoutSourceChangesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30430,7 +28072,6 @@ export type OrganizationUncheckedCreateWithoutSourceChangesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30472,10 +28113,10 @@ export type OrganizationUpdateWithoutSourceChangesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -30545,7 +28186,6 @@ export type OrganizationUpdateWithoutSourceChangesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -30575,10 +28215,10 @@ export type OrganizationUncheckedUpdateWithoutSourceChangesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30648,7 +28288,6 @@ export type OrganizationUncheckedUpdateWithoutSourceChangesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -30674,10 +28313,10 @@ export type OrganizationCreateWithoutWebauthnCredentialsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -30748,7 +28387,6 @@ export type OrganizationCreateWithoutWebauthnCredentialsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -30777,10 +28415,10 @@ export type OrganizationUncheckedCreateWithoutWebauthnCredentialsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30851,7 +28489,6 @@ export type OrganizationUncheckedCreateWithoutWebauthnCredentialsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -30892,10 +28529,10 @@ export type OrganizationUpdateWithoutWebauthnCredentialsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -30966,7 +28603,6 @@ export type OrganizationUpdateWithoutWebauthnCredentialsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -30995,10 +28631,10 @@ export type OrganizationUncheckedUpdateWithoutWebauthnCredentialsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -31069,7 +28705,6 @@ export type OrganizationUncheckedUpdateWithoutWebauthnCredentialsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -31094,10 +28729,10 @@ export type OrganizationCreateWithoutWebauthnChallengesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -31168,7 +28803,6 @@ export type OrganizationCreateWithoutWebauthnChallengesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -31197,10 +28831,10 @@ export type OrganizationUncheckedCreateWithoutWebauthnChallengesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -31271,7 +28905,6 @@ export type OrganizationUncheckedCreateWithoutWebauthnChallengesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -31312,10 +28945,10 @@ export type OrganizationUpdateWithoutWebauthnChallengesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -31386,7 +29019,6 @@ export type OrganizationUpdateWithoutWebauthnChallengesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -31415,10 +29047,10 @@ export type OrganizationUncheckedUpdateWithoutWebauthnChallengesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -31489,7 +29121,6 @@ export type OrganizationUncheckedUpdateWithoutWebauthnChallengesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -31514,10 +29145,10 @@ export type OrganizationCreateWithoutEmployeesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -31587,7 +29218,6 @@ export type OrganizationCreateWithoutEmployeesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -31617,10 +29247,10 @@ export type OrganizationUncheckedCreateWithoutEmployeesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -31690,7 +29320,6 @@ export type OrganizationUncheckedCreateWithoutEmployeesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -31732,10 +29361,10 @@ export type OrganizationUpdateWithoutEmployeesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -31805,7 +29434,6 @@ export type OrganizationUpdateWithoutEmployeesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -31835,10 +29463,10 @@ export type OrganizationUncheckedUpdateWithoutEmployeesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -31908,7 +29536,6 @@ export type OrganizationUncheckedUpdateWithoutEmployeesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -31934,10 +29561,10 @@ export type OrganizationCreateWithoutEmployeePersonalProfilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -32007,7 +29634,6 @@ export type OrganizationCreateWithoutEmployeePersonalProfilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -32037,10 +29663,10 @@ export type OrganizationUncheckedCreateWithoutEmployeePersonalProfilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -32110,7 +29736,6 @@ export type OrganizationUncheckedCreateWithoutEmployeePersonalProfilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -32152,10 +29777,10 @@ export type OrganizationUpdateWithoutEmployeePersonalProfilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -32225,7 +29850,6 @@ export type OrganizationUpdateWithoutEmployeePersonalProfilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -32255,10 +29879,10 @@ export type OrganizationUncheckedUpdateWithoutEmployeePersonalProfilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -32328,7 +29952,6 @@ export type OrganizationUncheckedUpdateWithoutEmployeePersonalProfilesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -32354,10 +29977,10 @@ export type OrganizationCreateWithoutEmployeeBankAccountsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -32427,7 +30050,6 @@ export type OrganizationCreateWithoutEmployeeBankAccountsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -32457,10 +30079,10 @@ export type OrganizationUncheckedCreateWithoutEmployeeBankAccountsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -32530,7 +30152,6 @@ export type OrganizationUncheckedCreateWithoutEmployeeBankAccountsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -32572,10 +30193,10 @@ export type OrganizationUpdateWithoutEmployeeBankAccountsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -32645,7 +30266,6 @@ export type OrganizationUpdateWithoutEmployeeBankAccountsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -32675,10 +30295,10 @@ export type OrganizationUncheckedUpdateWithoutEmployeeBankAccountsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -32748,7 +30368,6 @@ export type OrganizationUncheckedUpdateWithoutEmployeeBankAccountsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -32774,10 +30393,10 @@ export type OrganizationCreateWithoutEmployeeReferencesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -32847,7 +30466,6 @@ export type OrganizationCreateWithoutEmployeeReferencesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -32877,10 +30495,10 @@ export type OrganizationUncheckedCreateWithoutEmployeeReferencesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -32950,7 +30568,6 @@ export type OrganizationUncheckedCreateWithoutEmployeeReferencesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -32992,10 +30609,10 @@ export type OrganizationUpdateWithoutEmployeeReferencesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -33065,7 +30682,6 @@ export type OrganizationUpdateWithoutEmployeeReferencesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -33095,10 +30711,10 @@ export type OrganizationUncheckedUpdateWithoutEmployeeReferencesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -33168,7 +30784,6 @@ export type OrganizationUncheckedUpdateWithoutEmployeeReferencesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -33194,10 +30809,10 @@ export type OrganizationCreateWithoutEmployeeHolidayPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -33267,7 +30882,6 @@ export type OrganizationCreateWithoutEmployeeHolidayPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -33297,10 +30911,10 @@ export type OrganizationUncheckedCreateWithoutEmployeeHolidayPoliciesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -33370,7 +30984,6 @@ export type OrganizationUncheckedCreateWithoutEmployeeHolidayPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -33412,10 +31025,10 @@ export type OrganizationUpdateWithoutEmployeeHolidayPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -33485,7 +31098,6 @@ export type OrganizationUpdateWithoutEmployeeHolidayPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -33515,10 +31127,10 @@ export type OrganizationUncheckedUpdateWithoutEmployeeHolidayPoliciesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -33588,7 +31200,6 @@ export type OrganizationUncheckedUpdateWithoutEmployeeHolidayPoliciesInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -33614,10 +31225,10 @@ export type OrganizationCreateWithoutEmergencyContactsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -33687,7 +31298,6 @@ export type OrganizationCreateWithoutEmergencyContactsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -33717,10 +31327,10 @@ export type OrganizationUncheckedCreateWithoutEmergencyContactsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -33790,7 +31400,6 @@ export type OrganizationUncheckedCreateWithoutEmergencyContactsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -33832,10 +31441,10 @@ export type OrganizationUpdateWithoutEmergencyContactsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -33905,7 +31514,6 @@ export type OrganizationUpdateWithoutEmergencyContactsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -33935,10 +31543,10 @@ export type OrganizationUncheckedUpdateWithoutEmergencyContactsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -34008,7 +31616,6 @@ export type OrganizationUncheckedUpdateWithoutEmergencyContactsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -34034,10 +31641,10 @@ export type OrganizationCreateWithoutEmployeeBranchAssignmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -34107,7 +31714,6 @@ export type OrganizationCreateWithoutEmployeeBranchAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -34137,10 +31743,10 @@ export type OrganizationUncheckedCreateWithoutEmployeeBranchAssignmentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -34210,7 +31816,6 @@ export type OrganizationUncheckedCreateWithoutEmployeeBranchAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -34252,10 +31857,10 @@ export type OrganizationUpdateWithoutEmployeeBranchAssignmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -34325,7 +31930,6 @@ export type OrganizationUpdateWithoutEmployeeBranchAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -34355,10 +31959,10 @@ export type OrganizationUncheckedUpdateWithoutEmployeeBranchAssignmentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -34428,7 +32032,6 @@ export type OrganizationUncheckedUpdateWithoutEmployeeBranchAssignmentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -34454,10 +32057,10 @@ export type OrganizationCreateWithoutEmployeeFieldOwnershipInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -34527,7 +32130,6 @@ export type OrganizationCreateWithoutEmployeeFieldOwnershipInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -34557,10 +32159,10 @@ export type OrganizationUncheckedCreateWithoutEmployeeFieldOwnershipInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -34630,7 +32232,6 @@ export type OrganizationUncheckedCreateWithoutEmployeeFieldOwnershipInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -34672,10 +32273,10 @@ export type OrganizationUpdateWithoutEmployeeFieldOwnershipInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -34745,7 +32346,6 @@ export type OrganizationUpdateWithoutEmployeeFieldOwnershipInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -34775,10 +32375,10 @@ export type OrganizationUncheckedUpdateWithoutEmployeeFieldOwnershipInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -34848,7 +32448,6 @@ export type OrganizationUncheckedUpdateWithoutEmployeeFieldOwnershipInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -34874,10 +32473,10 @@ export type OrganizationCreateWithoutEmploymentRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -34947,7 +32546,6 @@ export type OrganizationCreateWithoutEmploymentRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -34977,10 +32575,10 @@ export type OrganizationUncheckedCreateWithoutEmploymentRecordsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -35050,7 +32648,6 @@ export type OrganizationUncheckedCreateWithoutEmploymentRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -35092,10 +32689,10 @@ export type OrganizationUpdateWithoutEmploymentRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -35165,7 +32762,6 @@ export type OrganizationUpdateWithoutEmploymentRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -35195,10 +32791,10 @@ export type OrganizationUncheckedUpdateWithoutEmploymentRecordsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -35268,7 +32864,6 @@ export type OrganizationUncheckedUpdateWithoutEmploymentRecordsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -35294,10 +32889,10 @@ export type OrganizationCreateWithoutCompensationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -35367,7 +32962,6 @@ export type OrganizationCreateWithoutCompensationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -35397,10 +32991,10 @@ export type OrganizationUncheckedCreateWithoutCompensationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -35470,7 +33064,6 @@ export type OrganizationUncheckedCreateWithoutCompensationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -35512,10 +33105,10 @@ export type OrganizationUpdateWithoutCompensationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -35585,7 +33178,6 @@ export type OrganizationUpdateWithoutCompensationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -35615,10 +33207,10 @@ export type OrganizationUncheckedUpdateWithoutCompensationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -35688,7 +33280,1254 @@ export type OrganizationUncheckedUpdateWithoutCompensationsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutEmployeePayrollPoliciesInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  employeeNumberSequence?: number
+  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
+  logoFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationLogoInput
+  coverFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationCoverInput
+}
+
+export type OrganizationUncheckedCreateWithoutEmployeePayrollPoliciesInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  logoFileId?: string | null
+  coverFileId?: string | null
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  employeeNumberSequence?: number
+  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutEmployeePayrollPoliciesInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeePayrollPoliciesInput>
+}
+
+export type OrganizationUpsertWithoutEmployeePayrollPoliciesInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeePayrollPoliciesInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeePayrollPoliciesInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutEmployeePayrollPoliciesInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeePayrollPoliciesInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeePayrollPoliciesInput>
+}
+
+export type OrganizationUpdateWithoutEmployeePayrollPoliciesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
+  logoFile?: Prisma.FileObjectUpdateOneWithoutOrganizationLogoNestedInput
+  coverFile?: Prisma.FileObjectUpdateOneWithoutOrganizationCoverNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutEmployeePayrollPoliciesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  logoFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutEmployeeStatutoryProfilesInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  employeeNumberSequence?: number
+  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
+  logoFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationLogoInput
+  coverFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationCoverInput
+}
+
+export type OrganizationUncheckedCreateWithoutEmployeeStatutoryProfilesInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  logoFileId?: string | null
+  coverFileId?: string | null
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  employeeNumberSequence?: number
+  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutEmployeeStatutoryProfilesInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryProfilesInput>
+}
+
+export type OrganizationUpsertWithoutEmployeeStatutoryProfilesInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeeStatutoryProfilesInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryProfilesInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutEmployeeStatutoryProfilesInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeeStatutoryProfilesInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeeStatutoryProfilesInput>
+}
+
+export type OrganizationUpdateWithoutEmployeeStatutoryProfilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
+  logoFile?: Prisma.FileObjectUpdateOneWithoutOrganizationLogoNestedInput
+  coverFile?: Prisma.FileObjectUpdateOneWithoutOrganizationCoverNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutEmployeeStatutoryProfilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  logoFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutOrganizationNestedInput
+}
+
+export type OrganizationCreateWithoutEmployeeStatutoryRecordsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  employeeNumberSequence?: number
+  settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutOrganizationInput
+  logoFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationLogoInput
+  coverFile?: Prisma.FileObjectCreateNestedOneWithoutOrganizationCoverInput
+}
+
+export type OrganizationUncheckedCreateWithoutEmployeeStatutoryRecordsInput = {
+  id?: string
+  name: string
+  slug: string
+  source: $Enums.OrganizationSource
+  externalId?: string | null
+  status?: $Enums.OrganizationStatus
+  timezone?: string
+  currencyCode: string
+  locale?: string
+  logoFileId?: string | null
+  coverFileId?: string | null
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  employeeNumberSequence?: number
+  settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedCreateNestedManyWithoutOrganizationInput
+  branches?: Prisma.BranchUncheckedCreateNestedManyWithoutOrganizationInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutOrganizationInput
+  users?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutOrganizationInput
+  sessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutOrganizationInput
+  invitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutOrganizationInput
+  roles?: Prisma.RoleUncheckedCreateNestedManyWithoutOrganizationInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutOrganizationInput
+  employees?: Prisma.EmployeeUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutOrganizationInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutOrganizationInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutOrganizationInput
+  payComponents?: Prisma.PayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  teams?: Prisma.TeamUncheckedCreateNestedManyWithoutOrganizationInput
+  teamMembers?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutOrganizationInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutOrganizationInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutOrganizationInput
+  workLocations?: Prisma.WorkLocationUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  holidays?: Prisma.HolidayUncheckedCreateNestedManyWithoutOrganizationInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutOrganizationInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutOrganizationInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedCreateNestedManyWithoutOrganizationInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  shifts?: Prisma.ShiftUncheckedCreateNestedManyWithoutOrganizationInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedCreateNestedManyWithoutOrganizationInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutOrganizationInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutOrganizationInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutOrganizationInput
+  federationGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutOrganizationInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutOrganizationInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedCreateNestedManyWithoutOrganizationInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedCreateNestedManyWithoutOrganizationInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
+  outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
+  approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutOrganizationInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutOrganizationInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUncheckedCreateNestedManyWithoutOrganizationInput
+  homeFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutHomeOrganizationInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutOrganizationInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutOrganizationInput
+}
+
+export type OrganizationCreateOrConnectWithoutEmployeeStatutoryRecordsInput = {
+  where: Prisma.OrganizationWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryRecordsInput>
+}
+
+export type OrganizationUpsertWithoutEmployeeStatutoryRecordsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeeStatutoryRecordsInput>
+  create: Prisma.XOR<Prisma.OrganizationCreateWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUncheckedCreateWithoutEmployeeStatutoryRecordsInput>
+  where?: Prisma.OrganizationWhereInput
+}
+
+export type OrganizationUpdateToOneWithWhereWithoutEmployeeStatutoryRecordsInput = {
+  where?: Prisma.OrganizationWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUpdateWithoutEmployeeStatutoryRecordsInput, Prisma.OrganizationUncheckedUpdateWithoutEmployeeStatutoryRecordsInput>
+}
+
+export type OrganizationUpdateWithoutEmployeeStatutoryRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
+  approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutOrganizationNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutOrganizationNestedInput
+  customFieldDefinitions?: Prisma.CustomFieldDefinitionUpdateManyWithoutOrganizationNestedInput
+  homeFederationClients?: Prisma.FederationClientUpdateManyWithoutHomeOrganizationNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutOrganizationNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutOrganizationNestedInput
+  logoFile?: Prisma.FileObjectUpdateOneWithoutOrganizationLogoNestedInput
+  coverFile?: Prisma.FileObjectUpdateOneWithoutOrganizationCoverNestedInput
+}
+
+export type OrganizationUncheckedUpdateWithoutEmployeeStatutoryRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  source?: Prisma.EnumOrganizationSourceFieldUpdateOperationsInput | $Enums.OrganizationSource
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currencyCode?: Prisma.StringFieldUpdateOperationsInput | string
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  logoFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
+  settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
+  payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollCalendars?: Prisma.PayrollCalendarUncheckedUpdateManyWithoutOrganizationNestedInput
+  branches?: Prisma.BranchUncheckedUpdateManyWithoutOrganizationNestedInput
+  sourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutOrganizationNestedInput
+  users?: Prisma.UserOrganizationUncheckedUpdateManyWithoutOrganizationNestedInput
+  sessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutOrganizationNestedInput
+  invitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutOrganizationNestedInput
+  roles?: Prisma.RoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutOrganizationNestedInput
+  employees?: Prisma.EmployeeUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePersonalProfiles?: Prisma.EmployeePersonalProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeReferences?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeStatutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutOrganizationNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeBranchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeFieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutOrganizationNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutOrganizationNestedInput
+  payComponents?: Prisma.PayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeePayComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  teams?: Prisma.TeamUncheckedUpdateManyWithoutOrganizationNestedInput
+  teamMembers?: Prisma.TeamMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutOrganizationNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutOrganizationNestedInput
+  workLocations?: Prisma.WorkLocationUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidays?: Prisma.HolidayUncheckedUpdateManyWithoutOrganizationNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutOrganizationNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutOrganizationNestedInput
+  employeeHolidayPolicies?: Prisma.EmployeeHolidayPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveTypes?: Prisma.LeaveTypeUncheckedUpdateManyWithoutOrganizationNestedInput
+  leavePolicyAssignments?: Prisma.LeavePolicyAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveBalanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutOrganizationNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  shifts?: Prisma.ShiftUncheckedUpdateManyWithoutOrganizationNestedInput
+  shiftAssignments?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetPeriods?: Prisma.TimesheetPeriodUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetEntries?: Prisma.TimesheetEntryUncheckedUpdateManyWithoutOrganizationNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItems?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollLineItemComponents?: Prisma.PayrollLineItemComponentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutOrganizationNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutOrganizationNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutOrganizationNestedInput
+  federationGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutOrganizationNestedInput
+  organizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutOrganizationNestedInput
+  externalIdMappings?: Prisma.ExternalIdMappingUncheckedUpdateManyWithoutOrganizationNestedInput
+  idempotencyRecords?: Prisma.FederationIdempotencyRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  requestRecords?: Prisma.FederationRequestRecordUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookSubscriptions?: Prisma.WebhookSubscriptionUncheckedUpdateManyWithoutOrganizationNestedInput
+  webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
+  outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -35714,10 +34553,10 @@ export type OrganizationCreateWithoutPayComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -35787,7 +34626,6 @@ export type OrganizationCreateWithoutPayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -35817,10 +34655,10 @@ export type OrganizationUncheckedCreateWithoutPayComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -35890,7 +34728,6 @@ export type OrganizationUncheckedCreateWithoutPayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -35932,10 +34769,10 @@ export type OrganizationUpdateWithoutPayComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -36005,7 +34842,6 @@ export type OrganizationUpdateWithoutPayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -36035,10 +34871,10 @@ export type OrganizationUncheckedUpdateWithoutPayComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -36108,7 +34944,6 @@ export type OrganizationUncheckedUpdateWithoutPayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -36134,10 +34969,10 @@ export type OrganizationCreateWithoutEmployeePayComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -36207,7 +35042,6 @@ export type OrganizationCreateWithoutEmployeePayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -36237,10 +35071,10 @@ export type OrganizationUncheckedCreateWithoutEmployeePayComponentsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -36310,7 +35144,6 @@ export type OrganizationUncheckedCreateWithoutEmployeePayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -36352,10 +35185,10 @@ export type OrganizationUpdateWithoutEmployeePayComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -36425,7 +35258,6 @@ export type OrganizationUpdateWithoutEmployeePayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -36455,10 +35287,10 @@ export type OrganizationUncheckedUpdateWithoutEmployeePayComponentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -36528,7 +35360,6 @@ export type OrganizationUncheckedUpdateWithoutEmployeePayComponentsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -36554,10 +35385,10 @@ export type OrganizationCreateWithoutTeamsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -36627,7 +35458,6 @@ export type OrganizationCreateWithoutTeamsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -36657,10 +35487,10 @@ export type OrganizationUncheckedCreateWithoutTeamsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -36730,7 +35560,6 @@ export type OrganizationUncheckedCreateWithoutTeamsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -36772,10 +35601,10 @@ export type OrganizationUpdateWithoutTeamsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -36845,7 +35674,6 @@ export type OrganizationUpdateWithoutTeamsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -36875,10 +35703,10 @@ export type OrganizationUncheckedUpdateWithoutTeamsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -36948,7 +35776,6 @@ export type OrganizationUncheckedUpdateWithoutTeamsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -36974,10 +35801,10 @@ export type OrganizationCreateWithoutTeamMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -37047,7 +35874,6 @@ export type OrganizationCreateWithoutTeamMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -37077,10 +35903,10 @@ export type OrganizationUncheckedCreateWithoutTeamMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -37150,7 +35976,6 @@ export type OrganizationUncheckedCreateWithoutTeamMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -37192,10 +36017,10 @@ export type OrganizationUpdateWithoutTeamMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -37265,7 +36090,6 @@ export type OrganizationUpdateWithoutTeamMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -37295,10 +36119,10 @@ export type OrganizationUncheckedUpdateWithoutTeamMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -37368,7 +36192,6 @@ export type OrganizationUncheckedUpdateWithoutTeamMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -37394,10 +36217,10 @@ export type OrganizationCreateWithoutProjectsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -37467,7 +36290,6 @@ export type OrganizationCreateWithoutProjectsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -37497,10 +36319,10 @@ export type OrganizationUncheckedCreateWithoutProjectsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -37570,7 +36392,6 @@ export type OrganizationUncheckedCreateWithoutProjectsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -37612,10 +36433,10 @@ export type OrganizationUpdateWithoutProjectsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -37685,7 +36506,6 @@ export type OrganizationUpdateWithoutProjectsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -37715,10 +36535,10 @@ export type OrganizationUncheckedUpdateWithoutProjectsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -37788,7 +36608,6 @@ export type OrganizationUncheckedUpdateWithoutProjectsInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -37814,10 +36633,10 @@ export type OrganizationCreateWithoutProjectMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutOrganizationInput
@@ -37887,7 +36706,6 @@ export type OrganizationCreateWithoutProjectMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutOrganizationInput
@@ -37917,10 +36735,10 @@ export type OrganizationUncheckedCreateWithoutProjectMembersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
   settings?: Prisma.OrganizationSettingsUncheckedCreateNestedOneWithoutOrganizationInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedCreateNestedManyWithoutOrganizationInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedCreateNestedManyWithoutOrganizationInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedCreateNestedManyWithoutOrganizationInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutOrganizationInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutOrganizationInput
@@ -37990,7 +36808,6 @@ export type OrganizationUncheckedCreateWithoutProjectMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedCreateNestedManyWithoutOrganizationInput
   outboxEvents?: Prisma.OutboxEventUncheckedCreateNestedManyWithoutOrganizationInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutOrganizationInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedCreateNestedManyWithoutOrganizationInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutOrganizationInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutOrganizationInput
   resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutOrganizationInput
@@ -38032,10 +36849,10 @@ export type OrganizationUpdateWithoutProjectMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -38105,7 +36922,6 @@ export type OrganizationUpdateWithoutProjectMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -38135,10 +36951,10 @@ export type OrganizationUncheckedUpdateWithoutProjectMembersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -38208,7 +37024,6 @@ export type OrganizationUncheckedUpdateWithoutProjectMembersInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -38235,6 +37050,7 @@ export type OrganizationCreateManyLogoFileInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
 }
 
 export type OrganizationCreateManyCoverFileInput = {
@@ -38252,6 +37068,7 @@ export type OrganizationCreateManyCoverFileInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   version?: number
+  employeeNumberSequence?: number
 }
 
 export type OrganizationUpdateWithoutLogoFileInput = {
@@ -38268,10 +37085,10 @@ export type OrganizationUpdateWithoutLogoFileInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -38342,7 +37159,6 @@ export type OrganizationUpdateWithoutLogoFileInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -38370,10 +37186,10 @@ export type OrganizationUncheckedUpdateWithoutLogoFileInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -38444,7 +37260,6 @@ export type OrganizationUncheckedUpdateWithoutLogoFileInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -38471,6 +37286,7 @@ export type OrganizationUncheckedUpdateManyWithoutLogoFileInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type OrganizationUpdateWithoutCoverFileInput = {
@@ -38487,10 +37303,10 @@ export type OrganizationUpdateWithoutCoverFileInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutOrganizationNestedInput
@@ -38561,7 +37377,6 @@ export type OrganizationUpdateWithoutCoverFileInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUpdateManyWithoutOrganizationNestedInput
@@ -38589,10 +37404,10 @@ export type OrganizationUncheckedUpdateWithoutCoverFileInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
   settings?: Prisma.OrganizationSettingsUncheckedUpdateOneWithoutOrganizationNestedInput
   payrollPolicies?: Prisma.PayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   payrollPolicyComponents?: Prisma.PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationNestedInput
-  payrollPolicyAssignmentRules?: Prisma.PayrollPolicyAssignmentRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   statutoryRules?: Prisma.PayrollStatutoryRuleUncheckedUpdateManyWithoutOrganizationNestedInput
   employeePayrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutOrganizationNestedInput
   salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -38663,7 +37478,6 @@ export type OrganizationUncheckedUpdateWithoutCoverFileInput = {
   webhookDeliveries?: Prisma.WebhookDeliveryUncheckedUpdateManyWithoutOrganizationNestedInput
   outboxEvents?: Prisma.OutboxEventUncheckedUpdateManyWithoutOrganizationNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutOrganizationNestedInput
-  workflowDrafts?: Prisma.WorkflowDraftUncheckedUpdateManyWithoutOrganizationNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutOrganizationNestedInput
   approvalDelegations?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutOrganizationNestedInput
   resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutOrganizationNestedInput
@@ -38690,6 +37504,7 @@ export type OrganizationUncheckedUpdateManyWithoutCoverFileInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
+  employeeNumberSequence?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -38700,7 +37515,6 @@ export type OrganizationUncheckedUpdateManyWithoutCoverFileInput = {
 export type OrganizationCountOutputType = {
   payrollPolicies: number
   payrollPolicyComponents: number
-  payrollPolicyAssignmentRules: number
   statutoryRules: number
   employeePayrollPolicies: number
   salaryAdvances: number
@@ -38771,7 +37585,6 @@ export type OrganizationCountOutputType = {
   webhookDeliveries: number
   outboxEvents: number
   auditLogs: number
-  workflowDrafts: number
   notifications: number
   approvalDelegations: number
   resignations: number
@@ -38786,7 +37599,6 @@ export type OrganizationCountOutputType = {
 export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   payrollPolicies?: boolean | OrganizationCountOutputTypeCountPayrollPoliciesArgs
   payrollPolicyComponents?: boolean | OrganizationCountOutputTypeCountPayrollPolicyComponentsArgs
-  payrollPolicyAssignmentRules?: boolean | OrganizationCountOutputTypeCountPayrollPolicyAssignmentRulesArgs
   statutoryRules?: boolean | OrganizationCountOutputTypeCountStatutoryRulesArgs
   employeePayrollPolicies?: boolean | OrganizationCountOutputTypeCountEmployeePayrollPoliciesArgs
   salaryAdvances?: boolean | OrganizationCountOutputTypeCountSalaryAdvancesArgs
@@ -38857,7 +37669,6 @@ export type OrganizationCountOutputTypeSelect<ExtArgs extends runtime.Types.Exte
   webhookDeliveries?: boolean | OrganizationCountOutputTypeCountWebhookDeliveriesArgs
   outboxEvents?: boolean | OrganizationCountOutputTypeCountOutboxEventsArgs
   auditLogs?: boolean | OrganizationCountOutputTypeCountAuditLogsArgs
-  workflowDrafts?: boolean | OrganizationCountOutputTypeCountWorkflowDraftsArgs
   notifications?: boolean | OrganizationCountOutputTypeCountNotificationsArgs
   approvalDelegations?: boolean | OrganizationCountOutputTypeCountApprovalDelegationsArgs
   resignations?: boolean | OrganizationCountOutputTypeCountResignationsArgs
@@ -38891,13 +37702,6 @@ export type OrganizationCountOutputTypeCountPayrollPoliciesArgs<ExtArgs extends 
  */
 export type OrganizationCountOutputTypeCountPayrollPolicyComponentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PayrollPolicyComponentWhereInput
-}
-
-/**
- * OrganizationCountOutputType without action
- */
-export type OrganizationCountOutputTypeCountPayrollPolicyAssignmentRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.PayrollPolicyAssignmentRuleWhereInput
 }
 
 /**
@@ -39393,13 +38197,6 @@ export type OrganizationCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtim
 /**
  * OrganizationCountOutputType without action
  */
-export type OrganizationCountOutputTypeCountWorkflowDraftsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.WorkflowDraftWhereInput
-}
-
-/**
- * OrganizationCountOutputType without action
- */
 export type OrganizationCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.NotificationWhereInput
 }
@@ -39477,10 +38274,10 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   createdAt?: boolean
   updatedAt?: boolean
   version?: boolean
+  employeeNumberSequence?: boolean
   settings?: boolean | Prisma.Organization$settingsArgs<ExtArgs>
   payrollPolicies?: boolean | Prisma.Organization$payrollPoliciesArgs<ExtArgs>
   payrollPolicyComponents?: boolean | Prisma.Organization$payrollPolicyComponentsArgs<ExtArgs>
-  payrollPolicyAssignmentRules?: boolean | Prisma.Organization$payrollPolicyAssignmentRulesArgs<ExtArgs>
   statutoryRules?: boolean | Prisma.Organization$statutoryRulesArgs<ExtArgs>
   employeePayrollPolicies?: boolean | Prisma.Organization$employeePayrollPoliciesArgs<ExtArgs>
   salaryAdvances?: boolean | Prisma.Organization$salaryAdvancesArgs<ExtArgs>
@@ -39551,7 +38348,6 @@ export type OrganizationSelect<ExtArgs extends runtime.Types.Extensions.Internal
   webhookDeliveries?: boolean | Prisma.Organization$webhookDeliveriesArgs<ExtArgs>
   outboxEvents?: boolean | Prisma.Organization$outboxEventsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Organization$auditLogsArgs<ExtArgs>
-  workflowDrafts?: boolean | Prisma.Organization$workflowDraftsArgs<ExtArgs>
   notifications?: boolean | Prisma.Organization$notificationsArgs<ExtArgs>
   approvalDelegations?: boolean | Prisma.Organization$approvalDelegationsArgs<ExtArgs>
   resignations?: boolean | Prisma.Organization$resignationsArgs<ExtArgs>
@@ -39582,6 +38378,7 @@ export type OrganizationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   createdAt?: boolean
   updatedAt?: boolean
   version?: boolean
+  employeeNumberSequence?: boolean
   logoFile?: boolean | Prisma.Organization$logoFileArgs<ExtArgs>
   coverFile?: boolean | Prisma.Organization$coverFileArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
@@ -39602,6 +38399,7 @@ export type OrganizationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   createdAt?: boolean
   updatedAt?: boolean
   version?: boolean
+  employeeNumberSequence?: boolean
   logoFile?: boolean | Prisma.Organization$logoFileArgs<ExtArgs>
   coverFile?: boolean | Prisma.Organization$coverFileArgs<ExtArgs>
 }, ExtArgs["result"]["organization"]>
@@ -39622,14 +38420,14 @@ export type OrganizationSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   version?: boolean
+  employeeNumberSequence?: boolean
 }
 
-export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "source" | "externalId" | "status" | "timezone" | "currencyCode" | "locale" | "logoFileId" | "coverFileId" | "deactivatedAt" | "createdAt" | "updatedAt" | "version", ExtArgs["result"]["organization"]>
+export type OrganizationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "source" | "externalId" | "status" | "timezone" | "currencyCode" | "locale" | "logoFileId" | "coverFileId" | "deactivatedAt" | "createdAt" | "updatedAt" | "version" | "employeeNumberSequence", ExtArgs["result"]["organization"]>
 export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   settings?: boolean | Prisma.Organization$settingsArgs<ExtArgs>
   payrollPolicies?: boolean | Prisma.Organization$payrollPoliciesArgs<ExtArgs>
   payrollPolicyComponents?: boolean | Prisma.Organization$payrollPolicyComponentsArgs<ExtArgs>
-  payrollPolicyAssignmentRules?: boolean | Prisma.Organization$payrollPolicyAssignmentRulesArgs<ExtArgs>
   statutoryRules?: boolean | Prisma.Organization$statutoryRulesArgs<ExtArgs>
   employeePayrollPolicies?: boolean | Prisma.Organization$employeePayrollPoliciesArgs<ExtArgs>
   salaryAdvances?: boolean | Prisma.Organization$salaryAdvancesArgs<ExtArgs>
@@ -39700,7 +38498,6 @@ export type OrganizationInclude<ExtArgs extends runtime.Types.Extensions.Interna
   webhookDeliveries?: boolean | Prisma.Organization$webhookDeliveriesArgs<ExtArgs>
   outboxEvents?: boolean | Prisma.Organization$outboxEventsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.Organization$auditLogsArgs<ExtArgs>
-  workflowDrafts?: boolean | Prisma.Organization$workflowDraftsArgs<ExtArgs>
   notifications?: boolean | Prisma.Organization$notificationsArgs<ExtArgs>
   approvalDelegations?: boolean | Prisma.Organization$approvalDelegationsArgs<ExtArgs>
   resignations?: boolean | Prisma.Organization$resignationsArgs<ExtArgs>
@@ -39729,7 +38526,6 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     settings: Prisma.$OrganizationSettingsPayload<ExtArgs> | null
     payrollPolicies: Prisma.$PayrollPolicyPayload<ExtArgs>[]
     payrollPolicyComponents: Prisma.$PayrollPolicyComponentPayload<ExtArgs>[]
-    payrollPolicyAssignmentRules: Prisma.$PayrollPolicyAssignmentRulePayload<ExtArgs>[]
     statutoryRules: Prisma.$PayrollStatutoryRulePayload<ExtArgs>[]
     employeePayrollPolicies: Prisma.$EmployeePayrollPolicyPayload<ExtArgs>[]
     salaryAdvances: Prisma.$SalaryAdvancePayload<ExtArgs>[]
@@ -39800,7 +38596,6 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     webhookDeliveries: Prisma.$WebhookDeliveryPayload<ExtArgs>[]
     outboxEvents: Prisma.$OutboxEventPayload<ExtArgs>[]
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
-    workflowDrafts: Prisma.$WorkflowDraftPayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     approvalDelegations: Prisma.$ApprovalDelegationPayload<ExtArgs>[]
     resignations: Prisma.$EmployeeResignationPayload<ExtArgs>[]
@@ -39829,6 +38624,7 @@ export type $OrganizationPayload<ExtArgs extends runtime.Types.Extensions.Intern
     createdAt: Date
     updatedAt: Date
     version: number
+    employeeNumberSequence: number
   }, ExtArgs["result"]["organization"]>
   composites: {}
 }
@@ -40226,7 +39022,6 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   settings<T extends Prisma.Organization$settingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$settingsArgs<ExtArgs>>): Prisma.Prisma__OrganizationSettingsClient<runtime.Types.Result.GetResult<Prisma.$OrganizationSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   payrollPolicies<T extends Prisma.Organization$payrollPoliciesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$payrollPoliciesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollPolicyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payrollPolicyComponents<T extends Prisma.Organization$payrollPolicyComponentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$payrollPolicyComponentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollPolicyComponentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  payrollPolicyAssignmentRules<T extends Prisma.Organization$payrollPolicyAssignmentRulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$payrollPolicyAssignmentRulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollPolicyAssignmentRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   statutoryRules<T extends Prisma.Organization$statutoryRulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$statutoryRulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollStatutoryRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   employeePayrollPolicies<T extends Prisma.Organization$employeePayrollPoliciesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$employeePayrollPoliciesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeePayrollPolicyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   salaryAdvances<T extends Prisma.Organization$salaryAdvancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$salaryAdvancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SalaryAdvancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -40297,7 +39092,6 @@ export interface Prisma__OrganizationClient<T, Null = never, ExtArgs extends run
   webhookDeliveries<T extends Prisma.Organization$webhookDeliveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$webhookDeliveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebhookDeliveryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   outboxEvents<T extends Prisma.Organization$outboxEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$outboxEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OutboxEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.Organization$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  workflowDrafts<T extends Prisma.Organization$workflowDraftsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$workflowDraftsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkflowDraftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.Organization$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   approvalDelegations<T extends Prisma.Organization$approvalDelegationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$approvalDelegationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApprovalDelegationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   resignations<T extends Prisma.Organization$resignationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Organization$resignationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeResignationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -40353,6 +39147,7 @@ export interface OrganizationFieldRefs {
   readonly createdAt: Prisma.FieldRef<"Organization", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Organization", 'DateTime'>
   readonly version: Prisma.FieldRef<"Organization", 'Int'>
+  readonly employeeNumberSequence: Prisma.FieldRef<"Organization", 'Int'>
 }
     
 
@@ -40818,30 +39613,6 @@ export type Organization$payrollPolicyComponentsArgs<ExtArgs extends runtime.Typ
   take?: number
   skip?: number
   distinct?: Prisma.PayrollPolicyComponentScalarFieldEnum | Prisma.PayrollPolicyComponentScalarFieldEnum[]
-}
-
-/**
- * Organization.payrollPolicyAssignmentRules
- */
-export type Organization$payrollPolicyAssignmentRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the PayrollPolicyAssignmentRule
-   */
-  select?: Prisma.PayrollPolicyAssignmentRuleSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the PayrollPolicyAssignmentRule
-   */
-  omit?: Prisma.PayrollPolicyAssignmentRuleOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.PayrollPolicyAssignmentRuleInclude<ExtArgs> | null
-  where?: Prisma.PayrollPolicyAssignmentRuleWhereInput
-  orderBy?: Prisma.PayrollPolicyAssignmentRuleOrderByWithRelationInput | Prisma.PayrollPolicyAssignmentRuleOrderByWithRelationInput[]
-  cursor?: Prisma.PayrollPolicyAssignmentRuleWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.PayrollPolicyAssignmentRuleScalarFieldEnum | Prisma.PayrollPolicyAssignmentRuleScalarFieldEnum[]
 }
 
 /**
@@ -42522,30 +41293,6 @@ export type Organization$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
-}
-
-/**
- * Organization.workflowDrafts
- */
-export type Organization$workflowDraftsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the WorkflowDraft
-   */
-  select?: Prisma.WorkflowDraftSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the WorkflowDraft
-   */
-  omit?: Prisma.WorkflowDraftOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.WorkflowDraftInclude<ExtArgs> | null
-  where?: Prisma.WorkflowDraftWhereInput
-  orderBy?: Prisma.WorkflowDraftOrderByWithRelationInput | Prisma.WorkflowDraftOrderByWithRelationInput[]
-  cursor?: Prisma.WorkflowDraftWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.WorkflowDraftScalarFieldEnum | Prisma.WorkflowDraftScalarFieldEnum[]
 }
 
 /**

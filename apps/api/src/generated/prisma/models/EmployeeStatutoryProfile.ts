@@ -455,6 +455,16 @@ export type EmployeeStatutoryProfileUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type EmployeeStatutoryProfileListRelationFilter = {
+  every?: Prisma.EmployeeStatutoryProfileWhereInput
+  some?: Prisma.EmployeeStatutoryProfileWhereInput
+  none?: Prisma.EmployeeStatutoryProfileWhereInput
+}
+
+export type EmployeeStatutoryProfileOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type EmployeeStatutoryProfileOrganizationIdEmployeeIdSchemeCodeEffectiveFromCompoundUniqueInput = {
   organizationId: string
   employeeId: string
@@ -513,24 +523,6 @@ export type EmployeeStatutoryProfileMinOrderByAggregateInput = {
 export type EmployeeStatutoryProfileSumOrderByAggregateInput = {
   employeeRate?: Prisma.SortOrder
   employerRate?: Prisma.SortOrder
-}
-
-export type EmployeeStatutoryProfileListRelationFilter = {
-  every?: Prisma.EmployeeStatutoryProfileWhereInput
-  some?: Prisma.EmployeeStatutoryProfileWhereInput
-  none?: Prisma.EmployeeStatutoryProfileWhereInput
-}
-
-export type EmployeeStatutoryProfileOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
-export type NullableDecimalFieldUpdateOperationsInput = {
-  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type EmployeeStatutoryProfileCreateNestedManyWithoutOrganizationInput = {

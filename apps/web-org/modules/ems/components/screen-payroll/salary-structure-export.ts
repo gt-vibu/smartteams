@@ -31,23 +31,15 @@ const NOT_RECORDED = 'Not recorded';
 export async function downloadSalaryStructurePdf(options: SalaryStructureExportOptions) {
   const { jsPDF } = await import('jspdf');
   const { orgName, organizationName, branchName, employee, profile } = options;
-  const resolvedOrgName = orgName || organizationName || profile.organizationName || NOT_RECORDED;
+  const resolvedOrgName = orgName || organizationName || NOT_RECORDED;
   const { salaryBreakdown, compensation, employeePolicy } = profile;
 
-  const identity = employee ?? profile.employeeDetails;
-  const employeeName = identity
-    ? [identity.firstName, 'middleName' in identity ? identity.middleName : null, identity.lastName]
-        .filter(Boolean)
-        .join(' ')
+  const employeeName = employee ? `${employee.firstName} ${employee.lastName}`.trim() : 'Employee';
+  const employeeId = employee?.employeeNumber || NOT_RECORDED;
+  const email = employee?.workEmail || '—';
+  const designation = employee?.employmentType
+    ? employee.employmentType.replace(/_/g, ' ')
     : NOT_RECORDED;
-  const employeeId = identity?.employeeNumber || NOT_RECORDED;
-  const email = identity?.workEmail || NOT_RECORDED;
-  const designation = identity?.employmentType
-    ? identity.employmentType.replace(/_/g, ' ')
-    : NOT_RECORDED;
-  const jobTitle = profile.employeeDetails?.jobTitle || NOT_RECORDED;
-  const department = profile.employeeDetails?.department || NOT_RECORDED;
-  const dateOfJoining = profile.employeeDetails?.dateOfJoining || NOT_RECORDED;
   const effectiveDate = compensation?.effectiveFrom
     ? compensation.effectiveFrom.slice(0, 10)
     : localDateKey();
@@ -79,7 +71,7 @@ export async function downloadSalaryStructurePdf(options: SalaryStructureExportO
   doc.text('COMPENSATION & SALARY STRUCTURE ANNEXURE', 40, y + 14);
   doc.text(`Date: ${generationDate}`, 555, y, { align: 'right' });
   doc.text(
-    `Branch: ${branchName || profile.employeeDetails?.branchName || NOT_RECORDED} · Jurisdiction: ${employeePolicy?.statutoryJurisdiction || NOT_RECORDED}`,
+    `Branch: ${branchName || NOT_RECORDED} · Jurisdiction: ${employeePolicy?.statutoryJurisdiction || NOT_RECORDED}`,
     555,
     y + 12,
     { align: 'right' },
@@ -95,20 +87,18 @@ export async function downloadSalaryStructurePdf(options: SalaryStructureExportO
   doc.setFillColor(248, 250, 252);
   doc.setDrawColor(226, 232, 240);
   doc.setLineWidth(0.75);
-  doc.roundedRect(40, y, 515, 58, 4, 4, 'FD');
+  doc.roundedRect(40, y, 515, 46, 4, 4, 'FD');
 
   doc.setFontSize(8.5);
   doc.setTextColor(30, 41, 59);
   doc.text(`Employee Name: ${employeeName}`, 50, y + 14);
   doc.text(`Employee ID: ${employeeId}`, 50, y + 27);
-  doc.text(`Work email: ${email}`, 50, y + 40, { maxWidth: 245 });
-  doc.text(`Department / title: ${department} / ${jobTitle}`, 50, y + 52, { maxWidth: 245 });
+  doc.text(`Email: ${email}`, 50, y + 40);
 
   doc.text(`Employment Type: ${designation}`, 310, y + 14);
   doc.text(`Effective From: ${effectiveDate}`, 310, y + 27);
-  doc.text(`Date of joining: ${dateOfJoining}`, 310, y + 40);
-  doc.text('Currency: INR (₹)', 310, y + 52);
-  y += 68;
+  doc.text('Currency: INR (₹)', 310, y + 40);
+  y += 56;
 
   // 3. KPI Summary Cards (Annual CTC, Monthly CTC, Monthly Gross, Net Take-Home)
   const kpis = [
@@ -300,26 +290,10 @@ export function downloadSalaryStructureCsv(options: SalaryStructureExportOptions
   const { employee, profile } = options;
   const { salaryBreakdown } = profile;
 
-  const identity = employee ?? profile.employeeDetails;
-  const employeeName = identity
-    ? [identity.firstName, 'middleName' in identity ? identity.middleName : null, identity.lastName]
-        .filter(Boolean)
-        .join(' ')
-    : NOT_RECORDED;
-  const employeeId = identity?.employeeNumber || 'employee';
+  const employeeName = employee ? `${employee.firstName} ${employee.lastName}`.trim() : 'Employee';
+  const employeeId = employee?.employeeNumber || 'employee';
 
   const rows: string[][] = [
-    ['Organization', options.orgName || options.organizationName || profile.organizationName || NOT_RECORDED],
-    ['Employee name', employeeName],
-    ['Employee ID', employeeId],
-    ['Work email', identity?.workEmail || NOT_RECORDED],
-    ['Employment type', identity?.employmentType || NOT_RECORDED],
-    ['Department', profile.employeeDetails?.department || NOT_RECORDED],
-    ['Job title', profile.employeeDetails?.jobTitle || NOT_RECORDED],
-    ['Branch', options.branchName || profile.employeeDetails?.branchName || NOT_RECORDED],
-    ['Effective from', profile.compensation?.effectiveFrom?.slice(0, 10) || NOT_RECORDED],
-    ['Date of joining', profile.employeeDetails?.dateOfJoining || NOT_RECORDED],
-    [],
     ['Category', 'Component Code', 'Component Name', 'Monthly Amount (INR)', 'Annual Amount (INR)'],
   ];
 

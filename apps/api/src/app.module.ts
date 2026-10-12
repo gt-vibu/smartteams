@@ -1,4 +1,3 @@
-import { WorkforceModule } from './modules/workforce/workforce.module';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggerModule } from 'nestjs-pino';
@@ -41,7 +40,6 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { ReportsModule } from './modules/reports/reports.module';
 import { TimesheetsModule } from './modules/timesheets/timesheets.module';
 import { UsersModule } from './modules/users/users.module';
-import { WorkflowDraftsModule } from './modules/workflow-drafts/workflow-drafts.module';
 
 @Module({
   imports: [
@@ -76,9 +74,7 @@ import { WorkflowDraftsModule } from './modules/workflow-drafts/workflow-drafts.
     RbacModule,
     OrganizationsModule,
     UsersModule,
-    WorkflowDraftsModule,
     EmployeesModule,
-    WorkforceModule,
     FilesModule,
     AttendanceModule,
     ApprovalsModule,

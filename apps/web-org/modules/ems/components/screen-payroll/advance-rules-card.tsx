@@ -52,8 +52,7 @@ export function AdvanceRulesCard() {
             Limit (% of monthly gross salary)
           </Label>
           <Input
-            step={1}
-            className="h-10 tabular-nums text-sm font-semibold"
+            className="h-10 font-mono text-sm font-semibold"
             disabled={advance.saving}
             id="advance-limit"
             inputMode="numeric"
@@ -72,8 +71,7 @@ export function AdvanceRulesCard() {
             Paid back over (months)
           </Label>
           <Input
-            step={1}
-            className="h-10 tabular-nums text-sm font-semibold"
+            className="h-10 font-mono text-sm font-semibold"
             disabled={advance.saving}
             id="advance-months"
             inputMode="numeric"

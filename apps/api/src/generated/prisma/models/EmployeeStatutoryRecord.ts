@@ -535,6 +535,16 @@ export type EmployeeStatutoryRecordUncheckedUpdateManyInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
+export type EmployeeStatutoryRecordListRelationFilter = {
+  every?: Prisma.EmployeeStatutoryRecordWhereInput
+  some?: Prisma.EmployeeStatutoryRecordWhereInput
+  none?: Prisma.EmployeeStatutoryRecordWhereInput
+}
+
+export type EmployeeStatutoryRecordOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type EmployeeStatutoryRecordOrganizationIdEmployeeIdSchemeCodePeriodStartPeriodEndCompoundUniqueInput = {
   organizationId: string
   employeeId: string
@@ -608,20 +618,6 @@ export type EmployeeStatutoryRecordSumOrderByAggregateInput = {
   employeeAmount?: Prisma.SortOrder
   employerAmount?: Prisma.SortOrder
   version?: Prisma.SortOrder
-}
-
-export type EmployeeStatutoryRecordListRelationFilter = {
-  every?: Prisma.EmployeeStatutoryRecordWhereInput
-  some?: Prisma.EmployeeStatutoryRecordWhereInput
-  none?: Prisma.EmployeeStatutoryRecordWhereInput
-}
-
-export type EmployeeStatutoryRecordOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
-export type EnumComplianceRecordStatusFieldUpdateOperationsInput = {
-  set?: $Enums.ComplianceRecordStatus
 }
 
 export type EmployeeStatutoryRecordCreateNestedManyWithoutOrganizationInput = {
@@ -706,6 +702,10 @@ export type EmployeeStatutoryRecordUncheckedUpdateManyWithoutEmployeeNestedInput
   update?: Prisma.EmployeeStatutoryRecordUpdateWithWhereUniqueWithoutEmployeeInput | Prisma.EmployeeStatutoryRecordUpdateWithWhereUniqueWithoutEmployeeInput[]
   updateMany?: Prisma.EmployeeStatutoryRecordUpdateManyWithWhereWithoutEmployeeInput | Prisma.EmployeeStatutoryRecordUpdateManyWithWhereWithoutEmployeeInput[]
   deleteMany?: Prisma.EmployeeStatutoryRecordScalarWhereInput | Prisma.EmployeeStatutoryRecordScalarWhereInput[]
+}
+
+export type EnumComplianceRecordStatusFieldUpdateOperationsInput = {
+  set?: $Enums.ComplianceRecordStatus
 }
 
 export type EmployeeStatutoryRecordCreateWithoutOrganizationInput = {

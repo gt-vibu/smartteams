@@ -34,6 +34,7 @@ export type BranchMinAggregateOutputType = {
   status: $Enums.OrganizationStatus | null
   timezone: string | null
   geofenceMode: $Enums.GeofenceMode | null
+  requireGps: boolean | null
   geofenceOwnerSource: $Enums.OwnerSource | null
   geofenceOwnerClientId: string | null
   biometricVerificationMode: $Enums.BiometricVerificationMode | null
@@ -53,6 +54,7 @@ export type BranchMaxAggregateOutputType = {
   status: $Enums.OrganizationStatus | null
   timezone: string | null
   geofenceMode: $Enums.GeofenceMode | null
+  requireGps: boolean | null
   geofenceOwnerSource: $Enums.OwnerSource | null
   geofenceOwnerClientId: string | null
   biometricVerificationMode: $Enums.BiometricVerificationMode | null
@@ -72,6 +74,7 @@ export type BranchCountAggregateOutputType = {
   status: number
   timezone: number
   geofenceMode: number
+  requireGps: number
   geofenceOwnerSource: number
   geofenceOwnerClientId: number
   biometricVerificationMode: number
@@ -94,6 +97,7 @@ export type BranchMinAggregateInputType = {
   status?: true
   timezone?: true
   geofenceMode?: true
+  requireGps?: true
   geofenceOwnerSource?: true
   geofenceOwnerClientId?: true
   biometricVerificationMode?: true
@@ -113,6 +117,7 @@ export type BranchMaxAggregateInputType = {
   status?: true
   timezone?: true
   geofenceMode?: true
+  requireGps?: true
   geofenceOwnerSource?: true
   geofenceOwnerClientId?: true
   biometricVerificationMode?: true
@@ -132,6 +137,7 @@ export type BranchCountAggregateInputType = {
   status?: true
   timezone?: true
   geofenceMode?: true
+  requireGps?: true
   geofenceOwnerSource?: true
   geofenceOwnerClientId?: true
   biometricVerificationMode?: true
@@ -225,6 +231,7 @@ export type BranchGroupByOutputType = {
   status: $Enums.OrganizationStatus
   timezone: string | null
   geofenceMode: $Enums.GeofenceMode | null
+  requireGps: boolean | null
   geofenceOwnerSource: $Enums.OwnerSource
   geofenceOwnerClientId: string | null
   biometricVerificationMode: $Enums.BiometricVerificationMode | null
@@ -266,6 +273,7 @@ export type BranchWhereInput = {
   status?: Prisma.EnumOrganizationStatusFilter<"Branch"> | $Enums.OrganizationStatus
   timezone?: Prisma.StringNullableFilter<"Branch"> | string | null
   geofenceMode?: Prisma.EnumGeofenceModeNullableFilter<"Branch"> | $Enums.GeofenceMode | null
+  requireGps?: Prisma.BoolNullableFilter<"Branch"> | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"Branch"> | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.UuidNullableFilter<"Branch"> | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeNullableFilter<"Branch"> | $Enums.BiometricVerificationMode | null
@@ -306,6 +314,7 @@ export type BranchOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrderInput | Prisma.SortOrder
   geofenceMode?: Prisma.SortOrderInput | Prisma.SortOrder
+  requireGps?: Prisma.SortOrderInput | Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
   geofenceOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
   biometricVerificationMode?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -351,6 +360,7 @@ export type BranchWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumOrganizationStatusFilter<"Branch"> | $Enums.OrganizationStatus
   timezone?: Prisma.StringNullableFilter<"Branch"> | string | null
   geofenceMode?: Prisma.EnumGeofenceModeNullableFilter<"Branch"> | $Enums.GeofenceMode | null
+  requireGps?: Prisma.BoolNullableFilter<"Branch"> | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"Branch"> | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.UuidNullableFilter<"Branch"> | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeNullableFilter<"Branch"> | $Enums.BiometricVerificationMode | null
@@ -391,6 +401,7 @@ export type BranchOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrderInput | Prisma.SortOrder
   geofenceMode?: Prisma.SortOrderInput | Prisma.SortOrder
+  requireGps?: Prisma.SortOrderInput | Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
   geofenceOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
   biometricVerificationMode?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -417,6 +428,7 @@ export type BranchScalarWhereWithAggregatesInput = {
   status?: Prisma.EnumOrganizationStatusWithAggregatesFilter<"Branch"> | $Enums.OrganizationStatus
   timezone?: Prisma.StringNullableWithAggregatesFilter<"Branch"> | string | null
   geofenceMode?: Prisma.EnumGeofenceModeNullableWithAggregatesFilter<"Branch"> | $Enums.GeofenceMode | null
+  requireGps?: Prisma.BoolNullableWithAggregatesFilter<"Branch"> | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceWithAggregatesFilter<"Branch"> | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.UuidNullableWithAggregatesFilter<"Branch"> | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeNullableWithAggregatesFilter<"Branch"> | $Enums.BiometricVerificationMode | null
@@ -436,6 +448,7 @@ export type BranchCreateInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -474,6 +487,7 @@ export type BranchUncheckedCreateInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -510,6 +524,7 @@ export type BranchUpdateInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -548,6 +563,7 @@ export type BranchUncheckedUpdateInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -585,6 +601,7 @@ export type BranchCreateManyInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -604,6 +621,7 @@ export type BranchUpdateManyMutationInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -622,6 +640,7 @@ export type BranchUncheckedUpdateManyInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -672,6 +691,7 @@ export type BranchCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  requireGps?: Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
   geofenceOwnerClientId?: Prisma.SortOrder
   biometricVerificationMode?: Prisma.SortOrder
@@ -692,6 +712,7 @@ export type BranchMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  requireGps?: Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
   geofenceOwnerClientId?: Prisma.SortOrder
   biometricVerificationMode?: Prisma.SortOrder
@@ -711,6 +732,7 @@ export type BranchMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   timezone?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  requireGps?: Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
   geofenceOwnerClientId?: Prisma.SortOrder
   biometricVerificationMode?: Prisma.SortOrder
@@ -1131,6 +1153,7 @@ export type BranchCreateWithoutRequestRecordsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -1168,6 +1191,7 @@ export type BranchUncheckedCreateWithoutRequestRecordsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -1219,6 +1243,7 @@ export type BranchUpdateWithoutRequestRecordsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1256,6 +1281,7 @@ export type BranchUncheckedUpdateWithoutRequestRecordsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -1291,6 +1317,7 @@ export type BranchCreateWithoutAuditLogsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -1328,6 +1355,7 @@ export type BranchUncheckedCreateWithoutAuditLogsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -1379,6 +1407,7 @@ export type BranchUpdateWithoutAuditLogsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1416,6 +1445,7 @@ export type BranchUncheckedUpdateWithoutAuditLogsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -1451,6 +1481,7 @@ export type BranchCreateWithoutGeofenceOwnerClientInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -1488,6 +1519,7 @@ export type BranchUncheckedCreateWithoutGeofenceOwnerClientInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -1533,6 +1565,7 @@ export type BranchCreateWithoutBiometricOwnerClientInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -1570,6 +1603,7 @@ export type BranchUncheckedCreateWithoutBiometricOwnerClientInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -1635,6 +1669,7 @@ export type BranchScalarWhereInput = {
   status?: Prisma.EnumOrganizationStatusFilter<"Branch"> | $Enums.OrganizationStatus
   timezone?: Prisma.StringNullableFilter<"Branch"> | string | null
   geofenceMode?: Prisma.EnumGeofenceModeNullableFilter<"Branch"> | $Enums.GeofenceMode | null
+  requireGps?: Prisma.BoolNullableFilter<"Branch"> | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"Branch"> | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.UuidNullableFilter<"Branch"> | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeNullableFilter<"Branch"> | $Enums.BiometricVerificationMode | null
@@ -1670,6 +1705,7 @@ export type BranchCreateWithoutGrantsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -1707,6 +1743,7 @@ export type BranchUncheckedCreateWithoutGrantsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -1758,6 +1795,7 @@ export type BranchUpdateWithoutGrantsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1795,6 +1833,7 @@ export type BranchUncheckedUpdateWithoutGrantsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -1830,6 +1869,7 @@ export type BranchCreateWithoutAttendanceRecordsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -1867,6 +1907,7 @@ export type BranchUncheckedCreateWithoutAttendanceRecordsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -1918,6 +1959,7 @@ export type BranchUpdateWithoutAttendanceRecordsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1955,6 +1997,7 @@ export type BranchUncheckedUpdateWithoutAttendanceRecordsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -1990,6 +2033,7 @@ export type BranchCreateWithoutHolidaysInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -2027,6 +2071,7 @@ export type BranchUncheckedCreateWithoutHolidaysInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -2078,6 +2123,7 @@ export type BranchUpdateWithoutHolidaysInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -2115,6 +2161,7 @@ export type BranchUncheckedUpdateWithoutHolidaysInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -2150,6 +2197,7 @@ export type BranchCreateWithoutLeavePolicyAssignmentsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -2187,6 +2235,7 @@ export type BranchUncheckedCreateWithoutLeavePolicyAssignmentsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -2238,6 +2287,7 @@ export type BranchUpdateWithoutLeavePolicyAssignmentsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -2275,6 +2325,7 @@ export type BranchUncheckedUpdateWithoutLeavePolicyAssignmentsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -2310,6 +2361,7 @@ export type BranchCreateWithoutLeaveRequestsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -2347,6 +2399,7 @@ export type BranchUncheckedCreateWithoutLeaveRequestsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -2398,6 +2451,7 @@ export type BranchUpdateWithoutLeaveRequestsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -2435,6 +2489,7 @@ export type BranchUncheckedUpdateWithoutLeaveRequestsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -2470,6 +2525,7 @@ export type BranchCreateWithoutShiftsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -2507,6 +2563,7 @@ export type BranchUncheckedCreateWithoutShiftsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -2558,6 +2615,7 @@ export type BranchUpdateWithoutShiftsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -2595,6 +2653,7 @@ export type BranchUncheckedUpdateWithoutShiftsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -2630,6 +2689,7 @@ export type BranchCreateWithoutShiftAssignmentsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -2667,6 +2727,7 @@ export type BranchUncheckedCreateWithoutShiftAssignmentsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -2718,6 +2779,7 @@ export type BranchUpdateWithoutShiftAssignmentsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -2755,6 +2817,7 @@ export type BranchUncheckedUpdateWithoutShiftAssignmentsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -2790,6 +2853,7 @@ export type BranchCreateWithoutTimesheetsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -2827,6 +2891,7 @@ export type BranchUncheckedCreateWithoutTimesheetsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -2878,6 +2943,7 @@ export type BranchUpdateWithoutTimesheetsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -2915,6 +2981,7 @@ export type BranchUncheckedUpdateWithoutTimesheetsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -2950,6 +3017,7 @@ export type BranchCreateWithoutRolesInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -2987,6 +3055,7 @@ export type BranchUncheckedCreateWithoutRolesInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -3038,6 +3107,7 @@ export type BranchUpdateWithoutRolesInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -3075,6 +3145,7 @@ export type BranchUncheckedUpdateWithoutRolesInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -3110,6 +3181,7 @@ export type BranchCreateWithoutUserRolesInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -3147,6 +3219,7 @@ export type BranchUncheckedCreateWithoutUserRolesInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -3198,6 +3271,7 @@ export type BranchUpdateWithoutUserRolesInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -3235,6 +3309,7 @@ export type BranchUncheckedUpdateWithoutUserRolesInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -3270,6 +3345,7 @@ export type BranchCreateWithoutOrganizationInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -3306,6 +3382,7 @@ export type BranchUncheckedCreateWithoutOrganizationInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -3368,6 +3445,7 @@ export type BranchCreateWithoutWorkLocationsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -3405,6 +3483,7 @@ export type BranchUncheckedCreateWithoutWorkLocationsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -3456,6 +3535,7 @@ export type BranchUpdateWithoutWorkLocationsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -3493,6 +3573,7 @@ export type BranchUncheckedUpdateWithoutWorkLocationsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -3528,6 +3609,7 @@ export type BranchCreateWithoutPrimaryEmployeesInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -3565,6 +3647,7 @@ export type BranchUncheckedCreateWithoutPrimaryEmployeesInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -3616,6 +3699,7 @@ export type BranchUpdateWithoutPrimaryEmployeesInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -3653,6 +3737,7 @@ export type BranchUncheckedUpdateWithoutPrimaryEmployeesInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -3688,6 +3773,7 @@ export type BranchCreateWithoutEmployeeAssignmentsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -3725,6 +3811,7 @@ export type BranchUncheckedCreateWithoutEmployeeAssignmentsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -3776,6 +3863,7 @@ export type BranchUpdateWithoutEmployeeAssignmentsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -3813,6 +3901,7 @@ export type BranchUncheckedUpdateWithoutEmployeeAssignmentsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -3848,6 +3937,7 @@ export type BranchCreateWithoutTeamsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -3885,6 +3975,7 @@ export type BranchUncheckedCreateWithoutTeamsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -3936,6 +4027,7 @@ export type BranchUpdateWithoutTeamsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -3973,6 +4065,7 @@ export type BranchUncheckedUpdateWithoutTeamsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -4008,6 +4101,7 @@ export type BranchCreateWithoutProjectsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -4045,6 +4139,7 @@ export type BranchUncheckedCreateWithoutProjectsInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -4096,6 +4191,7 @@ export type BranchUpdateWithoutProjectsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -4133,6 +4229,7 @@ export type BranchUncheckedUpdateWithoutProjectsInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -4169,6 +4266,7 @@ export type BranchCreateManyGeofenceOwnerClientInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: $Enums.OwnerSource
@@ -4188,6 +4286,7 @@ export type BranchCreateManyBiometricOwnerClientInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -4206,6 +4305,7 @@ export type BranchUpdateWithoutGeofenceOwnerClientInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -4243,6 +4343,7 @@ export type BranchUncheckedUpdateWithoutGeofenceOwnerClientInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -4279,6 +4380,7 @@ export type BranchUncheckedUpdateManyWithoutGeofenceOwnerClientInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -4297,6 +4399,7 @@ export type BranchUpdateWithoutBiometricOwnerClientInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -4334,6 +4437,7 @@ export type BranchUncheckedUpdateWithoutBiometricOwnerClientInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -4370,6 +4474,7 @@ export type BranchUncheckedUpdateManyWithoutBiometricOwnerClientInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -4388,6 +4493,7 @@ export type BranchCreateManyOrganizationInput = {
   status?: $Enums.OrganizationStatus
   timezone?: string | null
   geofenceMode?: $Enums.GeofenceMode | null
+  requireGps?: boolean | null
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode | null
@@ -4407,6 +4513,7 @@ export type BranchUpdateWithoutOrganizationInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -4443,6 +4550,7 @@ export type BranchUncheckedUpdateWithoutOrganizationInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -4479,6 +4587,7 @@ export type BranchUncheckedUpdateManyWithoutOrganizationInput = {
   status?: Prisma.EnumOrganizationStatusFieldUpdateOperationsInput | $Enums.OrganizationStatus
   timezone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  requireGps?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.NullableEnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode | null
@@ -4674,6 +4783,7 @@ export type BranchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   status?: boolean
   timezone?: boolean
   geofenceMode?: boolean
+  requireGps?: boolean
   geofenceOwnerSource?: boolean
   geofenceOwnerClientId?: boolean
   biometricVerificationMode?: boolean
@@ -4715,6 +4825,7 @@ export type BranchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   status?: boolean
   timezone?: boolean
   geofenceMode?: boolean
+  requireGps?: boolean
   geofenceOwnerSource?: boolean
   geofenceOwnerClientId?: boolean
   biometricVerificationMode?: boolean
@@ -4738,6 +4849,7 @@ export type BranchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   status?: boolean
   timezone?: boolean
   geofenceMode?: boolean
+  requireGps?: boolean
   geofenceOwnerSource?: boolean
   geofenceOwnerClientId?: boolean
   biometricVerificationMode?: boolean
@@ -4761,6 +4873,7 @@ export type BranchSelectScalar = {
   status?: boolean
   timezone?: boolean
   geofenceMode?: boolean
+  requireGps?: boolean
   geofenceOwnerSource?: boolean
   geofenceOwnerClientId?: boolean
   biometricVerificationMode?: boolean
@@ -4771,7 +4884,7 @@ export type BranchSelectScalar = {
   updatedAt?: boolean
 }
 
-export type BranchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "code" | "source" | "externalId" | "status" | "timezone" | "geofenceMode" | "geofenceOwnerSource" | "geofenceOwnerClientId" | "biometricVerificationMode" | "biometricOwnerSource" | "biometricOwnerClientId" | "address" | "createdAt" | "updatedAt", ExtArgs["result"]["branch"]>
+export type BranchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "code" | "source" | "externalId" | "status" | "timezone" | "geofenceMode" | "requireGps" | "geofenceOwnerSource" | "geofenceOwnerClientId" | "biometricVerificationMode" | "biometricOwnerSource" | "biometricOwnerClientId" | "address" | "createdAt" | "updatedAt", ExtArgs["result"]["branch"]>
 export type BranchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   workLocations?: boolean | Prisma.Branch$workLocationsArgs<ExtArgs>
@@ -4840,6 +4953,7 @@ export type $BranchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     status: $Enums.OrganizationStatus
     timezone: string | null
     geofenceMode: $Enums.GeofenceMode | null
+    requireGps: boolean | null
     geofenceOwnerSource: $Enums.OwnerSource
     geofenceOwnerClientId: string | null
     biometricVerificationMode: $Enums.BiometricVerificationMode | null
@@ -5300,6 +5414,7 @@ export interface BranchFieldRefs {
   readonly status: Prisma.FieldRef<"Branch", 'OrganizationStatus'>
   readonly timezone: Prisma.FieldRef<"Branch", 'String'>
   readonly geofenceMode: Prisma.FieldRef<"Branch", 'GeofenceMode'>
+  readonly requireGps: Prisma.FieldRef<"Branch", 'Boolean'>
   readonly geofenceOwnerSource: Prisma.FieldRef<"Branch", 'OwnerSource'>
   readonly geofenceOwnerClientId: Prisma.FieldRef<"Branch", 'String'>
   readonly biometricVerificationMode: Prisma.FieldRef<"Branch", 'BiometricVerificationMode'>

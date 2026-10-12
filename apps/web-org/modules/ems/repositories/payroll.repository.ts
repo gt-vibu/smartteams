@@ -1,22 +1,17 @@
 import {
-  parseOvertimeRates,
   parsePayComponent,
   parsePayComponentList,
+  parseOvertimeRates,
   parsePayrollPolicy,
-  parsePayrollPolicyList,
-  parsePayrollAssignmentRule,
-  parsePayrollAssignmentRuleList,
   parsePayrollRun,
   parsePayrollRunList,
   parsePayslipList,
   parseSalaryAdvanceList,
   parseSalaryProfile,
-  parseStatutoryRule,
   parseStatutoryRuleList,
-  type OvertimeRates,
   type PayComponentDefinition,
+  type OvertimeRates,
   type PayrollPolicy,
-  type PayrollAssignmentRule,
   type PayrollRun,
   type PayrollRunStatus,
   type Payslip,
@@ -196,17 +191,13 @@ export const payrollRepository = {
   async decideAdvance(
     organizationId: string,
     advanceId: string,
-    input: { status: 'APPROVED' | 'REJECTED'; comment?: string; approvedAmount?: number },
+    input: { status: 'APPROVED' | 'REJECTED'; comment: string; approvedAmount?: number },
   ): Promise<unknown> {
     return apiRequest(
       `${base(organizationId)}/advances/${encodeURIComponent(advanceId)}/decision`,
       {
         method: 'POST',
-        body: {
-          status: input.status,
-          ...(input.comment?.trim() ? { comment: input.comment.trim() } : {}),
-          ...(input.approvedAmount !== undefined ? { approvedAmount: input.approvedAmount } : {}),
-        },
+        body: input,
       },
     );
   },
@@ -322,7 +313,6 @@ export const payrollRepository = {
       pfEnabled: boolean;
       esiEnabled: boolean;
       ptEnabled: boolean;
-      payrollPolicyId?: string;
     },
   ): Promise<unknown> {
     return apiRequest(`${base(organizationId)}/profile`, { method: 'POST', body: input });
@@ -333,30 +323,6 @@ export const payrollRepository = {
     return expectShape(
       parsePayrollPolicy(await apiRequest(`${base(organizationId)}/policy`, { method: 'GET' })),
       'payroll policy',
-    );
-  },
-
-  async listPolicies(organizationId: string): Promise<PayrollPolicy[]> {
-    return expectShape(
-      parsePayrollPolicyList(await apiRequest(`${base(organizationId)}/policies`, { method: 'GET' })),
-      'payroll policy list',
-    );
-  },
-
-  async listAssignmentRules(organizationId: string): Promise<PayrollAssignmentRule[]> {
-    return expectShape(
-      parsePayrollAssignmentRuleList(await apiRequest(`${base(organizationId)}/assignment-rules`, { method: 'GET' })),
-      'salary assignment rules',
-    );
-  },
-
-  async saveAssignmentRule(
-    organizationId: string,
-    input: Omit<PayrollAssignmentRule, 'id' | 'payrollPolicy'> & { id?: string },
-  ): Promise<PayrollAssignmentRule> {
-    return expectShape(
-      parsePayrollAssignmentRule(await apiRequest(`${base(organizationId)}/assignment-rules`, { method: 'POST', body: input })),
-      'salary assignment rule',
     );
   },
 
@@ -372,7 +338,6 @@ export const payrollRepository = {
       basePercentage: number;
       baseMinimum: number;
       hraPercentage: number;
-      defaultGrossSalary?: number | null;
       pfDefault: boolean;
       esiDefault: boolean;
       ptDefault: boolean;
@@ -425,15 +390,6 @@ export const payrollRepository = {
         ),
       ),
       'statutory rule list',
-    );
-  },
-
-  async saveStatutoryRule(organizationId: string, input: StatutoryRule): Promise<StatutoryRule> {
-    return expectShape(
-      parseStatutoryRule(
-        await apiRequest(`${base(organizationId)}/statutory-rules`, { method: 'POST', body: input }),
-      ),
-      'statutory rule',
     );
   },
 

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Button, Label, Textarea } from '@smarteam/ui';
 import {
   ATTENDANCE_CORRECTION_REASON_MAX_LENGTH,
-  ATTENDANCE_CORRECTION_REASON_MIN_LENGTH,
+  ATTENDANCE_HOLIDAY_REVIEW_REASON_MIN_LENGTH,
 } from '@smarteam/contracts';
 import { HOLIDAY_CHECK_IN_REASON_SUGGESTIONS } from '../../services/holiday-conflict-view';
 
@@ -32,7 +32,7 @@ export function HolidayCheckInForm({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
-  const ready = reason.trim().length >= ATTENDANCE_CORRECTION_REASON_MIN_LENGTH;
+  const ready = reason.trim().length >= ATTENDANCE_HOLIDAY_REVIEW_REASON_MIN_LENGTH;
 
   const submit = async () => {
     if (!ready || saving) return;
@@ -81,7 +81,7 @@ export function HolidayCheckInForm({
           value={reason}
           maxLength={ATTENDANCE_CORRECTION_REASON_MAX_LENGTH}
           onChange={(event) => setReason(event.target.value)}
-          placeholder={`Reason (at least ${ATTENDANCE_CORRECTION_REASON_MIN_LENGTH} characters)`}
+          placeholder="Reason for working on this holiday"
           disabled={saving}
         />
       </div>

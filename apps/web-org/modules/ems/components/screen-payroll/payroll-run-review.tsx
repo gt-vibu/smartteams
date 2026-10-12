@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { LoadingIndicator, Button } from '@smarteam/ui';
+import { Button } from '@smarteam/ui';
 import { formatMoney } from '@smarteam/contracts';
 import { useSession } from '../../hooks/auth-context';
 import { useAsyncResource } from '../../hooks/use-async-resource';
@@ -38,7 +38,7 @@ export function PayrollRunReview({ runId, calculatedAt }: { runId: string; calcu
     { enabled: open && Boolean(organizationId) },
   );
   const data = review.data;
-  const noNetPay = data ? data.items.filter((item) => item.net <= 0).length : 0;
+  const unpaid = data ? data.items.filter((item) => item.gross <= 0 && item.net <= 0).length : 0;
 
   return (
     <div className="border-t border-border">
@@ -57,7 +57,9 @@ export function PayrollRunReview({ runId, calculatedAt }: { runId: string; calcu
         </Button>
       </div>
       {open && review.loading && (
-        <LoadingIndicator variant="inline" label="Loading the run’s figures" className="px-4 pb-3 text-[11px] text-muted-foreground" />
+        <p className="px-4 pb-3 text-[11px] text-muted-foreground" role="status">
+          Loading the run’s figures…
+        </p>
       )}
       {open && review.error && (
         <p className="px-4 pb-3 text-[11px] text-destructive" role="alert">
@@ -69,8 +71,8 @@ export function PayrollRunReview({ runId, calculatedAt }: { runId: string; calcu
           <dl className="grid grid-cols-2 gap-px border-t border-border bg-border sm:grid-cols-4">
             {[
               {
-                label: 'Employees with net pay',
-                value: `${data.items.length - noNetPay} of ${data.items.length}`,
+                label: 'Employees paid',
+                value: `${data.items.length - unpaid} of ${data.items.length}`,
               },
               { label: 'Gross', value: formatMoney(data.totals.gross) },
               { label: 'Deductions', value: formatMoney(data.totals.deductions) },
@@ -80,9 +82,7 @@ export function PayrollRunReview({ runId, calculatedAt }: { runId: string; calcu
                 <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   {tile.label}
                 </dt>
-                <dd className="mt-0.5 tabular-nums text-xs font-bold text-foreground">
-                  {tile.value}
-                </dd>
+                <dd className="mt-0.5 font-mono text-xs font-bold text-foreground">{tile.value}</dd>
               </div>
             ))}
           </dl>
@@ -102,17 +102,19 @@ export function PayrollRunReview({ runId, calculatedAt }: { runId: string; calcu
                     <td className="px-4 py-2">
                       <span className="font-medium text-foreground">{item.name}</span>{' '}
                       <span className="text-muted-foreground">{item.employeeNumber}</span>
-                      {item.net <= 0 && (
+                      {item.gross <= 0 && item.net <= 0 && (
                         <span className="ml-2 text-[10px] text-muted-foreground">
-                          no net pay
+                          nothing to pay
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-2 text-right tabular-nums">{formatMoney(item.gross)}</td>
-                    <td className="px-4 py-2 text-right tabular-nums">
+                    <td className="px-4 py-2 text-right font-mono tabular-nums">
+                      {formatMoney(item.gross)}
+                    </td>
+                    <td className="px-4 py-2 text-right font-mono tabular-nums">
                       {formatMoney(item.deductions)}
                     </td>
-                    <td className="px-4 py-2 text-right font-semibold tabular-nums">
+                    <td className="px-4 py-2 text-right font-mono font-semibold tabular-nums">
                       {formatMoney(item.net)}
                     </td>
                   </tr>

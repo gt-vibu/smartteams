@@ -4,11 +4,11 @@ import { SalarySlipMode } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { unmarkedDaysAreAbsent } from '../attendance/attendance-work-week.service';
-import { withNationalStatutoryRules } from './payroll-national-statutory';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { calculateSalaryStructure } from './payroll-salary-structure';
 import {
   countWorkingDays,
+  payrollPeriodCutoffs,
   summarizeAttendance,
   summarizeLeave,
   sumTimesheets,
@@ -22,6 +22,7 @@ import { dateOnly, type PreviewInput } from './payroll-policy.types';
 import { employeeScope, findPolicy, resolveEmployeeId } from './payroll-policy-access';
 import { DEFAULT_PAYROLL_POLICY } from './payroll-policy-defaults';
 import { readAdvanceRules, recoveryInstalment } from './payroll-advance-rules';
+import { effectivePolicyComponents, policyComponentDefaults } from './payroll-policy-components';
 
 @Injectable()
 export class PayrollPreviewService {
@@ -49,15 +50,10 @@ export class PayrollPreviewService {
           ...employeeScope(context),
         },
         include: {
-          employmentRecords: {
-            where: { effectiveFrom: { lte: periodEnd }, OR: [{ effectiveTo: null }, { effectiveTo: { gte: periodStart } }] },
-            orderBy: { effectiveFrom: 'desc' },
-            take: 1,
-          },
           compensations: {
             where: {
               effectiveFrom: { lte: periodEnd },
-              OR: [{ effectiveTo: null }, { effectiveTo: { gte: periodStart } }],
+              OR: [{ effectiveTo: null }, { effectiveTo: { gte: periodEnd } }],
             },
             orderBy: { effectiveFrom: 'desc' },
             take: 1,
@@ -85,22 +81,25 @@ export class PayrollPreviewService {
         },
       });
       if (!employee) throw new NotFoundError('Employee');
+      const compensation = employee.compensations[0];
+      if (!compensation) throw new ConflictError('Employee has no salary profile for this period');
       const employeePolicy = employee.payrollPolicies[0];
-      const policy = employeePolicy?.assignmentSource === 'INDIVIDUAL_OVERRIDE'
-        ? employeePolicy.payrollPolicy ?? DEFAULT_PAYROLL_POLICY
-        : (await findPolicy(tx, context.organizationId, periodStart)) ?? DEFAULT_PAYROLL_POLICY;
-      const compensation = employee.compensations[0] ?? (policy.defaultGrossSalary == null ? null : {
-        grossSalary: policy.defaultGrossSalary,
-        baseAmount: policy.defaultGrossSalary,
-        overtimeMultiplier: new Prisma.Decimal(1),
-      });
-      if (!compensation) throw new ConflictError('Employee has no salary profile or organization default salary for this period');
+      const organizationPolicy =
+        (await findPolicy(tx, context.organizationId, periodStart)) ?? DEFAULT_PAYROLL_POLICY;
+      const policy = employeePolicy?.payrollPolicyId
+        ? ((await findPolicy(
+            tx,
+            context.organizationId,
+            periodStart,
+            employeePolicy.payrollPolicyId,
+            employeePolicy.effectiveFrom,
+          )) ?? DEFAULT_PAYROLL_POLICY)
+        : DEFAULT_PAYROLL_POLICY;
       if (!(employeePolicy?.payrollEnabled ?? policy.payrollEnabledDefault))
         throw new ConflictError('Payroll is disabled for this employee');
       const gross = compensation.grossSalary ?? compensation.baseAmount;
       const monthlyStructure = calculateSalaryStructure(gross, policy);
-      const today = dateOnly(new Date().toISOString());
-      const measuredEnd = today < periodEnd ? today : periodEnd;
+      const { measuredEnd, absenceEnd } = payrollPeriodCutoffs(periodStart, periodEnd);
       const [settings, holidays, employeeHolidaySelections, approvedTimesheets] = await Promise.all(
         [
           tx.organizationSettings.findUniqueOrThrow({
@@ -172,11 +171,9 @@ export class PayrollPreviewService {
           },
         }),
       ]);
-      // Absences are counted up to yesterday: today can still be checked into.
-      const absenceEnd = new Date(Math.min(measuredEnd.getTime(), today.getTime() - 86_400_000));
       const attendance = summarizeAttendance(
-        attendanceRecords,
-        !unmarkedDaysAreAbsent(settings.metadata)
+        attendanceRecords.filter((record) => absenceEnd !== null && record.workDate <= absenceEnd),
+        !unmarkedDaysAreAbsent(settings.metadata) || absenceEnd === null
           ? undefined
           : {
               periodStart,
@@ -203,7 +200,8 @@ export class PayrollPreviewService {
         employee.dateOfLeaving,
       );
 
-      const jurisdiction = employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction;
+      const jurisdiction =
+        employeePolicy?.statutoryJurisdiction ?? organizationPolicy.statutoryJurisdiction;
       const advanceCutoff = endOfDay(periodEnd);
       const { recoveryMonths } = await readAdvanceRules(tx, context.organizationId);
       const [rules, advances, adjustments] = await Promise.all([
@@ -242,38 +240,22 @@ export class PayrollPreviewService {
         baseMinimum: new Prisma.Decimal(policy.baseMinimum),
         hraPercentage: new Prisma.Decimal(policy.hraPercentage),
       };
-      const employeeComponentIds = new Set(
-        employee.payComponents.map((assignment) => assignment.payComponentId),
-      );
-      const policyComponents = (
-        'components' in policy && Array.isArray(policy.components) ? policy.components : []
-      ) as typeof employee.payComponents;
-      const components = [
-        ...policyComponents
-          .filter((assignment) => !employeeComponentIds.has(assignment.payComponentId))
-          .map((assignment) => ({
-            componentId: assignment.payComponentId,
-            amount: assignment.amount,
-            percentage: assignment.percentage,
-            component: assignment.payComponent,
-          })),
-        ...employee.payComponents.map((assignment) => ({
-          componentId: assignment.payComponentId,
-          amount: assignment.amount,
-          percentage: assignment.percentage,
-          component: assignment.payComponent,
-        })),
-      ];
+      const components = effectivePolicyComponents(
+        policyComponentDefaults(policy),
+        employee.payComponents,
+      ).map((assignment) => ({
+        componentId: assignment.payComponentId,
+        amount: assignment.amount,
+        percentage: assignment.percentage,
+        component: assignment.payComponent,
+      }));
       const item = {
         employeeId,
+        periodMonth: periodEnd.getUTCMonth() + 1,
         compensation,
         employeePolicy: employeePolicy ?? null,
-        assignmentSource: employeePolicy?.assignmentSource === 'INDIVIDUAL_OVERRIDE'
-          ? 'INDIVIDUAL_OVERRIDE'
-          : 'ORGANIZATION_DEFAULT',
-        assignmentRuleId: null,
         policy: enginePolicy,
-        statutoryRules: withNationalStatutoryRules(rules, periodStart),
+        statutoryRules: rules,
         components,
         timesheet: sumTimesheets(approvedTimesheets),
         overtimeDays: sumOvertimeByDayType(attendanceRecords),
@@ -332,8 +314,6 @@ export class PayrollPreviewService {
 
       return {
         employeeId,
-        assignmentSource: item.assignmentSource,
-        assignmentRuleId: item.assignmentRuleId,
         periodStart: input.periodStart,
         periodEnd: input.periodEnd,
         payableDays,

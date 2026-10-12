@@ -139,5 +139,47 @@ export function mergeSalaryComponents(
           })
           .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
       : [];
-  return [...components, ...computed, ...statutory];
+  const calculated: Array<{
+    componentCode: string;
+    componentName: string;
+    componentType: string;
+    amount: Prisma.Decimal;
+  }> = [];
+  const addCalculated = (
+    code: string,
+    name: string,
+    componentType: 'EARNING' | 'DEDUCTION',
+    amount: Prisma.Decimal,
+  ) => {
+    if (existingCodes.has(code) || !amount.greaterThan(0)) return;
+    calculated.push({ componentCode: code, componentName: name, componentType, amount });
+    existingCodes.add(code);
+  };
+  if (isRecord(breakdown)) {
+    addCalculated(
+      'PAYROLL_OVERTIME',
+      'Overtime',
+      'EARNING',
+      decimalFromUnknown(breakdown.overtime),
+    );
+    addCalculated(
+      'PAYROLL_EARNING_ADJUSTMENT',
+      'Additional earnings',
+      'EARNING',
+      decimalFromUnknown(breakdown.earningAdjustmentTotal),
+    );
+    addCalculated(
+      'PAYROLL_DEDUCTION_ADJUSTMENT',
+      'Other deductions',
+      'DEDUCTION',
+      decimalFromUnknown(breakdown.deductionAdjustmentTotal),
+    );
+    addCalculated(
+      'PAYROLL_ADVANCE_RECOVERY',
+      'Salary advance recovery',
+      'DEDUCTION',
+      decimalFromUnknown(breakdown.advanceRecoveryTotal),
+    );
+  }
+  return [...components, ...computed, ...statutory, ...calculated];
 }

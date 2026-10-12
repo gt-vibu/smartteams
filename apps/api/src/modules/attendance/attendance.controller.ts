@@ -11,11 +11,10 @@ import {
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
-import { ApprovalInboxQueryDto } from '../approvals/approval-inbox.dto';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   AttendanceCorrectionDto,
-  AttendanceDateCorrectionDto,
+  MissingCheckOutCorrectionDto,
   AttendanceCorrectionQueryDto,
   AttendanceDecisionDto,
   AttendancePreferencesDto,
@@ -24,9 +23,10 @@ import {
   HolidayConflictQueryDto,
   HolidayReviewDecisionDto,
   HolidayReviewRequestDto,
-  MissingCheckOutCorrectionDto,
+  PunchDto,
 } from './attendance.dto';
 import { AttendanceService } from './attendance.service';
+import { parseWebauthnResponse, WebauthnService } from './webauthn.service';
 import {
   BeginAssertionDto,
   BeginEnrollmentDto,
@@ -34,9 +34,7 @@ import {
   CompleteEnrollmentDto,
   RevokeCredentialDto,
 } from './webauthn.dto';
-import { parseWebauthnResponse, WebauthnService } from './webauthn.service';
 
-import { NativePunchDto } from './attendance-native.dto';
 @Controller('v1/organizations/:organizationId/attendance')
 @UseGuards(NativeJwtGuard)
 export class AttendanceController {
@@ -70,7 +68,6 @@ export class AttendanceController {
   ) {
     return this.contexts.native(request.user.userId, organizationId).then((context) =>
       this.attendance.listCorrectionRequests(context, {
-        cursor: query.cursor, search: query.search,
         ...(query.employeeId ? { employeeId: query.employeeId } : {}),
         ...(query.status ? { status: query.status } : {}),
         ...(query.limit ? { limit: query.limit } : {}),
@@ -81,13 +78,12 @@ export class AttendanceController {
   /** Corrections awaiting the signed-in user's decision. */
   @Get('corrections/inbox') correctionInbox(
     @Param('organizationId') organizationId: string,
-    @Query() query: ApprovalInboxQueryDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) =>
-        this.attendance.listPendingCorrectionApprovals(context, request.user.userId, query),
+        this.attendance.listPendingCorrectionApprovals(context, request.user.userId),
       );
   }
 
@@ -148,7 +144,7 @@ export class AttendanceController {
 
   @Post('check-ins') checkIn(
     @Param('organizationId') organizationId: string,
-    @Body() body: NativePunchDto,
+    @Body() body: PunchDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -157,7 +153,7 @@ export class AttendanceController {
   }
   @Post('check-outs') checkOut(
     @Param('organizationId') organizationId: string,
-    @Body() body: NativePunchDto,
+    @Body() body: PunchDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -175,18 +171,6 @@ export class AttendanceController {
     return this.contexts
       .native(request.user.userId, organizationId, undefined, body.reason)
       .then((context) => this.attendance.requestCorrection(context, attendanceId, body));
-  }
-  /** Records an employee's request for a day with no attendance row. Approval applies it. */
-  @Post('corrections/date') correctionForDate(
-    @Param('organizationId') organizationId: string,
-    @Body() body: AttendanceDateCorrectionDto,
-    @Req() request: Request & { user: NativeRequestUser },
-  ) {
-    return this.contexts
-      .native(request.user.userId, organizationId, undefined, body.reason)
-      .then((context) =>
-        this.attendance.requestCorrectionForDate(context, body.employeeId, body.workDate, body),
-      );
   }
   /** Native only: supply the check-out a day never had. Federation has no equivalent route. */
   @Post(':attendanceId/corrections/missing-check-out') missingCheckOut(

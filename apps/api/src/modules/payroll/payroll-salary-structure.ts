@@ -1,5 +1,6 @@
 import { Prisma } from '../../generated/prisma/client';
 import { PayrollRoundingMode } from '../../generated/prisma/enums';
+import { ConflictError } from '../../common/errors/domain-error';
 
 export type SalaryStructurePolicy = {
   basePercentage: Prisma.Decimal | number | string;
@@ -33,6 +34,23 @@ export type StatutoryResult = {
   eligible: boolean;
   reason: string;
 };
+
+export function assertStatutoryRulesConfigured(
+  enabled: { pf: boolean; esi: boolean; pt: boolean },
+  rules: readonly Pick<StatutoryRuleInput, 'schemeCode'>[],
+) {
+  const configured = new Set(rules.map((rule) => rule.schemeCode.toUpperCase()));
+  const missing = [
+    ...(enabled.pf && !configured.has('PF') && !configured.has('EPF') ? ['EPF'] : []),
+    ...(enabled.esi && !configured.has('ESI') && !configured.has('ESIC') ? ['ESI'] : []),
+    ...(enabled.pt && !configured.has('PT') && !configured.has('PROFESSIONAL_TAX') ? ['PT'] : []),
+  ];
+  if (missing.length) {
+    throw new ConflictError(
+      `Set up ${missing.join(', ')} statutory rule${missing.length === 1 ? '' : 's'} for the employee's jurisdiction before calculating payroll.`,
+    );
+  }
+}
 
 export function calculateSalaryStructure(
   grossInput: Prisma.Decimal | number | string,

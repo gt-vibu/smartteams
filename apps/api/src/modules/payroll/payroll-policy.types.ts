@@ -10,6 +10,7 @@ import type {
 import { AccessMode } from '../../generated/prisma/enums';
 
 export type PolicyInput = {
+  isDefault?: boolean;
   id?: string;
   name?: string;
   effectiveFrom: string;
@@ -49,6 +50,7 @@ export type PolicyComponentInput = {
 };
 
 export type EmployeePolicyInput = {
+  payrollPolicyId?: string;
   employeeId: string;
   effectiveFrom: string;
   effectiveTo?: string;
@@ -58,7 +60,6 @@ export type EmployeePolicyInput = {
   esiEnabled: boolean;
   ptEnabled: boolean;
   statutoryJurisdiction?: string;
-  payrollPolicyId?: string;
 };
 
 export type SalaryProfileInput = EmployeePolicyInput & {
@@ -106,7 +107,6 @@ export type PaymentInput = {
 
 export function toPolicyData(input: PolicyInput, effectiveTo: Date | null) {
   return {
-    name: input.name?.trim() || 'Standard payroll',
     effectiveTo,
     salarySlipDefault: input.salarySlipDefault,
     payrollEnabledDefault: input.payrollEnabledDefault,
@@ -114,7 +114,8 @@ export function toPolicyData(input: PolicyInput, effectiveTo: Date | null) {
     basePercentage: new Prisma.Decimal(input.basePercentage),
     baseMinimum: new Prisma.Decimal(input.baseMinimum),
     hraPercentage: new Prisma.Decimal(input.hraPercentage),
-    defaultGrossSalary: input.defaultGrossSalary == null ? null : new Prisma.Decimal(input.defaultGrossSalary),
+    defaultGrossSalary:
+      input.defaultGrossSalary == null ? null : new Prisma.Decimal(input.defaultGrossSalary),
     pfDefault: input.pfDefault,
     esiDefault: input.esiDefault,
     ptDefault: input.ptDefault,
@@ -125,6 +126,7 @@ export function toPolicyData(input: PolicyInput, effectiveTo: Date | null) {
 
 export function toEmployeePolicyData(input: EmployeePolicyInput, effectiveTo: Date | null) {
   return {
+    payrollPolicyId: input.payrollEnabled ? input.payrollPolicyId : null,
     effectiveTo,
     payrollEnabled: input.payrollEnabled,
     salarySlipMode: input.salarySlipMode,
@@ -146,7 +148,8 @@ export function validatePolicy(input: PolicyInput) {
     !Number.isFinite(input.baseMinimum) ||
     !Number.isFinite(input.basePercentage) ||
     !Number.isFinite(input.hraPercentage) ||
-    (input.defaultGrossSalary != null && (!Number.isFinite(input.defaultGrossSalary) || input.defaultGrossSalary <= 0)) ||
+    (input.defaultGrossSalary != null &&
+      (!Number.isFinite(input.defaultGrossSalary) || input.defaultGrossSalary <= 0)) ||
     input.baseMinimum < 0 ||
     input.basePercentage < 0 ||
     input.basePercentage > 100 ||
@@ -169,6 +172,22 @@ export function validateStatutoryRule(input: StatutoryRuleInput) {
   }
   if (input.metadata !== undefined && !isStatutoryMetadata(input.metadata))
     throw new ConflictError('Statutory rule metadata must contain valid slabs');
+  const scheme = input.schemeCode.trim().toUpperCase();
+  if (!['PF', 'EPF', 'ESI', 'ESIC', 'PT', 'PROFESSIONAL_TAX'].includes(scheme))
+    throw new ConflictError('Choose EPF, ESI, or Professional Tax as the statutory rule');
+  if (['PF', 'EPF', 'ESI', 'ESIC'].includes(scheme)) {
+    if (input.employeeRate === undefined || input.employerRate === undefined)
+      throw new ConflictError('Enter both employee and employer contribution rates');
+    if (input.employeeRate > 100 || input.employerRate > 100)
+      throw new ConflictError('Contribution rates cannot exceed 100%');
+  }
+  if (
+    ['PT', 'PROFESSIONAL_TAX'].includes(scheme) &&
+    input.flatAmount === undefined &&
+    input.employeeRate === undefined &&
+    !(input.metadata && Array.isArray(input.metadata.slabs) && input.metadata.slabs.length > 0)
+  )
+    throw new ConflictError('Enter a Professional Tax rate, flat amount, or slab schedule');
 }
 
 function isStatutoryMetadata(metadata: Record<string, unknown>) {

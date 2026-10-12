@@ -100,6 +100,7 @@ function setup(options: { existingOrganization?: boolean; existingGrant?: boolea
       {
         prepare: jest.fn().mockResolvedValue({ deliver: jest.fn().mockResolvedValue(undefined) }),
       } as never,
+      {} as never,
     ),
   };
 }

@@ -143,7 +143,7 @@ describe('project view', () => {
     };
   }
 
-  it('carries the role for active members', () => {
+  it('does not treat an assignment role as the employee current role', () => {
     const view = toProjectView(
       project([
         {
@@ -159,6 +159,6 @@ describe('project view', () => {
       BRANCHES,
     );
 
-    expect(view.activeMembers[0]?.projectRole).toBe('Lead');
+    expect(view.activeMembers[0]?.role).toBeNull();
   });
 });

@@ -24,6 +24,7 @@ function teamMembership(overrides: Partial<TeamMembership> = {}): TeamMembership
     state: 'NOT_A_MEMBER',
     memberId: null,
     endedOn: null,
+    isLead: false,
     ...overrides,
   };
 }
@@ -41,6 +42,7 @@ function projectMembership(overrides: Partial<ProjectMembership> = {}): ProjectM
     state: 'NOT_A_MEMBER',
     memberId: null,
     endedOn: null,
+    isLead: false,
     ...overrides,
   };
 }

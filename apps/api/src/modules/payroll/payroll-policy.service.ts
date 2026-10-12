@@ -45,14 +45,6 @@ export class PayrollPolicyService {
     return this.settings.savePolicy(...args);
   }
 
-  listAssignmentRules(...args: Parameters<PayrollPolicySettingsService['listAssignmentRules']>) {
-    return this.settings.listAssignmentRules(...args);
-  }
-
-  saveAssignmentRule(...args: Parameters<PayrollPolicySettingsService['saveAssignmentRule']>) {
-    return this.settings.saveAssignmentRule(...args);
-  }
-
   saveEmployeePolicy(...args: Parameters<PayrollPolicySettingsService['saveEmployeePolicy']>) {
     return this.settings.saveEmployeePolicy(...args);
   }

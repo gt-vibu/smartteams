@@ -37,10 +37,11 @@ export class AttendanceWorkWeekService {
   ) {}
 
   /** Readable by anyone who can see their own attendance: calendars need it to mark weekends. */
-  async get(context: DomainContext): Promise<WorkWeek> {
-    if (!['attendance.read', 'attendance.preferences.read', 'attendance.preferences.write', 'organizations.read']
-      .some((permission) => context.permissions.has(permission)))
-      requirePermission(context, 'attendance.read');
+  async get(
+    context: DomainContext,
+    permission: 'attendance.read' | 'attendance.preferences.read' = 'attendance.read',
+  ): Promise<WorkWeek> {
+    requirePermission(context, permission);
     return this.database.run(context, async (tx) => {
       const settings = await tx.organizationSettings.findUniqueOrThrow({
         where: { organizationId: context.organizationId },

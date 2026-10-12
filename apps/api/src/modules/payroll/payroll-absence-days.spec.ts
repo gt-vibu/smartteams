@@ -1,4 +1,4 @@
-import { summarizeAttendance } from './payroll-calculation';
+import { payrollPeriodCutoffs, summarizeAttendance } from './payroll-calculation';
 
 /**
  * Which working days with no attendance count as an absence, and so cost a day's pay.
@@ -17,6 +17,40 @@ const base = {
 const present = (key: string) => ({ dayStatus: 'PRESENT', workDate: day(key) });
 
 describe('absence days for payroll', () => {
+  it('does not treat today or future working days as absences during an open payroll period', () => {
+    const cutoffs = payrollPeriodCutoffs(
+      day('2026-10-01'),
+      day('2026-10-31'),
+      new Date('2026-10-07T10:00:00.000Z'),
+    );
+    expect(cutoffs.measuredEnd).toEqual(day('2026-10-07'));
+    expect(cutoffs.absenceEnd).toEqual(day('2026-10-06'));
+    const absenceEnd = cutoffs.absenceEnd;
+    if (!absenceEnd) throw new Error('Expected a completed attendance cutoff');
+
+    const summary = summarizeAttendance(
+      [present('2026-10-05')].filter((record) => record.workDate <= absenceEnd),
+      {
+        ...base,
+        periodStart: day('2026-10-05'),
+        periodEnd: absenceEnd,
+        workWeekDays: [1, 2, 3, 4, 5],
+      },
+    );
+    // 6 Oct is a completed weekday with no record; 7–31 Oct have not happened yet.
+    expect(summary.absentDays).toBe(1);
+  });
+
+  it('returns no absence cutoff when the entire payroll period is still in the future', () => {
+    expect(
+      payrollPeriodCutoffs(
+        day('2026-10-10'),
+        day('2026-10-31'),
+        new Date('2026-10-07T10:00:00.000Z'),
+      ),
+    ).toEqual({ measuredEnd: day('2026-10-07'), absenceEnd: null });
+  });
+
   it('counts a working day with no attendance at all as an absence', () => {
     const summary = summarizeAttendance(
       [present('2026-09-01'), present('2026-09-02'), present('2026-09-04')],

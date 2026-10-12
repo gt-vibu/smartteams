@@ -59,11 +59,15 @@ describe('organizationRepository', () => {
 
   it('sends only the three fields the API accepts', async () => {
     const spy = mockFetch(200, organization({ name: 'Renamed' }));
-    await organizationRepository.update(ORG, {
-      name: 'Renamed',
-      timezone: 'Asia/Kolkata',
-      currencyCode: 'INR',
-    });
+    await organizationRepository.update(
+      ORG,
+      {
+        name: 'Renamed',
+        timezone: 'Asia/Kolkata',
+        currencyCode: 'INR',
+      },
+      3,
+    );
 
     const [, init] = spy.mock.calls[0] as [string, { body: string; method: string }];
     expect(init.method).toBe('PATCH');
@@ -76,7 +80,7 @@ describe('organizationRepository', () => {
 
   it('returns the organization the server stored, not the value that was sent', async () => {
     mockFetch(200, organization({ name: 'Server wins', version: 4 }));
-    const result = await organizationRepository.update(ORG, { name: 'Client guess' });
+    const result = await organizationRepository.update(ORG, { name: 'Client guess' }, 3);
 
     expect(result.name).toBe('Server wins');
     expect(result.version).toBe(4);

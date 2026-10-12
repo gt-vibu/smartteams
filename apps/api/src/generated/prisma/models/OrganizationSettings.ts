@@ -63,6 +63,7 @@ export type OrganizationSettingsMinAggregateOutputType = {
   primaryBranchId: string | null
   optionalHolidayAllowance: number | null
   geofenceMode: $Enums.GeofenceMode | null
+  requireGps: boolean | null
   geofenceOwnerSource: $Enums.OwnerSource | null
   geofenceOwnerClientId: string | null
   biometricVerificationMode: $Enums.BiometricVerificationMode | null
@@ -89,6 +90,7 @@ export type OrganizationSettingsMaxAggregateOutputType = {
   primaryBranchId: string | null
   optionalHolidayAllowance: number | null
   geofenceMode: $Enums.GeofenceMode | null
+  requireGps: boolean | null
   geofenceOwnerSource: $Enums.OwnerSource | null
   geofenceOwnerClientId: string | null
   biometricVerificationMode: $Enums.BiometricVerificationMode | null
@@ -116,6 +118,7 @@ export type OrganizationSettingsCountAggregateOutputType = {
   primaryBranchId: number
   optionalHolidayAllowance: number
   geofenceMode: number
+  requireGps: number
   geofenceOwnerSource: number
   geofenceOwnerClientId: number
   biometricVerificationMode: number
@@ -173,6 +176,7 @@ export type OrganizationSettingsMinAggregateInputType = {
   primaryBranchId?: true
   optionalHolidayAllowance?: true
   geofenceMode?: true
+  requireGps?: true
   geofenceOwnerSource?: true
   geofenceOwnerClientId?: true
   biometricVerificationMode?: true
@@ -199,6 +203,7 @@ export type OrganizationSettingsMaxAggregateInputType = {
   primaryBranchId?: true
   optionalHolidayAllowance?: true
   geofenceMode?: true
+  requireGps?: true
   geofenceOwnerSource?: true
   geofenceOwnerClientId?: true
   biometricVerificationMode?: true
@@ -226,6 +231,7 @@ export type OrganizationSettingsCountAggregateInputType = {
   primaryBranchId?: true
   optionalHolidayAllowance?: true
   geofenceMode?: true
+  requireGps?: true
   geofenceOwnerSource?: true
   geofenceOwnerClientId?: true
   biometricVerificationMode?: true
@@ -341,6 +347,7 @@ export type OrganizationSettingsGroupByOutputType = {
   primaryBranchId: string | null
   optionalHolidayAllowance: number
   geofenceMode: $Enums.GeofenceMode
+  requireGps: boolean
   geofenceOwnerSource: $Enums.OwnerSource
   geofenceOwnerClientId: string | null
   biometricVerificationMode: $Enums.BiometricVerificationMode
@@ -392,6 +399,7 @@ export type OrganizationSettingsWhereInput = {
   primaryBranchId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   optionalHolidayAllowance?: Prisma.IntFilter<"OrganizationSettings"> | number
   geofenceMode?: Prisma.EnumGeofenceModeFilter<"OrganizationSettings"> | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFilter<"OrganizationSettings"> | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFilter<"OrganizationSettings"> | $Enums.BiometricVerificationMode
@@ -423,6 +431,7 @@ export type OrganizationSettingsOrderByWithRelationInput = {
   primaryBranchId?: Prisma.SortOrderInput | Prisma.SortOrder
   optionalHolidayAllowance?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  requireGps?: Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
   geofenceOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
   biometricVerificationMode?: Prisma.SortOrder
@@ -457,6 +466,7 @@ export type OrganizationSettingsWhereUniqueInput = Prisma.AtLeast<{
   primaryBranchId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   optionalHolidayAllowance?: Prisma.IntFilter<"OrganizationSettings"> | number
   geofenceMode?: Prisma.EnumGeofenceModeFilter<"OrganizationSettings"> | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFilter<"OrganizationSettings"> | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFilter<"OrganizationSettings"> | $Enums.BiometricVerificationMode
@@ -488,6 +498,7 @@ export type OrganizationSettingsOrderByWithAggregationInput = {
   primaryBranchId?: Prisma.SortOrderInput | Prisma.SortOrder
   optionalHolidayAllowance?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  requireGps?: Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
   geofenceOwnerClientId?: Prisma.SortOrderInput | Prisma.SortOrder
   biometricVerificationMode?: Prisma.SortOrder
@@ -524,6 +535,7 @@ export type OrganizationSettingsScalarWhereWithAggregatesInput = {
   primaryBranchId?: Prisma.UuidNullableWithAggregatesFilter<"OrganizationSettings"> | string | null
   optionalHolidayAllowance?: Prisma.IntWithAggregatesFilter<"OrganizationSettings"> | number
   geofenceMode?: Prisma.EnumGeofenceModeWithAggregatesFilter<"OrganizationSettings"> | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolWithAggregatesFilter<"OrganizationSettings"> | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceWithAggregatesFilter<"OrganizationSettings"> | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.UuidNullableWithAggregatesFilter<"OrganizationSettings"> | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeWithAggregatesFilter<"OrganizationSettings"> | $Enums.BiometricVerificationMode
@@ -551,6 +563,7 @@ export type OrganizationSettingsCreateInput = {
   primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
+  requireGps?: boolean
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
@@ -580,6 +593,7 @@ export type OrganizationSettingsUncheckedCreateInput = {
   primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
+  requireGps?: boolean
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode
@@ -607,6 +621,7 @@ export type OrganizationSettingsUpdateInput = {
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFieldUpdateOperationsInput | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -636,6 +651,7 @@ export type OrganizationSettingsUncheckedUpdateInput = {
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFieldUpdateOperationsInput | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
@@ -664,6 +680,7 @@ export type OrganizationSettingsCreateManyInput = {
   primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
+  requireGps?: boolean
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode
@@ -691,6 +708,7 @@ export type OrganizationSettingsUpdateManyMutationInput = {
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFieldUpdateOperationsInput | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -717,6 +735,7 @@ export type OrganizationSettingsUncheckedUpdateManyInput = {
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFieldUpdateOperationsInput | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
@@ -760,6 +779,7 @@ export type OrganizationSettingsCountOrderByAggregateInput = {
   primaryBranchId?: Prisma.SortOrder
   optionalHolidayAllowance?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  requireGps?: Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
   geofenceOwnerClientId?: Prisma.SortOrder
   biometricVerificationMode?: Prisma.SortOrder
@@ -801,6 +821,7 @@ export type OrganizationSettingsMaxOrderByAggregateInput = {
   primaryBranchId?: Prisma.SortOrder
   optionalHolidayAllowance?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  requireGps?: Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
   geofenceOwnerClientId?: Prisma.SortOrder
   biometricVerificationMode?: Prisma.SortOrder
@@ -827,6 +848,7 @@ export type OrganizationSettingsMinOrderByAggregateInput = {
   primaryBranchId?: Prisma.SortOrder
   optionalHolidayAllowance?: Prisma.SortOrder
   geofenceMode?: Prisma.SortOrder
+  requireGps?: Prisma.SortOrder
   geofenceOwnerSource?: Prisma.SortOrder
   geofenceOwnerClientId?: Prisma.SortOrder
   biometricVerificationMode?: Prisma.SortOrder
@@ -1008,6 +1030,7 @@ export type OrganizationSettingsCreateWithoutGeofenceOwnerClientInput = {
   primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
+  requireGps?: boolean
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
@@ -1036,6 +1059,7 @@ export type OrganizationSettingsUncheckedCreateWithoutGeofenceOwnerClientInput =
   primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
+  requireGps?: boolean
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
@@ -1072,6 +1096,7 @@ export type OrganizationSettingsCreateWithoutBiometricOwnerClientInput = {
   primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
+  requireGps?: boolean
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
@@ -1100,6 +1125,7 @@ export type OrganizationSettingsUncheckedCreateWithoutBiometricOwnerClientInput 
   primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
+  requireGps?: boolean
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode
@@ -1156,6 +1182,7 @@ export type OrganizationSettingsScalarWhereInput = {
   primaryBranchId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   optionalHolidayAllowance?: Prisma.IntFilter<"OrganizationSettings"> | number
   geofenceMode?: Prisma.EnumGeofenceModeFilter<"OrganizationSettings"> | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFilter<"OrganizationSettings"> | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFilter<"OrganizationSettings"> | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.UuidNullableFilter<"OrganizationSettings"> | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFilter<"OrganizationSettings"> | $Enums.BiometricVerificationMode
@@ -1199,6 +1226,7 @@ export type OrganizationSettingsCreateWithoutOrganizationInput = {
   primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
+  requireGps?: boolean
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
@@ -1226,6 +1254,7 @@ export type OrganizationSettingsUncheckedCreateWithoutOrganizationInput = {
   primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
+  requireGps?: boolean
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode
@@ -1269,6 +1298,7 @@ export type OrganizationSettingsUpdateWithoutOrganizationInput = {
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFieldUpdateOperationsInput | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1296,6 +1326,7 @@ export type OrganizationSettingsUncheckedUpdateWithoutOrganizationInput = {
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFieldUpdateOperationsInput | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
@@ -1324,6 +1355,7 @@ export type OrganizationSettingsCreateManyGeofenceOwnerClientInput = {
   primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
+  requireGps?: boolean
   geofenceOwnerSource?: $Enums.OwnerSource
   biometricVerificationMode?: $Enums.BiometricVerificationMode
   biometricOwnerSource?: $Enums.OwnerSource
@@ -1351,6 +1383,7 @@ export type OrganizationSettingsCreateManyBiometricOwnerClientInput = {
   primaryBranchId?: string | null
   optionalHolidayAllowance?: number
   geofenceMode?: $Enums.GeofenceMode
+  requireGps?: boolean
   geofenceOwnerSource?: $Enums.OwnerSource
   geofenceOwnerClientId?: string | null
   biometricVerificationMode?: $Enums.BiometricVerificationMode
@@ -1377,6 +1410,7 @@ export type OrganizationSettingsUpdateWithoutGeofenceOwnerClientInput = {
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFieldUpdateOperationsInput | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1405,6 +1439,7 @@ export type OrganizationSettingsUncheckedUpdateWithoutGeofenceOwnerClientInput =
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFieldUpdateOperationsInput | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1432,6 +1467,7 @@ export type OrganizationSettingsUncheckedUpdateManyWithoutGeofenceOwnerClientInp
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFieldUpdateOperationsInput | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1458,6 +1494,7 @@ export type OrganizationSettingsUpdateWithoutBiometricOwnerClientInput = {
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFieldUpdateOperationsInput | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
   biometricOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
@@ -1486,6 +1523,7 @@ export type OrganizationSettingsUncheckedUpdateWithoutBiometricOwnerClientInput 
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFieldUpdateOperationsInput | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
@@ -1513,6 +1551,7 @@ export type OrganizationSettingsUncheckedUpdateManyWithoutBiometricOwnerClientIn
   primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   optionalHolidayAllowance?: Prisma.IntFieldUpdateOperationsInput | number
   geofenceMode?: Prisma.EnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode
+  requireGps?: Prisma.BoolFieldUpdateOperationsInput | boolean
   geofenceOwnerSource?: Prisma.EnumOwnerSourceFieldUpdateOperationsInput | $Enums.OwnerSource
   geofenceOwnerClientId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   biometricVerificationMode?: Prisma.EnumBiometricVerificationModeFieldUpdateOperationsInput | $Enums.BiometricVerificationMode
@@ -1542,6 +1581,7 @@ export type OrganizationSettingsSelect<ExtArgs extends runtime.Types.Extensions.
   primaryBranchId?: boolean
   optionalHolidayAllowance?: boolean
   geofenceMode?: boolean
+  requireGps?: boolean
   geofenceOwnerSource?: boolean
   geofenceOwnerClientId?: boolean
   biometricVerificationMode?: boolean
@@ -1573,6 +1613,7 @@ export type OrganizationSettingsSelectCreateManyAndReturn<ExtArgs extends runtim
   primaryBranchId?: boolean
   optionalHolidayAllowance?: boolean
   geofenceMode?: boolean
+  requireGps?: boolean
   geofenceOwnerSource?: boolean
   geofenceOwnerClientId?: boolean
   biometricVerificationMode?: boolean
@@ -1604,6 +1645,7 @@ export type OrganizationSettingsSelectUpdateManyAndReturn<ExtArgs extends runtim
   primaryBranchId?: boolean
   optionalHolidayAllowance?: boolean
   geofenceMode?: boolean
+  requireGps?: boolean
   geofenceOwnerSource?: boolean
   geofenceOwnerClientId?: boolean
   biometricVerificationMode?: boolean
@@ -1635,6 +1677,7 @@ export type OrganizationSettingsSelectScalar = {
   primaryBranchId?: boolean
   optionalHolidayAllowance?: boolean
   geofenceMode?: boolean
+  requireGps?: boolean
   geofenceOwnerSource?: boolean
   geofenceOwnerClientId?: boolean
   biometricVerificationMode?: boolean
@@ -1653,7 +1696,7 @@ export type OrganizationSettingsSelectScalar = {
   updatedAt?: boolean
 }
 
-export type OrganizationSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"organizationId" | "workWeekDays" | "standardDayMinutes" | "payrollFrequency" | "payrollDayOfMonth" | "leaveYearStartMonth" | "primaryBranchId" | "optionalHolidayAllowance" | "geofenceMode" | "geofenceOwnerSource" | "geofenceOwnerClientId" | "biometricVerificationMode" | "biometricOwnerSource" | "biometricOwnerClientId" | "autoCheckOutMode" | "autoCheckOutAt" | "approvalReminderDays" | "approvalEscalationDays" | "lateGraceMinutes" | "lateMarksPerHalfDay" | "advanceLimitPercent" | "advanceRecoveryMonths" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationSettings"]>
+export type OrganizationSettingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"organizationId" | "workWeekDays" | "standardDayMinutes" | "payrollFrequency" | "payrollDayOfMonth" | "leaveYearStartMonth" | "primaryBranchId" | "optionalHolidayAllowance" | "geofenceMode" | "requireGps" | "geofenceOwnerSource" | "geofenceOwnerClientId" | "biometricVerificationMode" | "biometricOwnerSource" | "biometricOwnerClientId" | "autoCheckOutMode" | "autoCheckOutAt" | "approvalReminderDays" | "approvalEscalationDays" | "lateGraceMinutes" | "lateMarksPerHalfDay" | "advanceLimitPercent" | "advanceRecoveryMonths" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationSettings"]>
 export type OrganizationSettingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   geofenceOwnerClient?: boolean | Prisma.OrganizationSettings$geofenceOwnerClientArgs<ExtArgs>
@@ -1690,6 +1733,7 @@ export type $OrganizationSettingsPayload<ExtArgs extends runtime.Types.Extension
     primaryBranchId: string | null
     optionalHolidayAllowance: number
     geofenceMode: $Enums.GeofenceMode
+    requireGps: boolean
     geofenceOwnerSource: $Enums.OwnerSource
     geofenceOwnerClientId: string | null
     biometricVerificationMode: $Enums.BiometricVerificationMode
@@ -2159,6 +2203,7 @@ export interface OrganizationSettingsFieldRefs {
   readonly primaryBranchId: Prisma.FieldRef<"OrganizationSettings", 'String'>
   readonly optionalHolidayAllowance: Prisma.FieldRef<"OrganizationSettings", 'Int'>
   readonly geofenceMode: Prisma.FieldRef<"OrganizationSettings", 'GeofenceMode'>
+  readonly requireGps: Prisma.FieldRef<"OrganizationSettings", 'Boolean'>
   readonly geofenceOwnerSource: Prisma.FieldRef<"OrganizationSettings", 'OwnerSource'>
   readonly geofenceOwnerClientId: Prisma.FieldRef<"OrganizationSettings", 'String'>
   readonly biometricVerificationMode: Prisma.FieldRef<"OrganizationSettings", 'BiometricVerificationMode'>

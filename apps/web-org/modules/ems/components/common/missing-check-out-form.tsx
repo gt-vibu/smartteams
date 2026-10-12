@@ -114,7 +114,7 @@ export function MissingCheckOutForm({
         aria-label="Reason"
         value={reason}
         onChange={(event) => setReason(event.target.value)}
-        placeholder={`Reason (at least ${ATTENDANCE_CORRECTION_REASON_MIN_LENGTH} characters)`}
+        placeholder="Reason for the missing check-out"
         disabled={saving}
       />
       {error && (

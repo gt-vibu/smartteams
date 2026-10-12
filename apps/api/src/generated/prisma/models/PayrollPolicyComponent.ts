@@ -627,7 +627,6 @@ export type PayrollPolicyComponentCreateWithoutPayrollPolicyInput = {
 
 export type PayrollPolicyComponentUncheckedCreateWithoutPayrollPolicyInput = {
   id?: string
-  organizationId: string
   payComponentId: string
   amount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   percentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -743,7 +742,6 @@ export type PayrollPolicyComponentCreateWithoutPayComponentInput = {
 
 export type PayrollPolicyComponentUncheckedCreateWithoutPayComponentInput = {
   id?: string
-  organizationId: string
   payrollPolicyId: string
   amount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   percentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -781,7 +779,6 @@ export type PayrollPolicyComponentUpdateManyWithWhereWithoutPayComponentInput = 
 
 export type PayrollPolicyComponentCreateManyPayrollPolicyInput = {
   id?: string
-  organizationId: string
   payComponentId: string
   amount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   percentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -805,7 +802,6 @@ export type PayrollPolicyComponentUpdateWithoutPayrollPolicyInput = {
 
 export type PayrollPolicyComponentUncheckedUpdateWithoutPayrollPolicyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   payComponentId?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   percentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -817,7 +813,6 @@ export type PayrollPolicyComponentUncheckedUpdateWithoutPayrollPolicyInput = {
 
 export type PayrollPolicyComponentUncheckedUpdateManyWithoutPayrollPolicyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   payComponentId?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   percentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -877,7 +872,6 @@ export type PayrollPolicyComponentUncheckedUpdateManyWithoutOrganizationInput = 
 
 export type PayrollPolicyComponentCreateManyPayComponentInput = {
   id?: string
-  organizationId: string
   payrollPolicyId: string
   amount?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   percentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -901,7 +895,6 @@ export type PayrollPolicyComponentUpdateWithoutPayComponentInput = {
 
 export type PayrollPolicyComponentUncheckedUpdateWithoutPayComponentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   payrollPolicyId?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   percentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -913,7 +906,6 @@ export type PayrollPolicyComponentUncheckedUpdateWithoutPayComponentInput = {
 
 export type PayrollPolicyComponentUncheckedUpdateManyWithoutPayComponentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   payrollPolicyId?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   percentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null

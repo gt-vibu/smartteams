@@ -35,21 +35,6 @@ export type LeaveApproval = Prisma.LeaveApprovalModel
  */
 export type ApprovalDelegation = Prisma.ApprovalDelegationModel
 /**
- * Model EmployeePayrollPolicy
- * 
- */
-export type EmployeePayrollPolicy = Prisma.EmployeePayrollPolicyModel
-/**
- * Model EmployeeStatutoryProfile
- * 
- */
-export type EmployeeStatutoryProfile = Prisma.EmployeeStatutoryProfileModel
-/**
- * Model EmployeeStatutoryRecord
- * 
- */
-export type EmployeeStatutoryRecord = Prisma.EmployeeStatutoryRecordModel
-/**
  * Model FederationIdempotencyRecord
  * 
  */
@@ -341,12 +326,6 @@ export type PayrollRun = Prisma.PayrollRunModel
  */
 export type PayrollPolicy = Prisma.PayrollPolicyModel
 /**
- * Model PayrollPolicyAssignmentRule
- * Determines which reusable payroll policy applies when an employee has no individual override.
- * `criteria` supports departmentIds, branchIds, employmentTypes, jobTitles, and gradeValues.
- */
-export type PayrollPolicyAssignmentRule = Prisma.PayrollPolicyAssignmentRuleModel
-/**
  * Model PayrollPolicyComponent
  * 
  */
@@ -421,11 +400,6 @@ export type UserRole = Prisma.UserRoleModel
  * 
  */
 export type Organization = Prisma.OrganizationModel
-/**
- * Model WorkflowDraft
- * 
- */
-export type WorkflowDraft = Prisma.WorkflowDraftModel
 /**
  * Model OrganizationSettings
  * 
@@ -525,6 +499,21 @@ export type EmployeeEmploymentRecord = Prisma.EmployeeEmploymentRecordModel
  * 
  */
 export type EmployeeCompensation = Prisma.EmployeeCompensationModel
+/**
+ * Model EmployeePayrollPolicy
+ * 
+ */
+export type EmployeePayrollPolicy = Prisma.EmployeePayrollPolicyModel
+/**
+ * Model EmployeeStatutoryProfile
+ * 
+ */
+export type EmployeeStatutoryProfile = Prisma.EmployeeStatutoryProfileModel
+/**
+ * Model EmployeeStatutoryRecord
+ * 
+ */
+export type EmployeeStatutoryRecord = Prisma.EmployeeStatutoryRecordModel
 /**
  * Model PayComponent
  * 

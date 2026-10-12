@@ -30,7 +30,7 @@ function Row({
         <span className="font-medium text-foreground">{name}</span>
         {note && <span className="mt-0.5 block text-[10px] text-muted-foreground">{note}</span>}
       </td>
-      <td className="px-4 py-2.5 text-right tabular-nums text-foreground">
+      <td className="px-4 py-2.5 text-right font-mono text-foreground">
         {tone === 'deduction' && amount > 0 ? '-' : ''}
         {formatMoney(amount)}
       </td>
@@ -67,7 +67,7 @@ function Section({
             </td>
             <td
               data-label="Monthly"
-              className="px-4 py-2.5 text-right tabular-nums font-bold text-foreground"
+              className="px-4 py-2.5 text-right font-mono font-bold text-foreground"
             >
               {formatMoney(total)}
             </td>
@@ -102,14 +102,7 @@ export function PayrollStructurePanel({
     <div className="space-y-4">
       {/* Header bar with download options */}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="text-xs text-muted-foreground">
-          <span className="font-semibold text-foreground">{profile.organizationPolicy?.name ?? 'Salary structure'}</span>
-          <span className="mx-1.5">·</span>
-          {profile.assignmentSource === 'INDIVIDUAL_OVERRIDE'
-            ? 'Individual salary override'
-            : 'Organization default for all employees'}
-          {profile.compensation?.effectiveFrom && <span className="ml-1.5">· Effective {profile.compensation.effectiveFrom.slice(0, 10)}</span>}
-        </div>
+        <span />
         <div className="flex items-center gap-2">
           <Button
             size="sm"
@@ -144,7 +137,7 @@ export function PayrollStructurePanel({
             <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               {tile.label}
             </dt>
-            <dd className="mt-1 tabular-nums text-sm font-bold text-foreground">
+            <dd className="mt-1 font-mono text-sm font-bold text-foreground">
               {formatMoney(tile.value)}
             </dd>
           </div>

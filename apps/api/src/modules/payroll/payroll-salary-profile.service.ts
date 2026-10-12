@@ -3,11 +3,15 @@ import { Prisma } from '../../generated/prisma/client';
 import { PayComponentType } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
-import { withNationalStatutoryRules } from './payroll-national-statutory';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { markPayrollStale } from './payroll-staleness';
-import { computePayrollLine } from './payroll-line-calculator';
+import {
+  assertStatutoryRulesConfigured,
+  calculateSalaryStructure,
+  calculateStatutoryDeduction,
+} from './payroll-salary-structure';
+import { calculateComponent } from './payroll-calculation';
 import { dateOnly, type SalaryProfileInput } from './payroll-policy.types';
 import {
   employeeScope,
@@ -18,6 +22,7 @@ import {
 import { DEFAULT_PAYROLL_POLICY } from './payroll-policy-defaults';
 
 import { saveEmployeePolicyInTransaction, statutoryName } from './payroll-policy-shared';
+import { effectivePolicyComponents, policyComponentDefaults } from './payroll-policy-components';
 
 /**
  * An employee's salary profile: what they are paid, and what the breakdown looks like.
@@ -130,8 +135,8 @@ export class PayrollSalaryProfileService {
         pfEnabled: input.pfEnabled,
         esiEnabled: input.esiEnabled,
         ptEnabled: input.ptEnabled,
-        statutoryJurisdiction: input.statutoryJurisdiction,
         payrollPolicyId: input.payrollPolicyId,
+        statutoryJurisdiction: input.statutoryJurisdiction,
       });
       await this.audit.record(
         context,
@@ -169,12 +174,11 @@ export class PayrollSalaryProfileService {
         false,
         'payroll.employee-profile.read.all',
       );
-      if (!employeeId) throw new NotFoundError('Employee');
       // "Today" where the organization is. In UTC, a salary saved from India early in the morning
       // to start that day was still in the future, so the screen went on showing no salary.
       const organization = await tx.organization.findUniqueOrThrow({
         where: { id: context.organizationId },
-        select: { timezone: true, name: true },
+        select: { timezone: true },
       });
       const effectiveDate = dateOnly(localDateIn(organization.timezone));
       const employee = await tx.employee.findFirst({
@@ -184,13 +188,6 @@ export class PayrollSalaryProfileService {
           ...employeeScope(context),
         },
         include: {
-          department: { select: { name: true } },
-          primaryBranch: { select: { name: true } },
-          employmentRecords: {
-            where: { effectiveFrom: { lte: effectiveDate }, OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveDate } }] },
-            orderBy: { effectiveFrom: 'desc' },
-            take: 1,
-          },
           compensations: {
             where: {
               effectiveFrom: { lte: effectiveDate },
@@ -206,7 +203,6 @@ export class PayrollSalaryProfileService {
             },
             orderBy: { effectiveFrom: 'desc' },
             take: 1,
-            include: { payrollPolicy: { include: { components: { include: { payComponent: true } } } } },
           },
           payComponents: {
             where: {
@@ -219,10 +215,6 @@ export class PayrollSalaryProfileService {
         },
       });
       if (!employee) throw new NotFoundError('Employee');
-      const employeePolicy = employee.payrollPolicies[0] ?? null;
-      const policy = employeePolicy?.assignmentSource === 'INDIVIDUAL_OVERRIDE'
-        ? employeePolicy.payrollPolicy ?? DEFAULT_PAYROLL_POLICY
-        : (await findPolicy(tx, context.organizationId, effectiveDate)) ?? DEFAULT_PAYROLL_POLICY;
       const compensation =
         employee.compensations[0] ??
         // Nothing in force yet: show the salary saved to start later, rather than none at all.
@@ -231,12 +223,29 @@ export class PayrollSalaryProfileService {
           where: { employeeId: employee.id, effectiveFrom: { gt: effectiveDate } },
           orderBy: { effectiveFrom: 'asc' },
         }));
+      const employeePolicy = employee.payrollPolicies[0] ?? null;
+      const organizationPolicy =
+        (await findPolicy(tx, context.organizationId, effectiveDate)) ?? DEFAULT_PAYROLL_POLICY;
+      const policy = employeePolicy?.payrollPolicyId
+        ? ((await findPolicy(
+            tx,
+            context.organizationId,
+            effectiveDate,
+            employeePolicy.payrollPolicyId,
+          )) ?? DEFAULT_PAYROLL_POLICY)
+        : DEFAULT_PAYROLL_POLICY;
+      const components = effectivePolicyComponents(
+        policyComponentDefaults(policy),
+        employee.payComponents,
+      );
       const gross =
         whatIf?.grossSalary !== undefined
           ? new Prisma.Decimal(whatIf.grossSalary)
-          : (compensation?.grossSalary ?? compensation?.baseAmount ?? policy.defaultGrossSalary ?? new Prisma.Decimal(0));
+          : (compensation?.grossSalary ?? compensation?.baseAmount ?? new Prisma.Decimal(0));
+
+      const structure = calculateSalaryStructure(gross, policy);
       const statutoryJurisdiction =
-        employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction;
+        employeePolicy?.statutoryJurisdiction ?? organizationPolicy.statutoryJurisdiction;
       const rules = statutoryJurisdiction
         ? await tx.payrollStatutoryRule.findMany({
             where: {
@@ -253,72 +262,38 @@ export class PayrollSalaryProfileService {
         esi: whatIf?.esiEnabled ?? employeePolicy?.esiEnabled ?? policy.esiDefault,
         pt: whatIf?.ptEnabled ?? employeePolicy?.ptEnabled ?? policy.ptDefault,
       };
-      const employeeComponentIds = new Set(employee.payComponents.map((assignment) => assignment.payComponentId));
-      const policyComponents = (employeePolicy?.assignmentSource === 'INDIVIDUAL_OVERRIDE'
-        ? employeePolicy.payrollPolicy?.components ?? []
-        : ('components' in policy ? policy.components : [])) as NonNullable<NonNullable<typeof employeePolicy>['payrollPolicy']>['components'];
-      const componentAssignments = [
-        ...policyComponents
-          .filter((assignment) => !employeeComponentIds.has(assignment.payComponentId)),
-        ...employee.payComponents,
-      ];
-      // Salary profile and payroll run use the same calculation engine. This screen models a
-      // complete month with no attendance exceptions, timesheet overtime, adjustments or advance
-      // recovery; the period preview/run supplies those period-specific inputs to that same engine.
-      const computed = computePayrollLine(
-        {
-          employeeId,
-          compensation: {
-            baseAmount: gross,
-            grossSalary: gross,
-            overtimeMultiplier: compensation?.overtimeMultiplier ?? new Prisma.Decimal(1),
-          },
-          employeePolicy: employeePolicy
-            ? {
-                payrollEnabled: employeePolicy.payrollEnabled,
-                pfEnabled: enabled.pf,
-                esiEnabled: enabled.esi,
-                ptEnabled: enabled.pt,
-                statutoryJurisdiction,
-              }
-            : null,
-          policy: {
-            payrollDayBasis: policy.payrollDayBasis,
-            basePercentage: new Prisma.Decimal(policy.basePercentage),
-            baseMinimum: new Prisma.Decimal(policy.baseMinimum),
-            hraPercentage: new Prisma.Decimal(policy.hraPercentage),
-            roundingMode: policy.roundingMode,
-            pfDefault: enabled.pf,
-            esiDefault: enabled.esi,
-            ptDefault: enabled.pt,
-            statutoryJurisdiction,
-          },
-          statutoryRules: withNationalStatutoryRules(rules, effectiveDate),
-          components: componentAssignments.map((assignment) => ({
-            componentId: assignment.payComponentId,
+      assertStatutoryRulesConfigured(enabled, rules);
+      const statutory = rules
+        .filter(
+          (rule) =>
+            (enabled.pf && ['PF', 'EPF'].includes(rule.schemeCode.toUpperCase())) ||
+            (enabled.esi && ['ESI', 'ESIC'].includes(rule.schemeCode.toUpperCase())) ||
+            (enabled.pt && ['PT', 'PROFESSIONAL_TAX'].includes(rule.schemeCode.toUpperCase())),
+        )
+        .map((rule) =>
+          calculateStatutoryDeduction(
+            structure,
+            rule,
+            policy.roundingMode,
+            structure,
+            undefined,
+            effectiveDate.getUTCMonth() + 1,
+          ),
+        );
+      const assignedComponents = components.map((assignment) => ({
+        code: assignment.payComponent.code,
+        name: assignment.payComponent.name,
+        componentType: assignment.payComponent.componentType,
+        calculationType: assignment.payComponent.calculationType,
+        isTaxable: assignment.payComponent.isTaxable,
+        amount: calculateComponent(
+          {
             amount: assignment.amount,
             percentage: assignment.percentage,
             component: assignment.payComponent,
-          })),
-          timesheet: null,
-          leave: { paidDays: 0, unpaidDays: 0 },
-          attendance: { absentDays: 0, halfDays: 0 },
-          unemployedDays: 0,
-          periodWorkingDays: policy.payrollDayBasis,
-          adjustments: [],
-          advances: [],
-        },
-        1,
-      );
-      const structure = computed.monthlyStructure;
-      const statutory = computed.statutory;
-      const assignedComponents = computed.components.map(({ assignment, amount }) => ({
-        code: assignment.component.code,
-        name: assignment.component.name,
-        componentType: assignment.component.componentType,
-        calculationType: assignment.component.calculationType,
-        isTaxable: assignment.component.isTaxable,
-        amount,
+          },
+          structure.base,
+        ),
       }));
       const extraEarnings = assignedComponents
         .filter(
@@ -346,7 +321,10 @@ export class PayrollSalaryProfileService {
           code: 'OTHER_ALLOWANCE',
           name: 'Other allowance',
           componentType: PayComponentType.EARNING,
-          amount: structure.otherAllowance.minus(extraEarnings),
+          amount: Prisma.Decimal.max(
+            new Prisma.Decimal(0),
+            structure.otherAllowance.minus(extraEarnings),
+          ),
           isTaxable: true,
         },
         ...assignedComponents.filter(
@@ -397,37 +375,36 @@ export class PayrollSalaryProfileService {
       );
       return {
         employeeId,
-        employeeDetails: {
-          firstName: employee.firstName,
-          middleName: employee.middleName,
-          lastName: employee.lastName,
-          employeeNumber: employee.employeeNumber,
-          workEmail: employee.workEmail,
-          employmentType: employee.employmentRecords[0]?.employmentType ?? employee.employmentType,
-          jobTitle: employee.employmentRecords[0]?.jobTitle ?? null,
-          department: employee.department?.name ?? employee.employmentRecords[0]?.department ?? null,
-          dateOfJoining: employee.dateOfJoining?.toISOString().slice(0, 10) ?? null,
-          branchName: employee.primaryBranch?.name ?? null,
-        },
-        organizationName: organization.name,
         compensation,
         employeePolicy,
-        organizationPolicy: policy,
-        assignmentSource: employeePolicy?.assignmentSource === 'INDIVIDUAL_OVERRIDE' ? 'INDIVIDUAL_OVERRIDE' : 'ORGANIZATION_DEFAULT',
-        assignmentRuleId: null,
-        assignmentRuleName: null,
+        organizationPolicy,
+        assignedPolicy: policy,
         structure,
         statutory,
         salaryBreakdown: {
-          gross: computed.gross,
+          gross: structure.gross,
           earnings,
           deductions,
           employerBenefits,
           totalDeductions,
           totalEmployerBenefits,
-          netPay: computed.net,
+          netPay: structure.gross.minus(totalDeductions),
         },
-        components: componentAssignments,
+        components: components.map((component) => ({
+          ...component,
+          effectiveFrom:
+            'effectiveFrom' in component
+              ? component.effectiveFrom
+              : 'effectiveFrom' in policy
+                ? policy.effectiveFrom
+                : effectiveDate,
+          effectiveTo:
+            'effectiveTo' in component
+              ? component.effectiveTo
+              : 'effectiveTo' in policy
+                ? policy.effectiveTo
+                : null,
+        })),
       };
     });
   }

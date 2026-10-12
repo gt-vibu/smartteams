@@ -1,12 +1,8 @@
-/**
- * How long an attendance correction reason must be.
- *
- * Shared because it was not: the drawer enabled its submit button at five characters while
- * `AttendanceCorrectionDto` required ten, so a reason of six to nine characters passed the form,
- * failed the API, and the drawer reported success anyway. One number, imported by both sides.
- */
-export const ATTENDANCE_CORRECTION_REASON_MIN_LENGTH = 10;
+/** Minimum length for a correction reason; blank and whitespace-only values are rejected by the API. */
+export const ATTENDANCE_CORRECTION_REASON_MIN_LENGTH = 1;
 export const ATTENDANCE_CORRECTION_REASON_MAX_LENGTH = 500;
+/** Holiday attendance reviews require a more descriptive explanation than ordinary corrections. */
+export const ATTENDANCE_HOLIDAY_REVIEW_REASON_MIN_LENGTH = 10;
 
 import { z } from 'zod';
 
@@ -145,6 +141,7 @@ export const DEFAULT_MISSED_CHECK_OUT_POLICY: MissedCheckOutPolicy = {
 };
 
 export const attendancePreferencesSchema = z.object({
+  requireGps: z.boolean().optional().default(false),
   id: z.string().optional(),
   organizationId: z.string().optional(),
   geofenceMode: z.string().nullable(),

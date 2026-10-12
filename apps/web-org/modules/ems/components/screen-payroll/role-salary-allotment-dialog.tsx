@@ -1,407 +1,398 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { Button, DatePicker, Dialog, DialogContent, DialogTitle, Input, Label } from '@smarteam/ui';
-import { CheckCircle2, Users } from 'lucide-react';
 import {
-  workforcePreviewSchema,
-  workforceOptionsSchema,
-  workforcePeopleSchema,
-  type WorkforceInput,
-  type WorkforcePreview,
-} from '@smarteam/contracts';
+  Badge,
+  Button,
+  Checkbox,
+  DatePicker,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Input,
+  Label,
+  SelectContent,
+  SelectItem,
+  SelectMenu,
+  SelectTrigger,
+  SelectValue,
+} from '@smarteam/ui';
+import { Users, CheckCircle2 } from 'lucide-react';
+import { useEmployees, useTeams } from '../../hooks/use-workforce';
 import type { CompensationState } from '../../hooks/use-compensation';
+import { payrollRepository } from '../../repositories/payroll.repository';
 import { useSession } from '../../hooks/auth-context';
-import { useAsyncResource } from '../../hooks/use-async-resource';
-import { useWorkforceJob } from '../../hooks/use-workforce-job';
-import { useTeams } from '../../hooks/use-workforce';
-import { apiRequest } from '../../lib/api-client';
-import { orgPath } from '../../repositories/api-helpers';
-import { WorkforceJobProgress } from '../../components/common/workforce-job-progress';
 
-const EMPTY_TARGET = '00000000-0000-0000-0000-000000000000';
+interface RoleSalaryAllotmentDialogProps {
+  compensation: CompensationState;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
 
-type FilterState = {
-  search: string;
-  departmentId: string;
-  roleId: string;
-  teamId: string;
-  employmentType: string;
-};
-
-/** Payroll salary changes use the same previewed, resumable background jobs as workforce setup. */
 export function RoleSalaryAllotmentDialog({
   compensation,
   open,
   onOpenChange,
-}: {
-  compensation: CompensationState;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}) {
-  const { session, hasPermission } = useSession();
-  const organizationId = session?.organizationId;
-  const job = useWorkforceJob();
-  const teams = useTeams();
-  const [grossSalary, setGrossSalary] = useState('');
-  const [salaryMode, setSalaryMode] = useState<'MONTHLY' | 'LPA'>('MONTHLY');
-  const [effectiveFrom, setEffectiveFrom] = useState('');
-  const [pfEnabled, setPfEnabled] = useState(true);
-  const [ptEnabled, setPtEnabled] = useState(true);
-  const [esiEnabled, setEsiEnabled] = useState(false);
-  const [filters, setFilters] = useState<FilterState>({
-    search: '',
-    departmentId: '',
-    roleId: '',
-    teamId: '',
-    employmentType: '',
-  });
-  const [preview, setPreview] = useState<WorkforcePreview | null>(null);
-  const [previewInput, setPreviewInput] = useState<WorkforceInput | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
+}: RoleSalaryAllotmentDialogProps) {
+  const { session } = useSession();
+  const organizationId = session?.organizationId ?? null;
 
-  const options = useAsyncResource(
-    async () =>
-      workforceOptionsSchema.parse(
-        await apiRequest(orgPath(organizationId!, `/workforce/options?operation=SALARY`), {
-          method: 'GET',
-        }),
-      ),
-    [organizationId],
-    {
-      enabled:
-        open &&
-        Boolean(organizationId) &&
-        hasPermission('payroll.employee-profile.write') &&
-        hasPermission('employees.read.all'),
-    },
-  );
-  const filter = useMemo(
-    () => ({
-      allEmployees: true,
-      ...(filters.search.trim() ? { search: filters.search.trim() } : {}),
-      ...(filters.departmentId ? { departmentId: filters.departmentId } : {}),
-      ...(filters.roleId ? { roleId: filters.roleId } : {}),
-      ...(filters.teamId ? { teamId: filters.teamId } : {}),
-      ...(filters.employmentType
-        ? {
-            employmentType: filters.employmentType as
-              'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'INTERN',
-          }
-        : {}),
-    }),
-    [filters],
-  );
-  const matching = useAsyncResource(
-    async () =>
-      workforcePeopleSchema.parse(
-        await apiRequest(
-          orgPath(
-            organizationId!,
-            `/workforce/people?${new URLSearchParams(Object.entries(filter).map(([key, value]) => [key, String(value)]))}`,
-          ),
-          { method: 'GET' },
-        ),
-      ),
-    [organizationId, filter],
-    { enabled: open && Boolean(organizationId) && hasPermission('employees.read.all') },
-  );
-  const targetOptions = [
-    ...(options.data?.roles ?? []).map((item) => ({ ...item, kind: 'role' })),
-    ...(options.data?.departments ?? []).map((item) => ({ ...item, kind: 'department' })),
-    ...(teams.data ?? []).map((item) => ({ id: item.id, name: item.name, kind: 'team' })),
-  ];
+  const employeesResource = useEmployees();
+  const teamsResource = useTeams();
 
-  const clearPreview = () => {
-    setPreview(null);
-    setPreviewInput(null);
-    setError('');
+  const allEmployees = employeesResource.data ?? [];
+  const allTeams = teamsResource.data ?? [];
+
+  const [selectedTarget, setSelectedTarget] = useState<string>('ALL');
+  const [excludedEmpIds, setExcludedEmpIds] = useState<Set<string>>(new Set());
+  const [grossSalary, setGrossSalary] = useState<string>('');
+  const [effectiveFrom, setEffectiveFrom] = useState<string>('');
+  const [pfEnabled, setPfEnabled] = useState<boolean>(true);
+  const [ptEnabled, setPtEnabled] = useState<boolean>(true);
+  const [esiEnabled, setEsiEnabled] = useState<boolean>(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [progressMsg, setProgressMsg] = useState<string>('');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Filter employees matching target selection (ALL, team_id, or employment type)
+  const targetEmployees = useMemo(() => {
+    if (selectedTarget === 'ALL') {
+      return allEmployees.filter((e) => e.status === 'ACTIVE');
+    }
+
+    if (selectedTarget.startsWith('TEAM:')) {
+      const teamId = selectedTarget.slice(5);
+      const team = allTeams.find((t) => t.id === teamId);
+      const memberEmpIds = new Set(team?.members?.map((m) => m.employeeId) ?? []);
+      return allEmployees.filter((e) => e.status === 'ACTIVE' && memberEmpIds.has(e.id));
+    }
+
+    if (selectedTarget.startsWith('TYPE:')) {
+      const type = selectedTarget.slice(5);
+      return allEmployees.filter((e) => e.status === 'ACTIVE' && e.employmentType === type);
+    }
+
+    return allEmployees.filter((e) => e.status === 'ACTIVE');
+  }, [allEmployees, allTeams, selectedTarget]);
+
+  // Selected employees are target employees not in excluded set
+  const selectedEmployees = useMemo(
+    () => targetEmployees.filter((e) => !excludedEmpIds.has(e.id)),
+    [targetEmployees, excludedEmpIds],
+  );
+
+  const handleTargetChange = (val: string) => {
+    setSelectedTarget(val);
+    setExcludedEmpIds(new Set());
   };
-  const updateFilter = (key: keyof FilterState, value: string) => {
-    setFilters((current) => ({ ...current, [key]: value }));
-    clearPreview();
-  };
-  const inputForPreview = (): WorkforceInput => ({
-    operation: 'SALARY',
-    targetId: EMPTY_TARGET,
-    effectiveFrom,
-    reason: 'Bulk salary assignment',
-    filter,
-    salary: { grossSalary: salaryMode === 'LPA' ? Number(grossSalary) * 100000 / 12 : Number(grossSalary), pfEnabled, esiEnabled, ptEnabled },
-  });
-  const makePreview = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!organizationId || busy || job.active) return;
-    setBusy(true);
-    setError('');
-    try {
-      const input = inputForPreview();
-      const result = workforcePreviewSchema.parse(
-        await apiRequest(orgPath(organizationId, '/workforce/preview'), {
-          method: 'POST',
-          body: input,
-          timeoutMs: 60000,
-        }),
-      );
-      setPreview(result);
-      setPreviewInput(input);
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'Could not preview salary changes.');
-    } finally {
-      setBusy(false);
+
+  // Auto-suggest ESI when gross salary changes
+  const handleGrossChange = (val: string) => {
+    setGrossSalary(val);
+    const num = Number(val);
+    if (Number.isFinite(num) && num > 0) {
+      setEsiEnabled(num <= 21000);
     }
   };
-  const apply = async () => {
-    if (!preview || !previewInput || busy || job.active) return;
-    await job.start(previewInput, preview.fingerprint);
-    setPreview(null);
-    setPreviewInput(null);
-    await compensation.refetch();
+
+  const toggleSelectAll = () => {
+    if (excludedEmpIds.size === 0) {
+      // Exclude all
+      setExcludedEmpIds(new Set(targetEmployees.map((e) => e.id)));
+    } else {
+      // Include all
+      setExcludedEmpIds(new Set());
+    }
   };
-  const setSalary = (value: string) => {
-    setGrossSalary(value);
-    clearPreview();
-    const entered = Number(value);
-    const number = salaryMode === 'LPA' ? entered * 100000 / 12 : entered;
-    if (Number.isFinite(number) && number > 0) setEsiEnabled(number <= 21000);
+
+  const toggleEmp = (id: string) => {
+    setExcludedEmpIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
   };
-  const closed = busy || job.starting || job.active;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+
+    const numericGross = Number(grossSalary);
+    if (!Number.isFinite(numericGross) || numericGross <= 0) {
+      setErrorMsg('Please enter a valid monthly gross salary.');
+      return;
+    }
+
+    if (!effectiveFrom) {
+      setErrorMsg('Please select an effective from date.');
+      return;
+    }
+
+    if (selectedEmployees.length === 0) {
+      setErrorMsg('Please select at least one employee.');
+      return;
+    }
+
+    if (!organizationId) {
+      setErrorMsg('Organization not found in session.');
+      return;
+    }
+
+    setSubmitting(true);
+    const empList = selectedEmployees.map((e) => e.id);
+
+    try {
+      let count = 0;
+      for (const empId of empList) {
+        setProgressMsg(`Saving salary for employee ${count + 1} of ${empList.length}...`);
+        await payrollRepository.saveSalaryProfile(organizationId, {
+          employeeId: empId,
+          grossSalary: numericGross,
+          payType: 'SALARY',
+          payFrequency: 'MONTHLY',
+          overtimeMultiplier: 1.5,
+          effectiveFrom,
+          payrollEnabled: true,
+          salarySlipMode: 'ENABLED',
+          pfEnabled,
+          esiEnabled,
+          ptEnabled,
+        });
+        count++;
+      }
+
+      await compensation.refetch();
+      onOpenChange(false);
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error ? err.message : 'An error occurred during bulk salary allotment.';
+      setErrorMsg(msg);
+    } finally {
+      setSubmitting(false);
+      setProgressMsg('');
+    }
+  };
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(next) => {
-        if (!closed) onOpenChange(next);
-      }}
-    >
-      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-2xl">
-        <DialogTitle className="sticky top-[-1.25rem] z-20 -mx-5 -mt-5 flex items-center gap-2 bg-card px-5 pt-5 pb-3 text-base font-bold">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-xl sm:max-h-[90vh] overflow-y-auto">
+        <DialogTitle className="flex items-center gap-2 text-base font-bold">
           <Users className="h-5 w-5 text-primary" />
-          Salary assignment
+          Role-Wise Salary Allotment
         </DialogTitle>
-        <p className="text-xs text-muted-foreground">
-          Choose a group or narrow the people list, review the affected employees, then apply.
-          Salary values are written only after you confirm the preview.
+        <p className="text-xs text-muted-foreground -mt-2">
+          Allot salary structure and statutory configurations across all employees in a specific
+          role or group.
         </p>
-        <form onSubmit={(event) => void makePreview(event)} className="mt-4 space-y-4">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <label className="space-y-1 text-xs">
-              <span>Role, department or team</span>
-              <select
-                aria-label="Salary assignment group"
-                className="block h-10 w-full rounded border border-border bg-background px-2"
-                disabled={closed}
-                value={
-                  filters.roleId
-                    ? `ROLE:${filters.roleId}`
-                    : filters.departmentId
-                      ? `DEPARTMENT:${filters.departmentId}`
-                      : filters.teamId
-                        ? `TEAM:${filters.teamId}`
-                        : ''
-                }
-                onChange={(event) => {
-                  const [kind, selectedId = ''] = event.target.value.split(':');
-                  setFilters((current) => ({
-                    ...current,
-                    roleId: kind === 'ROLE' ? selectedId : '',
-                    departmentId: kind === 'DEPARTMENT' ? selectedId : '',
-                    teamId: kind === 'TEAM' ? selectedId : '',
-                  }));
-                  clearPreview();
-                }}
-              >
-                <option value="">All groups</option>
-                {targetOptions.map((option) => (
-                  <option
-                    key={`${option.kind}:${option.id}`}
-                    value={`${option.kind.toUpperCase()}:${option.id}`}
-                  >
-                    {option.kind}: {option.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="space-y-1 text-xs">
-              <span>Employment type</span>
-              <select
-                aria-label="Salary employment type"
-                className="block h-10 w-full rounded border border-border bg-background px-2"
-                disabled={closed}
-                value={filters.employmentType}
-                onChange={(event) => updateFilter('employmentType', event.target.value)}
-              >
-                <option value="">All types</option>
-                {['FULL_TIME', 'PART_TIME', 'CONTRACT', 'INTERN'].map((type) => (
-                  <option key={type} value={type}>
-                    {type.replace('_', ' ')}
-                  </option>
-                ))}
-              </select>
-            </label>
+
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+          {/* Target Group Selector */}
+          <div>
+            <Label className="mb-1 block text-xs font-semibold">Target Group / Role</Label>
+            <SelectMenu value={selectedTarget} onValueChange={handleTargetChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Choose a role or team" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All Active Employees ({allEmployees.length})</SelectItem>
+                {allTeams.length > 0 && (
+                  <>
+                    <div className="px-2 py-1 text-[10px] font-bold uppercase text-muted-foreground">
+                      Teams / Departments
+                    </div>
+                    {allTeams.map((team) => (
+                      <SelectItem key={team.id} value={`TEAM:${team.id}`}>
+                        Team: {team.name} ({team.members?.length ?? 0} members)
+                      </SelectItem>
+                    ))}
+                  </>
+                )}
+                <div className="px-2 py-1 text-[10px] font-bold uppercase text-muted-foreground">
+                  Employment Type
+                </div>
+                <SelectItem value="TYPE:FULL_TIME">Full Time</SelectItem>
+                <SelectItem value="TYPE:PART_TIME">Part Time</SelectItem>
+                <SelectItem value="TYPE:CONTRACT">Contract</SelectItem>
+                <SelectItem value="TYPE:INTERN">Intern</SelectItem>
+              </SelectContent>
+            </SelectMenu>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="salary-target-search">Find employees</Label>
-            <Input
-              id="salary-target-search"
-              aria-label="Search salary assignment employees"
-              maxLength={100}
-              placeholder="Name or employee ID"
-              disabled={closed}
-              value={filters.search}
-              onChange={(event) => updateFilter('search', event.target.value)}
-            />
-            {matching.loading ? (
-              <p role="status" className="text-xs">
-                Counting matching employees…
-              </p>
-            ) : matching.error ? (
-              <p role="alert" className="text-xs text-destructive">
-                {matching.error}
-              </p>
-            ) : (
-              <p className="text-xs text-muted-foreground">
-                {matching.data?.total.toLocaleString() ?? 0} employees match. Every match is
-                included; preview shows the exact affected total and any payroll blockers.
-              </p>
-            )}
-            <div className="max-h-36 overflow-auto rounded border border-border p-2 text-xs">
-              {matching.data?.items.map((person) => (
-                <p key={person.id} className="py-0.5">
-                  {person.name} · {person.employeeNumber}
+
+          {/* Matching Employees Checklist */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <Label className="text-xs font-semibold">
+                Employees to Allot ({selectedEmployees.length} of {targetEmployees.length} selected)
+              </Label>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-6 text-[11px] px-2"
+                onClick={toggleSelectAll}
+              >
+                {excludedEmpIds.size === 0 ? 'Deselect all' : 'Select all'}
+              </Button>
+            </div>
+
+            <div className="max-h-36 overflow-y-auto rounded-lg border border-border bg-card p-2 space-y-1.5">
+              {targetEmployees.length === 0 ? (
+                <p className="text-xs text-muted-foreground py-3 text-center">
+                  No active employees found in this group.
                 </p>
-              ))}
+              ) : (
+                targetEmployees.map((emp) => {
+                  const isChecked = !excludedEmpIds.has(emp.id);
+                  return (
+                    <div
+                      key={emp.id}
+                      onClick={() => toggleEmp(emp.id)}
+                      className="flex items-center justify-between px-2.5 py-1.5 rounded hover:bg-muted/40 cursor-pointer text-xs transition-colors"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <Checkbox checked={isChecked} onCheckedChange={() => toggleEmp(emp.id)} />
+                        <span className="font-medium text-foreground">
+                          {emp.firstName} {emp.lastName}
+                        </span>
+                        <span className="font-mono text-[10px] text-muted-foreground">
+                          ({emp.employeeNumber})
+                        </span>
+                      </div>
+                      <Badge variant="outline" className="text-[10px]">
+                        {emp.employmentType}
+                      </Badge>
+                    </div>
+                  );
+                })
+              )}
             </div>
-            {matching.data?.nextCursor && (
-              <p className="text-[11px] text-muted-foreground">
-                Showing the first 50 matches. Search or use a narrower group to inspect people
-                further down the list.
-              </p>
-            )}
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <label className="space-y-1 text-xs">
-              <span>Gross salary</span>
-              <div className="grid grid-cols-[1fr_auto] gap-2">
-                <Input
-                  required
-                  min={0.01}
-                  max={salaryMode === 'LPA' ? 1000 : 100000000}
-                  step="0.01"
-                  type="number"
-                  inputMode="decimal"
-                  aria-label={salaryMode === 'LPA' ? 'Annual gross salary in LPA' : 'Monthly gross salary in rupees'}
-                  value={grossSalary}
-                  onChange={(event) => setSalary(event.target.value)}
-                  disabled={closed}
-                />
-                <select aria-label="Salary period" className="h-9 rounded-md border border-border bg-background px-2" value={salaryMode} onChange={(event) => { const nextMode = event.target.value as 'MONTHLY' | 'LPA'; setSalaryMode(nextMode); const value = Number(grossSalary); const monthly = nextMode === 'LPA' ? value * 100000 / 12 : value; if (Number.isFinite(monthly) && monthly > 0) setEsiEnabled(monthly <= 21000); clearPreview(); }} disabled={closed}>
-                  <option value="MONTHLY">Monthly ₹</option><option value="LPA">Annual LPA</option>
-                </select>
-              </div>
-            </label>
-            <label className="space-y-1 text-xs">
-              <span>Effective from</span>
-              <DatePicker
-                value={effectiveFrom}
-                onChange={(value) => {
-                  setEffectiveFrom(value);
-                  clearPreview();
-                }}
-                disabled={closed}
+
+          {/* Salary Parameters */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+            <div>
+              <Label className="mb-1 block text-xs font-semibold" htmlFor="role-gross">
+                Monthly Gross Salary (₹)
+              </Label>
+              <Input
+                id="role-gross"
+                type="number"
+                inputMode="decimal"
+                placeholder="e.g. 50000"
+                value={grossSalary}
+                onChange={(e) => handleGrossChange(e.target.value)}
+                disabled={submitting}
               />
-            </label>
-          </div>
-          <div className="space-y-2">
-            <p className="text-xs font-semibold">Statutory deductions</p>
-            <div className="grid grid-cols-3 gap-2">
-              {(
-                [
-                  ['PF', pfEnabled, setPfEnabled],
-                  ['PT', ptEnabled, setPtEnabled],
-                  ['ESI', esiEnabled, setEsiEnabled],
-                ] as const
-              ).map(([label, value, set]) => (
-                <button
-                  key={label}
-                  type="button"
-                  disabled={closed}
-                  aria-pressed={value}
-                  onClick={() => {
-                    set(!value);
-                    clearPreview();
-                  }}
-                  className={`rounded-lg border p-2 text-xs ${value ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground'}`}
-                >
-                  <CheckCircle2 className="mr-1 inline size-3.5" />
-                  {label} {value ? 'On' : 'Off'}
-                </button>
-              ))}
+            </div>
+            <div>
+              <Label className="mb-1 block text-xs font-semibold" htmlFor="role-effective">
+                Effective From
+              </Label>
+              <DatePicker
+                id="role-effective"
+                value={effectiveFrom}
+                onChange={setEffectiveFrom}
+                disabled={submitting}
+              />
             </div>
           </div>
-          {error && (
-            <p role="alert" className="text-xs text-destructive">
-              {error}
+
+          {/* Statutory Switches */}
+          <div>
+            <Label className="mb-1.5 block text-xs font-semibold">
+              Statutory Withholdings & Benefits
+            </Label>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => setPfEnabled(!pfEnabled)}
+                className={`flex items-center justify-center gap-1.5 p-2 rounded-lg border text-xs font-medium transition-colors ${
+                  pfEnabled
+                    ? 'bg-primary/10 border-primary text-primary font-semibold'
+                    : 'bg-muted/30 border-border text-muted-foreground'
+                }`}
+              >
+                <CheckCircle2
+                  className={`h-3.5 w-3.5 ${pfEnabled ? 'text-primary' : 'text-muted-foreground/40'}`}
+                />
+                PF {pfEnabled ? 'On' : 'Off'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setPtEnabled(!ptEnabled)}
+                className={`flex items-center justify-center gap-1.5 p-2 rounded-lg border text-xs font-medium transition-colors ${
+                  ptEnabled
+                    ? 'bg-primary/10 border-primary text-primary font-semibold'
+                    : 'bg-muted/30 border-border text-muted-foreground'
+                }`}
+              >
+                <CheckCircle2
+                  className={`h-3.5 w-3.5 ${ptEnabled ? 'text-primary' : 'text-muted-foreground/40'}`}
+                />
+                PT {ptEnabled ? 'On' : 'Off'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setEsiEnabled(!esiEnabled)}
+                className={`flex items-center justify-center gap-1.5 p-2 rounded-lg border text-xs font-medium transition-colors ${
+                  esiEnabled
+                    ? 'bg-primary/10 border-primary text-primary font-semibold'
+                    : 'bg-muted/30 border-border text-muted-foreground'
+                }`}
+              >
+                <CheckCircle2
+                  className={`h-3.5 w-3.5 ${esiEnabled ? 'text-primary' : 'text-muted-foreground/40'}`}
+                />
+                ESI {esiEnabled ? 'On' : 'Off'}
+              </button>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              PF (Provident Fund) and PT (Professional Tax) are standard for all roles. ESI
+              auto-enables for gross ≤ ₹21,000.
+            </p>
+          </div>
+
+          {errorMsg && (
+            <p className="text-xs text-destructive font-medium" role="alert">
+              {errorMsg}
             </p>
           )}
-          {preview && (
-            <section
-              aria-label="Salary assignment preview"
-              className="space-y-2 rounded border border-border bg-muted/30 p-3"
-            >
-              <p className="text-sm font-semibold">
-                {preview.affectedEmployees.toLocaleString()} employees ·{' '}
-                {preview.valid.toLocaleString()} ready · {preview.invalid.toLocaleString()} blocked
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {preview.targetName}. Existing released payroll periods are protected. This is an
-                individual salary change for every matching employee.
-              </p>
-              {preview.rows
-                .filter((row) => row.error)
-                .slice(0, 8)
-                .map((row) => (
-                  <p key={row.id} className="text-xs text-destructive">
-                    {row.name}: {row.error}
-                  </p>
-                ))}
-              {preview.invalid > 8 && (
-                <p className="text-xs text-muted-foreground">
-                  And {(preview.invalid - 8).toLocaleString()} more blockers; download the job
-                  results after applying.
-                </p>
-              )}
-            </section>
+
+          {progressMsg && (
+            <p className="text-xs text-primary font-medium flex items-center gap-2">
+              <span className="inline-block size-2 rounded-full bg-primary animate-ping" />
+              {progressMsg}
+            </p>
           )}
-          <WorkforceJobProgress job={job} />
-          <div className="sticky bottom-[-1.25rem] z-20 -mx-5 -mb-5 flex justify-end gap-2 border-t border-border bg-card px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+
+          {/* Footer Actions */}
+          <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
             <Button
               type="button"
               variant="outline"
-              disabled={closed}
+              size="sm"
               onClick={() => onOpenChange(false)}
+              disabled={submitting}
             >
-              Close
+              Cancel
             </Button>
-            {preview ? (
-              <Button
-                type="button"
-                disabled={closed || preview.valid === 0}
-                onClick={() => void apply()}
-              >
-                {job.starting
-                  ? 'Starting…'
-                  : `Apply to ${preview.valid.toLocaleString()} employees`}
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                disabled={closed || !grossSalary || !effectiveFrom || !matching.data?.total}
-              >
-                {busy ? 'Preparing preview…' : 'Preview salary changes'}
-              </Button>
-            )}
+            <Button
+              type="submit"
+              size="sm"
+              disabled={
+                submitting || selectedEmployees.length === 0 || !grossSalary || !effectiveFrom
+              }
+            >
+              {submitting
+                ? 'Allotting...'
+                : `Allot Salary to ${selectedEmployees.length} Employees`}
+            </Button>
           </div>
         </form>
       </DialogContent>

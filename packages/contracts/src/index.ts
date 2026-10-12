@@ -1,4 +1,5 @@
 import { z } from 'zod';
+export { employeeOnboardingDetailsSchema, type EmployeeOnboardingDetails } from './federation';
 
 export const correlationIdSchema = z.string().trim().min(1).max(128);
 export const idempotencyKeySchema = z.string().trim().min(16).max(255);

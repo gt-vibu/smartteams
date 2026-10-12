@@ -56,7 +56,7 @@ export function useAdvanceInbox() {
     (id: string, approve: boolean, comment?: string) =>
       payrollRepository.decideAdvance(organizationId!, id, {
         status: approve ? 'APPROVED' : 'REJECTED',
-        comment,
+        comment: comment ?? '',
       }),
     [organizationId],
   );

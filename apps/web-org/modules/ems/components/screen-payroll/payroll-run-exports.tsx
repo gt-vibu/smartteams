@@ -154,7 +154,7 @@ export function PayrollRunExports({ runId, canPay }: { runId: string; canPay: bo
             type="button"
             variant="outline"
           >
-            {busy === 'bank' ? '…' : 'Bank advice'}
+            {busy === 'bank' ? '…' : 'Bank file'}
           </Button>
         )}
       </div>

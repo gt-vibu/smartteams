@@ -1,7 +1,5 @@
 'use client';
 
-import { LoadingIndicator } from '@smarteam/ui';
-
 import React, { useState, useEffect } from 'react';
 import type { Employee } from '@smarteam/contracts';
 import type { CompensationState } from '../../hooks/use-compensation';
@@ -12,15 +10,10 @@ import { AssignComponentDialog } from './assign-component-dialog';
 import { ConfigureSalaryPolicyDialog } from './configure-salary-policy-dialog';
 import { UserCheck } from 'lucide-react';
 import { useSalaryPreview } from '../../hooks/use-salary-preview';
-import { useSession } from '../../hooks/auth-context';
-import { useAsyncResource } from '../../hooks/use-async-resource';
-import { payrollRepository } from '../../repositories/payroll.repository';
-import type { PayrollPolicy } from '@smarteam/contracts';
 
 interface EmployeeCompensationPanelProps {
   compensation: CompensationState;
   employee?: Employee | null;
-  onConfigureStatutory?: () => void;
 }
 
 /**
@@ -32,19 +25,11 @@ interface EmployeeCompensationPanelProps {
 export function EmployeeCompensationPanel({
   compensation,
   employee,
-  onConfigureStatutory,
 }: EmployeeCompensationPanelProps) {
   const [assigning, setAssigning] = useState(false);
   const [configuringPolicy, setConfiguringPolicy] = useState(false);
   const profile = compensation.profile;
   const policy = profile?.employeePolicy;
-  const { session } = useSession();
-  const policies = useAsyncResource<PayrollPolicy[]>(
-    () => payrollRepository.listPolicies(session!.organizationId),
-    [session?.organizationId],
-    { enabled: Boolean(session?.organizationId && compensation.can.saveSalary) },
-  );
-  const [selectedPolicyId, setSelectedPolicyId] = useState('');
 
   const [pfEnabled, setPfEnabled] = useState<boolean>(true);
   const [ptEnabled, setPtEnabled] = useState<boolean>(true);
@@ -76,12 +61,6 @@ export function EmployeeCompensationPanel({
       setEsiEnabled(policy.esiEnabled);
     }
   }, [policy]);
-
-  useEffect(() => {
-    setSelectedPolicyId(
-      policy?.assignmentSource === 'INDIVIDUAL_OVERRIDE' ? (policy.payrollPolicyId ?? '') : '',
-    );
-  }, [policy?.assignmentSource, policy?.payrollPolicyId, compensation.employeeId]);
 
   if (!compensation.employeeId) {
     return (
@@ -116,7 +95,9 @@ export function EmployeeCompensationPanel({
     return (
       <div className="flex min-h-[clamp(200px,40vh,350px)] flex-col items-center justify-center rounded-xl border border-border bg-card p-10 text-center">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent mb-2" />
-        <LoadingIndicator variant="inline" label="Loading compensation structure" className="text-xs text-muted-foreground" />
+        <p className="text-xs text-muted-foreground" role="status">
+          Loading compensation structure...
+        </p>
       </div>
     );
   }
@@ -163,10 +144,6 @@ export function EmployeeCompensationPanel({
           onTogglePt={() => setPtEnabled(!ptEnabled)}
           pfEnabled={pfEnabled}
           profile={profile}
-          policies={policies.data ?? []}
-          selectedPolicyId={selectedPolicyId}
-          onSelectedPolicyIdChange={setSelectedPolicyId}
-          onConfigureStatutory={onConfigureStatutory}
           ptEnabled={ptEnabled}
         />
         <SalaryBreakdownCard

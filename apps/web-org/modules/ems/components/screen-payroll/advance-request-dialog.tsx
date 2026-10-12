@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@smarteam/ui';
 import type { AdvanceAllowance } from '../../repositories/payroll.repository';
 import { AllowanceMeter, allowanceBlock, rupees } from './advance-allowance';
-import { LIMITS } from '@smarteam/contracts';
 
 /**
  * Asking for a salary advance.
@@ -72,9 +71,7 @@ export function AdvanceRequestDialog({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
-        <DialogTitle className="sticky top-[-1.25rem] z-20 -mx-5 -mt-5 bg-card px-5 pb-3 pt-5">
-          Request a salary advance
-        </DialogTitle>
+        <DialogTitle>Request a salary advance</DialogTitle>
 
         {!allowance ? (
           <p className="mt-4 text-xs text-muted-foreground" role="status">
@@ -107,7 +104,7 @@ export function AdvanceRequestDialog({
                 <input
                   aria-describedby="advance-amount-help"
                   aria-invalid={overLimit || (tried && !entered) || undefined}
-                  className="ml-2 w-full bg-transparent text-lg font-semibold tabular-nums text-foreground outline-none placeholder:text-muted-foreground/60"
+                  className="ml-2 w-full bg-transparent font-mono text-lg font-semibold tabular-nums text-foreground outline-none placeholder:text-muted-foreground/60"
                   disabled={saving}
                   id="advance-amount"
                   inputMode="decimal"
@@ -180,7 +177,6 @@ export function AdvanceRequestDialog({
                 Reason
               </Label>
               <Textarea
-                maxLength={LIMITS.reason}
                 aria-invalid={(tried && !reasonOk) || undefined}
                 disabled={saving}
                 id="advance-reason"
@@ -205,7 +201,7 @@ export function AdvanceRequestDialog({
               </p>
             )}
 
-            <div className="sticky bottom-[-1.25rem] z-20 -mx-5 -mb-5 flex flex-col-reverse gap-2 border-t border-border bg-card px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col-reverse gap-2 border-t border-border pt-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-[11px] text-muted-foreground">
                 Goes to payroll for approval. You are told when it is decided.
               </p>

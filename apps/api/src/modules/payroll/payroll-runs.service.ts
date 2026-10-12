@@ -1,4 +1,3 @@
-import { assertPayrollReady } from './payroll-readiness';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma/client';
 import {
@@ -59,22 +58,42 @@ export class PayrollRunsService {
       const periodEnd = dateOnly(input.periodEnd);
       if (periodEnd < periodStart)
         throw new ConflictError('Payroll period end must not precede its start');
+      const existingRun = await tx.payrollRun.findFirst({
+        where: {
+          organizationId: context.organizationId,
+          periodStart,
+          periodEnd,
+          status: { not: PayrollRunStatus.VOIDED },
+        },
+        select: { id: true },
+      });
+      if (existingRun)
+        throw new ConflictError(
+          'A payroll run already exists for this period. Continue the existing run instead of creating a duplicate.',
+        );
       const organization = await tx.organization.findUniqueOrThrow({
         where: { id: context.organizationId },
         include: { settings: true },
       });
-      const run = await tx.payrollRun.create({
-        data: {
-          organizationId: context.organizationId,
-          periodStart,
-          periodEnd,
-          payFrequency:
-            input.payFrequency ?? organization.settings?.payrollFrequency ?? PayFrequency.MONTHLY,
-          currencyCode: organization.currencyCode,
-          calculationVersion: 'v1-deterministic',
-          inputSnapshotHash: emptyHash(),
-        },
-      });
+      const run = await tx.payrollRun
+        .create({
+          data: {
+            organizationId: context.organizationId,
+            periodStart,
+            periodEnd,
+            payFrequency:
+              input.payFrequency ?? organization.settings?.payrollFrequency ?? PayFrequency.MONTHLY,
+            currencyCode: organization.currencyCode,
+            calculationVersion: 'v1-deterministic',
+            inputSnapshotHash: emptyHash(),
+          },
+        })
+        .catch((error: unknown) => {
+          // The partial unique index is the final guard against concurrent create requests.
+          if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002')
+            throw new ConflictError('A payroll run already exists for this period');
+          throw error;
+        });
       await this.audit.record(
         context,
         {
@@ -259,11 +278,15 @@ export class PayrollRunsService {
         throw new ConflictError(
           'Payroll inputs changed after this run was calculated; calculate it again before approving or releasing it',
         );
-      if (
-        context.accessMode === 'NATIVE' &&
-        (target === PayrollRunStatus.APPROVED || target === PayrollRunStatus.RELEASED)
-      )
-        await assertPayrollReady(tx, context.organizationId, run);
+      if (target === PayrollRunStatus.APPROVED || target === PayrollRunStatus.RELEASED) {
+        const lineCount = await tx.payrollLineItem.count({
+          where: { organizationId: context.organizationId, payrollRunId: run.id },
+        });
+        if (lineCount === 0)
+          throw new ConflictError(
+            'This payroll run has no employee pay lines. Calculate a run with eligible employees before approving or releasing it.',
+          );
+      }
       const updated = await tx.payrollRun.update({
         where: { id: run.id },
         data: {

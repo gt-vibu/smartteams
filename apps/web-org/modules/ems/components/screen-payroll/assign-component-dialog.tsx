@@ -22,7 +22,6 @@ import {
   NewComponentFields,
   type NewComponentDraft,
 } from './new-component-fields';
-import { LIMITS } from '@smarteam/contracts';
 
 const NEW = '__new__';
 const today = () => new Date().toLocaleDateString('en-CA');
@@ -100,9 +99,7 @@ export function AssignComponentDialog({
       open={open}
     >
       <DialogContent className="sm:max-h-[90dvh] overflow-y-auto sm:max-w-md">
-        <DialogTitle className="sticky top-[-1.25rem] z-20 -mx-5 -mt-5 bg-card px-5 pt-5 pb-3">
-          Assign a pay component
-        </DialogTitle>
+        <DialogTitle>Assign a pay component</DialogTitle>
         <form className="mt-4 space-y-3" onSubmit={submit}>
           <div>
             <Label className="mb-1 block">Component</Label>
@@ -135,8 +132,6 @@ export function AssignComponentDialog({
               {isPercentage ? 'Percentage of Basic (%)' : 'Monthly amount (₹)'}
             </Label>
             <Input
-              min={0}
-              max={isPercentage ? 100 : LIMITS.amount}
               disabled={compensation.saving || !ready}
               id="assignment-value"
               inputMode="decimal"
@@ -187,7 +182,7 @@ export function AssignComponentDialog({
             </p>
           )}
 
-          <div className="sticky bottom-[-1.25rem] z-20 -mx-5 -mb-5 flex justify-end gap-2 bg-card px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+          <div className="flex justify-end gap-2">
             <Button
               disabled={compensation.saving}
               onClick={() => onOpenChange(false)}

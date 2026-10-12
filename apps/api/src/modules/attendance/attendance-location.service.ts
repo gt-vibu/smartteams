@@ -12,6 +12,27 @@ export type WorkLocationInput = {
   radiusMeters: number;
 };
 
+export function validateAttendanceCoordinates(input: {
+  latitude?: number;
+  longitude?: number;
+  accuracyMeters?: number;
+}) {
+  const { latitude, longitude, accuracyMeters } = input;
+  if (latitude !== undefined || longitude !== undefined) {
+    if (
+      !Number.isFinite(latitude) ||
+      !Number.isFinite(longitude) ||
+      latitude! < -90 ||
+      latitude! > 90 ||
+      longitude! < -180 ||
+      longitude! > 180
+    )
+      throw new ConflictError('Supply valid latitude and longitude together');
+  }
+  if (accuracyMeters !== undefined && (!Number.isFinite(accuracyMeters) || accuracyMeters < 0))
+    throw new ConflictError('Location accuracy must be a finite non-negative number');
+}
+
 @Injectable()
 export class AttendanceLocationService {
   async evaluateGeofence(
@@ -22,6 +43,7 @@ export class AttendanceLocationService {
     longitude: number | undefined,
     mode: GeofenceMode,
   ) {
+    validateAttendanceCoordinates({ latitude, longitude });
     if (mode === GeofenceMode.DISABLED || latitude === undefined || longitude === undefined)
       return {
         isWithin: mode === GeofenceMode.DISABLED ? null : false,
@@ -35,7 +57,16 @@ export class AttendanceLocationService {
         ...(branchId ? { OR: [{ branchId }, { branchId: null }] } : { branchId: null }),
       },
     });
-    const nearest = locations
+    const candidates = locations
+      .filter(
+        (location) =>
+          Number.isFinite(Number(location.latitude)) &&
+          Number.isFinite(Number(location.longitude)) &&
+          Math.abs(Number(location.latitude)) <= 90 &&
+          Math.abs(Number(location.longitude)) <= 180 &&
+          Number.isFinite(Number(location.radiusMeters)) &&
+          Number(location.radiusMeters) > 0,
+      )
       .map((location) => ({
         location,
         distance: this.distanceMeters(
@@ -45,7 +76,11 @@ export class AttendanceLocationService {
           Number(location.longitude),
         ),
       }))
-      .sort((a, b) => a.distance - b.distance)[0];
+      .sort((a, b) => a.distance - b.distance);
+    // Any allowed circle may contain the device; the nearest centre can have a smaller radius.
+    const nearest =
+      candidates.find(({ location, distance }) => distance <= Number(location.radiusMeters)) ??
+      candidates[0];
     if (!nearest) return { isWithin: false, distance: null, workLocationId: undefined };
     return {
       isWithin: nearest.distance <= Number(nearest.location.radiusMeters),
@@ -68,11 +103,14 @@ export class AttendanceLocationService {
         throw new ConflictError('Work-location names must be unique within a request');
       names.add(name);
       if (
+        !Number.isFinite(location.latitude) ||
+        !Number.isFinite(location.longitude) ||
+        !Number.isFinite(location.radiusMeters) ||
         location.latitude < -90 ||
         location.latitude > 90 ||
         location.longitude < -180 ||
         location.longitude > 180 ||
-        location.radiusMeters <= 0
+        location.radiusMeters < 1
       )
         throw new ConflictError('Work-location coordinates or radius are invalid');
       const existing = await tx.workLocation.findUnique({
@@ -120,6 +158,7 @@ export class AttendanceLocationService {
       Math.cos((latitudeA * Math.PI) / 180) *
         Math.cos((latitudeB * Math.PI) / 180) *
         Math.sin(longitudeDelta / 2) ** 2;
-    return radius * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
+    const bounded = Math.min(1, Math.max(0, haversine));
+    return radius * 2 * Math.atan2(Math.sqrt(bounded), Math.sqrt(1 - bounded));
   }
 }

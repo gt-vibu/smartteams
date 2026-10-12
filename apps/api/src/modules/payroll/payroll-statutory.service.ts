@@ -33,28 +33,42 @@ export class PayrollStatutoryService {
     );
   }
 
-  async saveStatutoryRule(context: DomainContext, input: StatutoryRuleInput) {
+  async saveStatutoryRule(context: DomainContext, input: StatutoryRuleInput, ruleId?: string) {
     requirePermission(context, 'payroll.policy.write');
     validateStatutoryRule(input);
     const effectiveFrom = dateOnly(input.effectiveFrom);
+    const providedScheme = input.schemeCode.trim().toUpperCase();
+    const schemeCode =
+      providedScheme === 'PF'
+        ? 'EPF'
+        : providedScheme === 'ESI'
+          ? 'ESIC'
+          : providedScheme === 'PROFESSIONAL_TAX'
+            ? 'PT'
+            : providedScheme;
     return this.database.run(context, async (tx) => {
-      const existing = await tx.payrollStatutoryRule.findUnique({
-        where: {
-          organizationId_schemeCode_jurisdiction_effectiveFrom: {
-            organizationId: context.organizationId,
-            schemeCode: input.schemeCode.trim().toUpperCase(),
-            jurisdiction: input.jurisdiction.trim().toUpperCase(),
-            effectiveFrom,
-          },
-        },
-      });
+      const existing = ruleId
+        ? await tx.payrollStatutoryRule.findFirst({
+            where: { id: ruleId, organizationId: context.organizationId },
+          })
+        : await tx.payrollStatutoryRule.findUnique({
+            where: {
+              organizationId_schemeCode_jurisdiction_effectiveFrom: {
+                organizationId: context.organizationId,
+                schemeCode,
+                jurisdiction: input.jurisdiction.trim().toUpperCase(),
+                effectiveFrom,
+              },
+            },
+          });
+      if (ruleId && !existing) throw new NotFoundError('Statutory rule');
       const effectiveTo = input.effectiveTo ? dateOnly(input.effectiveTo) : null;
       if (effectiveTo && effectiveTo < effectiveFrom)
         throw new ConflictError('Statutory rule end must not precede its start');
       const overlap = await tx.payrollStatutoryRule.findFirst({
         where: {
           organizationId: context.organizationId,
-          schemeCode: input.schemeCode.trim().toUpperCase(),
+          schemeCode,
           jurisdiction: input.jurisdiction.trim().toUpperCase(),
           ...(existing ? { id: { not: existing.id } } : {}),
           effectiveFrom: { lte: effectiveTo ?? new Date('9999-12-31') },
@@ -63,7 +77,7 @@ export class PayrollStatutoryService {
       });
       if (overlap) throw new ConflictError('Statutory rule periods must not overlap');
       const data = {
-        schemeCode: input.schemeCode.trim().toUpperCase(),
+        schemeCode,
         jurisdiction: input.jurisdiction.trim().toUpperCase(),
         effectiveTo,
         employeeRate:
@@ -78,25 +92,23 @@ export class PayrollStatutoryService {
         flatAmount: input.flatAmount === undefined ? null : new Prisma.Decimal(input.flatAmount),
         metadata: jsonSnapshot(input.metadata ?? {}),
       };
+      if (existing) {
+        await markPayrollStale(
+          tx,
+          context.organizationId,
+          existing.effectiveFrom,
+          existing.effectiveTo ?? undefined,
+        );
+      }
       await markPayrollStale(tx, context.organizationId, effectiveFrom, effectiveTo ?? undefined);
-      const saved = existing
-        ? tx.payrollStatutoryRule.update({ where: { id: existing.id }, data })
+      return existing
+        ? tx.payrollStatutoryRule.update({
+            where: { id: existing.id },
+            data: { ...data, effectiveFrom },
+          })
         : tx.payrollStatutoryRule.create({
             data: { organizationId: context.organizationId, effectiveFrom, ...data },
           });
-      const result = await saved;
-      await this.audit.record(
-        context,
-        {
-          entityType: 'PAYROLL_STATUTORY_RULE',
-          entityId: result.id,
-          action: existing ? 'PAYROLL_STATUTORY_RULE_UPDATED' : 'PAYROLL_STATUTORY_RULE_CREATED',
-          ...(existing ? { beforeState: jsonSnapshot(existing) } : {}),
-          afterState: jsonSnapshot(result),
-        },
-        tx,
-      );
-      return result;
     });
   }
 

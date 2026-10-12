@@ -56,7 +56,6 @@ export type ApprovalPolicyCountAggregateOutputType = {
   domain: number
   code: number
   name: number
-  automation: number
   isDefault: number
   isActive: number
   createdByUserId: number
@@ -98,7 +97,6 @@ export type ApprovalPolicyCountAggregateInputType = {
   domain?: true
   code?: true
   name?: true
-  automation?: true
   isDefault?: true
   isActive?: true
   createdByUserId?: true
@@ -185,7 +183,6 @@ export type ApprovalPolicyGroupByOutputType = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation: runtime.JsonValue
   isDefault: boolean
   isActive: boolean
   createdByUserId: string | null
@@ -220,7 +217,6 @@ export type ApprovalPolicyWhereInput = {
   domain?: Prisma.EnumApprovalDomainFilter<"ApprovalPolicy"> | $Enums.ApprovalDomain
   code?: Prisma.StringFilter<"ApprovalPolicy"> | string
   name?: Prisma.StringFilter<"ApprovalPolicy"> | string
-  automation?: Prisma.JsonFilter<"ApprovalPolicy">
   isDefault?: Prisma.BoolFilter<"ApprovalPolicy"> | boolean
   isActive?: Prisma.BoolFilter<"ApprovalPolicy"> | boolean
   createdByUserId?: Prisma.UuidNullableFilter<"ApprovalPolicy"> | string | null
@@ -241,7 +237,6 @@ export type ApprovalPolicyOrderByWithRelationInput = {
   domain?: Prisma.SortOrder
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  automation?: Prisma.SortOrder
   isDefault?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -266,7 +261,6 @@ export type ApprovalPolicyWhereUniqueInput = Prisma.AtLeast<{
   domain?: Prisma.EnumApprovalDomainFilter<"ApprovalPolicy"> | $Enums.ApprovalDomain
   code?: Prisma.StringFilter<"ApprovalPolicy"> | string
   name?: Prisma.StringFilter<"ApprovalPolicy"> | string
-  automation?: Prisma.JsonFilter<"ApprovalPolicy">
   isDefault?: Prisma.BoolFilter<"ApprovalPolicy"> | boolean
   isActive?: Prisma.BoolFilter<"ApprovalPolicy"> | boolean
   createdByUserId?: Prisma.UuidNullableFilter<"ApprovalPolicy"> | string | null
@@ -287,7 +281,6 @@ export type ApprovalPolicyOrderByWithAggregationInput = {
   domain?: Prisma.SortOrder
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  automation?: Prisma.SortOrder
   isDefault?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -307,7 +300,6 @@ export type ApprovalPolicyScalarWhereWithAggregatesInput = {
   domain?: Prisma.EnumApprovalDomainWithAggregatesFilter<"ApprovalPolicy"> | $Enums.ApprovalDomain
   code?: Prisma.StringWithAggregatesFilter<"ApprovalPolicy"> | string
   name?: Prisma.StringWithAggregatesFilter<"ApprovalPolicy"> | string
-  automation?: Prisma.JsonWithAggregatesFilter<"ApprovalPolicy">
   isDefault?: Prisma.BoolWithAggregatesFilter<"ApprovalPolicy"> | boolean
   isActive?: Prisma.BoolWithAggregatesFilter<"ApprovalPolicy"> | boolean
   createdByUserId?: Prisma.UuidNullableWithAggregatesFilter<"ApprovalPolicy"> | string | null
@@ -320,7 +312,6 @@ export type ApprovalPolicyCreateInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdAt?: Date | string
@@ -340,7 +331,6 @@ export type ApprovalPolicyUncheckedCreateInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdByUserId?: string | null
@@ -358,7 +348,6 @@ export type ApprovalPolicyUpdateInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -378,7 +367,6 @@ export type ApprovalPolicyUncheckedUpdateInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -397,7 +385,6 @@ export type ApprovalPolicyCreateManyInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdByUserId?: string | null
@@ -410,7 +397,6 @@ export type ApprovalPolicyUpdateManyMutationInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -423,7 +409,6 @@ export type ApprovalPolicyUncheckedUpdateManyInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -458,7 +443,6 @@ export type ApprovalPolicyCountOrderByAggregateInput = {
   domain?: Prisma.SortOrder
   code?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  automation?: Prisma.SortOrder
   isDefault?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdByUserId?: Prisma.SortOrder
@@ -668,7 +652,6 @@ export type ApprovalPolicyCreateWithoutCreatedByInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdAt?: Date | string
@@ -687,7 +670,6 @@ export type ApprovalPolicyUncheckedCreateWithoutCreatedByInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdAt?: Date | string
@@ -734,7 +716,6 @@ export type ApprovalPolicyScalarWhereInput = {
   domain?: Prisma.EnumApprovalDomainFilter<"ApprovalPolicy"> | $Enums.ApprovalDomain
   code?: Prisma.StringFilter<"ApprovalPolicy"> | string
   name?: Prisma.StringFilter<"ApprovalPolicy"> | string
-  automation?: Prisma.JsonFilter<"ApprovalPolicy">
   isDefault?: Prisma.BoolFilter<"ApprovalPolicy"> | boolean
   isActive?: Prisma.BoolFilter<"ApprovalPolicy"> | boolean
   createdByUserId?: Prisma.UuidNullableFilter<"ApprovalPolicy"> | string | null
@@ -747,7 +728,6 @@ export type ApprovalPolicyCreateWithoutAttendanceCorrectionsInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdAt?: Date | string
@@ -766,7 +746,6 @@ export type ApprovalPolicyUncheckedCreateWithoutAttendanceCorrectionsInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdByUserId?: string | null
@@ -799,7 +778,6 @@ export type ApprovalPolicyUpdateWithoutAttendanceCorrectionsInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -818,7 +796,6 @@ export type ApprovalPolicyUncheckedUpdateWithoutAttendanceCorrectionsInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -835,7 +812,6 @@ export type ApprovalPolicyCreateWithoutLeaveRequestsInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdAt?: Date | string
@@ -854,7 +830,6 @@ export type ApprovalPolicyUncheckedCreateWithoutLeaveRequestsInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdByUserId?: string | null
@@ -887,7 +862,6 @@ export type ApprovalPolicyUpdateWithoutLeaveRequestsInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -906,7 +880,6 @@ export type ApprovalPolicyUncheckedUpdateWithoutLeaveRequestsInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -923,7 +896,6 @@ export type ApprovalPolicyCreateWithoutTimesheetsInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdAt?: Date | string
@@ -942,7 +914,6 @@ export type ApprovalPolicyUncheckedCreateWithoutTimesheetsInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdByUserId?: string | null
@@ -975,7 +946,6 @@ export type ApprovalPolicyUpdateWithoutTimesheetsInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -994,7 +964,6 @@ export type ApprovalPolicyUncheckedUpdateWithoutTimesheetsInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1011,7 +980,6 @@ export type ApprovalPolicyCreateWithoutPayrollRunsInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdAt?: Date | string
@@ -1030,7 +998,6 @@ export type ApprovalPolicyUncheckedCreateWithoutPayrollRunsInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdByUserId?: string | null
@@ -1063,7 +1030,6 @@ export type ApprovalPolicyUpdateWithoutPayrollRunsInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1082,7 +1048,6 @@ export type ApprovalPolicyUncheckedUpdateWithoutPayrollRunsInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1099,7 +1064,6 @@ export type ApprovalPolicyCreateWithoutOrganizationInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdAt?: Date | string
@@ -1117,7 +1081,6 @@ export type ApprovalPolicyUncheckedCreateWithoutOrganizationInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdByUserId?: string | null
@@ -1161,7 +1124,6 @@ export type ApprovalPolicyCreateWithoutStepsInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdAt?: Date | string
@@ -1180,7 +1142,6 @@ export type ApprovalPolicyUncheckedCreateWithoutStepsInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdByUserId?: string | null
@@ -1213,7 +1174,6 @@ export type ApprovalPolicyUpdateWithoutStepsInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1232,7 +1192,6 @@ export type ApprovalPolicyUncheckedUpdateWithoutStepsInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1250,7 +1209,6 @@ export type ApprovalPolicyCreateManyCreatedByInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdAt?: Date | string
@@ -1262,7 +1220,6 @@ export type ApprovalPolicyUpdateWithoutCreatedByInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1281,7 +1238,6 @@ export type ApprovalPolicyUncheckedUpdateWithoutCreatedByInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1299,7 +1255,6 @@ export type ApprovalPolicyUncheckedUpdateManyWithoutCreatedByInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1311,7 +1266,6 @@ export type ApprovalPolicyCreateManyOrganizationInput = {
   domain: $Enums.ApprovalDomain
   code: string
   name: string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: boolean
   isActive?: boolean
   createdByUserId?: string | null
@@ -1324,7 +1278,6 @@ export type ApprovalPolicyUpdateWithoutOrganizationInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1342,7 +1295,6 @@ export type ApprovalPolicyUncheckedUpdateWithoutOrganizationInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1360,7 +1312,6 @@ export type ApprovalPolicyUncheckedUpdateManyWithoutOrganizationInput = {
   domain?: Prisma.EnumApprovalDomainFieldUpdateOperationsInput | $Enums.ApprovalDomain
   code?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  automation?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1441,7 +1392,6 @@ export type ApprovalPolicySelect<ExtArgs extends runtime.Types.Extensions.Intern
   domain?: boolean
   code?: boolean
   name?: boolean
-  automation?: boolean
   isDefault?: boolean
   isActive?: boolean
   createdByUserId?: boolean
@@ -1463,7 +1413,6 @@ export type ApprovalPolicySelectCreateManyAndReturn<ExtArgs extends runtime.Type
   domain?: boolean
   code?: boolean
   name?: boolean
-  automation?: boolean
   isDefault?: boolean
   isActive?: boolean
   createdByUserId?: boolean
@@ -1479,7 +1428,6 @@ export type ApprovalPolicySelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   domain?: boolean
   code?: boolean
   name?: boolean
-  automation?: boolean
   isDefault?: boolean
   isActive?: boolean
   createdByUserId?: boolean
@@ -1495,7 +1443,6 @@ export type ApprovalPolicySelectScalar = {
   domain?: boolean
   code?: boolean
   name?: boolean
-  automation?: boolean
   isDefault?: boolean
   isActive?: boolean
   createdByUserId?: boolean
@@ -1503,7 +1450,7 @@ export type ApprovalPolicySelectScalar = {
   updatedAt?: boolean
 }
 
-export type ApprovalPolicyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "domain" | "code" | "name" | "automation" | "isDefault" | "isActive" | "createdByUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["approvalPolicy"]>
+export type ApprovalPolicyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "domain" | "code" | "name" | "isDefault" | "isActive" | "createdByUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["approvalPolicy"]>
 export type ApprovalPolicyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.ApprovalPolicy$createdByArgs<ExtArgs>
@@ -1540,7 +1487,6 @@ export type $ApprovalPolicyPayload<ExtArgs extends runtime.Types.Extensions.Inte
     domain: $Enums.ApprovalDomain
     code: string
     name: string
-    automation: runtime.JsonValue
     isDefault: boolean
     isActive: boolean
     createdByUserId: string | null
@@ -1981,7 +1927,6 @@ export interface ApprovalPolicyFieldRefs {
   readonly domain: Prisma.FieldRef<"ApprovalPolicy", 'ApprovalDomain'>
   readonly code: Prisma.FieldRef<"ApprovalPolicy", 'String'>
   readonly name: Prisma.FieldRef<"ApprovalPolicy", 'String'>
-  readonly automation: Prisma.FieldRef<"ApprovalPolicy", 'Json'>
   readonly isDefault: Prisma.FieldRef<"ApprovalPolicy", 'Boolean'>
   readonly isActive: Prisma.FieldRef<"ApprovalPolicy", 'Boolean'>
   readonly createdByUserId: Prisma.FieldRef<"ApprovalPolicy", 'String'>

@@ -21,6 +21,7 @@ import { announceHolidayCheckIn, emitDataChanged, useDataChanged } from '../lib/
 import { useMinuteClock } from './use-minute-clock';
 import { useWorkingSchedule } from './use-working-schedule';
 import { localDateKey } from '../lib/local-date';
+import { captureAttendanceLocation } from '../services/attendance-location';
 
 // Attendance is recorded in the employee's own day; kept exported here for existing importers.
 export { localDateKey };
@@ -76,7 +77,8 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
     [organizationId, employeeId, from, to],
     {
       enabled: Boolean(organizationId && employeeId) && canRead,
-      preservePreviousDataKey: organizationId && employeeId ? `${organizationId}:${employeeId}` : null,
+      preservePreviousDataKey:
+        organizationId && employeeId ? `${organizationId}:${employeeId}` : null,
     },
   );
 
@@ -89,7 +91,8 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
     [organizationId, employeeId, from, to],
     {
       enabled: Boolean(organizationId && employeeId) && canRead,
-      preservePreviousDataKey: organizationId && employeeId ? `${organizationId}:${employeeId}` : null,
+      preservePreviousDataKey:
+        organizationId && employeeId ? `${organizationId}:${employeeId}` : null,
     },
   );
   const holidayConflicts = useMemo(
@@ -185,11 +188,21 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
   const punch = useCallback(
     (direction: 'IN' | 'OUT') =>
       run(async () => {
+        // Read effective branch/employee rules on the action too, rather than relying
+        // on settings loaded before an administrator changed the attendance policy.
+        const preferences = await attendanceRepository.getPreferences(organizationId!);
+        const required = preferences.requireGps || preferences.geofenceMode === 'REQUIRED';
+        const location = required
+          ? await captureAttendanceLocation()
+          : preferences.geofenceMode === 'FLAG_ONLY'
+            ? await captureAttendanceLocation().catch(() => undefined)
+            : undefined;
         const now = new Date();
         const input = {
           employeeId: employeeId!,
           occurredAt: now.toISOString(),
           workDate: localDateKey(now),
+          ...location,
         };
         const reply =
           direction === 'IN'
@@ -256,7 +269,12 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
 
   /** Requests attendance for a missing day; the record remains pending until approval. */
   const requestCorrectionForDate = useCallback(
-    async (workDate: string, reason: string, correctedCheckIn: string, correctedCheckOut?: string) => {
+    async (
+      workDate: string,
+      reason: string,
+      correctedCheckIn: string,
+      correctedCheckOut?: string,
+    ) => {
       if (!organizationId || !employeeId)
         throw new Error('This account has no employee record, so attendance cannot be recorded.');
       try {
@@ -296,7 +314,11 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
   const days: AttendanceDayView[] = useMemo(
     () =>
       toAttendanceDayViews(records, todayKey, [], holidayConflicts, now, workWeekDays).map(
-        (day) => ({ ...day, shiftName: shiftOnDate(day.workDate)?.name ?? null, isWeekend: isWeeklyOffOn(day.workDate) }),
+        (day) => ({
+          ...day,
+          shiftName: shiftOnDate(day.workDate)?.name ?? null,
+          isWeekend: isWeeklyOffOn(day.workDate),
+        }),
       ),
     [records, todayKey, holidayConflicts, now, workWeekDays, shiftOnDate, isWeeklyOffOn],
   );

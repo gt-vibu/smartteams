@@ -16,21 +16,18 @@ import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   EmployeePayrollPolicyDto,
   PayrollListQueryDto,
+  PayrollPaymentDto,
+  PayrollPolicyDto,
   PayrollPreviewDto,
   SalaryProfilePreviewDto,
+  SalaryAdvanceDecisionDto,
   SalaryAdvanceDto,
   SalaryProfileDto,
+  StatutoryRuleDto,
 } from './payroll.dto';
 import { PayrollPolicyService } from './payroll-policy.service';
 import { PayrollPreviewService } from './payroll-preview.service';
 
-import {
-  NativePayrollPaymentDto,
-  NativePayrollPolicyDto,
-  NativeSalaryAdvanceDecisionDto,
-  NativeStatutoryRuleDto,
-  NativePayrollAssignmentRuleDto,
-} from './payroll-native.dto';
 @Controller('v1/organizations/:organizationId/payroll')
 @UseGuards(NativeJwtGuard)
 export class PayrollPolicyController {
@@ -51,7 +48,7 @@ export class PayrollPolicyController {
 
   @Put('policy') savePolicy(
     @Param('organizationId') organizationId: string,
-    @Body() body: NativePayrollPolicyDto,
+    @Body() body: PayrollPolicyDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -68,25 +65,6 @@ export class PayrollPolicyController {
       .then((context) => this.payroll.listPolicies(context));
   }
 
-  @Get('assignment-rules') assignmentRules(
-    @Param('organizationId') organizationId: string,
-    @Req() request: Request & { user: NativeRequestUser },
-  ) {
-    return this.contexts.native(request.user.userId, organizationId).then((context) =>
-      this.payroll.listAssignmentRules(context),
-    );
-  }
-
-  @Post('assignment-rules') saveAssignmentRule(
-    @Param('organizationId') organizationId: string,
-    @Body() body: NativePayrollAssignmentRuleDto,
-    @Req() request: Request & { user: NativeRequestUser },
-  ) {
-    return this.contexts.native(request.user.userId, organizationId, undefined, body.name).then((context) =>
-      this.payroll.saveAssignmentRule(context, body),
-    );
-  }
-
   @Get('statutory-rules') statutoryRules(
     @Param('organizationId') organizationId: string,
     @Query('jurisdiction') jurisdiction: string | undefined,
@@ -99,7 +77,7 @@ export class PayrollPolicyController {
 
   @Post('statutory-rules') saveStatutoryRule(
     @Param('organizationId') organizationId: string,
-    @Body() body: NativeStatutoryRuleDto,
+    @Body() body: StatutoryRuleDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -110,6 +88,17 @@ export class PayrollPolicyController {
         `Configure statutory rule ${body.schemeCode}`,
       )
       .then((context) => this.payroll.saveStatutoryRule(context, body));
+  }
+
+  @Put('statutory-rules/:ruleId') updateStatutoryRule(
+    @Param('organizationId') organizationId: string,
+    @Param('ruleId') ruleId: string,
+    @Body() body: StatutoryRuleDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, `Update statutory rule ${ruleId}`)
+      .then((context) => this.payroll.saveStatutoryRule(context, body, ruleId));
   }
 
   @Delete('statutory-rules/:ruleId') deleteStatutoryRule(
@@ -208,7 +197,7 @@ export class PayrollPolicyController {
   @Post('advances/:advanceId/decision') decideAdvance(
     @Param('organizationId') organizationId: string,
     @Param('advanceId') advanceId: string,
-    @Body() body: NativeSalaryAdvanceDecisionDto,
+    @Body() body: SalaryAdvanceDecisionDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -233,7 +222,7 @@ export class PayrollPolicyController {
   @Post('payments/:lineItemId/paid') markPaid(
     @Param('organizationId') organizationId: string,
     @Param('lineItemId') lineItemId: string,
-    @Body() body: NativePayrollPaymentDto,
+    @Body() body: PayrollPaymentDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts

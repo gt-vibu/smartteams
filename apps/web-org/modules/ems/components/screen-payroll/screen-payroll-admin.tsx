@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { BulkWorkforcePanel } from '../common/bulk-workforce-panel';
 import { Wallet } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
 import { useScreenTab } from '../../hooks/use-screen-tab';
@@ -43,32 +42,32 @@ export function ScreenPayrollAdmin() {
     [
       {
         id: 'RUNS',
-        label: `Pay runs${admin.runs.length ? ` (${admin.runs.length})` : ''}`,
+        label: `Payroll runs${admin.runs.length ? ` (${admin.runs.length})` : ''}`,
         allowed: may('payroll.runs.read'),
       },
-      { id: 'EMPLOYEE_PAY', label: 'Employee salaries', allowed: may('payroll.payslips.read.all') },
+      { id: 'EMPLOYEE_PAY', label: 'Employee pay', allowed: may('payroll.payslips.read.all') },
       {
         id: 'COMPENSATION',
         label: 'Compensation',
         allowed: may('payroll.employee-profile.read.all') || may('payroll.components.read'),
       },
-      { id: 'STATUTORY', label: 'Statutory & salary defaults', allowed: may('payroll.policy.read') },
+      { id: 'STATUTORY', label: 'Statutory rules', allowed: may('payroll.policy.read') },
     ],
     tab,
   );
 
   return (
     <PageShell>
-      <ScreenHeader icon={Wallet} title="Payroll" tone="warning" />
-      <BulkWorkforcePanel initialOperation="PAYROLL_POLICY" />
-      <div
-        aria-label="Payroll sections"
-        className="flex min-w-0 items-center gap-4 overflow-x-auto border-b border-border pb-2"
-        role="group"
-      >
+      <ScreenHeader
+        description="Runs, compensation, statutory configuration and employee pay."
+        icon={Wallet}
+        title="Payroll"
+        tone="warning"
+      />
+      <div className="flex items-center gap-4 border-b border-border pb-2">
         {tabs.map((entry) => (
           <Button
-            className={`shrink-0 whitespace-nowrap rounded-none pb-1 text-xs font-semibold ${
+            className={`rounded-none pb-1 text-xs font-semibold ${
               active === entry.id
                 ? 'border-b-2 border-foreground font-bold text-foreground'
                 : 'text-muted-foreground'
@@ -79,16 +78,7 @@ export function ScreenPayrollAdmin() {
             type="button"
             variant="ghost"
           >
-            <span className="sm:hidden">
-              {entry.id === 'RUNS'
-                ? 'Runs'
-                : entry.id === 'EMPLOYEE_PAY'
-                  ? 'Salaries'
-                  : entry.id === 'COMPENSATION'
-                    ? 'Pay setup'
-                    : 'Statutory'}
-            </span>
-            <span className="hidden sm:inline">{entry.label}</span>
+            {entry.label}
           </Button>
         ))}
       </div>
@@ -96,9 +86,7 @@ export function ScreenPayrollAdmin() {
       {active === 'RUNS' && <PayrollRunsPanel admin={admin} />}
       {active === 'EMPLOYEE_PAY' && <PayrollEmployeePayPanel admin={admin} />}
       {active === 'STATUTORY' && <ScreenPayrollLegalConfig />}
-      {active === 'COMPENSATION' && (
-        <ScreenCompensation onConfigureStatutory={() => setTab('STATUTORY')} />
-      )}
+      {active === 'COMPENSATION' && <ScreenCompensation />}
     </PageShell>
   );
 }
