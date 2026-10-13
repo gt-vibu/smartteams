@@ -123,7 +123,15 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
 
   const checkedIn = derivedCheckedIn(todayRecord);
   const checkInTimestamp = openCheckInAt(todayRecord);
-  const isDayCompleted = Boolean(todayRecord && todayRecord.status === 'COMPLETED' && !checkedIn);
+  // Keep the UI in sync with the API's single-session guard. The API refuses another check-in
+  // once two punches have been recorded, even when a stale/miscomputed record status is not
+  // COMPLETED. Derive completion from the punches as well so we never offer an action the server
+  // is guaranteed to reject.
+  const isDayCompleted = Boolean(
+    todayRecord &&
+    !checkedIn &&
+    (todayRecord.status === 'COMPLETED' || (todayRecord.punches?.length ?? 0) >= 2),
+  );
 
   // The day's worked time: earlier sessions today, plus the one running now. Checking in again
   // carries on from the total rather than starting at zero; the gap between sessions is not

@@ -43,7 +43,12 @@ export function ScreenPayroll() {
       {
         id: 'payslips',
         label: `Payslips${payroll.payslips.length ? ` (${payroll.payslips.length})` : ''}`,
-        allowed: may('payroll.payslips.read'),
+        // Keep this feature out of the employee UI until the organization policy is known.
+        // The API independently enforces the same setting for self-service reads.
+        allowed:
+          may('payroll.payslips.read') &&
+          !payroll.profileLoading &&
+          payroll.profile?.organizationPolicy?.salarySlipDefault === true,
       },
       {
         id: 'advances',

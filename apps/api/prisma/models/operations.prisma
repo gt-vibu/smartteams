@@ -25,6 +25,7 @@ model AttendanceRecord {
   punches          AttendancePunch[]
   corrections      AttendanceCorrection[]
   holidayReviews   AttendanceHolidayReview[]
+  leaveOverlapReviews AttendanceLeaveOverlapReview[]
   timesheetEntries TimesheetEntry[]
 
   @@unique([employeeId, workDate])
@@ -280,6 +281,7 @@ model LeaveRequest {
   approvals           LeaveApproval[]
   balanceTransactions LeaveBalanceTransaction[]
   files               FileObject[]
+  attendanceOverlapReviews AttendanceLeaveOverlapReview[]
 
   @@unique([organizationId, externalId])
   @@index([organizationId, status, startDate])
@@ -470,4 +472,34 @@ model AttendanceHolidayReview {
   @@index([organizationId, status, createdAt])
   @@index([organizationId, employeeId])
   @@map("attendance_holiday_reviews")
+}
+
+/// A check-in during approved leave, reviewed separately from leave cancellation so one worked
+/// date can be restored without cancelling the employee's entire leave request.
+model AttendanceLeaveOverlapReview {
+  id                 String    @id @default(uuid()) @db.Uuid
+  organizationId     String    @map("organization_id") @db.Uuid
+  employeeId         String    @map("employee_id") @db.Uuid
+  attendanceRecordId String    @map("attendance_record_id") @db.Uuid
+  leaveRequestId     String    @map("leave_request_id") @db.Uuid
+  workDate           DateTime  @map("work_date") @db.Date
+  leaveUnits         Decimal   @map("leave_units") @db.Decimal(4, 2)
+  status             String    @default("PENDING")
+  autoApproved       Boolean   @default(false) @map("auto_approved")
+  requestedByUserId  String?   @map("requested_by_user_id") @db.Uuid
+  decidedByUserId    String?   @map("decided_by_user_id") @db.Uuid
+  decisionComment    String?   @map("decision_comment")
+  decidedAt          DateTime? @map("decided_at") @db.Timestamptz(6)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization     Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee         Employee         @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  attendanceRecord AttendanceRecord @relation(fields: [attendanceRecordId], references: [id], onDelete: Restrict)
+  leaveRequest     LeaveRequest     @relation(fields: [leaveRequestId], references: [id], onDelete: Restrict)
+
+  @@unique([attendanceRecordId, leaveRequestId])
+  @@index([organizationId, status, createdAt])
+  @@index([organizationId, employeeId, workDate])
+  @@map("attendance_leave_overlap_reviews")
 }

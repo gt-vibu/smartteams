@@ -18,6 +18,7 @@ import { MetricsService } from '../../common/metrics/metrics.service';
 import { OutboxService } from '../federation/outbox.service';
 import {
   countWorkingDays,
+  eligibleOptionalHolidayDates,
   hash,
   payrollPeriodCutoffs,
   summarizeAttendance,
@@ -122,11 +123,13 @@ export class PayrollCalculationService {
           employeeHolidaySelections,
           approvedLeaves,
           attendanceRecords,
+          acceptedLeaveOverlapReviews,
         ] = await Promise.all([
           tx.employee.findMany({
             where: { organizationId: context.organizationId, status: 'ACTIVE' },
             orderBy: { id: 'asc' },
             include: {
+              holidayPolicy: { select: { allowanceOverride: true } },
               compensations: {
                 where: {
                   effectiveFrom: { lte: run.periodEnd },
@@ -176,13 +179,23 @@ export class PayrollCalculationService {
               holiday: {
                 isActive: true,
                 isOptional: true,
-                holidayDate: { gte: run.periodStart, lte: run.periodEnd },
+                holidayDate:
+                  context.accessMode === 'NATIVE'
+                    ? {
+                        gte: new Date(Date.UTC(run.periodStart.getUTCFullYear(), 0, 1)),
+                        lt: new Date(Date.UTC(run.periodEnd.getUTCFullYear() + 1, 0, 1)),
+                      }
+                    : { gte: run.periodStart, lte: run.periodEnd },
               },
             },
             select: {
+              id: true,
               employeeId: true,
+              year: true,
+              selectedAt: true,
               holiday: { select: { holidayDate: true } },
             },
+            orderBy: [{ year: 'asc' }, { selectedAt: 'asc' }, { id: 'asc' }],
           }),
           tx.leaveRequest.findMany({
             where: {
@@ -192,11 +205,14 @@ export class PayrollCalculationService {
               endDate: { gte: run.periodStart },
             },
             select: {
+              id: true,
               employeeId: true,
               branchId: true,
               startDate: true,
               endDate: true,
               requestedDays: true,
+              session: true,
+              chargedDates: true,
               leaveType: { select: { paid: true } },
             },
           }),
@@ -213,6 +229,16 @@ export class PayrollCalculationService {
               overtimeDayType: true,
             },
           }),
+          context.accessMode === 'NATIVE'
+            ? tx.attendanceLeaveOverlapReview.findMany({
+                where: {
+                  organizationId: context.organizationId,
+                  status: 'APPROVED',
+                  workDate: { gte: run.periodStart, lte: run.periodEnd },
+                },
+                select: { leaveRequestId: true, leaveUnits: true },
+              })
+            : Promise.resolve([]),
         ]);
         const timesheets = await tx.timesheet.findMany({
           where: {
@@ -345,6 +371,13 @@ export class PayrollCalculationService {
           }))
             lateByEmployee.set(mark.employeeId, (lateByEmployee.get(mark.employeeId) ?? 0) + 1);
         const leavesByEmployee = groupBy(approvedLeaves, (leave) => leave.employeeId);
+        const acceptedOverlapUnitsByRequest = new Map<string, number>();
+        for (const review of acceptedLeaveOverlapReviews)
+          acceptedOverlapUnitsByRequest.set(
+            review.leaveRequestId,
+            (acceptedOverlapUnitsByRequest.get(review.leaveRequestId) ?? 0) +
+              Number(review.leaveUnits),
+          );
         const timesheetsByEmployee = groupBy(timesheets, (timesheet) => timesheet.employeeId);
         const adjustmentsByEmployee = groupBy(adjustments, (adjustment) => adjustment.employeeId);
         // Recovered in equal monthly shares when the organization spreads it; all at once otherwise.
@@ -359,12 +392,26 @@ export class PayrollCalculationService {
           })),
           (advance) => advance.employeeId,
         );
-        const holidayDatesByEmployee = new Map<string, string[]>();
-        for (const sel of employeeHolidaySelections) {
-          const list = holidayDatesByEmployee.get(sel.employeeId) ?? [];
-          list.push(sel.holiday.holidayDate.toISOString().slice(0, 10));
-          holidayDatesByEmployee.set(sel.employeeId, list);
-        }
+        const allowanceByEmployee = new Map(
+          employees.map((employee) => [
+            employee.id,
+            employee.holidayPolicy?.allowanceOverride ?? settings.optionalHolidayAllowance,
+          ]),
+        );
+        const holidayDatesByEmployee =
+          context.accessMode === 'NATIVE'
+            ? eligibleOptionalHolidayDates(
+                employeeHolidaySelections,
+                (employeeId) =>
+                  allowanceByEmployee.get(employeeId) ?? settings.optionalHolidayAllowance,
+              )
+            : new Map<string, string[]>();
+        if (context.accessMode !== 'NATIVE')
+          for (const selection of employeeHolidaySelections) {
+            const dates = holidayDatesByEmployee.get(selection.employeeId) ?? [];
+            dates.push(selection.holiday.holidayDate.toISOString().slice(0, 10));
+            holidayDatesByEmployee.set(selection.employeeId, dates);
+          }
         const empty = Object.freeze([]) as [];
 
         const snapshot = employees
@@ -372,18 +419,26 @@ export class PayrollCalculationService {
             const employeePolicy = employee.payrollPolicies[0] ?? null;
             const assignedPolicy = employeePolicy?.payrollPolicyId
               ? assignedPoliciesById.get(employeePolicy.payrollPolicyId)
-              : {
-                  ...policy,
-                  ...DEFAULT_PAYROLL_POLICY,
-                  id: 'gross-salary-only',
-                  isDefault: false,
-                  basePercentage: new Prisma.Decimal(DEFAULT_PAYROLL_POLICY.basePercentage),
-                  baseMinimum: new Prisma.Decimal(DEFAULT_PAYROLL_POLICY.baseMinimum),
-                  hraPercentage: new Prisma.Decimal(DEFAULT_PAYROLL_POLICY.hraPercentage),
-                  statutoryJurisdiction:
-                    employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction,
-                  components: [],
-                };
+              : context.accessMode === 'NATIVE'
+                ? {
+                    ...policy,
+                    id: 'organization-default',
+                    isDefault: true,
+                    statutoryJurisdiction:
+                      employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction,
+                  }
+                : {
+                    ...policy,
+                    ...DEFAULT_PAYROLL_POLICY,
+                    id: 'gross-salary-only',
+                    isDefault: false,
+                    basePercentage: new Prisma.Decimal(DEFAULT_PAYROLL_POLICY.basePercentage),
+                    baseMinimum: new Prisma.Decimal(DEFAULT_PAYROLL_POLICY.baseMinimum),
+                    hraPercentage: new Prisma.Decimal(DEFAULT_PAYROLL_POLICY.hraPercentage),
+                    statutoryJurisdiction:
+                      employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction,
+                    components: [],
+                  };
             if (!assignedPolicy)
               throw new ConflictError('The assigned payroll policy is unavailable');
             const selectedPolicy =
@@ -450,6 +505,7 @@ export class PayrollCalculationService {
                 leavesByEmployee.get(employee.id) ?? empty,
                 run.periodStart,
                 measuredEnd,
+                acceptedOverlapUnitsByRequest,
               ),
               // With the working-day calendar, so a working day with no attendance at all is an
               // absence. Without it only days explicitly marked ABSENT were, and someone who never
@@ -471,26 +527,53 @@ export class PayrollCalculationService {
                         branchId: employee.primaryBranchId,
                         leaves: leavesByEmployee.get(employee.id) ?? empty,
                         employeeSelectedDates: holidayDatesByEmployee.get(employee.id),
+                        skipNonworkingDays: context.accessMode === 'NATIVE',
                         dateOfJoining: employee.dateOfJoining,
                         dateOfLeaving: employee.dateOfLeaving,
                       },
                 ),
               ),
               // Days in the period before joining or after leaving. Priced exactly like unpaid leave.
-              unemployedDays: unemployedDays(
-                run.periodStart,
-                run.periodEnd,
-                employee.dateOfJoining,
-                employee.dateOfLeaving,
-              ),
-              periodWorkingDays: countWorkingDays(
-                run.periodStart,
-                run.periodEnd,
-                settings.workWeekDays,
-                holidays,
-                employee.primaryBranchId,
-                holidayDatesByEmployee.get(employee.id),
-              ),
+              unemployedDays:
+                context.accessMode === 'NATIVE'
+                  ? unemployedDays(
+                      run.periodStart,
+                      run.periodEnd,
+                      employee.dateOfJoining,
+                      employee.dateOfLeaving,
+                      settings.workWeekDays,
+                      holidays,
+                      employee.primaryBranchId,
+                      holidayDatesByEmployee.get(employee.id),
+                    )
+                  : unemployedDays(
+                      run.periodStart,
+                      run.periodEnd,
+                      employee.dateOfJoining,
+                      employee.dateOfLeaving,
+                    ),
+              periodWorkingDays:
+                context.accessMode === 'NATIVE'
+                  ? countWorkingDays(
+                      run.periodStart,
+                      run.periodEnd,
+                      settings.workWeekDays,
+                      holidays,
+                      employee.primaryBranchId,
+                      holidayDatesByEmployee.get(employee.id),
+                    )
+                  : Math.max(
+                      1,
+                      countWorkingDays(
+                        run.periodStart,
+                        run.periodEnd,
+                        settings.workWeekDays,
+                        holidays,
+                        employee.primaryBranchId,
+                        holidayDatesByEmployee.get(employee.id),
+                      ),
+                    ),
+              ...(context.accessMode === 'NATIVE' ? { useWorkCalendarBasis: true } : {}),
               adjustments: adjustmentsByEmployee.get(employee.id) ?? empty,
               advances: advancesByEmployee.get(employee.id) ?? empty,
             };

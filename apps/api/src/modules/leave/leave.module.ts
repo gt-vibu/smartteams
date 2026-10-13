@@ -11,6 +11,7 @@ import { LeaveEncashmentService } from './leave-encashment.service';
 import { LeaveExtrasController } from './leave-extras.controller';
 import { LeaveController } from './leave.controller';
 import { LeaveService } from './leave.service';
+import { LeavePreviewService } from './leave-preview.service';
 
 @Module({
   imports: [QueueModule],
@@ -18,6 +19,7 @@ import { LeaveService } from './leave.service';
   exports: [LeaveService],
   providers: [
     LeaveService,
+    LeavePreviewService,
     LeaveWorkflowsService,
     LeaveAttachmentsService,
     LeaveAccrualService,

@@ -22,7 +22,7 @@ import {
   selfEmployee,
   toRequestDto,
 } from './leave-shared';
-import { ledger, provisionBalance, workingDays } from './leave-balance-ops';
+import { ledger, leaveCalendarDays, provisionBalance } from './leave-balance-ops';
 
 /**
  * Raising leave requests, and the two lists that show them.
@@ -41,6 +41,7 @@ export type LeaveRequestInput = {
   branchId?: string;
   externalId?: string;
   attachmentIds?: string[];
+  session?: 'FULL_DAY' | 'FIRST_HALF' | 'SECOND_HALF';
   source: AccessMode;
 };
 
@@ -81,7 +82,15 @@ export class LeaveRequestsService {
   async listRequests(
     context: DomainContext,
     requestedEmployeeId?: string,
-    pagination: { cursor?: string; limit?: number } = {},
+    pagination: {
+      cursor?: string;
+      limit?: number;
+      status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+      search?: string;
+      departmentId?: string;
+      from?: string;
+      to?: string;
+    } = {},
   ) {
     requirePermission(context, 'leave.requests.read');
     return this.database.run(context, async (tx) => {
@@ -95,10 +104,38 @@ export class LeaveRequestsService {
       }
       const cursorId = pagination.cursor ? decodeLeaveCursor(pagination.cursor) : undefined;
       const limit = Math.min(pagination.limit ?? 100, 500);
+      // The native workspace exposes these filters. Keep partner reads on the original
+      // employee/cursor contract unless the native controller explicitly supplies them.
+      const nativeFilters = context.accessMode === 'NATIVE' ? pagination : {};
+      const searchTerms = nativeFilters.search?.trim().split(/\s+/).filter(Boolean) ?? [];
       const requests = await tx.leaveRequest.findMany({
         where: {
           organizationId: context.organizationId,
           employeeId,
+          ...(nativeFilters.status ? { status: nativeFilters.status } : {}),
+          ...(nativeFilters.from || nativeFilters.to
+            ? {
+                ...(nativeFilters.to ? { startDate: { lte: dateOnly(nativeFilters.to) } } : {}),
+                ...(nativeFilters.from ? { endDate: { gte: dateOnly(nativeFilters.from) } } : {}),
+              }
+            : {}),
+          ...(nativeFilters.departmentId
+            ? { employee: { departmentId: nativeFilters.departmentId } }
+            : {}),
+          ...(searchTerms.length
+            ? {
+                employee: {
+                  ...(nativeFilters.departmentId
+                    ? { departmentId: nativeFilters.departmentId }
+                    : {}),
+                  AND: searchTerms.map((term) => ({
+                    OR: ['firstName', 'lastName', 'employeeNumber', 'workEmail'].map((field) => ({
+                      [field]: { contains: term, mode: 'insensitive' as const },
+                    })),
+                  })),
+                },
+              }
+            : {}),
           ...(context.branchId ? { branchId: context.branchId } : {}),
         },
         ...(cursorId ? { cursor: { id: cursorId }, skip: 1 } : {}),
@@ -235,9 +272,10 @@ export class LeaveRequestsService {
       // other rather than both passing the lookup below.
       if (input.source === 'NATIVE')
         await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${`leave:${employee.id}`}, 0))`;
-      const clash =
+      const session = input.session ?? 'FULL_DAY';
+      const clashes =
         input.source === 'NATIVE' &&
-        (await tx.leaveRequest.findFirst({
+        (await tx.leaveRequest.findMany({
           where: {
             organizationId: context.organizationId,
             employeeId: employee.id,
@@ -245,8 +283,22 @@ export class LeaveRequestsService {
             startDate: { lte: end },
             endDate: { gte: start },
           },
-          select: { startDate: true, endDate: true, status: true },
+          select: { startDate: true, endDate: true, status: true, session: true },
         }));
+      const clash =
+        clashes &&
+        clashes.find((existing) => {
+          const sameSingleDate =
+            start.getTime() === end.getTime() &&
+            existing.startDate.getTime() === existing.endDate.getTime() &&
+            existing.startDate.getTime() === start.getTime();
+          const oppositeHalfDays =
+            sameSingleDate &&
+            session !== 'FULL_DAY' &&
+            existing.session !== 'FULL_DAY' &&
+            existing.session !== session;
+          return !oppositeHalfDays;
+        });
       if (clash)
         throw new ConflictError(
           `Your leave for ${formatDateRange(clash.startDate, clash.endDate)} is already ` +
@@ -261,7 +313,9 @@ export class LeaveRequestsService {
         }))
       )
         throw new NotFoundError('Branch');
-      const days = await workingDays(
+      if (session !== 'FULL_DAY' && start.getTime() !== end.getTime())
+        throw new ConflictError('A half-day request must use one working date');
+      const calendarDays = await leaveCalendarDays(
         tx,
         context.organizationId,
         branchId,
@@ -271,6 +325,14 @@ export class LeaveRequestsService {
         employee.id,
         type.sandwichOffDays,
       );
+      if (
+        input.source === 'NATIVE' &&
+        session === 'FULL_DAY' &&
+        (!calendarDays[0]?.counted || !calendarDays.at(-1)?.counted)
+      )
+        throw new ConflictError('Leave request must start and end on working days');
+      const countedDays = calendarDays.filter((day) => day.counted).length;
+      const days = session === 'FULL_DAY' ? countedDays : countedDays > 0 ? 0.5 : 0;
       if (days <= 0) throw new ConflictError('Leave request must contain at least one working day');
       if (type.requiresAttachment && !input.attachmentIds?.length)
         throw new ConflictError('This leave type requires supporting attachment');
@@ -347,6 +409,7 @@ export class LeaveRequestsService {
           startDate: start,
           endDate: end,
           requestedDays: new Prisma.Decimal(days),
+          session,
           reason: input.reason,
           status: LeaveRequestStatus.PENDING,
           sourceAccessMode: input.source,

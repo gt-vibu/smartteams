@@ -19,6 +19,8 @@ import {
   PayrollPaymentDto,
   PayrollPolicyDto,
   PayrollPreviewDto,
+  PayrollRuleUpdateDecisionDto,
+  PayrollRuleUpdateDto,
   SalaryProfilePreviewDto,
   SalaryAdvanceDecisionDto,
   SalaryAdvanceDto,
@@ -27,6 +29,7 @@ import {
 } from './payroll.dto';
 import { PayrollPolicyService } from './payroll-policy.service';
 import { PayrollPreviewService } from './payroll-preview.service';
+import { PayrollRuleUpdatesService } from './payroll-rule-updates.service';
 
 @Controller('v1/organizations/:organizationId/payroll')
 @UseGuards(NativeJwtGuard)
@@ -35,7 +38,79 @@ export class PayrollPolicyController {
     private readonly payroll: PayrollPolicyService,
     private readonly previewService: PayrollPreviewService,
     private readonly contexts: DomainContextFactory,
+    private readonly ruleUpdates: PayrollRuleUpdatesService,
   ) {}
+
+  @Get('rule-updates') ruleUpdatesList(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.ruleUpdates.list(context));
+  }
+
+  @Post('rule-updates/sync') syncRuleSources(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(
+        request.user.userId,
+        organizationId,
+        undefined,
+        'Manually check official payroll rule sources',
+      )
+      .then((context) => this.ruleUpdates.requestSync(context));
+  }
+
+  @Get('rule-updates/sync/:jobId') ruleSyncStatus(
+    @Param('organizationId') organizationId: string,
+    @Param('jobId') jobId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.ruleUpdates.syncStatus(context, jobId));
+  }
+
+  @Put('rule-updates/:proposalId') prepareRuleUpdate(
+    @Param('organizationId') organizationId: string,
+    @Param('proposalId') proposalId: string,
+    @Body() body: PayrollRuleUpdateDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(
+        request.user.userId,
+        organizationId,
+        undefined,
+        'Prepare verified payroll rule update',
+      )
+      .then((context) => this.ruleUpdates.prepareProposal(context, proposalId, body));
+  }
+
+  @Post('rule-updates/:proposalId/accept') acceptRuleUpdate(
+    @Param('organizationId') organizationId: string,
+    @Param('proposalId') proposalId: string,
+    @Body() body: PayrollRuleUpdateDecisionDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, 'Accept verified payroll rule update')
+      .then((context) => this.ruleUpdates.accept(context, proposalId, body.note));
+  }
+
+  @Post('rule-updates/:proposalId/reject') rejectRuleUpdate(
+    @Param('organizationId') organizationId: string,
+    @Param('proposalId') proposalId: string,
+    @Body() body: PayrollRuleUpdateDecisionDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, 'Reject payroll rule update proposal')
+      .then((context) => this.ruleUpdates.reject(context, proposalId, body.note));
+  }
 
   @Get('policy') policy(
     @Param('organizationId') organizationId: string,

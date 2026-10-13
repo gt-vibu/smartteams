@@ -93,6 +93,8 @@ export type PayrollLineInput = {
   attendance: { absentDays: number; halfDays: number };
   unemployedDays: number;
   periodWorkingDays: number;
+  /** Native payroll uses the employee's configured work calendar; Federation retains policy basis. */
+  useWorkCalendarBasis?: boolean;
   adjustments: Array<{
     type: PayrollAdjustmentType;
     amount: Prisma.Decimal;
@@ -126,19 +128,19 @@ export function computePayrollLine(item: PayrollLineInput, standardDayMinutes: n
     roundingMode: item.policy.roundingMode,
   });
   const unpaidAttendanceDays = item.attendance.absentDays + item.attendance.halfDays / 2;
-  // `payrollDayBasis` is a fixed monthly divisor, so every unpaid day — leave, absence, or a day
-  // outside employment — costs one basis-day of gross.
+  // Pay is prorated against scheduled working days in this period. The count already excludes
+  // weekly offs, organization holidays, and allowance-eligible optional holidays.
+  const workingDayBasis = item.useWorkCalendarBasis
+    ? Math.max(1, item.periodWorkingDays)
+    : item.policy.payrollDayBasis;
   const payableDays = Math.max(
     0,
-    item.policy.payrollDayBasis -
-      item.leave.unpaidDays -
-      unpaidAttendanceDays -
-      item.unemployedDays,
+    workingDayBasis - item.leave.unpaidDays - unpaidAttendanceDays - item.unemployedDays,
   );
   const proratedStructure = prorateSalaryStructure(
     monthlyStructure,
     payableDays,
-    item.policy.payrollDayBasis,
+    workingDayBasis,
     item.policy.roundingMode,
   );
   const unpaidLeaveAdjustment = monthlyStructure.gross.minus(proratedStructure.gross);
@@ -146,7 +148,7 @@ export function computePayrollLine(item: PayrollLineInput, standardDayMinutes: n
   const overtime =
     item.compensation && item.timesheet
       ? overtimePay({
-          minutePay: monthlyStructure.gross.div(standardDayMinutes * item.policy.payrollDayBasis),
+          minutePay: monthlyStructure.gross.div(standardDayMinutes * workingDayBasis),
           overtimeMinutes: item.timesheet.overtimeMinutes,
           employeeMultiplier: item.compensation.overtimeMultiplier,
           days: item.overtimeDays ?? NO_OVERTIME_DAYS,
@@ -376,6 +378,7 @@ export function buildPayrollLineRows(
         halfAttendanceDays: item.attendance.halfDays,
         unpaidAttendanceDays,
         periodWorkingDays: item.periodWorkingDays,
+        ...(item.useWorkCalendarBasis ? { unemployedDays: item.unemployedDays } : {}),
       }),
     },
     components: components.map(({ assignment, amount }) => ({

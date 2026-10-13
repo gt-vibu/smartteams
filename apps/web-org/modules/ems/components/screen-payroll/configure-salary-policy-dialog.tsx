@@ -15,7 +15,9 @@ import {
 import { Sliders, Sparkles, Calculator, Check } from 'lucide-react';
 import { formatMoney } from '@smarteam/contracts';
 import type { CompensationState } from '../../hooks/use-compensation';
+import { useOrganization } from '../../hooks/use-organization';
 import { localDateKey } from '../../lib/local-date';
+import { INDIA_PAYROLL_JURISDICTIONS, PROFESSIONAL_TAX_PRESETS } from './statutory-rule-presets';
 
 interface ConfigureSalaryPolicyDialogProps {
   compensation: CompensationState;
@@ -25,7 +27,7 @@ interface ConfigureSalaryPolicyDialogProps {
 
 const PRESETS = [
   { label: 'Standard (50% / 40%)', base: 50, hra: 40 },
-  { label: 'Metro (50% / 50%)', base: 50, hra: 50 },
+  { label: 'Higher HRA (50% / 50%)', base: 50, hra: 50 },
   { label: 'High Base (60% / 40%)', base: 60, hra: 40 },
   { label: 'Flexi (40% / 40%)', base: 40, hra: 40 },
 ];
@@ -35,13 +37,27 @@ export function ConfigureSalaryPolicyDialog({
   open,
   onOpenChange,
 }: ConfigureSalaryPolicyDialogProps) {
-  const currentPolicy = compensation.profile?.organizationPolicy;
-  const sampleGross = Number(compensation.profile?.salaryBreakdown.gross ?? 50000);
-
+  const organization = useOrganization();
+  const currentPolicy = compensation.organizationPolicy;
   const [basePct, setBasePct] = useState<string>('50');
   const [hraPct, setHraPct] = useState<string>('40');
   const [baseMin, setBaseMin] = useState<string>('15000');
+  const [defaultGrossSalary, setDefaultGrossSalary] = useState<string>('');
   const [effectiveFrom, setEffectiveFrom] = useState<string>('');
+  const [statutoryJurisdiction, setStatutoryJurisdiction] = useState('');
+  const [pfDefault, setPfDefault] = useState(false);
+  const [esiDefault, setEsiDefault] = useState(false);
+  const [ptDefault, setPtDefault] = useState(false);
+  const [salarySlipDefault, setSalarySlipDefault] = useState(true);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const primaryBranch = organization.branches.find(
+    (branch) => branch.id === organization.primaryBranchId,
+  );
+  const address = primaryBranch?.address;
+  const addressState =
+    address && typeof address === 'object' && !Array.isArray(address) ? address.state : undefined;
+  const primaryBranchState = typeof addressState === 'string' ? addressState.trim() : '';
 
   useEffect(() => {
     if (open) {
@@ -49,31 +65,63 @@ export function ConfigureSalaryPolicyDialog({
         setBasePct(String(currentPolicy.basePercentage));
         setHraPct(String(currentPolicy.hraPercentage));
         setBaseMin(String(currentPolicy.baseMinimum));
+        setDefaultGrossSalary(
+          currentPolicy.defaultGrossSalary == null ? '' : String(currentPolicy.defaultGrossSalary),
+        );
+        setStatutoryJurisdiction(currentPolicy.statutoryJurisdiction ?? primaryBranchState);
+        setPfDefault(currentPolicy.pfDefault);
+        setEsiDefault(currentPolicy.esiDefault);
+        setPtDefault(currentPolicy.ptDefault);
+        setSalarySlipDefault(currentPolicy.salarySlipDefault);
+      } else {
+        setBasePct('50');
+        setHraPct('40');
+        setBaseMin('15000');
+        setDefaultGrossSalary('');
+        setStatutoryJurisdiction(primaryBranchState);
+        setPfDefault(false);
+        setEsiDefault(false);
+        setPtDefault(false);
+        setSalarySlipDefault(true);
       }
       setEffectiveFrom(localDateKey());
+      setValidationError(null);
     }
   }, [open, currentPolicy]);
+
+  useEffect(() => {
+    if (
+      open &&
+      !currentPolicy?.statutoryJurisdiction &&
+      !statutoryJurisdiction &&
+      primaryBranchState
+    ) {
+      setStatutoryJurisdiction(primaryBranchState.toUpperCase());
+    }
+  }, [open, currentPolicy?.statutoryJurisdiction, primaryBranchState, statutoryJurisdiction]);
 
   const numBasePct = Number(basePct) || 0;
   const numHraPct = Number(hraPct) || 0;
   const numBaseMin = Number(baseMin) || 0;
+  const numDefaultGross = Number(defaultGrossSalary);
 
   // Live calculation preview
   const preview = useMemo(() => {
-    const gross = sampleGross > 0 ? sampleGross : 50000;
+    const gross = Number.isFinite(numDefaultGross) && numDefaultGross > 0 ? numDefaultGross : 0;
     const baseRaw = (gross * numBasePct) / 100;
     const base = Math.min(gross, Math.max(baseRaw, numBaseMin));
     const hraRaw = (base * numHraPct) / 100;
     const hra = Math.min(hraRaw, Math.max(0, gross - base));
     const otherAllowance = Math.max(0, gross - base - hra);
     return { gross, base, hra, otherAllowance };
-  }, [sampleGross, numBasePct, numHraPct, numBaseMin]);
+  }, [numDefaultGross, numBasePct, numHraPct, numBaseMin]);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     const basePercentage = Number(basePct);
     const hraPercentage = Number(hraPct);
     const baseMinimum = Number(baseMin);
+    const parsedDefaultGross = defaultGrossSalary.trim() ? Number(defaultGrossSalary) : null;
 
     if (
       !Number.isFinite(basePercentage) ||
@@ -82,17 +130,43 @@ export function ConfigureSalaryPolicyDialog({
       !Number.isFinite(hraPercentage) ||
       hraPercentage < 0 ||
       hraPercentage > 100 ||
+      (parsedDefaultGross !== null &&
+        (!Number.isFinite(parsedDefaultGross) || parsedDefaultGross <= 0)) ||
       !effectiveFrom
     ) {
       return;
     }
 
-    await compensation.savePolicy({
+    if ((pfDefault || esiDefault || ptDefault) && !statutoryJurisdiction.trim()) {
+      setValidationError('Set the organization jurisdiction before enabling statutory schemes.');
+      return;
+    }
+
+    if (
+      ptDefault &&
+      !PROFESSIONAL_TAX_PRESETS.some(
+        (preset) => preset.jurisdiction === statutoryJurisdiction.trim().toUpperCase(),
+      )
+    ) {
+      setValidationError(
+        `There is no reviewed professional-tax schedule for ${statutoryJurisdiction}. Turn off PT or add a verified state schedule under Payroll → Statutory rules.`,
+      );
+      return;
+    }
+
+    const saved = await compensation.savePolicy({
       effectiveFrom,
       basePercentage,
       hraPercentage,
       baseMinimum,
+      defaultGrossSalary: parsedDefaultGross,
+      statutoryJurisdiction: statutoryJurisdiction.trim().toUpperCase(),
+      salarySlipDefault,
+      pfDefault,
+      esiDefault,
+      ptDefault,
     });
+    if (!saved) return;
     onOpenChange(false);
   };
 
@@ -105,11 +179,9 @@ export function ConfigureSalaryPolicyDialog({
               <Sliders className="h-4 w-4" />
             </div>
             <div>
-              <DialogTitle className="text-sm font-bold">
-                Configure Salary Structure Policy
-              </DialogTitle>
+              <DialogTitle className="text-sm font-bold">Organization Salary Defaults</DialogTitle>
               <p className="text-[11px] text-muted-foreground mt-0.5">
-                Set organization-wide percentage rules for Basic Salary, HRA and allowances.
+                Set the default monthly gross and salary breakdown for your organization.
               </p>
             </div>
           </div>
@@ -145,6 +217,33 @@ export function ConfigureSalaryPolicyDialog({
         </div>
 
         <form onSubmit={submit} className="space-y-3.5 py-1">
+          <div className="rounded-lg border border-primary/20 bg-primary/5 p-3">
+            <Label htmlFor="policy-default-gross" className="text-xs font-bold text-foreground">
+              Default monthly gross salary
+            </Label>
+            <div className="relative mt-1.5">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                ₹
+              </span>
+              <Input
+                id="policy-default-gross"
+                type="number"
+                min="0.01"
+                step="0.01"
+                inputMode="decimal"
+                value={defaultGrossSalary}
+                onChange={(event) => setDefaultGrossSalary(event.target.value)}
+                className="h-10 pl-7 font-mono text-sm font-semibold"
+                placeholder="e.g. 35000"
+              />
+            </div>
+            <p className="mt-1.5 text-[10px] leading-relaxed text-muted-foreground">
+              Prefills salary forms for employees without an individual salary and role-wise
+              allotments. It does not overwrite saved employee gross amounts. Take-home and CTC use
+              each employee&apos;s applicable payroll rules.
+            </p>
+          </div>
+
           {/* Base Salary % */}
           <div className="rounded-lg border border-border/80 bg-card p-3 space-y-2">
             <div className="flex items-center justify-between">
@@ -214,49 +313,51 @@ export function ConfigureSalaryPolicyDialog({
             />
             <div className="flex justify-between text-[10px] text-muted-foreground">
               <span>0% (No HRA)</span>
-              <span>40% (Non-Metro)</span>
-              <span>50% (Metro)</span>
+              <span>40% (Common)</span>
+              <span>50% (Higher HRA)</span>
             </div>
           </div>
 
           {/* Live Calculated Breakdown Preview */}
-          <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-                <Calculator className="h-3.5 w-3.5 text-primary" />
-                <span>Live Breakdown Preview</span>
+          {preview.gross > 0 && (
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                  <Calculator className="h-3.5 w-3.5 text-primary" />
+                  <span>Live Breakdown Preview</span>
+                </div>
+                <span className="font-mono text-[11px] font-semibold text-muted-foreground">
+                  Monthly Gross: {formatMoney(preview.gross)}
+                </span>
               </div>
-              <span className="font-mono text-[11px] font-semibold text-muted-foreground">
-                Monthly Gross: {formatMoney(preview.gross)}
-              </span>
+              <div className="grid grid-cols-1 gap-1.5 pt-1 sm:grid-cols-3 sm:gap-2 sm:text-center">
+                <div className="flex items-baseline justify-between gap-3 rounded border border-border/60 bg-card/80 px-2.5 py-1.5 sm:block sm:p-1.5">
+                  <span className="block text-[10px] text-muted-foreground font-medium">
+                    Base ({numBasePct}%)
+                  </span>
+                  <span className="block font-mono text-xs font-bold text-foreground sm:mt-0.5">
+                    {formatMoney(preview.base)}
+                  </span>
+                </div>
+                <div className="flex items-baseline justify-between gap-3 rounded border border-border/60 bg-card/80 px-2.5 py-1.5 sm:block sm:p-1.5">
+                  <span className="block text-[10px] text-muted-foreground font-medium">
+                    HRA ({numHraPct}% of Base)
+                  </span>
+                  <span className="block font-mono text-xs font-bold text-foreground sm:mt-0.5">
+                    {formatMoney(preview.hra)}
+                  </span>
+                </div>
+                <div className="flex items-baseline justify-between gap-3 rounded border border-border/60 bg-card/80 px-2.5 py-1.5 sm:block sm:p-1.5">
+                  <span className="block text-[10px] text-muted-foreground font-medium">
+                    Other Allowance
+                  </span>
+                  <span className="block font-mono text-xs font-bold text-foreground sm:mt-0.5">
+                    {formatMoney(preview.otherAllowance)}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="grid grid-cols-1 gap-1.5 pt-1 sm:grid-cols-3 sm:gap-2 sm:text-center">
-              <div className="flex items-baseline justify-between gap-3 rounded border border-border/60 bg-card/80 px-2.5 py-1.5 sm:block sm:p-1.5">
-                <span className="block text-[10px] text-muted-foreground font-medium">
-                  Base ({numBasePct}%)
-                </span>
-                <span className="block font-mono text-xs font-bold text-foreground sm:mt-0.5">
-                  {formatMoney(preview.base)}
-                </span>
-              </div>
-              <div className="flex items-baseline justify-between gap-3 rounded border border-border/60 bg-card/80 px-2.5 py-1.5 sm:block sm:p-1.5">
-                <span className="block text-[10px] text-muted-foreground font-medium">
-                  HRA ({numHraPct}% of Base)
-                </span>
-                <span className="block font-mono text-xs font-bold text-foreground sm:mt-0.5">
-                  {formatMoney(preview.hra)}
-                </span>
-              </div>
-              <div className="flex items-baseline justify-between gap-3 rounded border border-border/60 bg-card/80 px-2.5 py-1.5 sm:block sm:p-1.5">
-                <span className="block text-[10px] text-muted-foreground font-medium">
-                  Other Allowance
-                </span>
-                <span className="block font-mono text-xs font-bold text-foreground sm:mt-0.5">
-                  {formatMoney(preview.otherAllowance)}
-                </span>
-              </div>
-            </div>
-          </div>
+          )}
 
           {/* Base Minimum Floor & Effective Date */}
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -294,6 +395,107 @@ export function ConfigureSalaryPolicyDialog({
             </div>
           </div>
 
+          <section className="space-y-3 rounded-lg border border-border/80 bg-card p-3">
+            <div>
+              <h3 className="text-xs font-bold text-foreground">Organization statutory defaults</h3>
+              <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                These defaults apply to employees without an individual payroll setting. Saving
+                creates any missing verified EPF, ESI and state PT rules automatically; existing
+                custom rules are kept.
+              </p>
+            </div>
+            {compensation.organizationPolicyLoading && (
+              <p className="text-xs text-muted-foreground" role="status">
+                Loading saved organization payroll defaults…
+              </p>
+            )}
+            {(compensation.organizationPolicyError || compensation.organizationPolicyForbidden) && (
+              <p className="text-xs text-destructive" role="alert">
+                {compensation.organizationPolicyForbidden
+                  ? 'You need payroll policy read permission to configure organization defaults.'
+                  : compensation.organizationPolicyError}
+              </p>
+            )}
+            <div>
+              <Label
+                htmlFor="policy-statutory-jurisdiction"
+                className="mb-1 block text-xs font-semibold"
+              >
+                Payroll state or territory
+              </Label>
+              <select
+                id="policy-statutory-jurisdiction"
+                value={statutoryJurisdiction.toUpperCase()}
+                onChange={(event) => {
+                  setStatutoryJurisdiction(event.target.value);
+                  setValidationError(null);
+                }}
+                disabled={compensation.saving}
+                className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+              >
+                <option value="">Select a state or territory</option>
+                {statutoryJurisdiction &&
+                  !INDIA_PAYROLL_JURISDICTIONS.some(
+                    (state) => state.toUpperCase() === statutoryJurisdiction.toUpperCase(),
+                  ) && (
+                    <option value={statutoryJurisdiction.toUpperCase()}>
+                      {statutoryJurisdiction} (saved/custom)
+                    </option>
+                  )}
+                {INDIA_PAYROLL_JURISDICTIONS.map((state) => (
+                  <option key={state} value={state.toUpperCase()}>
+                    {state}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1 text-[10px] text-muted-foreground">
+                {primaryBranchState
+                  ? `Suggested from the primary branch address: ${primaryBranchState}.`
+                  : 'Suggested from the primary branch address when one is available.'}{' '}
+                State-based payroll rules use this jurisdiction by default; branch or employee
+                policies can override it.
+              </p>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-3">
+              {[
+                { label: 'EPF', checked: pfDefault, onChange: setPfDefault },
+                { label: 'ESI', checked: esiDefault, onChange: setEsiDefault },
+                { label: 'Professional Tax', checked: ptDefault, onChange: setPtDefault },
+              ].map((scheme) => (
+                <label
+                  key={scheme.label}
+                  className="flex min-h-10 items-center gap-2 rounded-md border border-border px-3 text-xs font-medium"
+                >
+                  <input
+                    type="checkbox"
+                    checked={scheme.checked}
+                    onChange={(event) => scheme.onChange(event.target.checked)}
+                    className="size-4 accent-primary"
+                  />
+                  {scheme.label} default on
+                </label>
+              ))}
+            </div>
+            <label className="flex min-h-10 items-center gap-2 rounded-md border border-border px-3 text-xs font-medium">
+              <input
+                type="checkbox"
+                checked={salarySlipDefault}
+                onChange={(event) => setSalarySlipDefault(event.target.checked)}
+                className="size-4 accent-primary"
+              />
+              Employees can see released payslips in Payroll
+            </label>
+            <p className="text-[10px] leading-relaxed text-muted-foreground">
+              Turn this off to hide the Payslips tab from employees and block access to their
+              payslips. Admin payroll review and released payroll records are unchanged.
+            </p>
+            {validationError && (
+              <p className="text-xs text-destructive" role="alert">
+                {validationError}
+              </p>
+            )}
+          </section>
+
           <div className="rounded-lg border border-border bg-muted/30 p-2.5 text-[10px] text-muted-foreground flex items-start gap-1.5">
             <Sparkles className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
             <span>
@@ -321,7 +523,9 @@ export function ConfigureSalaryPolicyDialog({
             <Button
               type="submit"
               size="sm"
-              disabled={compensation.saving}
+              disabled={
+                compensation.saving || compensation.organizationPolicyLoading || !currentPolicy
+              }
               className="font-semibold gap-1.5"
             >
               <Check className="h-3.5 w-3.5" />

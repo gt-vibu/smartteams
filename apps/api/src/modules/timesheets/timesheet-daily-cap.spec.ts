@@ -27,12 +27,21 @@ function context(overrides: Partial<DomainContext> = {}): DomainContext {
 
 function setup(alreadyLogged: number | null) {
   const tx = {
+    leaveRequest: { findFirst: jest.fn().mockResolvedValue(null) },
+    holiday: { findFirst: jest.fn().mockResolvedValue(null) },
+    employeeHolidaySelection: { findFirst: jest.fn().mockResolvedValue(null) },
+    employeeShiftAssignment: { findFirst: jest.fn().mockResolvedValue(null) },
     timesheet: {
       findFirst: jest.fn().mockResolvedValue({ id: SHEET, employeeId: SELF, status: 'DRAFT' }),
       update: jest.fn().mockResolvedValue({ id: SHEET }),
     },
     employee: { findFirst: jest.fn().mockResolvedValue({ id: SELF }) },
     // No period row: the date checks that need one are exercised by verify:workday-audit.
+    organizationSettings: {
+      findUnique: jest
+        .fn()
+        .mockResolvedValue({ workWeekDays: [1, 2, 3, 4, 5], standardDayMinutes: 480 }),
+    },
     timesheetPeriod: { findFirst: jest.fn().mockResolvedValue(null) },
     timesheetEntry: {
       aggregate: jest.fn().mockResolvedValue({ _sum: { minutes: alreadyLogged } }),

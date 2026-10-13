@@ -5,9 +5,9 @@
  * button was pressed, with nothing sent anywhere. These pin the replacement: items come from the
  * inbox, a decision goes through the inbox's API call, and a refused decision stays visible.
  */
-import { describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 import type { ApprovalInboxItem, ApprovalInboxState } from '../../hooks/use-approval-inbox';
 import { ApprovalQueue } from './approval-queue';
 
@@ -39,11 +39,11 @@ function inbox(overrides: Partial<ApprovalInboxState> = {}): ApprovalInboxState 
   };
 }
 
-async function approveWith(comment: string) {
-  await userEvent.click(screen.getByRole('button', { name: 'Approve' }));
+async function rejectWith(reason: string) {
+  await userEvent.click(screen.getByRole('button', { name: 'Reject' }));
   const dialog = screen.getByRole('dialog');
-  await userEvent.type(within(dialog).getByLabelText('Comment'), comment);
-  await userEvent.click(within(dialog).getByRole('button', { name: 'Approve' }));
+  await userEvent.type(within(dialog).getByLabelText('Reason for rejection'), reason);
+  await userEvent.click(within(dialog).getByRole('button', { name: 'Reject' }));
 }
 
 describe('ApprovalQueue', () => {
@@ -59,22 +59,30 @@ describe('ApprovalQueue', () => {
     expect(screen.getByText('Nothing awaiting your decision')).toBeInTheDocument();
   });
 
-  it('sends the decision to the API with the comment', async () => {
+  it('approves directly without asking for a comment', async () => {
     const state = inbox();
     render(<ApprovalQueue inbox={state} />);
-    await approveWith('Cover arranged');
+    await userEvent.click(screen.getByRole('button', { name: 'Approve' }));
 
-    expect(state.decide).toHaveBeenCalledWith(leave, 'APPROVED', 'Cover arranged', undefined);
+    expect(state.decide).toHaveBeenCalledWith(leave, 'APPROVED', '');
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('keeps the dialog open and claims nothing when the API refuses', async () => {
+  it('rejects with a required reason', async () => {
+    const state = inbox();
+    render(<ApprovalQueue inbox={state} />);
+    await rejectWith('Cover not arranged');
+
+    expect(state.decide).toHaveBeenCalledWith(leave, 'REJECTED', 'Cover not arranged');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('keeps the reject dialog open when the API refuses', async () => {
     const state = inbox({ decide: vi.fn().mockResolvedValue(false) });
     render(<ApprovalQueue inbox={state} />);
-    await approveWith('Cover arranged');
+    await rejectWith('Cover not arranged');
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.queryByText(/✓ Approved/)).not.toBeInTheDocument();
   });
 
   it('shows why a decision failed', () => {
@@ -86,5 +94,41 @@ describe('ApprovalQueue', () => {
     render(<ApprovalQueue inbox={inbox({ canDecide: () => false })} />);
     expect(screen.queryByRole('button', { name: 'Approve' })).not.toBeInTheDocument();
     expect(screen.getByText('You cannot decide this')).toBeInTheDocument();
+  });
+
+  it('excludes ADVANCE financial items from bulk selection', () => {
+    const advanceItem: ApprovalInboxItem = {
+      id: 'adv-1',
+      domain: 'ADVANCE',
+      employeeId: 'employee-1',
+      requester: 'Asha',
+      title: 'Salary Advance · ₹15,000',
+      detail: 'Emergency medical expenses',
+      submittedAt: '2026-09-14T09:00:00.000Z',
+    };
+    render(<ApprovalQueue inbox={inbox({ items: [leave, advanceItem] })} />);
+    expect(screen.getByText(/Financial · Individual Review/)).toBeInTheDocument();
+    // Bulk select bar should not be present when only 1 selectable non-advance item exists
+    expect(screen.queryByText('Select all')).not.toBeInTheDocument();
+  });
+
+  it('keeps absent-day regularizations on the individual review path', async () => {
+    const regularization: ApprovalInboxItem = {
+      id: 'corr-1',
+      domain: 'ATTENDANCE_CORRECTION',
+      employeeId: 'employee-1',
+      requester: 'Rohan Das (EMP-105)',
+      title: 'Attendance regularization',
+      detail: 'Check-in to 09:10 AM · Check-out to 10:20 PM · Forgot to punch',
+      submittedAt: '2026-10-12T09:00:00.000Z',
+      requiresIndividualReview: true,
+    };
+    const state = inbox({ items: [regularization] });
+    render(<ApprovalQueue inbox={state} />);
+
+    expect(screen.queryByText('Select all')).not.toBeInTheDocument();
+    expect(screen.getByText(/Attendance regularization · Individual review/)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Approve' }));
+    expect(state.decide).toHaveBeenCalledWith(regularization, 'APPROVED', '');
   });
 });

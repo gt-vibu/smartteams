@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Wallet } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
 import { useScreenTab } from '../../hooks/use-screen-tab';
@@ -14,6 +14,7 @@ import { PageShell } from '../layout/page-shell';
 import { hasPermission } from '@smarteam/contracts';
 import { useSession } from '../../hooks/auth-context';
 import { permittedTabs } from '../../lib/permitted-tabs';
+import { PayrollRuleUpdatesCard } from './payroll-rule-updates-card';
 
 type Tab = 'RUNS' | 'COMPENSATION' | 'STATUTORY' | 'EMPLOYEE_PAY';
 
@@ -28,6 +29,7 @@ type Tab = 'RUNS' | 'COMPENSATION' | 'STATUTORY' | 'EMPLOYEE_PAY';
  */
 export function ScreenPayrollAdmin() {
   const admin = usePayrollAdmin();
+  const [rulesRevision, setRulesRevision] = useState(0);
   const [tab, setTab] = useScreenTab<Tab>(
     'payrollAdminTab',
     ['RUNS', 'COMPENSATION', 'STATUTORY', 'EMPLOYEE_PAY'],
@@ -64,6 +66,9 @@ export function ScreenPayrollAdmin() {
         title="Payroll"
         tone="warning"
       />
+      <PayrollRuleUpdatesCard
+        onAccepted={() => Promise.resolve().then(() => setRulesRevision((value) => value + 1))}
+      />
       <div className="flex items-center gap-4 border-b border-border pb-2">
         {tabs.map((entry) => (
           <Button
@@ -85,7 +90,7 @@ export function ScreenPayrollAdmin() {
 
       {active === 'RUNS' && <PayrollRunsPanel admin={admin} />}
       {active === 'EMPLOYEE_PAY' && <PayrollEmployeePayPanel admin={admin} />}
-      {active === 'STATUTORY' && <ScreenPayrollLegalConfig />}
+      {active === 'STATUTORY' && <ScreenPayrollLegalConfig key={rulesRevision} />}
       {active === 'COMPENSATION' && <ScreenCompensation />}
     </PageShell>
   );

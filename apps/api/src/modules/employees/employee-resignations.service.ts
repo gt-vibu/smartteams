@@ -86,6 +86,12 @@ export class EmployeeResignationsService {
   }
 
   submit(context: DomainContext, input: { reason: string; requestedLastDay: string }) {
+    // A person who manages employee records cannot submit a self-service resignation. The
+    // employee UI hides the action for these roles too; enforce the same boundary on the API.
+    if (context.permissions.has('*') || context.permissions.has('employees.write'))
+      throw new ForbiddenDomainError(
+        'Organization administrators cannot submit a self-service resignation.',
+      );
     const reason = input.reason.trim();
     if (reason.length < 3) throw new ConflictError('Say briefly why you are leaving.');
     const lastDay = dateOnly(input.requestedLastDay);

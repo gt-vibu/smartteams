@@ -10,6 +10,7 @@ import {
   assertStatutoryRulesConfigured,
   calculateSalaryStructure,
   calculateStatutoryDeduction,
+  missingStatutoryRules,
 } from './payroll-salary-structure';
 import { calculateComponent } from './payroll-calculation';
 import { dateOnly, type SalaryProfileInput } from './payroll-policy.types';
@@ -233,7 +234,9 @@ export class PayrollSalaryProfileService {
             effectiveDate,
             employeePolicy.payrollPolicyId,
           )) ?? DEFAULT_PAYROLL_POLICY)
-        : DEFAULT_PAYROLL_POLICY;
+        : context.accessMode === 'NATIVE'
+          ? organizationPolicy
+          : DEFAULT_PAYROLL_POLICY;
       const components = effectivePolicyComponents(
         policyComponentDefaults(policy),
         employee.payComponents,
@@ -262,7 +265,15 @@ export class PayrollSalaryProfileService {
         esi: whatIf?.esiEnabled ?? employeePolicy?.esiEnabled ?? policy.esiDefault,
         pt: whatIf?.ptEnabled ?? employeePolicy?.ptEnabled ?? policy.ptDefault,
       };
-      assertStatutoryRulesConfigured(enabled, rules);
+      // Profile reads and live previews must remain usable while an administrator is still
+      // setting up payroll. The run calculator remains strict and will refuse to calculate until
+      // every enabled statutory scheme has a rule for the employee's jurisdiction.
+      const missingRules = missingStatutoryRules(enabled, rules);
+      // Keep the existing Federation contract and behavior unchanged. The setup warning is for
+      // the native compensation UI only; Federation reads retain their strict validation.
+      if (context.accessMode !== 'NATIVE') {
+        assertStatutoryRulesConfigured(enabled, rules);
+      }
       const statutory = rules
         .filter(
           (rule) =>
@@ -379,6 +390,14 @@ export class PayrollSalaryProfileService {
         employeePolicy,
         organizationPolicy,
         assignedPolicy: policy,
+        ...(context.accessMode === 'NATIVE'
+          ? {
+              configurationWarnings: missingRules.map(
+                (scheme) =>
+                  `${scheme} is enabled but has no statutory rule for this jurisdiction. Configure it before calculating payroll.`,
+              ),
+            }
+          : {}),
         structure,
         statutory,
         salaryBreakdown: {

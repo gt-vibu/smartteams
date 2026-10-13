@@ -15,6 +15,7 @@ type Options = {
     chargedDates?: Prisma.JsonValue | null;
   }>;
   employeeSelectedDates?: readonly string[];
+  skipNonworkingDays?: boolean;
   dateOfJoining?: Date | null;
   dateOfLeaving?: Date | null;
 };
@@ -69,8 +70,11 @@ export function summarizeAttendance(
     const working =
       (assignment?.shift.daysOfWeek ?? options.workWeekDays).includes(date.getUTCDay() || 7) &&
       !holidays.has(key);
-    if (!record && working) missing = 1;
-    if (record?.dayStatus === 'ON_LEAVE' && leave < 1 && working) missing = 1;
+    // Explicit attendance records on a configured weekly off or company holiday must not create
+    // a salary deduction. Those dates are outside the payroll's scheduled working-day basis.
+    if (options.skipNonworkingDays && !working) continue;
+    if (!record) missing = 1;
+    if (record?.dayStatus === 'ON_LEAVE' && leave < 1) missing = 1;
     const uncovered = Math.max(0, missing - leave);
     if (uncovered >= 1) result.absentDays++;
     else if (uncovered > 0) result.halfDays += uncovered * 2;

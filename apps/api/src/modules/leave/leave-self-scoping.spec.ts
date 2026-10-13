@@ -61,6 +61,33 @@ const balanceFilter = (tx: ReturnType<typeof setup>['tx']) =>
   firstWhere(tx.leaveBalance.findMany.mock.calls);
 
 describe('LeaveService.listRequests self-scoping', () => {
+  it('filters status and employee name before paging while preserving self scope', async () => {
+    const { tx, service } = setup();
+    await service.listRequests(context(['leave.requests.read']), undefined, {
+      status: 'PENDING',
+      search: 'Ada Case',
+      limit: 100,
+    });
+    expect(requestFilter(tx)).toMatchObject({
+      employeeId: EMPLOYEE_A,
+      status: 'PENDING',
+      employee: {
+        AND: [
+          {
+            OR: ['firstName', 'lastName', 'employeeNumber', 'workEmail'].map((field) => ({
+              [field]: { contains: 'Ada', mode: 'insensitive' },
+            })),
+          },
+          {
+            OR: ['firstName', 'lastName', 'employeeNumber', 'workEmail'].map((field) => ({
+              [field]: { contains: 'Case', mode: 'insensitive' },
+            })),
+          },
+        ],
+      },
+    });
+    expect(tx.leaveRequest.findMany).toHaveBeenCalledWith(expect.objectContaining({ take: 101 }));
+  });
   it('allows an employee to read their own requests by id', async () => {
     const { tx, service } = setup();
     await service.listRequests(context(['leave.requests.read']), EMPLOYEE_A);

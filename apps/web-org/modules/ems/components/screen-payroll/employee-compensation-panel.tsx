@@ -7,7 +7,6 @@ import { CompensationHeaderCard } from './compensation-header-card';
 import { CompensationSalaryForm } from './compensation-salary-form';
 import { SalaryBreakdownCard } from './salary-breakdown-card';
 import { AssignComponentDialog } from './assign-component-dialog';
-import { ConfigureSalaryPolicyDialog } from './configure-salary-policy-dialog';
 import { UserCheck } from 'lucide-react';
 import { useSalaryPreview } from '../../hooks/use-salary-preview';
 
@@ -27,13 +26,12 @@ export function EmployeeCompensationPanel({
   employee,
 }: EmployeeCompensationPanelProps) {
   const [assigning, setAssigning] = useState(false);
-  const [configuringPolicy, setConfiguringPolicy] = useState(false);
   const profile = compensation.profile;
   const policy = profile?.employeePolicy;
 
-  const [pfEnabled, setPfEnabled] = useState<boolean>(true);
-  const [ptEnabled, setPtEnabled] = useState<boolean>(true);
-  const [esiEnabled, setEsiEnabled] = useState<boolean>(true);
+  const [pfEnabled, setPfEnabled] = useState<boolean>(false);
+  const [ptEnabled, setPtEnabled] = useState<boolean>(false);
+  const [esiEnabled, setEsiEnabled] = useState<boolean>(false);
 
   const [grossInput, setGrossInput] = useState('');
   const savedGross = Number(
@@ -55,12 +53,10 @@ export function EmployeeCompensationPanel({
   );
 
   useEffect(() => {
-    if (policy) {
-      setPfEnabled(policy.pfEnabled);
-      setPtEnabled(policy.ptEnabled);
-      setEsiEnabled(policy.esiEnabled);
-    }
-  }, [policy]);
+    setPfEnabled(policy?.pfEnabled ?? profile?.organizationPolicy?.pfDefault ?? false);
+    setPtEnabled(policy?.ptEnabled ?? profile?.organizationPolicy?.ptDefault ?? false);
+    setEsiEnabled(policy?.esiEnabled ?? profile?.organizationPolicy?.esiDefault ?? false);
+  }, [policy, profile?.organizationPolicy]);
 
   if (!compensation.employeeId) {
     return (
@@ -93,11 +89,47 @@ export function EmployeeCompensationPanel({
 
   if (compensation.profileLoading) {
     return (
-      <div className="flex min-h-[clamp(200px,40vh,350px)] flex-col items-center justify-center rounded-xl border border-border bg-card p-10 text-center">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent mb-2" />
-        <p className="text-xs text-muted-foreground" role="status">
-          Loading compensation structure...
-        </p>
+      <div aria-busy="true" className="w-full min-w-0 space-y-3.5" role="status">
+        <span className="sr-only">
+          Loading compensation structure for {employee?.firstName ?? 'employee'}.
+        </span>
+        <div className="rounded-xl border border-border bg-card p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-foreground">
+                {employee ? `${employee.firstName} ${employee.lastName}` : 'Loading employee'}
+              </p>
+              <div className="h-3 w-44 animate-pulse rounded bg-muted" />
+            </div>
+            <div className="h-8 w-32 animate-pulse rounded-full bg-muted" />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2 xl:grid-cols-4">
+          {Array.from({ length: 4 }, (_, index) => (
+            <div className="space-y-3 rounded-xl border border-border bg-card p-4" key={index}>
+              <div className="h-3 w-24 animate-pulse rounded bg-muted" />
+              <div className="h-6 w-32 max-w-full animate-pulse rounded bg-muted" />
+              <div className="h-3 w-28 animate-pulse rounded bg-muted" />
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 items-start gap-3.5 xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+          <div className="space-y-5 rounded-xl border border-border bg-card p-5">
+            <div className="h-5 w-24 animate-pulse rounded bg-muted" />
+            {Array.from({ length: 4 }, (_, index) => (
+              <div className="space-y-2" key={index}>
+                <div className="h-3 w-32 animate-pulse rounded bg-muted" />
+                <div className="h-10 w-full animate-pulse rounded-md bg-muted" />
+              </div>
+            ))}
+          </div>
+          <div className="space-y-4 rounded-xl border border-border bg-card p-5">
+            <div className="h-5 w-40 animate-pulse rounded bg-muted" />
+            {Array.from({ length: 6 }, (_, index) => (
+              <div className="h-8 w-full animate-pulse rounded bg-muted" key={index} />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -148,9 +180,7 @@ export function EmployeeCompensationPanel({
         />
         <SalaryBreakdownCard
           canAssign={compensation.can.assign}
-          canConfigurePolicy={compensation.can.savePolicy}
           onAssignComponent={() => setAssigning(true)}
-          onConfigurePolicy={() => setConfiguringPolicy(true)}
           profile={shown}
         />
       </div>
@@ -160,13 +190,6 @@ export function EmployeeCompensationPanel({
         compensation={compensation}
         onOpenChange={setAssigning}
         open={assigning}
-      />
-
-      {/* Configure Salary Policy Modal */}
-      <ConfigureSalaryPolicyDialog
-        compensation={compensation}
-        onOpenChange={setConfiguringPolicy}
-        open={configuringPolicy}
       />
     </div>
   );

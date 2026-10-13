@@ -63,6 +63,7 @@ model Employee {
   attendancePunches        AttendancePunch[]
   holidaySelections        EmployeeHolidaySelection[]
   attendanceHolidayReviews AttendanceHolidayReview[]
+  attendanceLeaveOverlapReviews AttendanceLeaveOverlapReview[]
   leaveBalances            LeaveBalance[]
   leaveRequests            LeaveRequest[]
   shifts                   EmployeeShiftAssignment[]

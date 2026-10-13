@@ -1,8 +1,8 @@
-import { Prisma } from '../../generated/prisma/client';
-import { PayrollAdvancesService } from './payroll-advances.service';
 import type { DomainContext } from '../../common/context/domain-context';
-import type { AccessMode } from '../../generated/prisma/enums';
 import { ForbiddenDomainError } from '../../common/errors/domain-error';
+import { Prisma } from '../../generated/prisma/client';
+import type { AccessMode } from '../../generated/prisma/enums';
+import { PayrollAdvancesService } from './payroll-advances.service';
 
 /**
  * Who may raise and decide a salary advance.
@@ -84,6 +84,17 @@ describe('PayrollAdvancesService.decideAdvance', () => {
     const { tx, service } = decideSetup(null);
     await service.decideAdvance(context(['payroll.advances.approve']), ADVANCE, approve);
     expect(tx.salaryAdvance.update).toHaveBeenCalled();
+  });
+
+  it('rejects an advance decision with REJECTED status if comment is missing', async () => {
+    const { tx, service } = decideSetup(COLLEAGUE_USER);
+    await expect(
+      service.decideAdvance(context(['payroll.advances.approve']), ADVANCE, {
+        status: 'REJECTED',
+        comment: '',
+      }),
+    ).rejects.toThrow('Advance rejections require a reason');
+    expect(tx.salaryAdvance.update).not.toHaveBeenCalled();
   });
 });
 

@@ -1,7 +1,8 @@
+import type { DomainContext } from '../../common/context/domain-context';
+import { AttendancePunchType } from '../../generated/prisma/enums';
 import { AttendanceCorrectionsService } from './attendance-corrections.service';
 import { assertValidMissingCheckOut } from './attendance-missing-checkout';
-import { AttendancePunchType } from '../../generated/prisma/enums';
-import type { DomainContext } from '../../common/context/domain-context';
+import { DEFAULT_MISSED_CHECK_OUT_POLICY } from '@smarteam/contracts';
 
 /**
  * Supplying a day's missing check-out through a correction.
@@ -50,6 +51,7 @@ function setup(
     requestedByClientId?: string | null;
     pendingMissingCheckOut?: boolean;
     nextPunchAt?: Date;
+    employeeCorrectionsAllowed?: boolean;
   } = {},
 ) {
   const punches: Punch[] = options.punches ?? [{ punchType: IN, occurredAt: CHECK_IN }];
@@ -75,6 +77,9 @@ function setup(
     recordUpdate: undefined as undefined | Record<string, unknown>,
   };
   const tx = {
+    organization: {
+      findUniqueOrThrow: jest.fn().mockResolvedValue({ timezone: 'Asia/Kolkata' }),
+    },
     approvalDelegation: { findMany: jest.fn().mockResolvedValue([]) },
     $queryRaw: jest.fn().mockResolvedValue([]),
     employee: {
@@ -162,9 +167,21 @@ function setup(
     notification: { createMany: jest.fn().mockResolvedValue({ count: 1 }) },
     employeeHolidaySelection: { findFirst: jest.fn().mockResolvedValue(null) },
     organizationSettings: {
-      findUniqueOrThrow: jest.fn().mockResolvedValue({ standardDayMinutes: 480 }),
+      findUniqueOrThrow: jest.fn().mockResolvedValue({
+        standardDayMinutes: 480,
+        autoCheckOutMode: 'DISABLED',
+        metadata: {
+          missedCheckOutPolicy: {
+            ...DEFAULT_MISSED_CHECK_OUT_POLICY,
+            employeeCorrectionsAllowed: options.employeeCorrectionsAllowed ?? true,
+          },
+        },
+      }),
     },
-    payrollRun: { updateMany: jest.fn().mockResolvedValue({ count: 1 }) },
+    payrollRun: {
+      findFirst: jest.fn().mockResolvedValue(null),
+      updateMany: jest.fn().mockResolvedValue({ count: 1 }),
+    },
   };
   const database = {
     run: jest.fn((_ctx: unknown, cb: (client: unknown) => unknown) => Promise.resolve(cb(tx))),
@@ -181,6 +198,9 @@ describe('missing check-out: the exact reported case', () => {
     const { tx, state, punches, service } = setup();
 
     await service.requestMissingCheckOut(employee, RECORD, request);
+    expect(state.afterSnapshot).toMatchObject({
+      missingCheckOut: { policyVersion: 1, submittedAfterDeadline: true },
+    });
     // Nothing changes until the approver decides.
     expect(tx.attendancePunch.create).not.toHaveBeenCalled();
 
@@ -257,6 +277,14 @@ describe('raising a missing check-out correction', () => {
     await expect(service.requestMissingCheckOut(employee, RECORD, request)).rejects.toThrow(
       'already has a check-out',
     );
+  });
+
+  it('does not allow the employee to submit a correction when policy disables it', async () => {
+    const { tx, service } = setup({ employeeCorrectionsAllowed: false });
+    await expect(service.requestMissingCheckOut(employee, RECORD, request)).rejects.toThrow(
+      'Employee correction requests are disabled by attendance policy',
+    );
+    expect(tx.attendanceCorrection.create).not.toHaveBeenCalled();
   });
 
   it('refuses a second request while one is awaiting a decision', async () => {

@@ -316,6 +316,12 @@ export type TimesheetApproval = Prisma.TimesheetApprovalModel
  */
 export type AttendanceHolidayReview = Prisma.AttendanceHolidayReviewModel
 /**
+ * Model AttendanceLeaveOverlapReview
+ * A check-in during approved leave, reviewed separately from leave cancellation so one worked
+ * date can be restored without cancelling the employee's entire leave request.
+ */
+export type AttendanceLeaveOverlapReview = Prisma.AttendanceLeaveOverlapReviewModel
+/**
  * Model PayrollRun
  * 
  */
@@ -335,6 +341,16 @@ export type PayrollPolicyComponent = Prisma.PayrollPolicyComponentModel
  * 
  */
 export type PayrollStatutoryRule = Prisma.PayrollStatutoryRuleModel
+/**
+ * Model PayrollComplianceSourceCheck
+ * Per-tenant cursor for an allowlisted, jurisdiction-matched government source.
+ */
+export type PayrollComplianceSourceCheck = Prisma.PayrollComplianceSourceCheckModel
+/**
+ * Model PayrollRuleUpdateProposal
+ * A detected source change that an organization must review before any payroll rule is changed.
+ */
+export type PayrollRuleUpdateProposal = Prisma.PayrollRuleUpdateProposalModel
 /**
  * Model PayrollLineItem
  * 

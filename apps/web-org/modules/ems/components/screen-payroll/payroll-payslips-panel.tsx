@@ -181,6 +181,39 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
             </div>
             {expanded && (
               <div className="border-t border-border">
+                {payslip.payrollSummary && (
+                  <div className="grid gap-2 border-b border-border px-4 py-3 text-xs sm:grid-cols-2 lg:grid-cols-4">
+                    <span className="text-muted-foreground">
+                      Working days{' '}
+                      <strong className="text-foreground">
+                        {payslip.payrollSummary.workingDays}
+                      </strong>
+                    </span>
+                    <span className="text-muted-foreground">
+                      Paid leave{' '}
+                      <strong className="text-foreground">
+                        {payslip.payrollSummary.paidLeaveDays}
+                      </strong>{' '}
+                      · does not reduce pay
+                    </span>
+                    <span className="text-muted-foreground">
+                      Unpaid days{' '}
+                      <strong className="text-foreground">
+                        {payslip.payrollSummary.unpaidDays}
+                      </strong>
+                    </span>
+                    <span className="text-muted-foreground">
+                      Unpaid-time adjustment{' '}
+                      <strong className="text-foreground">
+                        {formatMoney(
+                          payslip.payrollSummary.unpaidTimeReduction,
+                          payslip.run.currencyCode ?? 'INR',
+                        )}
+                      </strong>{' '}
+                      · included in gross
+                    </span>
+                  </div>
+                )}
                 <div className="flex flex-wrap gap-6 px-4 py-3 text-xs">
                   <span className="text-muted-foreground">
                     Gross{' '}

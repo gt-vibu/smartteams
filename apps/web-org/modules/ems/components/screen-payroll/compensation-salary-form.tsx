@@ -98,7 +98,12 @@ export function CompensationSalaryForm({
   const locked = compensation.saving || !compensation.can.saveSalary;
 
   useEffect(() => {
-    const gross = Number(current?.grossSalary ?? current?.baseAmount ?? 0);
+    const gross = Number(
+      current?.grossSalary ??
+        current?.baseAmount ??
+        compensation.organizationPolicy?.defaultGrossSalary ??
+        0,
+    );
     setMonthlyGrossInput(gross > 0 ? String(gross) : '');
     onGrossChange?.(gross > 0 ? String(gross) : '');
     setLpaInput(gross > 0 ? String(Number(((gross * 12) / 100_000).toFixed(2))) : '');
@@ -108,7 +113,7 @@ export function CompensationSalaryForm({
     setOvertimeInput(
       current?.overtimeMultiplier === undefined ? '' : String(Number(current.overtimeMultiplier)),
     );
-  }, [current]);
+  }, [current, compensation.organizationPolicy?.defaultGrossSalary]);
 
   // A first salary starts at the company's standard rate.
   useEffect(() => {
@@ -154,13 +159,17 @@ export function CompensationSalaryForm({
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3">
         <div>
-          <div className="mb-1 flex items-center justify-between gap-2">
+          <div className="mb-1.5 space-y-1.5">
             <Label className="text-xs font-semibold" htmlFor="gross-salary">
               {unit === 'monthly' ? 'Monthly gross salary' : 'Annual gross (LPA)'}
             </Label>
-            <div className="flex rounded-md border border-border p-0.5 text-[11px]" role="group">
+            <div
+              aria-label="Salary input period"
+              className="flex w-full rounded-md border border-border p-0.5 text-[11px]"
+              role="group"
+            >
               {(
                 [
                   ['monthly', 'Monthly'],
@@ -169,7 +178,7 @@ export function CompensationSalaryForm({
               ).map(([id, label]) => (
                 <button
                   aria-pressed={unit === id}
-                  className={`rounded px-2 py-0.5 font-semibold ${
+                  className={`min-w-0 flex-1 whitespace-nowrap rounded px-2 py-1 font-semibold ${
                     unit === id ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
                   }`}
                   key={id}

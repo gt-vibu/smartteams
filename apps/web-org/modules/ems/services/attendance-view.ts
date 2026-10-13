@@ -37,6 +37,8 @@ export type AttendanceDayView = {
   workedLabel: string;
   overtimeLabel: string;
   dayStatus: string;
+  /** An approved leave row and at least one real check-in exist for the same day. */
+  leaveOverlap: boolean;
   /** Null until the shifts module is wired. */
   shiftName: string | null;
   /** The optional holiday this day's check-in landed on; null for any other day. */
@@ -98,6 +100,8 @@ export function toAttendanceDayView(
   const checkIn = firstPunch(record, 'IN');
   const checkOut = firstPunch(record, 'OUT');
   const worked = liveWorkedMinutes(record, options.now);
+  const leaveOverlap =
+    record.dayStatus === 'ON_LEAVE' && record.status !== 'REJECTED' && Boolean(checkIn);
 
   return {
     id: record.id,
@@ -114,7 +118,10 @@ export function toAttendanceDayView(
     workedMinutes: worked,
     workedLabel: formatMinutes(worked),
     overtimeLabel: formatMinutes(record.overtimeMinutes),
+    // A punch during leave remains under review; only the authorized overlap decision may mark
+    // the day present. Keep the stored leave status until that decision is recorded.
     dayStatus: record.dayStatus,
+    leaveOverlap,
     shiftName: null,
     holidayName: options.holidayConflict?.holidayName ?? null,
     spanStartPercent: dayPercent(checkIn?.occurredAt),

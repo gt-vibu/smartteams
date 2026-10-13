@@ -312,12 +312,20 @@ export function workspaceTitle(persona: {
   permissions: readonly string[];
   roles: ReadonlyArray<{ code: string; name: string }>;
 }): { workspace: string; badge: string } {
+  const organizationAdmin = persona.roles.find((role) => role.code === 'ORG_ADMIN');
+  if (organizationAdmin)
+    return { workspace: 'Admin workspace', badge: organizationAdmin.name || 'Tenant Admin' };
+  const hrAdmin = persona.roles.find((role) => role.code === 'HR_ADMIN');
+  if (hrAdmin) return { workspace: 'HR workspace', badge: hrAdmin.name || 'HR Admin' };
   if (persona.permissions.includes('*'))
     return { workspace: 'Admin workspace', badge: 'Tenant Admin' };
-  if (persona.roles.some((role) => role.code === 'HR_ADMIN'))
-    return { workspace: 'HR workspace', badge: 'HR Admin' };
   const role = persona.roles.find((entry) => !['EMPLOYEE', 'MANAGER'].includes(entry.code));
   return role
     ? { workspace: `${role.name} workspace`, badge: role.name }
     : { workspace: 'Admin workspace', badge: 'Admin' };
+}
+
+/** Only self-service employees may hand in a resignation; people-management roles decide them. */
+export function canSubmitSelfResignation(permissions: readonly string[]): boolean {
+  return !permissions.includes('*') && !permissions.includes('employees.write');
 }

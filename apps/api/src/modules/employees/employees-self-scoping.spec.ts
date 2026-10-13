@@ -68,9 +68,8 @@ function database(options: { rows?: Array<ReturnType<typeof row>>; self?: string
 
   const findFirst = jest.fn(({ where }: { where: Record<string, unknown> }) => {
     if ('userId' in where) return Promise.resolve(selfId ? { id: selfId } : null);
-    const match = rows.find(
-      (entry) => entry.id === where.id && entry.organizationId === where.organizationId,
-    );
+    const requestedId = findId(where);
+    const match = rows.find((entry) => entry.id === requestedId && entry.organizationId === ORG);
     return Promise.resolve(match ?? null);
   });
 
@@ -97,6 +96,18 @@ function database(options: { rows?: Array<ReturnType<typeof row>>; self?: string
       run: jest.fn((_ctx: unknown, cb: (client: unknown) => unknown) => Promise.resolve(cb(tx))),
     },
   };
+}
+
+function findId(where: Record<string, unknown>): string | undefined {
+  if (typeof where.id === 'string') return where.id;
+  if (!Array.isArray(where.AND)) return undefined;
+  for (const clause of where.AND) {
+    if (clause && typeof clause === 'object') {
+      const id = findId(clause as Record<string, unknown>);
+      if (id) return id;
+    }
+  }
+  return undefined;
 }
 
 function employees(options?: Parameters<typeof database>[0]) {

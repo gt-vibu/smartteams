@@ -28,6 +28,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     BullModule.registerQueue({ name: 'approval-reminders' }),
     BullModule.registerQueue({ name: 'approval-batches' }),
     BullModule.registerQueue({ name: 'workforce-assignments' }),
+    BullModule.registerQueue({ name: 'payroll-compliance-watch' }),
   ],
   exports: [BullModule],
 })

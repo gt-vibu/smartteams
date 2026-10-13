@@ -356,6 +356,7 @@ export type LeaveRequestWhereInput = {
   approvals?: Prisma.LeaveApprovalListRelationFilter
   balanceTransactions?: Prisma.LeaveBalanceTransactionListRelationFilter
   files?: Prisma.FileObjectListRelationFilter
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewListRelationFilter
 }
 
 export type LeaveRequestOrderByWithRelationInput = {
@@ -389,6 +390,7 @@ export type LeaveRequestOrderByWithRelationInput = {
   approvals?: Prisma.LeaveApprovalOrderByRelationAggregateInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionOrderByRelationAggregateInput
   files?: Prisma.FileObjectOrderByRelationAggregateInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewOrderByRelationAggregateInput
 }
 
 export type LeaveRequestWhereUniqueInput = Prisma.AtLeast<{
@@ -426,6 +428,7 @@ export type LeaveRequestWhereUniqueInput = Prisma.AtLeast<{
   approvals?: Prisma.LeaveApprovalListRelationFilter
   balanceTransactions?: Prisma.LeaveBalanceTransactionListRelationFilter
   files?: Prisma.FileObjectListRelationFilter
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewListRelationFilter
 }, "id" | "organizationId_externalId">
 
 export type LeaveRequestOrderByWithAggregationInput = {
@@ -512,6 +515,7 @@ export type LeaveRequestCreateInput = {
   approvals?: Prisma.LeaveApprovalCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestUncheckedCreateInput = {
@@ -540,6 +544,7 @@ export type LeaveRequestUncheckedCreateInput = {
   approvals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestUpdateInput = {
@@ -568,6 +573,7 @@ export type LeaveRequestUpdateInput = {
   approvals?: Prisma.LeaveApprovalUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateInput = {
@@ -596,6 +602,7 @@ export type LeaveRequestUncheckedUpdateInput = {
   approvals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestCreateManyInput = {
@@ -866,6 +873,20 @@ export type EnumLeaveRequestStatusFieldUpdateOperationsInput = {
   set?: $Enums.LeaveRequestStatus
 }
 
+export type LeaveRequestCreateNestedOneWithoutAttendanceOverlapReviewsInput = {
+  create?: Prisma.XOR<Prisma.LeaveRequestCreateWithoutAttendanceOverlapReviewsInput, Prisma.LeaveRequestUncheckedCreateWithoutAttendanceOverlapReviewsInput>
+  connectOrCreate?: Prisma.LeaveRequestCreateOrConnectWithoutAttendanceOverlapReviewsInput
+  connect?: Prisma.LeaveRequestWhereUniqueInput
+}
+
+export type LeaveRequestUpdateOneRequiredWithoutAttendanceOverlapReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.LeaveRequestCreateWithoutAttendanceOverlapReviewsInput, Prisma.LeaveRequestUncheckedCreateWithoutAttendanceOverlapReviewsInput>
+  connectOrCreate?: Prisma.LeaveRequestCreateOrConnectWithoutAttendanceOverlapReviewsInput
+  upsert?: Prisma.LeaveRequestUpsertWithoutAttendanceOverlapReviewsInput
+  connect?: Prisma.LeaveRequestWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LeaveRequestUpdateToOneWithWhereWithoutAttendanceOverlapReviewsInput, Prisma.LeaveRequestUpdateWithoutAttendanceOverlapReviewsInput>, Prisma.LeaveRequestUncheckedUpdateWithoutAttendanceOverlapReviewsInput>
+}
+
 export type LeaveRequestCreateNestedManyWithoutOrganizationInput = {
   create?: Prisma.XOR<Prisma.LeaveRequestCreateWithoutOrganizationInput, Prisma.LeaveRequestUncheckedCreateWithoutOrganizationInput> | Prisma.LeaveRequestCreateWithoutOrganizationInput[] | Prisma.LeaveRequestUncheckedCreateWithoutOrganizationInput[]
   connectOrCreate?: Prisma.LeaveRequestCreateOrConnectWithoutOrganizationInput | Prisma.LeaveRequestCreateOrConnectWithoutOrganizationInput[]
@@ -1059,6 +1080,7 @@ export type LeaveRequestCreateWithoutApprovalsInput = {
   approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutLeaveRequestsInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestUncheckedCreateWithoutApprovalsInput = {
@@ -1086,6 +1108,7 @@ export type LeaveRequestUncheckedCreateWithoutApprovalsInput = {
   version?: number
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestCreateOrConnectWithoutApprovalsInput = {
@@ -1129,6 +1152,7 @@ export type LeaveRequestUpdateWithoutApprovalsInput = {
   approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutLeaveRequestsNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateWithoutApprovalsInput = {
@@ -1156,6 +1180,7 @@ export type LeaveRequestUncheckedUpdateWithoutApprovalsInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestCreateWithoutFilesInput = {
@@ -1183,6 +1208,7 @@ export type LeaveRequestCreateWithoutFilesInput = {
   approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutLeaveRequestsInput
   approvals?: Prisma.LeaveApprovalCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestUncheckedCreateWithoutFilesInput = {
@@ -1210,6 +1236,7 @@ export type LeaveRequestUncheckedCreateWithoutFilesInput = {
   version?: number
   approvals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestCreateOrConnectWithoutFilesInput = {
@@ -1253,6 +1280,7 @@ export type LeaveRequestUpdateWithoutFilesInput = {
   approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutLeaveRequestsNestedInput
   approvals?: Prisma.LeaveApprovalUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateWithoutFilesInput = {
@@ -1280,6 +1308,7 @@ export type LeaveRequestUncheckedUpdateWithoutFilesInput = {
   version?: Prisma.IntFieldUpdateOperationsInput | number
   approvals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestCreateWithoutLeaveTypeInput = {
@@ -1307,6 +1336,7 @@ export type LeaveRequestCreateWithoutLeaveTypeInput = {
   approvals?: Prisma.LeaveApprovalCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestUncheckedCreateWithoutLeaveTypeInput = {
@@ -1334,6 +1364,7 @@ export type LeaveRequestUncheckedCreateWithoutLeaveTypeInput = {
   approvals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestCreateOrConnectWithoutLeaveTypeInput = {
@@ -1415,6 +1446,7 @@ export type LeaveRequestCreateWithoutBalanceTransactionsInput = {
   approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutLeaveRequestsInput
   approvals?: Prisma.LeaveApprovalCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestUncheckedCreateWithoutBalanceTransactionsInput = {
@@ -1442,6 +1474,7 @@ export type LeaveRequestUncheckedCreateWithoutBalanceTransactionsInput = {
   version?: number
   approvals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestCreateOrConnectWithoutBalanceTransactionsInput = {
@@ -1485,6 +1518,7 @@ export type LeaveRequestUpdateWithoutBalanceTransactionsInput = {
   approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutLeaveRequestsNestedInput
   approvals?: Prisma.LeaveApprovalUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateWithoutBalanceTransactionsInput = {
@@ -1511,6 +1545,135 @@ export type LeaveRequestUncheckedUpdateWithoutBalanceTransactionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   version?: Prisma.IntFieldUpdateOperationsInput | number
   approvals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutLeaveRequestNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutLeaveRequestNestedInput
+}
+
+export type LeaveRequestCreateWithoutAttendanceOverlapReviewsInput = {
+  id?: string
+  startDate: Date | string
+  endDate: Date | string
+  requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reason?: string | null
+  status?: $Enums.LeaveRequestStatus
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  decidedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutLeaveRequestsInput
+  employee: Prisma.EmployeeCreateNestedOneWithoutLeaveRequestsInput
+  branch?: Prisma.BranchCreateNestedOneWithoutLeaveRequestsInput
+  leaveType: Prisma.LeaveTypeCreateNestedOneWithoutRequestsInput
+  approvalPolicy?: Prisma.ApprovalPolicyCreateNestedOneWithoutLeaveRequestsInput
+  approvals?: Prisma.LeaveApprovalCreateNestedManyWithoutLeaveRequestInput
+  balanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveRequestInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutLeaveRequestInput
+}
+
+export type LeaveRequestUncheckedCreateWithoutAttendanceOverlapReviewsInput = {
+  id?: string
+  organizationId: string
+  employeeId: string
+  branchId?: string | null
+  leaveTypeId: string
+  approvalPolicyId?: string | null
+  startDate: Date | string
+  endDate: Date | string
+  requestedDays: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reason?: string | null
+  status?: $Enums.LeaveRequestStatus
+  sourceAccessMode: $Enums.AccessMode
+  externalId?: string | null
+  submittedAt?: Date | string | null
+  decidedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  version?: number
+  approvals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutLeaveRequestInput
+  balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveRequestInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutLeaveRequestInput
+}
+
+export type LeaveRequestCreateOrConnectWithoutAttendanceOverlapReviewsInput = {
+  where: Prisma.LeaveRequestWhereUniqueInput
+  create: Prisma.XOR<Prisma.LeaveRequestCreateWithoutAttendanceOverlapReviewsInput, Prisma.LeaveRequestUncheckedCreateWithoutAttendanceOverlapReviewsInput>
+}
+
+export type LeaveRequestUpsertWithoutAttendanceOverlapReviewsInput = {
+  update: Prisma.XOR<Prisma.LeaveRequestUpdateWithoutAttendanceOverlapReviewsInput, Prisma.LeaveRequestUncheckedUpdateWithoutAttendanceOverlapReviewsInput>
+  create: Prisma.XOR<Prisma.LeaveRequestCreateWithoutAttendanceOverlapReviewsInput, Prisma.LeaveRequestUncheckedCreateWithoutAttendanceOverlapReviewsInput>
+  where?: Prisma.LeaveRequestWhereInput
+}
+
+export type LeaveRequestUpdateToOneWithWhereWithoutAttendanceOverlapReviewsInput = {
+  where?: Prisma.LeaveRequestWhereInput
+  data: Prisma.XOR<Prisma.LeaveRequestUpdateWithoutAttendanceOverlapReviewsInput, Prisma.LeaveRequestUncheckedUpdateWithoutAttendanceOverlapReviewsInput>
+}
+
+export type LeaveRequestUpdateWithoutAttendanceOverlapReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  decidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutLeaveRequestsNestedInput
+  employee?: Prisma.EmployeeUpdateOneRequiredWithoutLeaveRequestsNestedInput
+  branch?: Prisma.BranchUpdateOneWithoutLeaveRequestsNestedInput
+  leaveType?: Prisma.LeaveTypeUpdateOneRequiredWithoutRequestsNestedInput
+  approvalPolicy?: Prisma.ApprovalPolicyUpdateOneWithoutLeaveRequestsNestedInput
+  approvals?: Prisma.LeaveApprovalUpdateManyWithoutLeaveRequestNestedInput
+  balanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveRequestNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutLeaveRequestNestedInput
+}
+
+export type LeaveRequestUncheckedUpdateWithoutAttendanceOverlapReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeId?: Prisma.StringFieldUpdateOperationsInput | string
+  branchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leaveTypeId?: Prisma.StringFieldUpdateOperationsInput | string
+  approvalPolicyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requestedDays?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session?: Prisma.StringFieldUpdateOperationsInput | string
+  cancellation?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  chargedDates?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumLeaveRequestStatusFieldUpdateOperationsInput | $Enums.LeaveRequestStatus
+  sourceAccessMode?: Prisma.EnumAccessModeFieldUpdateOperationsInput | $Enums.AccessMode
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  submittedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  decidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  approvals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutLeaveRequestNestedInput
+  balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutLeaveRequestNestedInput
 }
 
@@ -1539,6 +1702,7 @@ export type LeaveRequestCreateWithoutOrganizationInput = {
   approvals?: Prisma.LeaveApprovalCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestUncheckedCreateWithoutOrganizationInput = {
@@ -1566,6 +1730,7 @@ export type LeaveRequestUncheckedCreateWithoutOrganizationInput = {
   approvals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestCreateOrConnectWithoutOrganizationInput = {
@@ -1619,6 +1784,7 @@ export type LeaveRequestCreateWithoutApprovalPolicyInput = {
   approvals?: Prisma.LeaveApprovalCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestUncheckedCreateWithoutApprovalPolicyInput = {
@@ -1646,6 +1812,7 @@ export type LeaveRequestUncheckedCreateWithoutApprovalPolicyInput = {
   approvals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestCreateOrConnectWithoutApprovalPolicyInput = {
@@ -1699,6 +1866,7 @@ export type LeaveRequestCreateWithoutBranchInput = {
   approvals?: Prisma.LeaveApprovalCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestUncheckedCreateWithoutBranchInput = {
@@ -1726,6 +1894,7 @@ export type LeaveRequestUncheckedCreateWithoutBranchInput = {
   approvals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestCreateOrConnectWithoutBranchInput = {
@@ -1779,6 +1948,7 @@ export type LeaveRequestCreateWithoutEmployeeInput = {
   approvals?: Prisma.LeaveApprovalCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestUncheckedCreateWithoutEmployeeInput = {
@@ -1806,6 +1976,7 @@ export type LeaveRequestUncheckedCreateWithoutEmployeeInput = {
   approvals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutLeaveRequestInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutLeaveRequestInput
   files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutLeaveRequestInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutLeaveRequestInput
 }
 
 export type LeaveRequestCreateOrConnectWithoutEmployeeInput = {
@@ -1883,6 +2054,7 @@ export type LeaveRequestUpdateWithoutLeaveTypeInput = {
   approvals?: Prisma.LeaveApprovalUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateWithoutLeaveTypeInput = {
@@ -1910,6 +2082,7 @@ export type LeaveRequestUncheckedUpdateWithoutLeaveTypeInput = {
   approvals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateManyWithoutLeaveTypeInput = {
@@ -1985,6 +2158,7 @@ export type LeaveRequestUpdateWithoutOrganizationInput = {
   approvals?: Prisma.LeaveApprovalUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateWithoutOrganizationInput = {
@@ -2012,6 +2186,7 @@ export type LeaveRequestUncheckedUpdateWithoutOrganizationInput = {
   approvals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateManyWithoutOrganizationInput = {
@@ -2087,6 +2262,7 @@ export type LeaveRequestUpdateWithoutApprovalPolicyInput = {
   approvals?: Prisma.LeaveApprovalUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateWithoutApprovalPolicyInput = {
@@ -2114,6 +2290,7 @@ export type LeaveRequestUncheckedUpdateWithoutApprovalPolicyInput = {
   approvals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateManyWithoutApprovalPolicyInput = {
@@ -2189,6 +2366,7 @@ export type LeaveRequestUpdateWithoutBranchInput = {
   approvals?: Prisma.LeaveApprovalUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateWithoutBranchInput = {
@@ -2216,6 +2394,7 @@ export type LeaveRequestUncheckedUpdateWithoutBranchInput = {
   approvals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateManyWithoutBranchInput = {
@@ -2291,6 +2470,7 @@ export type LeaveRequestUpdateWithoutEmployeeInput = {
   approvals?: Prisma.LeaveApprovalUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateWithoutEmployeeInput = {
@@ -2318,6 +2498,7 @@ export type LeaveRequestUncheckedUpdateWithoutEmployeeInput = {
   approvals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutLeaveRequestNestedInput
   balanceTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutLeaveRequestNestedInput
   files?: Prisma.FileObjectUncheckedUpdateManyWithoutLeaveRequestNestedInput
+  attendanceOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutLeaveRequestNestedInput
 }
 
 export type LeaveRequestUncheckedUpdateManyWithoutEmployeeInput = {
@@ -2353,12 +2534,14 @@ export type LeaveRequestCountOutputType = {
   approvals: number
   balanceTransactions: number
   files: number
+  attendanceOverlapReviews: number
 }
 
 export type LeaveRequestCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   approvals?: boolean | LeaveRequestCountOutputTypeCountApprovalsArgs
   balanceTransactions?: boolean | LeaveRequestCountOutputTypeCountBalanceTransactionsArgs
   files?: boolean | LeaveRequestCountOutputTypeCountFilesArgs
+  attendanceOverlapReviews?: boolean | LeaveRequestCountOutputTypeCountAttendanceOverlapReviewsArgs
 }
 
 /**
@@ -2390,6 +2573,13 @@ export type LeaveRequestCountOutputTypeCountBalanceTransactionsArgs<ExtArgs exte
  */
 export type LeaveRequestCountOutputTypeCountFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.FileObjectWhereInput
+}
+
+/**
+ * LeaveRequestCountOutputType without action
+ */
+export type LeaveRequestCountOutputTypeCountAttendanceOverlapReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttendanceLeaveOverlapReviewWhereInput
 }
 
 
@@ -2424,6 +2614,7 @@ export type LeaveRequestSelect<ExtArgs extends runtime.Types.Extensions.Internal
   approvals?: boolean | Prisma.LeaveRequest$approvalsArgs<ExtArgs>
   balanceTransactions?: boolean | Prisma.LeaveRequest$balanceTransactionsArgs<ExtArgs>
   files?: boolean | Prisma.LeaveRequest$filesArgs<ExtArgs>
+  attendanceOverlapReviews?: boolean | Prisma.LeaveRequest$attendanceOverlapReviewsArgs<ExtArgs>
   _count?: boolean | Prisma.LeaveRequestCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["leaveRequest"]>
 
@@ -2522,6 +2713,7 @@ export type LeaveRequestInclude<ExtArgs extends runtime.Types.Extensions.Interna
   approvals?: boolean | Prisma.LeaveRequest$approvalsArgs<ExtArgs>
   balanceTransactions?: boolean | Prisma.LeaveRequest$balanceTransactionsArgs<ExtArgs>
   files?: boolean | Prisma.LeaveRequest$filesArgs<ExtArgs>
+  attendanceOverlapReviews?: boolean | Prisma.LeaveRequest$attendanceOverlapReviewsArgs<ExtArgs>
   _count?: boolean | Prisma.LeaveRequestCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LeaveRequestIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2550,6 +2742,7 @@ export type $LeaveRequestPayload<ExtArgs extends runtime.Types.Extensions.Intern
     approvals: Prisma.$LeaveApprovalPayload<ExtArgs>[]
     balanceTransactions: Prisma.$LeaveBalanceTransactionPayload<ExtArgs>[]
     files: Prisma.$FileObjectPayload<ExtArgs>[]
+    attendanceOverlapReviews: Prisma.$AttendanceLeaveOverlapReviewPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2976,6 +3169,7 @@ export interface Prisma__LeaveRequestClient<T, Null = never, ExtArgs extends run
   approvals<T extends Prisma.LeaveRequest$approvalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeaveRequest$approvalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   balanceTransactions<T extends Prisma.LeaveRequest$balanceTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeaveRequest$balanceTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveBalanceTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   files<T extends Prisma.LeaveRequest$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeaveRequest$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileObjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  attendanceOverlapReviews<T extends Prisma.LeaveRequest$attendanceOverlapReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LeaveRequest$attendanceOverlapReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceLeaveOverlapReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3535,6 +3729,30 @@ export type LeaveRequest$filesArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.FileObjectScalarFieldEnum | Prisma.FileObjectScalarFieldEnum[]
+}
+
+/**
+ * LeaveRequest.attendanceOverlapReviews
+ */
+export type LeaveRequest$attendanceOverlapReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AttendanceLeaveOverlapReview
+   */
+  select?: Prisma.AttendanceLeaveOverlapReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AttendanceLeaveOverlapReview
+   */
+  omit?: Prisma.AttendanceLeaveOverlapReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttendanceLeaveOverlapReviewInclude<ExtArgs> | null
+  where?: Prisma.AttendanceLeaveOverlapReviewWhereInput
+  orderBy?: Prisma.AttendanceLeaveOverlapReviewOrderByWithRelationInput | Prisma.AttendanceLeaveOverlapReviewOrderByWithRelationInput[]
+  cursor?: Prisma.AttendanceLeaveOverlapReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttendanceLeaveOverlapReviewScalarFieldEnum | Prisma.AttendanceLeaveOverlapReviewScalarFieldEnum[]
 }
 
 /**

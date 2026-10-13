@@ -16,6 +16,12 @@ type Review = {
     gross: number;
     deductions: number;
     net: number;
+    breakdown: {
+      workingDays: number;
+      paidLeaveDays: number;
+      unpaidDays: number;
+      unpaidLeaveDeduction: number;
+    };
   }>;
   totals: { gross: number; deductions: number; net: number };
 };
@@ -107,6 +113,17 @@ export function PayrollRunReview({ runId, calculatedAt }: { runId: string; calcu
                           nothing to pay
                         </span>
                       )}
+                      <span className="mt-0.5 block text-[10px] text-muted-foreground">
+                        {item.breakdown.workingDays} working days · {item.breakdown.paidLeaveDays}{' '}
+                        paid leave · {item.breakdown.unpaidDays} unpaid days
+                        {item.breakdown.unpaidLeaveDeduction > 0 && (
+                          <>
+                            {' '}
+                            · unpaid-time adjustment{' '}
+                            {formatMoney(item.breakdown.unpaidLeaveDeduction)}
+                          </>
+                        )}
+                      </span>
                     </td>
                     <td className="px-4 py-2 text-right font-mono tabular-nums">
                       {formatMoney(item.gross)}

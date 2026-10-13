@@ -425,15 +425,39 @@ export class AttendancePunchService {
       }
       const cursorId = filters.cursor ? decodeAttendanceCursor(filters.cursor) : undefined;
       const limit = Math.min(filters.limit ?? 100, 500);
+      // Native attendance is a dated work record: future approved leave can already have
+      // attendance rows, but those are not attendance activity and should not crowd employees'
+      // records before the day happens. Keep the partner feed's established date range/order.
+      const now = new Date();
+      const throughToday =
+        context.accessMode === 'FEDERATION'
+          ? undefined
+          : await tx.organization
+              .findUniqueOrThrow({
+                where: { id: context.organizationId },
+                select: { timezone: true },
+              })
+              .then(
+                (organization) =>
+                  new Date(`${workDateInTimeZone(now, organization.timezone)}T00:00:00.000Z`),
+              );
+      const workDateFilter = {
+        gte: filters.from ? new Date(filters.from) : undefined,
+        lte:
+          context.accessMode === 'FEDERATION'
+            ? filters.to
+              ? new Date(filters.to)
+              : undefined
+            : filters.to
+              ? new Date(Math.min(new Date(filters.to).getTime(), throughToday!.getTime()))
+              : throughToday,
+      };
       const records = await tx.attendanceRecord.findMany({
         where: {
           organizationId: context.organizationId,
           employeeId,
           branchId,
-          workDate: {
-            gte: filters.from ? new Date(filters.from) : undefined,
-            lte: filters.to ? new Date(filters.to) : undefined,
-          },
+          workDate: workDateFilter,
         },
         include: {
           punches: {
@@ -451,7 +475,10 @@ export class AttendancePunchService {
           },
         },
         ...(cursorId ? { cursor: { id: cursorId }, skip: 1 } : {}),
-        orderBy: { id: 'desc' },
+        orderBy:
+          context.accessMode === 'FEDERATION'
+            ? { id: 'desc' }
+            : [{ workDate: 'desc' }, { id: 'desc' }],
         take: limit + 1,
       });
       const hasNextPage = records.length > limit;

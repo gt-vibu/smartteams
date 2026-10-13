@@ -16,6 +16,7 @@ type Stored = {
   paidLeaveDays?: unknown;
   unpaidLeaveDays?: unknown;
   unpaidAttendanceDays?: unknown;
+  unemployedDays?: unknown;
   periodWorkingDays?: unknown;
 };
 
@@ -34,7 +35,10 @@ function breakdownOf(value: unknown) {
       .map((entry) => ({ scheme: String(entry.schemeCode), amount: money(entry.employeeAmount) })),
     workingDays: Number(stored.periodWorkingDays ?? 0),
     paidLeaveDays: Number(stored.paidLeaveDays ?? 0),
-    unpaidDays: Number(stored.unpaidLeaveDays ?? 0) + Number(stored.unpaidAttendanceDays ?? 0),
+    unpaidDays:
+      Number(stored.unpaidLeaveDays ?? 0) +
+      Number(stored.unpaidAttendanceDays ?? 0) +
+      Number(stored.unemployedDays ?? 0),
   };
 }
 

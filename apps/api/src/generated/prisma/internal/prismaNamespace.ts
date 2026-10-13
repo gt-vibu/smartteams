@@ -453,10 +453,13 @@ export const ModelName = {
   TimesheetEntry: 'TimesheetEntry',
   TimesheetApproval: 'TimesheetApproval',
   AttendanceHolidayReview: 'AttendanceHolidayReview',
+  AttendanceLeaveOverlapReview: 'AttendanceLeaveOverlapReview',
   PayrollRun: 'PayrollRun',
   PayrollPolicy: 'PayrollPolicy',
   PayrollPolicyComponent: 'PayrollPolicyComponent',
   PayrollStatutoryRule: 'PayrollStatutoryRule',
+  PayrollComplianceSourceCheck: 'PayrollComplianceSourceCheck',
+  PayrollRuleUpdateProposal: 'PayrollRuleUpdateProposal',
   PayrollLineItem: 'PayrollLineItem',
   SalaryAdvance: 'SalaryAdvance',
   SalaryAdvanceRecovery: 'SalaryAdvanceRecovery',
@@ -514,7 +517,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "attendanceApproval" | "leaveApproval" | "approvalDelegation" | "federationIdempotencyRecord" | "federationRequestRecord" | "webhookSigningKey" | "webhookSubscription" | "outboxEvent" | "webhookDelivery" | "webhookDeliveryAttempt" | "auditLog" | "employeeResignation" | "federationClient" | "federationClientCredential" | "federationScope" | "federationGrant" | "federationGrantScope" | "federationGrantRoleMapping" | "federationCapability" | "organizationFederationCapability" | "externalIdMapping" | "fileObject" | "fileShare" | "fileObjectVersion" | "compOffCredit" | "leaveEncashment" | "customFieldDefinition" | "user" | "userInvitation" | "employeeAccessCode" | "passwordResetToken" | "userOrganization" | "authSession" | "platformRole" | "platformPermission" | "platformRolePermission" | "userPlatformRole" | "notification" | "attendanceRecord" | "attendancePunch" | "attendanceCorrection" | "holiday" | "employeeHolidaySelection" | "leaveType" | "leavePolicyAssignment" | "leaveBalance" | "leaveBalanceTransaction" | "leaveRequest" | "shift" | "shiftBreakRule" | "employeeShiftAssignment" | "timesheetPeriod" | "timesheet" | "timesheetEntry" | "timesheetApproval" | "attendanceHolidayReview" | "payrollRun" | "payrollPolicy" | "payrollPolicyComponent" | "payrollStatutoryRule" | "payrollLineItem" | "salaryAdvance" | "salaryAdvanceRecovery" | "payrollPayment" | "payrollLineItemComponent" | "payrollAdjustment" | "payrollApproval" | "payslip" | "role" | "permission" | "rolePermission" | "userRole" | "organization" | "organizationSettings" | "payrollCalendar" | "approvalPolicy" | "approvalPolicyStep" | "branch" | "workLocation" | "organizationSourceChange" | "webauthnCredential" | "webauthnChallenge" | "employee" | "employeePersonalProfile" | "employeeBankAccount" | "employeeReference" | "employeeHolidayPolicy" | "employeeEmergencyContact" | "employeeBranchAssignment" | "employeeFieldOwnership" | "employeeEmploymentRecord" | "employeeCompensation" | "employeePayrollPolicy" | "employeeStatutoryProfile" | "employeeStatutoryRecord" | "payComponent" | "employeePayComponent" | "team" | "teamMember" | "project" | "projectMember" | "department"
+    modelProps: "attendanceApproval" | "leaveApproval" | "approvalDelegation" | "federationIdempotencyRecord" | "federationRequestRecord" | "webhookSigningKey" | "webhookSubscription" | "outboxEvent" | "webhookDelivery" | "webhookDeliveryAttempt" | "auditLog" | "employeeResignation" | "federationClient" | "federationClientCredential" | "federationScope" | "federationGrant" | "federationGrantScope" | "federationGrantRoleMapping" | "federationCapability" | "organizationFederationCapability" | "externalIdMapping" | "fileObject" | "fileShare" | "fileObjectVersion" | "compOffCredit" | "leaveEncashment" | "customFieldDefinition" | "user" | "userInvitation" | "employeeAccessCode" | "passwordResetToken" | "userOrganization" | "authSession" | "platformRole" | "platformPermission" | "platformRolePermission" | "userPlatformRole" | "notification" | "attendanceRecord" | "attendancePunch" | "attendanceCorrection" | "holiday" | "employeeHolidaySelection" | "leaveType" | "leavePolicyAssignment" | "leaveBalance" | "leaveBalanceTransaction" | "leaveRequest" | "shift" | "shiftBreakRule" | "employeeShiftAssignment" | "timesheetPeriod" | "timesheet" | "timesheetEntry" | "timesheetApproval" | "attendanceHolidayReview" | "attendanceLeaveOverlapReview" | "payrollRun" | "payrollPolicy" | "payrollPolicyComponent" | "payrollStatutoryRule" | "payrollComplianceSourceCheck" | "payrollRuleUpdateProposal" | "payrollLineItem" | "salaryAdvance" | "salaryAdvanceRecovery" | "payrollPayment" | "payrollLineItemComponent" | "payrollAdjustment" | "payrollApproval" | "payslip" | "role" | "permission" | "rolePermission" | "userRole" | "organization" | "organizationSettings" | "payrollCalendar" | "approvalPolicy" | "approvalPolicyStep" | "branch" | "workLocation" | "organizationSourceChange" | "webauthnCredential" | "webauthnChallenge" | "employee" | "employeePersonalProfile" | "employeeBankAccount" | "employeeReference" | "employeeHolidayPolicy" | "employeeEmergencyContact" | "employeeBranchAssignment" | "employeeFieldOwnership" | "employeeEmploymentRecord" | "employeeCompensation" | "employeePayrollPolicy" | "employeeStatutoryProfile" | "employeeStatutoryRecord" | "payComponent" | "employeePayComponent" | "team" | "teamMember" | "project" | "projectMember" | "department"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4662,6 +4665,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AttendanceLeaveOverlapReview: {
+      payload: Prisma.$AttendanceLeaveOverlapReviewPayload<ExtArgs>
+      fields: Prisma.AttendanceLeaveOverlapReviewFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AttendanceLeaveOverlapReviewFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceLeaveOverlapReviewPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AttendanceLeaveOverlapReviewFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceLeaveOverlapReviewPayload>
+        }
+        findFirst: {
+          args: Prisma.AttendanceLeaveOverlapReviewFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceLeaveOverlapReviewPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AttendanceLeaveOverlapReviewFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceLeaveOverlapReviewPayload>
+        }
+        findMany: {
+          args: Prisma.AttendanceLeaveOverlapReviewFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceLeaveOverlapReviewPayload>[]
+        }
+        create: {
+          args: Prisma.AttendanceLeaveOverlapReviewCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceLeaveOverlapReviewPayload>
+        }
+        createMany: {
+          args: Prisma.AttendanceLeaveOverlapReviewCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AttendanceLeaveOverlapReviewCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceLeaveOverlapReviewPayload>[]
+        }
+        delete: {
+          args: Prisma.AttendanceLeaveOverlapReviewDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceLeaveOverlapReviewPayload>
+        }
+        update: {
+          args: Prisma.AttendanceLeaveOverlapReviewUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceLeaveOverlapReviewPayload>
+        }
+        deleteMany: {
+          args: Prisma.AttendanceLeaveOverlapReviewDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AttendanceLeaveOverlapReviewUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AttendanceLeaveOverlapReviewUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceLeaveOverlapReviewPayload>[]
+        }
+        upsert: {
+          args: Prisma.AttendanceLeaveOverlapReviewUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AttendanceLeaveOverlapReviewPayload>
+        }
+        aggregate: {
+          args: Prisma.AttendanceLeaveOverlapReviewAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAttendanceLeaveOverlapReview>
+        }
+        groupBy: {
+          args: Prisma.AttendanceLeaveOverlapReviewGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AttendanceLeaveOverlapReviewGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AttendanceLeaveOverlapReviewCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AttendanceLeaveOverlapReviewCountAggregateOutputType> | number
+        }
+      }
+    }
     PayrollRun: {
       payload: Prisma.$PayrollRunPayload<ExtArgs>
       fields: Prisma.PayrollRunFieldRefs
@@ -4955,6 +5032,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.PayrollStatutoryRuleCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.PayrollStatutoryRuleCountAggregateOutputType> | number
+        }
+      }
+    }
+    PayrollComplianceSourceCheck: {
+      payload: Prisma.$PayrollComplianceSourceCheckPayload<ExtArgs>
+      fields: Prisma.PayrollComplianceSourceCheckFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PayrollComplianceSourceCheckFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollComplianceSourceCheckPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PayrollComplianceSourceCheckFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollComplianceSourceCheckPayload>
+        }
+        findFirst: {
+          args: Prisma.PayrollComplianceSourceCheckFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollComplianceSourceCheckPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PayrollComplianceSourceCheckFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollComplianceSourceCheckPayload>
+        }
+        findMany: {
+          args: Prisma.PayrollComplianceSourceCheckFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollComplianceSourceCheckPayload>[]
+        }
+        create: {
+          args: Prisma.PayrollComplianceSourceCheckCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollComplianceSourceCheckPayload>
+        }
+        createMany: {
+          args: Prisma.PayrollComplianceSourceCheckCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PayrollComplianceSourceCheckCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollComplianceSourceCheckPayload>[]
+        }
+        delete: {
+          args: Prisma.PayrollComplianceSourceCheckDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollComplianceSourceCheckPayload>
+        }
+        update: {
+          args: Prisma.PayrollComplianceSourceCheckUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollComplianceSourceCheckPayload>
+        }
+        deleteMany: {
+          args: Prisma.PayrollComplianceSourceCheckDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PayrollComplianceSourceCheckUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PayrollComplianceSourceCheckUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollComplianceSourceCheckPayload>[]
+        }
+        upsert: {
+          args: Prisma.PayrollComplianceSourceCheckUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollComplianceSourceCheckPayload>
+        }
+        aggregate: {
+          args: Prisma.PayrollComplianceSourceCheckAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePayrollComplianceSourceCheck>
+        }
+        groupBy: {
+          args: Prisma.PayrollComplianceSourceCheckGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PayrollComplianceSourceCheckGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PayrollComplianceSourceCheckCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PayrollComplianceSourceCheckCountAggregateOutputType> | number
+        }
+      }
+    }
+    PayrollRuleUpdateProposal: {
+      payload: Prisma.$PayrollRuleUpdateProposalPayload<ExtArgs>
+      fields: Prisma.PayrollRuleUpdateProposalFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PayrollRuleUpdateProposalFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollRuleUpdateProposalPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PayrollRuleUpdateProposalFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollRuleUpdateProposalPayload>
+        }
+        findFirst: {
+          args: Prisma.PayrollRuleUpdateProposalFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollRuleUpdateProposalPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PayrollRuleUpdateProposalFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollRuleUpdateProposalPayload>
+        }
+        findMany: {
+          args: Prisma.PayrollRuleUpdateProposalFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollRuleUpdateProposalPayload>[]
+        }
+        create: {
+          args: Prisma.PayrollRuleUpdateProposalCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollRuleUpdateProposalPayload>
+        }
+        createMany: {
+          args: Prisma.PayrollRuleUpdateProposalCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PayrollRuleUpdateProposalCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollRuleUpdateProposalPayload>[]
+        }
+        delete: {
+          args: Prisma.PayrollRuleUpdateProposalDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollRuleUpdateProposalPayload>
+        }
+        update: {
+          args: Prisma.PayrollRuleUpdateProposalUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollRuleUpdateProposalPayload>
+        }
+        deleteMany: {
+          args: Prisma.PayrollRuleUpdateProposalDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PayrollRuleUpdateProposalUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PayrollRuleUpdateProposalUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollRuleUpdateProposalPayload>[]
+        }
+        upsert: {
+          args: Prisma.PayrollRuleUpdateProposalUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PayrollRuleUpdateProposalPayload>
+        }
+        aggregate: {
+          args: Prisma.PayrollRuleUpdateProposalAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePayrollRuleUpdateProposal>
+        }
+        groupBy: {
+          args: Prisma.PayrollRuleUpdateProposalGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PayrollRuleUpdateProposalGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PayrollRuleUpdateProposalCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PayrollRuleUpdateProposalCountAggregateOutputType> | number
         }
       }
     }
@@ -9092,6 +9317,27 @@ export const AttendanceHolidayReviewScalarFieldEnum = {
 export type AttendanceHolidayReviewScalarFieldEnum = (typeof AttendanceHolidayReviewScalarFieldEnum)[keyof typeof AttendanceHolidayReviewScalarFieldEnum]
 
 
+export const AttendanceLeaveOverlapReviewScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  attendanceRecordId: 'attendanceRecordId',
+  leaveRequestId: 'leaveRequestId',
+  workDate: 'workDate',
+  leaveUnits: 'leaveUnits',
+  status: 'status',
+  autoApproved: 'autoApproved',
+  requestedByUserId: 'requestedByUserId',
+  decidedByUserId: 'decidedByUserId',
+  decisionComment: 'decisionComment',
+  decidedAt: 'decidedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AttendanceLeaveOverlapReviewScalarFieldEnum = (typeof AttendanceLeaveOverlapReviewScalarFieldEnum)[keyof typeof AttendanceLeaveOverlapReviewScalarFieldEnum]
+
+
 export const PayrollRunScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
@@ -9132,6 +9378,7 @@ export const PayrollPolicyScalarFieldEnum = {
   basePercentage: 'basePercentage',
   baseMinimum: 'baseMinimum',
   hraPercentage: 'hraPercentage',
+  defaultGrossSalary: 'defaultGrossSalary',
   pfDefault: 'pfDefault',
   esiDefault: 'esiDefault',
   ptDefault: 'ptDefault',
@@ -9179,6 +9426,51 @@ export const PayrollStatutoryRuleScalarFieldEnum = {
 } as const
 
 export type PayrollStatutoryRuleScalarFieldEnum = (typeof PayrollStatutoryRuleScalarFieldEnum)[keyof typeof PayrollStatutoryRuleScalarFieldEnum]
+
+
+export const PayrollComplianceSourceCheckScalarFieldEnum = {
+  organizationId: 'organizationId',
+  sourceKey: 'sourceKey',
+  schemeCode: 'schemeCode',
+  jurisdiction: 'jurisdiction',
+  sourceLabel: 'sourceLabel',
+  sourceUrl: 'sourceUrl',
+  contentHash: 'contentHash',
+  etag: 'etag',
+  lastModified: 'lastModified',
+  checkedAt: 'checkedAt',
+  sourceChangedAt: 'sourceChangedAt',
+  lastError: 'lastError',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PayrollComplianceSourceCheckScalarFieldEnum = (typeof PayrollComplianceSourceCheckScalarFieldEnum)[keyof typeof PayrollComplianceSourceCheckScalarFieldEnum]
+
+
+export const PayrollRuleUpdateProposalScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  sourceKey: 'sourceKey',
+  sourceHash: 'sourceHash',
+  schemeCode: 'schemeCode',
+  jurisdiction: 'jurisdiction',
+  sourceLabel: 'sourceLabel',
+  sourceUrl: 'sourceUrl',
+  status: 'status',
+  changeSummary: 'changeSummary',
+  currentRule: 'currentRule',
+  proposedRule: 'proposedRule',
+  impactPreview: 'impactPreview',
+  effectiveFrom: 'effectiveFrom',
+  decidedByUserId: 'decidedByUserId',
+  decidedAt: 'decidedAt',
+  decisionNote: 'decisionNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PayrollRuleUpdateProposalScalarFieldEnum = (typeof PayrollRuleUpdateProposalScalarFieldEnum)[keyof typeof PayrollRuleUpdateProposalScalarFieldEnum]
 
 
 export const PayrollLineItemScalarFieldEnum = {
@@ -11212,10 +11504,13 @@ export type GlobalOmitConfig = {
   timesheetEntry?: Prisma.TimesheetEntryOmit
   timesheetApproval?: Prisma.TimesheetApprovalOmit
   attendanceHolidayReview?: Prisma.AttendanceHolidayReviewOmit
+  attendanceLeaveOverlapReview?: Prisma.AttendanceLeaveOverlapReviewOmit
   payrollRun?: Prisma.PayrollRunOmit
   payrollPolicy?: Prisma.PayrollPolicyOmit
   payrollPolicyComponent?: Prisma.PayrollPolicyComponentOmit
   payrollStatutoryRule?: Prisma.PayrollStatutoryRuleOmit
+  payrollComplianceSourceCheck?: Prisma.PayrollComplianceSourceCheckOmit
+  payrollRuleUpdateProposal?: Prisma.PayrollRuleUpdateProposalOmit
   payrollLineItem?: Prisma.PayrollLineItemOmit
   salaryAdvance?: Prisma.SalaryAdvanceOmit
   salaryAdvanceRecovery?: Prisma.SalaryAdvanceRecoveryOmit

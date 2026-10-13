@@ -56,6 +56,9 @@ withRules(NativeLeaveRequestDto, {
   reason: [IsOptional(), IsText('Reason', LIMITS.reason)],
 });
 
+/** Preview accepts the same form payload; it never persists these fields. */
+export class NativeLeavePreviewDto extends NativeLeaveRequestDto {}
+
 export class NativeLeaveDecisionDto extends LeaveDecisionDto {}
 withRules(NativeLeaveDecisionDto, {
   comment: [IsOptional(), IsText('Comment', LIMITS.reason, 2)],

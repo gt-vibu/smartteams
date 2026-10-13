@@ -9,6 +9,7 @@ import { AttendanceAutoCheckOutService } from './attendance-auto-checkout.servic
 import { AttendanceCorrectionListsService } from './attendance-correction-lists.service';
 import { AttendanceCorrectionsService } from './attendance-corrections.service';
 import { AttendanceHolidayReviewService } from './attendance-holiday-review.service';
+import { AttendanceLeaveOverlapService } from './attendance-leave-overlap.service';
 import { AttendanceLocationService } from './attendance-location.service';
 import { AttendancePreferencesService } from './attendance-preferences.service';
 import { AttendancePunchService, type PunchInput } from './attendance-punch.service';
@@ -25,6 +26,7 @@ export class AttendanceService {
   private readonly preferences: AttendancePreferencesService;
   private readonly punches: AttendancePunchService;
   private readonly holidayReviews: AttendanceHolidayReviewService;
+  private readonly leaveOverlaps: AttendanceLeaveOverlapService;
   private readonly autoCheckOut: AttendanceAutoCheckOutService;
 
   constructor(
@@ -39,6 +41,7 @@ export class AttendanceService {
     this.preferences = new AttendancePreferencesService(database, audit, locations);
     this.punches = new AttendancePunchService(database, audit, outbox, locations);
     this.holidayReviews = new AttendanceHolidayReviewService(database, audit, outbox);
+    this.leaveOverlaps = new AttendanceLeaveOverlapService(database, audit);
   }
 
   runAutoCheckOut(context: DomainContext) {
@@ -51,8 +54,29 @@ export class AttendanceService {
 
   async punchNative(context: DomainContext, type: AttendancePunchType, input: PunchInput) {
     const result = await this.punches.punch(context, type, input);
+    await this.leaveOverlaps.afterNativePunch(context, result.record.id, type);
     const holidayConflict = await this.holidayReviews.conflictForRecord(context, result.record.id);
     return { ...result, holidayConflict };
+  }
+
+  listLeaveOverlapInbox(context: DomainContext) {
+    return this.leaveOverlaps.inbox(context);
+  }
+
+  decideLeaveOverlap(
+    context: DomainContext,
+    id: string,
+    input: { status: 'APPROVED' | 'REJECTED'; comment?: string },
+  ) {
+    return this.leaveOverlaps.decide(context, id, input);
+  }
+
+  getLeaveOverlapAutoApproval(context: DomainContext) {
+    return this.leaveOverlaps.autoApprovalSetting(context);
+  }
+
+  setLeaveOverlapAutoApproval(context: DomainContext, enabled: boolean) {
+    return this.leaveOverlaps.setAutoApproval(context, enabled);
   }
 
   list(...args: Parameters<AttendancePunchService['list']>) {

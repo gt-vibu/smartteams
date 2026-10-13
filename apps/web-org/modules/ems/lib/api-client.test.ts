@@ -225,3 +225,23 @@ describe('in-flight read deduplication', () => {
     expect(calls).toBe(2);
   });
 });
+
+describe('CSV result downloads', () => {
+  it('returns plain text after refreshing an expired session', async () => {
+    let downloads = 0;
+    mockFetch((url) => {
+      if (url.endsWith('/v1/auth/refresh')) return response(200);
+      downloads++;
+      return downloads === 1
+        ? response(401)
+        : new Response('Employee,Outcome\r\nAlice,APPLIED', {
+            status: 200,
+            headers: { 'Content-Type': 'text/csv' },
+          });
+    });
+    expect(await apiRequest('/v1/results.csv', { method: 'GET', responseType: 'text' })).toContain(
+      'Alice,APPLIED',
+    );
+    expect(downloads).toBe(2);
+  });
+});

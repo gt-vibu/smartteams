@@ -76,6 +76,7 @@ export function usePayroll() {
 
   return {
     profile: profileResource.data ?? null,
+    profileLoading: profileResource.loading,
     payslips: useMemo(() => payslipResource.data ?? [], [payslipResource.data]),
     advances: useMemo(() => advanceResource.data ?? [], [advanceResource.data]),
     advanceAllowance: allowanceResource.data ?? null,

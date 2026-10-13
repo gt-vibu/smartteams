@@ -130,6 +130,15 @@ export class HolidayReviewDecisionDto {
   @IsString() @MinLength(2) @MaxLength(500) comment!: string;
 }
 
+export class LeaveOverlapDecisionDto {
+  @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
+}
+
+export class LeaveOverlapAutoApprovalDto {
+  @IsBoolean() enabled!: boolean;
+}
+
 export class WorkLocationDto {
   @IsString() @MinLength(2) name!: string;
   @IsNumber() @Min(-90) @Max(90) latitude!: number;

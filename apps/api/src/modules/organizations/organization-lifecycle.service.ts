@@ -30,17 +30,46 @@ export class OrganizationLifecycleService {
 
   async get(context: DomainContext) {
     requirePermission(context, 'organizations.read');
+    const organizationSelect = {
+      id: true,
+      name: true,
+      slug: true,
+      source: true,
+      externalId: true,
+      status: true,
+      timezone: true,
+      currencyCode: true,
+      locale: true,
+      version: true,
+      settings: true,
+      logoFile: true,
+      coverFile: true,
+    } satisfies Prisma.OrganizationSelect;
     const organization = (await runScoped(this.database, context, async (tx) => {
       const organization = await tx.organization.findUnique({
         where: { id: context.organizationId },
-        include: { settings: true, logoFile: true, coverFile: true },
+        // Avoid selecting internal employee-numbering state here. Older local databases may
+        // not have the federation-owned sequence column yet, and it is not part of this DTO.
+        select: organizationSelect,
       });
       if (!organization) throw new NotFoundError('Organization');
       return organization;
-    })) as Prisma.OrganizationGetPayload<{ include: { settings: true; logoFile: true; coverFile: true } }>;
+    })) as Prisma.OrganizationGetPayload<{ select: typeof organizationSelect }>;
     const [logoUrl, coverUrl] = await Promise.all([
-      organization.logoFile ? this.storage.createDownloadUrl(organization.logoFile.objectKey, { expiresIn: 86_400, contentType: organization.logoFile.contentType, inline: true }) : null,
-      organization.coverFile ? this.storage.createDownloadUrl(organization.coverFile.objectKey, { expiresIn: 86_400, contentType: organization.coverFile.contentType, inline: true }) : null,
+      organization.logoFile
+        ? this.storage.createDownloadUrl(organization.logoFile.objectKey, {
+            expiresIn: 86_400,
+            contentType: organization.logoFile.contentType,
+            inline: true,
+          })
+        : null,
+      organization.coverFile
+        ? this.storage.createDownloadUrl(organization.coverFile.objectKey, {
+            expiresIn: 86_400,
+            contentType: organization.coverFile.contentType,
+            inline: true,
+          })
+        : null,
     ]);
     return { ...toDto(organization), logoUrl, coverUrl };
   }
@@ -48,7 +77,13 @@ export class OrganizationLifecycleService {
   async update(
     context: DomainContext,
     version: number,
-    input: { name?: string; timezone?: string; currencyCode?: string; logoFileId?: string | null; coverFileId?: string | null },
+    input: {
+      name?: string;
+      timezone?: string;
+      currencyCode?: string;
+      logoFileId?: string | null;
+      coverFileId?: string | null;
+    },
   ) {
     requirePermission(context, 'organizations.update');
     return this.database.run(context, async (tx) => {
@@ -57,7 +92,17 @@ export class OrganizationLifecycleService {
       for (const fileId of [input.logoFileId, input.coverFileId]) {
         if (fileId === undefined || fileId === null) continue;
         const image = await tx.fileObject.findFirst({
-          where: { id: fileId, organizationId: context.organizationId, purpose: 'ORGANIZATION_BRANDING', accessScope: 'ORGANIZATION', status: 'AVAILABLE', deletedAt: null, employeeId: null, leaveRequestId: null, contentType: { startsWith: 'image/' } },
+          where: {
+            id: fileId,
+            organizationId: context.organizationId,
+            purpose: 'ORGANIZATION_BRANDING',
+            accessScope: 'ORGANIZATION',
+            status: 'AVAILABLE',
+            deletedAt: null,
+            employeeId: null,
+            leaveRequestId: null,
+            contentType: { startsWith: 'image/' },
+          },
           select: { id: true },
         });
         if (!image) throw new NotFoundError('Organization image');

@@ -119,6 +119,7 @@ export class PayrollPolicyDto {
   @IsNumber() @Min(0) @Max(100) basePercentage!: number;
   @IsNumber() @Min(0) baseMinimum!: number;
   @IsNumber() @Min(0) @Max(100) hraPercentage!: number;
+  @IsOptional() @IsNumber() @Min(0.01) defaultGrossSalary?: number | null;
   @IsBoolean() pfDefault!: boolean;
   @IsBoolean() esiDefault!: boolean;
   @IsBoolean() ptDefault!: boolean;
@@ -188,6 +189,14 @@ export class StatutoryRuleDto {
   @IsOptional() @IsNumber() @Min(0) employeeThreshold?: number;
   @IsOptional() @IsNumber() @Min(0) flatAmount?: number;
   @IsOptional() @IsObject() metadata?: Record<string, unknown>;
+}
+
+export class PayrollRuleUpdateDto extends StatutoryRuleDto {
+  @IsOptional() @IsString() @MaxLength(500) note?: string;
+}
+
+export class PayrollRuleUpdateDecisionDto {
+  @IsOptional() @IsString() @MaxLength(500) note?: string;
 }
 
 export class SalaryAdvanceDto {

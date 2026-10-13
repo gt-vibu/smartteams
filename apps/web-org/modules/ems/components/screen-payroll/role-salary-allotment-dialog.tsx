@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Badge,
   Button,
@@ -53,6 +53,13 @@ export function RoleSalaryAllotmentDialog({
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [progressMsg, setProgressMsg] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    const defaultGross = compensation.organizationPolicy?.defaultGrossSalary;
+    if (open && defaultGross) {
+      setGrossSalary((current) => current || String(defaultGross));
+    }
+  }, [open, compensation.organizationPolicy?.defaultGrossSalary]);
 
   // Filter employees matching target selection (ALL, team_id, or employment type)
   const targetEmployees = useMemo(() => {

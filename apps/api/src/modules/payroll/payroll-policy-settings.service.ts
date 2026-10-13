@@ -137,7 +137,8 @@ export class PayrollPolicySettingsService {
           overlap.pfDefault === DEFAULT_PAYROLL_POLICY.pfDefault &&
           overlap.esiDefault === DEFAULT_PAYROLL_POLICY.esiDefault &&
           overlap.ptDefault === DEFAULT_PAYROLL_POLICY.ptDefault &&
-          overlap.statutoryJurisdiction === DEFAULT_PAYROLL_POLICY.statutoryJurisdiction;
+          overlap.statutoryJurisdiction === DEFAULT_PAYROLL_POLICY.statutoryJurisdiction &&
+          overlap.defaultGrossSalary === DEFAULT_PAYROLL_POLICY.defaultGrossSalary;
         if (!baseline) throw new ConflictError('Payroll policy periods must not overlap');
         await tx.payrollPolicy.update({
           where: { id: overlap.id },

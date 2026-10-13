@@ -8,6 +8,7 @@ import { TenantDatabaseService } from '../../infrastructure/database/tenant-data
 import { calculateSalaryStructure } from './payroll-salary-structure';
 import {
   countWorkingDays,
+  eligibleOptionalHolidayDates,
   payrollPeriodCutoffs,
   summarizeAttendance,
   summarizeLeave,
@@ -50,6 +51,7 @@ export class PayrollPreviewService {
           ...employeeScope(context),
         },
         include: {
+          holidayPolicy: { select: { allowanceOverride: true } },
           compensations: {
             where: {
               effectiveFrom: { lte: periodEnd },
@@ -94,7 +96,9 @@ export class PayrollPreviewService {
             employeePolicy.payrollPolicyId,
             employeePolicy.effectiveFrom,
           )) ?? DEFAULT_PAYROLL_POLICY)
-        : DEFAULT_PAYROLL_POLICY;
+        : context.accessMode === 'NATIVE'
+          ? organizationPolicy
+          : DEFAULT_PAYROLL_POLICY;
       if (!(employeePolicy?.payrollEnabled ?? policy.payrollEnabledDefault))
         throw new ConflictError('Payroll is disabled for this employee');
       const gross = compensation.grossSalary ?? compensation.baseAmount;
@@ -124,12 +128,22 @@ export class PayrollPreviewService {
               holiday: {
                 isActive: true,
                 isOptional: true,
-                holidayDate: { gte: periodStart, lte: periodEnd },
+                holidayDate:
+                  context.accessMode === 'NATIVE'
+                    ? {
+                        gte: new Date(Date.UTC(periodStart.getUTCFullYear(), 0, 1)),
+                        lt: new Date(Date.UTC(periodEnd.getUTCFullYear() + 1, 0, 1)),
+                      }
+                    : { gte: periodStart, lte: periodEnd },
               },
             },
             select: {
+              id: true,
+              year: true,
+              selectedAt: true,
               holiday: { select: { holidayDate: true } },
             },
+            orderBy: [{ year: 'asc' }, { selectedAt: 'asc' }, { id: 'asc' }],
           }),
           tx.timesheet.findMany({
             where: {
@@ -141,7 +155,7 @@ export class PayrollPreviewService {
           }),
         ],
       );
-      const [attendanceRecords, approvedLeaves] = await Promise.all([
+      const [attendanceRecords, approvedLeaves, acceptedLeaveOverlapReviews] = await Promise.all([
         tx.attendanceRecord.findMany({
           where: {
             organizationId: context.organizationId,
@@ -164,13 +178,43 @@ export class PayrollPreviewService {
             endDate: { gte: periodStart },
           },
           select: {
+            id: true,
             startDate: true,
             endDate: true,
             requestedDays: true,
+            session: true,
+            chargedDates: true,
             leaveType: { select: { paid: true } },
           },
         }),
+        context.accessMode === 'NATIVE'
+          ? tx.attendanceLeaveOverlapReview.findMany({
+              where: {
+                organizationId: context.organizationId,
+                employeeId,
+                status: 'APPROVED',
+                workDate: { gte: periodStart, lte: periodEnd },
+              },
+              select: { leaveRequestId: true, leaveUnits: true },
+            })
+          : Promise.resolve([]),
       ]);
+      const acceptedOverlapUnitsByRequest = new Map<string, number>();
+      for (const review of acceptedLeaveOverlapReviews)
+        acceptedOverlapUnitsByRequest.set(
+          review.leaveRequestId,
+          (acceptedOverlapUnitsByRequest.get(review.leaveRequestId) ?? 0) +
+            Number(review.leaveUnits),
+        );
+      const employeeSelectedDates =
+        context.accessMode === 'NATIVE'
+          ? (eligibleOptionalHolidayDates(
+              employeeHolidaySelections.map((selection) => ({ ...selection, employeeId })),
+              () => employee.holidayPolicy?.allowanceOverride ?? settings.optionalHolidayAllowance,
+            ).get(employeeId) ?? [])
+          : employeeHolidaySelections.map((selection) =>
+              selection.holiday.holidayDate.toISOString().slice(0, 10),
+            );
       const attendance = summarizeAttendance(
         attendanceRecords.filter((record) => absenceEnd !== null && record.workDate <= absenceEnd),
         !unmarkedDaysAreAbsent(settings.metadata) || absenceEnd === null
@@ -182,23 +226,34 @@ export class PayrollPreviewService {
               holidays,
               branchId: employee.primaryBranchId,
               leaves: approvedLeaves,
-              employeeSelectedDates: employeeHolidaySelections.map((selection) =>
-                selection.holiday.holidayDate.toISOString().slice(0, 10),
-              ),
+              employeeSelectedDates,
+              skipNonworkingDays: context.accessMode === 'NATIVE',
               dateOfJoining: employee.dateOfJoining,
               dateOfLeaving: employee.dateOfLeaving,
             },
       );
-      const leave = summarizeLeave(approvedLeaves, periodStart, measuredEnd);
+      const leave = summarizeLeave(
+        approvedLeaves,
+        periodStart,
+        measuredEnd,
+        acceptedOverlapUnitsByRequest,
+      );
       // Preview measures the period only as far as today. That is the ONE deliberate difference
       // from a released run, and it is the reason a mid-month preview is smaller than the final
       // figure — every other input below is now read exactly as `calculate` reads it.
-      const notEmployedDays = unemployedDays(
-        periodStart,
-        measuredEnd,
-        employee.dateOfJoining,
-        employee.dateOfLeaving,
-      );
+      const notEmployedDays =
+        context.accessMode === 'NATIVE'
+          ? unemployedDays(
+              periodStart,
+              periodEnd,
+              employee.dateOfJoining,
+              employee.dateOfLeaving,
+              settings.workWeekDays,
+              holidays,
+              employee.primaryBranchId,
+              employeeSelectedDates,
+            )
+          : unemployedDays(periodStart, periodEnd, employee.dateOfJoining, employee.dateOfLeaving);
 
       const jurisdiction =
         employeePolicy?.statutoryJurisdiction ?? organizationPolicy.statutoryJurisdiction;
@@ -249,6 +304,16 @@ export class PayrollPreviewService {
         percentage: assignment.percentage,
         component: assignment.payComponent,
       }));
+      const scheduledDays = countWorkingDays(
+        periodStart,
+        periodEnd,
+        settings.workWeekDays,
+        holidays,
+        employee.primaryBranchId,
+        employeeSelectedDates,
+      );
+      const periodWorkingDays =
+        context.accessMode === 'NATIVE' ? scheduledDays : Math.max(1, scheduledDays);
       const item = {
         employeeId,
         periodMonth: periodEnd.getUTCMonth() + 1,
@@ -263,14 +328,8 @@ export class PayrollPreviewService {
         leave,
         attendance,
         unemployedDays: notEmployedDays,
-        periodWorkingDays: countWorkingDays(
-          periodStart,
-          measuredEnd,
-          settings.workWeekDays,
-          holidays,
-          employee.primaryBranchId,
-          employeeHolidaySelections.map((s) => s.holiday.holidayDate.toISOString().slice(0, 10)),
-        ),
+        periodWorkingDays,
+        ...(context.accessMode === 'NATIVE' ? { useWorkCalendarBasis: true } : {}),
         adjustments,
         // Spread the same way the run will spread it, so the preview matches the payslip.
         advances: advances.map((advance) => ({
@@ -288,7 +347,8 @@ export class PayrollPreviewService {
       // modelling "what if this many days were payable". It replaces the computed figure rather
       // than sitting alongside it, so the number shown is always the one the maths used.
       const payableDays = input.payableDays ?? computed.payableDays;
-      if (!Number.isFinite(payableDays) || payableDays < 0 || payableDays > policy.payrollDayBasis)
+      const dayBasis = context.accessMode === 'NATIVE' ? periodWorkingDays : policy.payrollDayBasis;
+      if (!Number.isFinite(payableDays) || payableDays < 0 || payableDays > dayBasis)
         throw new ConflictError('Preview payable days must be within the payroll day basis');
       const overridden =
         input.payableDays === undefined
@@ -298,7 +358,7 @@ export class PayrollPreviewService {
                 ...item,
                 leave: { paidDays: leave.paidDays, unpaidDays: 0 },
                 attendance: { absentDays: 0, halfDays: 0 },
-                unemployedDays: policy.payrollDayBasis - input.payableDays,
+                unemployedDays: dayBasis - input.payableDays,
               },
               settings.standardDayMinutes,
             );
@@ -317,7 +377,7 @@ export class PayrollPreviewService {
         periodStart: input.periodStart,
         periodEnd: input.periodEnd,
         payableDays,
-        dayBasis: policy.payrollDayBasis,
+        dayBasis,
         monthlyStructure,
         structure,
         statutory,

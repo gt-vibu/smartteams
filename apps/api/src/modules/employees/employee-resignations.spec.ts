@@ -63,3 +63,22 @@ describe('off-boarding after the last working day', () => {
     expect(completed).toEqual([]);
   });
 });
+
+describe('resignation authorization', () => {
+  it.each([['*'], ['employees.write']])(
+    'rejects self-service resignation for elevated permission %s before reading employee data',
+    (permission) => {
+      const database = { run: jest.fn() };
+      const service = new EmployeeResignationsService(database as never, {} as never, {} as never);
+      const context = { permissions: new Set([permission]) } as never;
+
+      expect(() =>
+        service.submit(context, {
+          reason: 'Leaving the organization',
+          requestedLastDay: '2026-11-12',
+        }),
+      ).toThrow('Organization administrators cannot submit a self-service resignation.');
+      expect(database.run).not.toHaveBeenCalled();
+    },
+  );
+});

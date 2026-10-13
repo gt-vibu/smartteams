@@ -1,16 +1,19 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { useScreenTab } from '../../hooks/use-screen-tab';
 import { useMediaQuery, WIDE_LAYOUT_QUERY } from '../../hooks/use-media-query';
 import { Button, Input } from '@smarteam/ui';
-import { ChevronLeft, Search, Users } from 'lucide-react';
+import { ChevronLeft, Search, Settings2, Users } from 'lucide-react';
 import { useCompensation } from '../../hooks/use-compensation';
+import { useSession } from '../../hooks/auth-context';
 import { useEmployees } from '../../hooks/use-workforce';
 import { ComponentCatalogPanel } from './component-catalog-panel';
 import { EmployeeCompensationPanel } from './employee-compensation-panel';
 import { RoleSalaryAllotmentDialog } from './role-salary-allotment-dialog';
+import { ConfigureSalaryPolicyDialog } from './configure-salary-policy-dialog';
 import { permittedTabs } from '../../lib/permitted-tabs';
+import { ensureStateStatutoryRules } from './ensure-state-statutory-rules';
 
 type Tab = 'employees' | 'catalog';
 
@@ -25,6 +28,7 @@ type Tab = 'employees' | 'catalog';
  */
 export function ScreenCompensation() {
   const compensation = useCompensation();
+  const { session } = useSession();
   const employees = useEmployees();
   const [requestedTab, setTab] = useScreenTab<Tab>(
     'compensationTab',
@@ -53,6 +57,7 @@ export function ScreenCompensation() {
   const tab = active;
   const [search, setSearch] = useState('');
   const [allottingRole, setAllottingRole] = useState(false);
+  const [configuringPolicy, setConfiguringPolicy] = useState(false);
   const isWide = useMediaQuery(WIDE_LAYOUT_QUERY);
   const [view, setView] = useScreenTab<'list' | 'detail'>(
     'compensationView',
@@ -61,6 +66,79 @@ export function ScreenCompensation() {
   );
   const showList = isWide || view === 'list';
   const showDetail = isWide || view === 'detail';
+  const stateRulesKey = useRef<string | null>(null);
+
+  // Repair missing rules for existing saved state defaults as well as after a policy save.
+  // This keeps the compensation preview usable without asking admins to visit another screen.
+  useEffect(() => {
+    const policy = compensation.organizationPolicy;
+    const jurisdiction = policy?.statutoryJurisdiction?.trim().toUpperCase();
+    const organizationId = session?.organizationId;
+    if (
+      !organizationId ||
+      !policy ||
+      compensation.organizationPolicyLoading ||
+      !compensation.can.savePolicy ||
+      !jurisdiction
+    ) {
+      return;
+    }
+
+    const enabled = { epf: policy.pfDefault, esic: policy.esiDefault, pt: policy.ptDefault };
+    if (!enabled.epf && !enabled.esic && !enabled.pt) return;
+    const key = `${organizationId}:${jurisdiction}:${Number(enabled.epf)}:${Number(enabled.esic)}:${Number(enabled.pt)}`;
+    if (stateRulesKey.current === key) return;
+    stateRulesKey.current = key;
+
+    void ensureStateStatutoryRules(organizationId, jurisdiction, enabled)
+      .then(async ({ created, unsupported, notify, error }) => {
+        if (error) {
+          stateRulesKey.current = null;
+          if (notify) {
+            window.dispatchEvent(
+              new CustomEvent('ems:feedback', {
+                detail: {
+                  tone: 'error',
+                  message:
+                    error instanceof Error
+                      ? `Could not create missing state payroll rules: ${error.message}`
+                      : 'Could not create missing state payroll rules.',
+                },
+              }),
+            );
+          }
+          return;
+        }
+        await compensation.refetch();
+        if (typeof window === 'undefined' || !notify) return;
+        if (created.length || unsupported.length) {
+          window.dispatchEvent(
+            new CustomEvent('ems:feedback', {
+              detail: {
+                tone: unsupported.length ? 'error' : 'success',
+                message: [
+                  created.length
+                    ? `Added ${created.join(', ')} payroll rules for ${jurisdiction}.`
+                    : '',
+                  unsupported.length
+                    ? `No reviewed ${unsupported.join(', ')} schedule is available for ${jurisdiction}; no rate was guessed.`
+                    : '',
+                ]
+                  .filter(Boolean)
+                  .join(' '),
+              },
+            }),
+          );
+        }
+      })
+      .catch(() => undefined);
+  }, [
+    compensation.can.savePolicy,
+    compensation.organizationPolicy,
+    compensation.organizationPolicyLoading,
+    compensation.refetch,
+    session?.organizationId,
+  ]);
 
   const query = search.trim().toLowerCase();
   const rows = useMemo(
@@ -116,17 +194,30 @@ export function ScreenCompensation() {
           ))}
         </div>
 
-        {tab === 'employees' && compensation.can.saveSalary && (
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-7 gap-1.5 text-xs font-medium"
-            onClick={() => setAllottingRole(true)}
-          >
-            <Users className="h-3.5 w-3.5 text-primary" />
-            Role-wise allotment
-          </Button>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          {compensation.can.savePolicy && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 gap-1.5 text-xs font-medium"
+              onClick={() => setConfiguringPolicy(true)}
+            >
+              <Settings2 className="h-3.5 w-3.5 text-primary" />
+              Organization payroll defaults
+            </Button>
+          )}
+          {tab === 'employees' && compensation.can.saveSalary && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 gap-1.5 text-xs font-medium"
+              onClick={() => setAllottingRole(true)}
+            >
+              <Users className="h-3.5 w-3.5 text-primary" />
+              Role-wise allotment
+            </Button>
+          )}
+        </div>
       </div>
 
       {tab === 'catalog' && <ComponentCatalogPanel compensation={compensation} />}
@@ -257,6 +348,11 @@ export function ScreenCompensation() {
         compensation={compensation}
         onOpenChange={setAllottingRole}
         open={allottingRole}
+      />
+      <ConfigureSalaryPolicyDialog
+        compensation={compensation}
+        onOpenChange={setConfiguringPolicy}
+        open={configuringPolicy}
       />
     </div>
   );

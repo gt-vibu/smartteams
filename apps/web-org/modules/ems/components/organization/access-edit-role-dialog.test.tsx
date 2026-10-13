@@ -2,8 +2,8 @@
  * Turning individual permissions on and off for a role.
  *
  * These pin what the administrator sees: the role's current permissions checked, a change sent as
- * the complete new set with its reason, nothing sent until something changed and a reason is
- * given, and a permission the signed-in user does not hold shown but not toggleable.
+ * the complete new set with an audit description, nothing sent until something changed, and a
+ * permission the signed-in user does not hold shown but not toggleable.
  */
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
@@ -46,27 +46,24 @@ describe('editing a role’s permissions', () => {
     renderDialog(['*']);
     expect(screen.getByRole('checkbox', { name: 'Approve leave requests' })).toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'View everyone’s attendance' })).not.toBeChecked();
+    expect(screen.queryByText('attendance.read')).not.toBeInTheDocument();
+    expect(screen.queryByText('leave.requests.decide')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Save permissions' })).toBeDisabled();
   });
 
-  it('sends the whole new set and the reason, then closes', async () => {
+  it('sends the whole new set without asking for a comment, then closes', async () => {
     const { onSave, onClose } = renderDialog(['*']);
     const user = userEvent.setup();
     await user.click(screen.getByRole('checkbox', { name: 'View everyone’s attendance' }));
     await user.click(screen.getByRole('checkbox', { name: 'Approve leave requests' }));
     expect(screen.getByText('1 turned on · 1 turned off')).toBeInTheDocument();
 
-    // A change without a reason is not sent.
-    expect(screen.getByRole('button', { name: 'Save permissions' })).toBeDisabled();
-    // Pasted rather than typed key by key: the content is what matters, and typing is slow enough
-    // under a full parallel run to time out.
-    await user.click(screen.getByLabelText('Reason for the change'));
-    await user.paste('Managers see the whole team');
+    expect(screen.queryByLabelText('Reason for the change')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Save permissions' }));
 
     expect(onSave).toHaveBeenCalledWith(manager.id, {
       permissionKeys: expect.arrayContaining(['attendance.read', 'attendance.read.all']) as unknown,
-      reason: 'Managers see the whole team',
+      reason: 'Role permissions updated',
     });
     const sent = (onSave.mock.calls[0] as [string, { permissionKeys: string[] }])[1].permissionKeys;
     expect(sent).not.toContain('leave.requests.decide');

@@ -31,6 +31,7 @@ export type PayrollPolicyAvgAggregateOutputType = {
   basePercentage: runtime.Decimal | null
   baseMinimum: runtime.Decimal | null
   hraPercentage: runtime.Decimal | null
+  defaultGrossSalary: runtime.Decimal | null
 }
 
 export type PayrollPolicySumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type PayrollPolicySumAggregateOutputType = {
   basePercentage: runtime.Decimal | null
   baseMinimum: runtime.Decimal | null
   hraPercentage: runtime.Decimal | null
+  defaultGrossSalary: runtime.Decimal | null
 }
 
 export type PayrollPolicyMinAggregateOutputType = {
@@ -53,6 +55,7 @@ export type PayrollPolicyMinAggregateOutputType = {
   basePercentage: runtime.Decimal | null
   baseMinimum: runtime.Decimal | null
   hraPercentage: runtime.Decimal | null
+  defaultGrossSalary: runtime.Decimal | null
   pfDefault: boolean | null
   esiDefault: boolean | null
   ptDefault: boolean | null
@@ -75,6 +78,7 @@ export type PayrollPolicyMaxAggregateOutputType = {
   basePercentage: runtime.Decimal | null
   baseMinimum: runtime.Decimal | null
   hraPercentage: runtime.Decimal | null
+  defaultGrossSalary: runtime.Decimal | null
   pfDefault: boolean | null
   esiDefault: boolean | null
   ptDefault: boolean | null
@@ -97,6 +101,7 @@ export type PayrollPolicyCountAggregateOutputType = {
   basePercentage: number
   baseMinimum: number
   hraPercentage: number
+  defaultGrossSalary: number
   pfDefault: number
   esiDefault: number
   ptDefault: number
@@ -114,6 +119,7 @@ export type PayrollPolicyAvgAggregateInputType = {
   basePercentage?: true
   baseMinimum?: true
   hraPercentage?: true
+  defaultGrossSalary?: true
 }
 
 export type PayrollPolicySumAggregateInputType = {
@@ -121,6 +127,7 @@ export type PayrollPolicySumAggregateInputType = {
   basePercentage?: true
   baseMinimum?: true
   hraPercentage?: true
+  defaultGrossSalary?: true
 }
 
 export type PayrollPolicyMinAggregateInputType = {
@@ -136,6 +143,7 @@ export type PayrollPolicyMinAggregateInputType = {
   basePercentage?: true
   baseMinimum?: true
   hraPercentage?: true
+  defaultGrossSalary?: true
   pfDefault?: true
   esiDefault?: true
   ptDefault?: true
@@ -158,6 +166,7 @@ export type PayrollPolicyMaxAggregateInputType = {
   basePercentage?: true
   baseMinimum?: true
   hraPercentage?: true
+  defaultGrossSalary?: true
   pfDefault?: true
   esiDefault?: true
   ptDefault?: true
@@ -180,6 +189,7 @@ export type PayrollPolicyCountAggregateInputType = {
   basePercentage?: true
   baseMinimum?: true
   hraPercentage?: true
+  defaultGrossSalary?: true
   pfDefault?: true
   esiDefault?: true
   ptDefault?: true
@@ -290,6 +300,7 @@ export type PayrollPolicyGroupByOutputType = {
   basePercentage: runtime.Decimal
   baseMinimum: runtime.Decimal
   hraPercentage: runtime.Decimal
+  defaultGrossSalary: runtime.Decimal | null
   pfDefault: boolean
   esiDefault: boolean
   ptDefault: boolean
@@ -336,6 +347,7 @@ export type PayrollPolicyWhereInput = {
   basePercentage?: Prisma.DecimalFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.DecimalNullableFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFilter<"PayrollPolicy"> | boolean
   esiDefault?: Prisma.BoolFilter<"PayrollPolicy"> | boolean
   ptDefault?: Prisma.BoolFilter<"PayrollPolicy"> | boolean
@@ -362,6 +374,7 @@ export type PayrollPolicyOrderByWithRelationInput = {
   basePercentage?: Prisma.SortOrder
   baseMinimum?: Prisma.SortOrder
   hraPercentage?: Prisma.SortOrder
+  defaultGrossSalary?: Prisma.SortOrderInput | Prisma.SortOrder
   pfDefault?: Prisma.SortOrder
   esiDefault?: Prisma.SortOrder
   ptDefault?: Prisma.SortOrder
@@ -393,6 +406,7 @@ export type PayrollPolicyWhereUniqueInput = Prisma.AtLeast<{
   basePercentage?: Prisma.DecimalFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.DecimalNullableFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFilter<"PayrollPolicy"> | boolean
   esiDefault?: Prisma.BoolFilter<"PayrollPolicy"> | boolean
   ptDefault?: Prisma.BoolFilter<"PayrollPolicy"> | boolean
@@ -419,6 +433,7 @@ export type PayrollPolicyOrderByWithAggregationInput = {
   basePercentage?: Prisma.SortOrder
   baseMinimum?: Prisma.SortOrder
   hraPercentage?: Prisma.SortOrder
+  defaultGrossSalary?: Prisma.SortOrderInput | Prisma.SortOrder
   pfDefault?: Prisma.SortOrder
   esiDefault?: Prisma.SortOrder
   ptDefault?: Prisma.SortOrder
@@ -450,6 +465,7 @@ export type PayrollPolicyScalarWhereWithAggregatesInput = {
   basePercentage?: Prisma.DecimalWithAggregatesFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalWithAggregatesFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalWithAggregatesFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.DecimalNullableWithAggregatesFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolWithAggregatesFilter<"PayrollPolicy"> | boolean
   esiDefault?: Prisma.BoolWithAggregatesFilter<"PayrollPolicy"> | boolean
   ptDefault?: Prisma.BoolWithAggregatesFilter<"PayrollPolicy"> | boolean
@@ -472,6 +488,7 @@ export type PayrollPolicyCreateInput = {
   basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -498,6 +515,7 @@ export type PayrollPolicyUncheckedCreateInput = {
   basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -522,6 +540,7 @@ export type PayrollPolicyUpdateInput = {
   basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -548,6 +567,7 @@ export type PayrollPolicyUncheckedUpdateInput = {
   basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -573,6 +593,7 @@ export type PayrollPolicyCreateManyInput = {
   basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -595,6 +616,7 @@ export type PayrollPolicyUpdateManyMutationInput = {
   basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -618,6 +640,7 @@ export type PayrollPolicyUncheckedUpdateManyInput = {
   basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -652,6 +675,7 @@ export type PayrollPolicyCountOrderByAggregateInput = {
   basePercentage?: Prisma.SortOrder
   baseMinimum?: Prisma.SortOrder
   hraPercentage?: Prisma.SortOrder
+  defaultGrossSalary?: Prisma.SortOrder
   pfDefault?: Prisma.SortOrder
   esiDefault?: Prisma.SortOrder
   ptDefault?: Prisma.SortOrder
@@ -667,6 +691,7 @@ export type PayrollPolicyAvgOrderByAggregateInput = {
   basePercentage?: Prisma.SortOrder
   baseMinimum?: Prisma.SortOrder
   hraPercentage?: Prisma.SortOrder
+  defaultGrossSalary?: Prisma.SortOrder
 }
 
 export type PayrollPolicyMaxOrderByAggregateInput = {
@@ -682,6 +707,7 @@ export type PayrollPolicyMaxOrderByAggregateInput = {
   basePercentage?: Prisma.SortOrder
   baseMinimum?: Prisma.SortOrder
   hraPercentage?: Prisma.SortOrder
+  defaultGrossSalary?: Prisma.SortOrder
   pfDefault?: Prisma.SortOrder
   esiDefault?: Prisma.SortOrder
   ptDefault?: Prisma.SortOrder
@@ -704,6 +730,7 @@ export type PayrollPolicyMinOrderByAggregateInput = {
   basePercentage?: Prisma.SortOrder
   baseMinimum?: Prisma.SortOrder
   hraPercentage?: Prisma.SortOrder
+  defaultGrossSalary?: Prisma.SortOrder
   pfDefault?: Prisma.SortOrder
   esiDefault?: Prisma.SortOrder
   ptDefault?: Prisma.SortOrder
@@ -718,6 +745,7 @@ export type PayrollPolicySumOrderByAggregateInput = {
   basePercentage?: Prisma.SortOrder
   baseMinimum?: Prisma.SortOrder
   hraPercentage?: Prisma.SortOrder
+  defaultGrossSalary?: Prisma.SortOrder
 }
 
 export type PayrollPolicyScalarRelationFilter = {
@@ -828,6 +856,7 @@ export type PayrollPolicyCreateWithoutComponentsInput = {
   basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -853,6 +882,7 @@ export type PayrollPolicyUncheckedCreateWithoutComponentsInput = {
   basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -892,6 +922,7 @@ export type PayrollPolicyUpdateWithoutComponentsInput = {
   basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -917,6 +948,7 @@ export type PayrollPolicyUncheckedUpdateWithoutComponentsInput = {
   basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -940,6 +972,7 @@ export type PayrollPolicyCreateWithoutOrganizationInput = {
   basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -964,6 +997,7 @@ export type PayrollPolicyUncheckedCreateWithoutOrganizationInput = {
   basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -1018,6 +1052,7 @@ export type PayrollPolicyScalarWhereInput = {
   basePercentage?: Prisma.DecimalFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.DecimalNullableFilter<"PayrollPolicy"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFilter<"PayrollPolicy"> | boolean
   esiDefault?: Prisma.BoolFilter<"PayrollPolicy"> | boolean
   ptDefault?: Prisma.BoolFilter<"PayrollPolicy"> | boolean
@@ -1040,6 +1075,7 @@ export type PayrollPolicyCreateWithoutEmployeesInput = {
   basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -1065,6 +1101,7 @@ export type PayrollPolicyUncheckedCreateWithoutEmployeesInput = {
   basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -1104,6 +1141,7 @@ export type PayrollPolicyUpdateWithoutEmployeesInput = {
   basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1129,6 +1167,7 @@ export type PayrollPolicyUncheckedUpdateWithoutEmployeesInput = {
   basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1152,6 +1191,7 @@ export type PayrollPolicyCreateManyOrganizationInput = {
   basePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -1174,6 +1214,7 @@ export type PayrollPolicyUpdateWithoutOrganizationInput = {
   basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1198,6 +1239,7 @@ export type PayrollPolicyUncheckedUpdateWithoutOrganizationInput = {
   basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1222,6 +1264,7 @@ export type PayrollPolicyUncheckedUpdateManyWithoutOrganizationInput = {
   basePercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   baseMinimum?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hraPercentage?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  defaultGrossSalary?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   pfDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   esiDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   ptDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1285,6 +1328,7 @@ export type PayrollPolicySelect<ExtArgs extends runtime.Types.Extensions.Interna
   basePercentage?: boolean
   baseMinimum?: boolean
   hraPercentage?: boolean
+  defaultGrossSalary?: boolean
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -1312,6 +1356,7 @@ export type PayrollPolicySelectCreateManyAndReturn<ExtArgs extends runtime.Types
   basePercentage?: boolean
   baseMinimum?: boolean
   hraPercentage?: boolean
+  defaultGrossSalary?: boolean
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -1336,6 +1381,7 @@ export type PayrollPolicySelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   basePercentage?: boolean
   baseMinimum?: boolean
   hraPercentage?: boolean
+  defaultGrossSalary?: boolean
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -1360,6 +1406,7 @@ export type PayrollPolicySelectScalar = {
   basePercentage?: boolean
   baseMinimum?: boolean
   hraPercentage?: boolean
+  defaultGrossSalary?: boolean
   pfDefault?: boolean
   esiDefault?: boolean
   ptDefault?: boolean
@@ -1370,7 +1417,7 @@ export type PayrollPolicySelectScalar = {
   updatedAt?: boolean
 }
 
-export type PayrollPolicyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "isDefault" | "effectiveFrom" | "effectiveTo" | "salarySlipDefault" | "payrollEnabledDefault" | "payrollDayBasis" | "basePercentage" | "baseMinimum" | "hraPercentage" | "pfDefault" | "esiDefault" | "ptDefault" | "statutoryJurisdiction" | "roundingMode" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["payrollPolicy"]>
+export type PayrollPolicyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "name" | "isDefault" | "effectiveFrom" | "effectiveTo" | "salarySlipDefault" | "payrollEnabledDefault" | "payrollDayBasis" | "basePercentage" | "baseMinimum" | "hraPercentage" | "defaultGrossSalary" | "pfDefault" | "esiDefault" | "ptDefault" | "statutoryJurisdiction" | "roundingMode" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["payrollPolicy"]>
 export type PayrollPolicyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   components?: boolean | Prisma.PayrollPolicy$componentsArgs<ExtArgs>
@@ -1404,6 +1451,7 @@ export type $PayrollPolicyPayload<ExtArgs extends runtime.Types.Extensions.Inter
     basePercentage: runtime.Decimal
     baseMinimum: runtime.Decimal
     hraPercentage: runtime.Decimal
+    defaultGrossSalary: runtime.Decimal | null
     pfDefault: boolean
     esiDefault: boolean
     ptDefault: boolean
@@ -1850,6 +1898,7 @@ export interface PayrollPolicyFieldRefs {
   readonly basePercentage: Prisma.FieldRef<"PayrollPolicy", 'Decimal'>
   readonly baseMinimum: Prisma.FieldRef<"PayrollPolicy", 'Decimal'>
   readonly hraPercentage: Prisma.FieldRef<"PayrollPolicy", 'Decimal'>
+  readonly defaultGrossSalary: Prisma.FieldRef<"PayrollPolicy", 'Decimal'>
   readonly pfDefault: Prisma.FieldRef<"PayrollPolicy", 'Boolean'>
   readonly esiDefault: Prisma.FieldRef<"PayrollPolicy", 'Boolean'>
   readonly ptDefault: Prisma.FieldRef<"PayrollPolicy", 'Boolean'>

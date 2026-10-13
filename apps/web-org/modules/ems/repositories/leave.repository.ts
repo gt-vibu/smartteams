@@ -64,6 +64,8 @@ export type LeaveCalendarEntry = {
   startDate: string;
   endDate: string;
   days: number;
+  /** Dates accepted as worked during leave, so the calendar does not show the employee off. */
+  workedDates?: string[];
   status: 'APPROVED' | 'PENDING';
   type: string | null;
   isYou: boolean;
@@ -155,7 +157,15 @@ export const leaveRepository = {
 
   async listRequests(
     organizationId: string,
-    filters: { employeeId?: string; limit?: number; status?: string; search?: string; departmentId?: string; from?: string; to?: string } = {},
+    filters: {
+      employeeId?: string;
+      limit?: number;
+      status?: string;
+      search?: string;
+      departmentId?: string;
+      from?: string;
+      to?: string;
+    } = {},
   ): Promise<LeaveRequest[]> {
     const requests: LeaveRequest[] = [];
     const seen = new Set<string>();
@@ -185,7 +195,16 @@ export const leaveRepository = {
 
   async listRequestPage(
     organizationId: string,
-    filters: { cursor?: string; status?: string; search?: string; employeeId?: string; departmentId?: string; from?: string; to?: string; limit?: number } = {},
+    filters: {
+      cursor?: string;
+      status?: string;
+      search?: string;
+      employeeId?: string;
+      departmentId?: string;
+      from?: string;
+      to?: string;
+      limit?: number;
+    } = {},
   ) {
     return expectShape(
       parseLeaveRequestPage(

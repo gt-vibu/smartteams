@@ -203,10 +203,24 @@ export async function tenant(tag, { defaultPolicies = true } = {}) {
       }),
     );
     const cookies = jar();
-    const employeeCsrf = await signIn(cookies, email, member.payload.temporaryPassword);
+    let employeeCsrf = await signIn(cookies, email, member.payload.temporaryPassword);
     return {
       id: employee.payload.id,
       userId: member.payload.userId,
+      cookies,
+      completeOnboarding: async () => {
+        const password = 'Workflow-ready-42-' + slug;
+        const changed = await call(
+          cookies,
+          'POST',
+          '/v1/auth/password/change',
+          { currentPassword: member.payload.temporaryPassword, newPassword: password },
+          employeeCsrf,
+        );
+        if (!good(changed))
+          throw new Error('Employee password setup failed: HTTP ' + changed.status);
+        employeeCsrf = { 'x-csrf-token': changed.payload.csrfToken };
+      },
       as: (method, path, body) =>
         call(
           cookies,

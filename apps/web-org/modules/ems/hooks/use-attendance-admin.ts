@@ -153,12 +153,11 @@ export function useAttendanceAdmin(
   };
 }
 
-/** Default admin range: the full current calendar month. */
+/** Default admin range: this month through today, so future leave is not presented as attendance. */
 export function currentMonthRange(): { from: string; to: string } {
   const now = new Date();
   const first = new Date(now.getFullYear(), now.getMonth(), 1);
-  const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-  return { from: localDateKey(first), to: localDateKey(last) };
+  return { from: localDateKey(first), to: localDateKey(now) };
 }
 
 export type AttendanceAdminState = ReturnType<typeof useAttendanceAdmin>;

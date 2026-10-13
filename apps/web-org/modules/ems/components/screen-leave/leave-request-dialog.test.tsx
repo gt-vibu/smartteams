@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 import type { LeaveAdminState } from '../../hooks/use-leave-admin';
 import { LeaveRequestDialog } from './leave-request-dialog';
 
@@ -78,7 +78,7 @@ describe('LeaveRequestDialog', () => {
     expect(screen.getByText('No reason was given.')).toBeTruthy();
   });
 
-  it('decides the request with the comment, then closes', async () => {
+  it('approves the request without requiring a comment, then closes', async () => {
     const decide = vi.fn().mockResolvedValue(true);
     const onClose = vi.fn();
     render(
@@ -89,25 +89,31 @@ describe('LeaveRequestDialog', () => {
         request={request as never}
       />,
     );
-    await userEvent.type(screen.getByLabelText('Decision comment'), 'Approved, cover arranged');
     await userEvent.click(screen.getByRole('button', { name: 'Approve' }));
-    expect(decide).toHaveBeenCalledWith('req-1', 'APPROVED', 'Approved, cover arranged');
+    expect(decide).toHaveBeenCalledWith('req-1', 'APPROVED', '');
     expect(onClose).toHaveBeenCalled();
   });
 
-  it('asks for a comment before deciding', async () => {
-    const decide = vi.fn();
+  it('requires a reason when rejecting', async () => {
+    const decide = vi.fn().mockResolvedValue(true);
+    const onClose = vi.fn();
     render(
       <LeaveRequestDialog
         admin={adminState({ decide })}
         employee={employee as never}
-        onClose={vi.fn()}
+        onClose={onClose}
         request={request as never}
       />,
     );
-    await userEvent.click(screen.getByRole('button', { name: 'Approve' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Reject' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm Rejection' }));
     expect(decide).not.toHaveBeenCalled();
-    expect(screen.getByRole('alert').textContent).toContain('A comment is required');
+    expect(screen.getByRole('alert').textContent).toContain('A reason is required');
+
+    await userEvent.type(screen.getByLabelText('Rejection reason'), 'Coverage conflict');
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm Rejection' }));
+    expect(decide).toHaveBeenCalledWith('req-1', 'REJECTED', 'Coverage conflict');
+    expect(onClose).toHaveBeenCalled();
   });
 
   it('offers no decision on a request awaiting someone else', () => {

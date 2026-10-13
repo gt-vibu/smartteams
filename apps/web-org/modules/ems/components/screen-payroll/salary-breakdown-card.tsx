@@ -3,7 +3,7 @@
 import React from 'react';
 import { Button } from '@smarteam/ui';
 import { formatMoney, type SalaryProfile } from '@smarteam/contracts';
-import { Plus, Sliders } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 type Row = { code: string; name: string; amount: number };
 
@@ -55,15 +55,11 @@ function Total({ label, amount, strong }: { label: string; amount: number; stron
 export function SalaryBreakdownCard({
   profile,
   canAssign,
-  canConfigurePolicy,
   onAssignComponent,
-  onConfigurePolicy,
 }: {
   profile: SalaryProfile;
   canAssign: boolean;
-  canConfigurePolicy: boolean;
   onAssignComponent: () => void;
-  onConfigurePolicy: () => void;
 }) {
   const { salaryBreakdown: b, employeePolicy } = profile;
   const deductions = b.deductions.filter((row) => row.amount > 0);
@@ -83,17 +79,6 @@ export function SalaryBreakdownCard({
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {canConfigurePolicy && (
-            <Button
-              className="h-9 gap-1.5 text-xs"
-              onClick={onConfigurePolicy}
-              type="button"
-              variant="outline"
-            >
-              <Sliders className="h-3.5 w-3.5" />
-              Basic, HRA &amp; state
-            </Button>
-          )}
           {canAssign && (
             <Button
               className="h-9 gap-1.5 text-xs"
@@ -107,6 +92,16 @@ export function SalaryBreakdownCard({
           )}
         </div>
       </div>
+
+      {profile.configurationWarnings?.map((warning) => (
+        <p
+          className="border-b border-amber-300/60 bg-amber-50 px-4 py-2 text-xs text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200"
+          key={warning}
+          role="status"
+        >
+          {warning}
+        </p>
+      ))}
 
       {!jurisdiction && (
         <p
@@ -145,9 +140,9 @@ export function SalaryBreakdownCard({
         </table>
       </div>
       <p className="border-t border-border/60 px-4 py-2 text-[11px] text-muted-foreground">
-        EPF: 12% of Basic on wages up to ₹15,000. ESI: 0.75% employee and 3.25% employer while gross
-        is ₹21,000 or less. Professional Tax follows the state&apos;s slab. Income tax (TDS) is not
-        calculated here.
+        Statutory deductions use the rules and wage bases configured for this employee&apos;s
+        jurisdiction. Check scheme eligibility and current rates with the applicable authority.
+        Professional Tax follows the saved state schedule. Income tax (TDS) is not calculated here.
       </p>
     </div>
   );

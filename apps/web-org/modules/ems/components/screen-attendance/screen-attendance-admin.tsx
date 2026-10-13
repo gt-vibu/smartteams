@@ -35,7 +35,8 @@ type Tab = 'records' | 'corrections' | 'policy';
  * Organization-wide attendance.
  *
  * Replaces a screen driven entirely by `attendance-records.json`, keyed by a hardcoded demo
- * date. The range now defaults to the current month and every row is a record the API returned.
+ * date. The range defaults to this month through today; approved leave after today is not shown
+ * as an attendance record before the date occurs.
  */
 export function ScreenAttendanceAdmin() {
   const defaults = useMemo(() => currentMonthRange(), []);
@@ -77,16 +78,17 @@ export function ScreenAttendanceAdmin() {
   const [exportError, setExportError] = useState('');
   const departments = useDepartments();
   const settledSearch = useDebouncedValue(search.trim());
+  const todayKey = localDateKey();
+  const effectiveTo = to > todayKey ? todayKey : to;
   const admin = useAttendanceAdmin(
     from,
-    to,
+    effectiveTo,
     settledSearch,
     tab ?? 'records',
     correctionStatus,
     departmentId,
     dayStatus,
   );
-  const todayKey = localDateKey();
   const todaySummary = useAsyncResource<{
     totalEmployees: number;
     present: number;
@@ -125,7 +127,10 @@ export function ScreenAttendanceAdmin() {
     [admin.records, admin.corrections, todayKey, now, workWeekDays],
   );
 
-  const filtered = rows;
+  // The Attendance records table is for attendance activity. A rejected leave overlap remains
+  // an ON_LEAVE day, so do not surface its punches here; the leave and approval screens retain
+  // the leave record and its decision history.
+  const filtered = rows.filter((row) => row.dayStatus !== 'ON_LEAVE');
   const exportRows = async () => {
     if (!session?.organizationId || exporting) return;
     setExporting(true);
@@ -136,7 +141,7 @@ export function ScreenAttendanceAdmin() {
       do {
         const page = await attendanceRepository.list(session.organizationId, {
           from,
-          to,
+          to: effectiveTo,
           search: settledSearch || undefined,
           departmentId: departmentId || undefined,
           dayStatus: dayStatus === 'ALL' ? undefined : dayStatus,
@@ -146,7 +151,14 @@ export function ScreenAttendanceAdmin() {
         records.push(...page.records);
         cursor = page.nextCursor;
       } while (cursor);
-      const allRows = toAttendanceDayViews(records, todayKey, [], new Map(), now, workWeekDays);
+      const allRows = toAttendanceDayViews(
+        records,
+        todayKey,
+        [],
+        new Map(),
+        now,
+        workWeekDays,
+      ).filter((row) => row.dayStatus !== 'ON_LEAVE');
       return allRows.map((row) => [
         formatDate(row.workDate),
         row.employeeName ?? 'Not in the directory',
@@ -155,7 +167,9 @@ export function ScreenAttendanceAdmin() {
         row.lastOutTime ?? '',
         row.workedLabel,
         row.overtimeLabel,
-        statusLabel(row.dayStatus),
+        row.leaveOverlap
+          ? `${statusLabel(row.dayStatus)} (leave overlap)`
+          : statusLabel(row.dayStatus),
       ]);
     } catch (error) {
       setExportError(error instanceof Error ? error.message : 'Could not prepare this export.');
@@ -168,7 +182,7 @@ export function ScreenAttendanceAdmin() {
     const result = await exportRows();
     if (result)
       downloadFile(
-        `attendance-${from}-to-${to}.csv`,
+        `attendance-${from}-to-${effectiveTo}.csv`,
         toCsv([
           [
             'Date',
@@ -240,7 +254,8 @@ export function ScreenAttendanceAdmin() {
                 setSelectedSummaryStatus(null);
                 setDayStatus('ALL');
                 setFrom(start);
-                setTo(end || start);
+                const selectedEnd = end || start;
+                setTo(selectedEnd > todayKey ? todayKey : selectedEnd);
               }}
             />
             <Input
@@ -283,7 +298,6 @@ export function ScreenAttendanceAdmin() {
               <option value="ABSENT">Absent</option>
               <option value="LATE">Late</option>
               <option value="HALF_DAY">Half day</option>
-              <option value="ON_LEAVE">On leave</option>
             </Select>
             <Button
               className="gap-1.5"
@@ -565,6 +579,15 @@ export function ScreenAttendanceAdmin() {
                       </td>
                       <td data-cell="status" data-label="Status" className="px-4 py-2.5">
                         <Badge variant="outline">{statusLabel(row.dayStatus)}</Badge>
+                        {row.leaveOverlap && (
+                          <Badge
+                            className="ml-1"
+                            title="The employee checked in during approved leave. An authorized reviewer must decide whether the day counts as worked."
+                            variant="secondary"
+                          >
+                            Leave overlap · review required
+                          </Badge>
+                        )}
                         {row.correctionStatus === 'PENDING' && (
                           <Badge className="ml-1" variant="secondary">
                             Correction pending

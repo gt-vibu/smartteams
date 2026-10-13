@@ -98,6 +98,7 @@ describe('the employee’s view of the day', () => {
     const day = (state: HolidayConflict['state']) =>
       ({
         dayStatus: 'PRESENT',
+        record: { leaveUnits: 0 },
         holidayConflict: toHolidayConflictView(conflict(state)),
       }) as AttendanceDayView;
     expect(attendanceSummaryStats([day('AWAITING_DECISION')])).toMatchObject({

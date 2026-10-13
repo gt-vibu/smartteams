@@ -2,6 +2,7 @@ import { AttendanceAutoCheckOutService } from './attendance-auto-checkout.servic
 import { instantAtLocalTime, isAutoClose, wallClock } from './attendance-auto-checkout';
 import { missingCheckOutFrom } from './attendance-missing-checkout';
 import type { DomainContext } from '../../common/context/domain-context';
+import { DEFAULT_MISSED_CHECK_OUT_POLICY, type MissedCheckOutPolicy } from '@smarteam/contracts';
 
 /**
  * Closing a day nobody checked out of.
@@ -39,6 +40,8 @@ function setup(
     nightShift?: boolean;
     pendingMissingCheckOut?: boolean;
     lastPunchOut?: boolean;
+    policy?: MissedCheckOutPolicy;
+    assignedShift?: { endsAt: Date; crossesMidnight: boolean; daysOfWeek: number[] };
   } = {},
 ) {
   const record = {
@@ -56,6 +59,7 @@ function setup(
   };
   const created: Array<{ reason: string; afterSnapshot: unknown }> = [];
   const tx = {
+    $queryRaw: jest.fn().mockResolvedValue([]),
     organization: {
       findMany: jest.fn().mockResolvedValue([{ id: ORG, timezone: 'Asia/Kolkata' }]),
       findUniqueOrThrow: jest.fn().mockResolvedValue({
@@ -67,6 +71,8 @@ function setup(
       findUniqueOrThrow: jest.fn().mockResolvedValue({
         autoCheckOutMode: options.mode ?? 'REVIEW_REQUIRED',
         autoCheckOutAt: CLOSE_TIME,
+        metadata: options.policy ? { missedCheckOutPolicy: options.policy } : undefined,
+        payrollDayOfMonth: null,
       }),
     },
     attendanceRecord: {
@@ -77,7 +83,18 @@ function setup(
       }),
     },
     employeeShiftAssignment: {
-      findFirst: jest.fn().mockResolvedValue(options.nightShift ? { id: 'assignment-1' } : null),
+      findFirst: jest.fn().mockResolvedValue(
+        options.nightShift || options.assignedShift
+          ? {
+              id: 'assignment-1',
+              shift: options.assignedShift ?? {
+                endsAt: new Date(Date.UTC(1970, 0, 1, 6)),
+                crossesMidnight: true,
+                daysOfWeek: [1, 2, 3, 4, 5, 6, 7],
+              },
+            }
+          : null,
+      ),
     },
     attendanceCorrection: {
       findMany: jest
@@ -124,6 +141,7 @@ function setup(
   const audit = { record: jest.fn().mockResolvedValue(undefined) };
   return {
     tx,
+    record,
     created,
     audit,
     service: new AttendanceAutoCheckOutService(database as never, audit),
@@ -161,11 +179,68 @@ describe('the day close', () => {
     expect(created).toHaveLength(0);
   });
 
+  it('proposes the assigned shift end after its local deadline', async () => {
+    const policy: MissedCheckOutPolicy = {
+      ...DEFAULT_MISSED_CHECK_OUT_POLICY,
+      resolutionMethod: 'PROVISIONAL_AUTO_CLOSE',
+      correctionDeadline: 'SAME_DAY',
+      closeTimeSource: 'SHIFT_END',
+      configuredTime: '23:59',
+    };
+    const { created, service } = setup({
+      policy,
+      assignedShift: {
+        endsAt: new Date(Date.UTC(1970, 0, 1, 17)),
+        crossesMidnight: false,
+        daysOfWeek: [1, 2, 3, 4, 5, 6, 7],
+      },
+    });
+    const outcome = await service.closeDueDays(AFTER_CUTOFF);
+    expect(outcome.closed).toBe(1);
+    expect(missingCheckOutFrom(created[0]?.afterSnapshot)?.toISOString()).toBe(
+      '2026-09-16T11:30:00.000Z',
+    );
+    expect(created[0]?.afterSnapshot).toMatchObject({
+      missingCheckOut: { policyVersion: 1, policy: { closeTimeSource: 'SHIFT_END' } },
+    });
+  });
+
+  it('does not auto-resolve when the employee-correction fallback is keep-open', async () => {
+    const policy: MissedCheckOutPolicy = {
+      ...DEFAULT_MISSED_CHECK_OUT_POLICY,
+      resolutionMethod: 'EMPLOYEE_CORRECTION',
+      deadlineFallback: 'KEEP_OPEN',
+    };
+    const { tx, created, service } = setup({ policy });
+    const outcome = await service.closeDueDays(AFTER_CUTOFF);
+    expect(outcome.closed).toBe(0);
+    expect(created).toHaveLength(0);
+    expect(tx.attendanceRecord.findMany).not.toHaveBeenCalled();
+  });
+
   it('does not raise a second request for a day already awaiting one', async () => {
     const { created, service } = setup({ pendingMissingCheckOut: true });
     const outcome = await service.closeDueDays(AFTER_CUTOFF);
     expect(outcome.skippedAlreadyPending).toBe(1);
     expect(created).toHaveLength(0);
+  });
+
+  it('paginates across organization-sized batches instead of stopping at the first 200 records', async () => {
+    const { tx, record, created, service } = setup();
+    const makeBatch = (start: number, count: number) =>
+      Array.from({ length: count }, (_, index) => ({
+        ...record,
+        id: `record-${String(start + index).padStart(4, '0')}`,
+      }));
+    tx.attendanceRecord.findMany
+      .mockResolvedValueOnce(makeBatch(0, 200))
+      .mockResolvedValueOnce(makeBatch(200, 1));
+
+    const outcome = await service.closeDueDays(AFTER_CUTOFF);
+
+    expect(outcome.closed).toBe(201);
+    expect(created).toHaveLength(201);
+    expect(tx.attendanceRecord.findMany).toHaveBeenCalledTimes(2);
   });
 
   it('ignores a day whose last punch is a check-out', async () => {

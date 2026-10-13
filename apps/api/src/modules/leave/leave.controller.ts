@@ -18,8 +18,6 @@ import {
   LeaveBalanceQueryDto,
   LeaveCalendarQueryDto,
   LeaveCancelDto,
-  LeaveDecisionDto,
-  LeaveRequestDto,
   LeaveRequestQueryDto,
   LeavePolicyAssignmentDto,
   LeaveTypeDto,
@@ -27,6 +25,13 @@ import {
 } from './leave.dto';
 import { LeaveService } from './leave.service';
 import { LeaveCalendarService } from './leave-calendar.service';
+import {
+  LeaveDateAvailabilityDto,
+  NativeLeavePreviewDto,
+  NativeLeaveDecisionDto,
+  NativeLeaveRequestDto,
+} from './leave-native.dto';
+import { LeavePreviewService } from './leave-preview.service';
 
 @Controller('v1/organizations/:organizationId/leave')
 @UseGuards(NativeJwtGuard)
@@ -35,6 +40,7 @@ export class LeaveController {
     private readonly leave: LeaveService,
     private readonly contexts: DomainContextFactory,
     private readonly calendarService: LeaveCalendarService,
+    private readonly preview: LeavePreviewService,
   ) {}
 
   /**
@@ -54,6 +60,11 @@ export class LeaveController {
       this.leave.listRequests(context, query.employeeId, {
         ...(query.cursor ? { cursor: query.cursor } : {}),
         ...(query.limit ? { limit: query.limit } : {}),
+        ...(query.status ? { status: query.status } : {}),
+        ...(query.search ? { search: query.search } : {}),
+        ...(query.departmentId ? { departmentId: query.departmentId } : {}),
+        ...(query.from ? { from: query.from } : {}),
+        ...(query.to ? { to: query.to } : {}),
       }),
     );
   }
@@ -77,6 +88,26 @@ export class LeaveController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.leave.listPendingApprovals(context, request.user.userId));
+  }
+
+  @Post('requests/date-availability') dateAvailability(
+    @Param('organizationId') organizationId: string,
+    @Body() body: LeaveDateAvailabilityDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.preview.availability(context, body.from, body.to));
+  }
+
+  @Post('requests/preview') requestPreview(
+    @Param('organizationId') organizationId: string,
+    @Body() body: NativeLeavePreviewDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.preview.requestPreview(context, body));
   }
 
   @Get('balances') balances(
@@ -137,7 +168,7 @@ export class LeaveController {
   }
   @Post('requests') request(
     @Param('organizationId') organizationId: string,
-    @Body() body: LeaveRequestDto,
+    @Body() body: NativeLeaveRequestDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -147,7 +178,7 @@ export class LeaveController {
   @Post('requests/:requestId/decision') decision(
     @Param('organizationId') organizationId: string,
     @Param('requestId') requestId: string,
-    @Body() body: LeaveDecisionDto,
+    @Body() body: NativeLeaveDecisionDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts

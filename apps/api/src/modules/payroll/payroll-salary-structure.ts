@@ -39,17 +39,24 @@ export function assertStatutoryRulesConfigured(
   enabled: { pf: boolean; esi: boolean; pt: boolean },
   rules: readonly Pick<StatutoryRuleInput, 'schemeCode'>[],
 ) {
-  const configured = new Set(rules.map((rule) => rule.schemeCode.toUpperCase()));
-  const missing = [
-    ...(enabled.pf && !configured.has('PF') && !configured.has('EPF') ? ['EPF'] : []),
-    ...(enabled.esi && !configured.has('ESI') && !configured.has('ESIC') ? ['ESI'] : []),
-    ...(enabled.pt && !configured.has('PT') && !configured.has('PROFESSIONAL_TAX') ? ['PT'] : []),
-  ];
+  const missing = missingStatutoryRules(enabled, rules);
   if (missing.length) {
     throw new ConflictError(
       `Set up ${missing.join(', ')} statutory rule${missing.length === 1 ? '' : 's'} for the employee's jurisdiction before calculating payroll.`,
     );
   }
+}
+
+export function missingStatutoryRules(
+  enabled: { pf: boolean; esi: boolean; pt: boolean },
+  rules: readonly Pick<StatutoryRuleInput, 'schemeCode'>[],
+) {
+  const configured = new Set(rules.map((rule) => rule.schemeCode.toUpperCase()));
+  return [
+    ...(enabled.pf && !configured.has('PF') && !configured.has('EPF') ? ['EPF'] : []),
+    ...(enabled.esi && !configured.has('ESI') && !configured.has('ESIC') ? ['ESI'] : []),
+    ...(enabled.pt && !configured.has('PT') && !configured.has('PROFESSIONAL_TAX') ? ['PT'] : []),
+  ];
 }
 
 export function calculateSalaryStructure(

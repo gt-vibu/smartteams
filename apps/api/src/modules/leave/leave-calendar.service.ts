@@ -102,10 +102,31 @@ export class LeaveCalendarService {
           },
         },
       });
+      const acceptedOverlaps = requests.length
+        ? await tx.attendanceLeaveOverlapReview.findMany({
+            where: {
+              organizationId,
+              leaveRequestId: { in: requests.map((request) => request.id) },
+              status: 'APPROVED',
+              workDate: { gte: from, lte: to },
+            },
+            select: { leaveRequestId: true, workDate: true, leaveUnits: true },
+          })
+        : [];
+      const workedDatesByRequest = new Map<string, Array<{ date: string; units: number }>>();
+      for (const overlap of acceptedOverlaps) {
+        const dates = workedDatesByRequest.get(overlap.leaveRequestId) ?? [];
+        dates.push({
+          date: overlap.workDate.toISOString().slice(0, 10),
+          units: Number(overlap.leaveUnits),
+        });
+        workedDatesByRequest.set(overlap.leaveRequestId, dates);
+      }
       return {
         entries: requests.map((request) => {
           const seesType =
             readsAll || request.employeeId === self?.id || reportIds.has(request.employeeId);
+          const workedDates = workedDatesByRequest.get(request.id) ?? [];
           return {
             id: request.id,
             employeeId: request.employeeId,
@@ -115,7 +136,12 @@ export class LeaveCalendarService {
             employeeNumber: request.employee.employeeNumber,
             startDate: request.startDate.toISOString().slice(0, 10),
             endDate: request.endDate.toISOString().slice(0, 10),
-            days: Number(request.requestedDays),
+            days: Math.max(
+              0,
+              Number(request.requestedDays) -
+                workedDates.reduce((sum, item) => sum + item.units, 0),
+            ),
+            workedDates: workedDates.map((item) => item.date),
             status: request.status,
             type: seesType ? request.leaveType.name : null,
             isYou: request.employeeId === self?.id,

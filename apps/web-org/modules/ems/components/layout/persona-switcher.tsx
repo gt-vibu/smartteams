@@ -14,7 +14,7 @@ import { useAuth } from '../../hooks/use-auth';
 import { useSession } from '../../hooks/auth-context';
 import { useEmployeeDetail } from '../../hooks/use-employee-detail';
 import { ProfileEditDrawer } from '../profile/profile-edit-drawer';
-import { workspaceTitle } from '../../services/authorization.policy';
+import { canSubmitSelfResignation, workspaceTitle } from '../../services/authorization.policy';
 import { OverviewProfileTab } from '../screen-1-overview/overview-profile-tab';
 import { MyResignationCard } from '../screen-1-overview/my-resignation-card';
 import { Moon, Sun } from 'lucide-react';
@@ -56,6 +56,7 @@ export function PersonaSwitcher() {
   // Clean role label for top bar
   const displayedRoleLabel =
     workspaceContext === 'ADMIN' ? workspaceTitle(persona).badge : (jobTitle ?? 'Employee');
+  const canSubmitResignation = canSubmitSelfResignation(persona.permissions);
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -227,7 +228,11 @@ export function PersonaSwitcher() {
               onClick={toggleTheme}
               className="w-full flex items-center justify-start gap-2.5 rounded-[6px] px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted transition-all cursor-pointer"
             >
-              {isDark ? <Sun aria-hidden="true" className="h-4 w-4 text-muted-foreground" /> : <Moon aria-hidden="true" className="h-4 w-4 text-muted-foreground" />}
+              {isDark ? (
+                <Sun aria-hidden="true" className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <Moon aria-hidden="true" className="h-4 w-4 text-muted-foreground" />
+              )}
               <span>{isDark ? 'Switch to light theme' : 'Switch to dark theme'}</span>
             </Button>
 
@@ -292,7 +297,7 @@ export function PersonaSwitcher() {
           </SheetHeader>
           <div className="space-y-4 p-5">
             <OverviewProfileTab />
-            <MyResignationCard />
+            {canSubmitResignation && <MyResignationCard />}
           </div>
         </SheetContent>
       </Sheet>

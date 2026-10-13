@@ -24,6 +24,10 @@ export function EmployeeProfilePanel() {
     checkIn,
     checkOut,
     saving,
+    loading: attendanceLoading,
+    saveError,
+    canWrite,
+    hasNoEmployeeRecord,
   } = useAttendance();
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -38,6 +42,7 @@ export function EmployeeProfilePanel() {
   const isCheckedIn = isMounted && checkedIn;
 
   const handleToggleAttendance = () => {
+    if (saving || !canWrite || hasNoEmployeeRecord) return;
     if (checkedIn) {
       void checkOut();
     } else if (canCheckInAgain) {
@@ -151,7 +156,13 @@ export function EmployeeProfilePanel() {
             <Button
               variant={isCheckedIn ? 'outline' : 'default'}
               size="sm"
-              disabled={saving}
+              disabled={
+                attendanceLoading ||
+                saving ||
+                !canWrite ||
+                hasNoEmployeeRecord ||
+                (!isCheckedIn && !canCheckInAgain)
+              }
               onClick={handleToggleAttendance}
               className={`w-full py-1.5 px-3 rounded text-xs font-semibold shadow-xs transition-colors cursor-pointer ${
                 isCheckedIn
@@ -159,14 +170,31 @@ export function EmployeeProfilePanel() {
                   : 'bg-primary hover:bg-primary/90 text-primary-foreground font-bold'
               }`}
             >
-              {saving
-                ? 'Processing...'
-                : isCheckedIn
-                  ? 'Check out'
-                  : isDayCompleted
-                    ? 'Check in again'
-                    : 'Check in'}
+              {attendanceLoading
+                ? 'Loading attendance…'
+                : saving
+                  ? 'Processing...'
+                  : isCheckedIn
+                    ? 'Check out'
+                    : isDayCompleted
+                      ? 'Check in again'
+                      : 'Check in'}
             </Button>
+          )}
+          {saveError && (
+            <p className="w-full text-left text-[11px] font-medium text-destructive" role="alert">
+              {saveError}
+            </p>
+          )}
+          {!saveError && hasNoEmployeeRecord && (
+            <p className="w-full text-left text-[11px] text-muted-foreground" role="status">
+              Attendance is unavailable because this account is not linked to an employee record.
+            </p>
+          )}
+          {!saveError && !hasNoEmployeeRecord && !canWrite && (
+            <p className="w-full text-left text-[11px] text-muted-foreground" role="status">
+              Your account does not have permission to record attendance.
+            </p>
           )}
         </div>
 

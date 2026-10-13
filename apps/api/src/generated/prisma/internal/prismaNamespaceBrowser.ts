@@ -107,10 +107,13 @@ export const ModelName = {
   TimesheetEntry: 'TimesheetEntry',
   TimesheetApproval: 'TimesheetApproval',
   AttendanceHolidayReview: 'AttendanceHolidayReview',
+  AttendanceLeaveOverlapReview: 'AttendanceLeaveOverlapReview',
   PayrollRun: 'PayrollRun',
   PayrollPolicy: 'PayrollPolicy',
   PayrollPolicyComponent: 'PayrollPolicyComponent',
   PayrollStatutoryRule: 'PayrollStatutoryRule',
+  PayrollComplianceSourceCheck: 'PayrollComplianceSourceCheck',
+  PayrollRuleUpdateProposal: 'PayrollRuleUpdateProposal',
   PayrollLineItem: 'PayrollLineItem',
   SalaryAdvance: 'SalaryAdvance',
   SalaryAdvanceRecovery: 'SalaryAdvanceRecovery',
@@ -1158,6 +1161,27 @@ export const AttendanceHolidayReviewScalarFieldEnum = {
 export type AttendanceHolidayReviewScalarFieldEnum = (typeof AttendanceHolidayReviewScalarFieldEnum)[keyof typeof AttendanceHolidayReviewScalarFieldEnum]
 
 
+export const AttendanceLeaveOverlapReviewScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  employeeId: 'employeeId',
+  attendanceRecordId: 'attendanceRecordId',
+  leaveRequestId: 'leaveRequestId',
+  workDate: 'workDate',
+  leaveUnits: 'leaveUnits',
+  status: 'status',
+  autoApproved: 'autoApproved',
+  requestedByUserId: 'requestedByUserId',
+  decidedByUserId: 'decidedByUserId',
+  decisionComment: 'decisionComment',
+  decidedAt: 'decidedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AttendanceLeaveOverlapReviewScalarFieldEnum = (typeof AttendanceLeaveOverlapReviewScalarFieldEnum)[keyof typeof AttendanceLeaveOverlapReviewScalarFieldEnum]
+
+
 export const PayrollRunScalarFieldEnum = {
   id: 'id',
   organizationId: 'organizationId',
@@ -1198,6 +1222,7 @@ export const PayrollPolicyScalarFieldEnum = {
   basePercentage: 'basePercentage',
   baseMinimum: 'baseMinimum',
   hraPercentage: 'hraPercentage',
+  defaultGrossSalary: 'defaultGrossSalary',
   pfDefault: 'pfDefault',
   esiDefault: 'esiDefault',
   ptDefault: 'ptDefault',
@@ -1245,6 +1270,51 @@ export const PayrollStatutoryRuleScalarFieldEnum = {
 } as const
 
 export type PayrollStatutoryRuleScalarFieldEnum = (typeof PayrollStatutoryRuleScalarFieldEnum)[keyof typeof PayrollStatutoryRuleScalarFieldEnum]
+
+
+export const PayrollComplianceSourceCheckScalarFieldEnum = {
+  organizationId: 'organizationId',
+  sourceKey: 'sourceKey',
+  schemeCode: 'schemeCode',
+  jurisdiction: 'jurisdiction',
+  sourceLabel: 'sourceLabel',
+  sourceUrl: 'sourceUrl',
+  contentHash: 'contentHash',
+  etag: 'etag',
+  lastModified: 'lastModified',
+  checkedAt: 'checkedAt',
+  sourceChangedAt: 'sourceChangedAt',
+  lastError: 'lastError',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PayrollComplianceSourceCheckScalarFieldEnum = (typeof PayrollComplianceSourceCheckScalarFieldEnum)[keyof typeof PayrollComplianceSourceCheckScalarFieldEnum]
+
+
+export const PayrollRuleUpdateProposalScalarFieldEnum = {
+  id: 'id',
+  organizationId: 'organizationId',
+  sourceKey: 'sourceKey',
+  sourceHash: 'sourceHash',
+  schemeCode: 'schemeCode',
+  jurisdiction: 'jurisdiction',
+  sourceLabel: 'sourceLabel',
+  sourceUrl: 'sourceUrl',
+  status: 'status',
+  changeSummary: 'changeSummary',
+  currentRule: 'currentRule',
+  proposedRule: 'proposedRule',
+  impactPreview: 'impactPreview',
+  effectiveFrom: 'effectiveFrom',
+  decidedByUserId: 'decidedByUserId',
+  decidedAt: 'decidedAt',
+  decisionNote: 'decisionNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PayrollRuleUpdateProposalScalarFieldEnum = (typeof PayrollRuleUpdateProposalScalarFieldEnum)[keyof typeof PayrollRuleUpdateProposalScalarFieldEnum]
 
 
 export const PayrollLineItemScalarFieldEnum = {

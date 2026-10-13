@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { canAccessModule, canAdministerOrganization } from './authorization.policy';
+import {
+  canAccessModule,
+  canAdministerOrganization,
+  canSubmitSelfResignation,
+  workspaceTitle,
+} from './authorization.policy';
 
 /**
  * Module visibility, gated on permissions the backend actually grants.
@@ -92,6 +97,32 @@ describe('canAccessModule', () => {
     expect(canAccessModule('payroll', 'ADMIN', permissions, false)).toBe(false);
   });
 
+  it('hides admin management pages unless the user can read and maintain their records', () => {
+    const cases = [
+      ['employees', 'employees.read.all', 'employees.write'],
+      ['teams', 'teams.read', 'teams.write'],
+      ['projects', 'projects.read', 'projects.write'],
+      ['shifts', 'shifts.read', 'shifts.write'],
+      ['holidays', 'organizations.read', 'organizations.update'],
+    ] as const;
+    for (const [module, readPermission, writePermission] of cases) {
+      expect(canAccessModule(module, 'ADMIN', [readPermission], false)).toBe(false);
+      expect(canAccessModule(module, 'ADMIN', [writePermission], false)).toBe(false);
+      expect(canAccessModule(module, 'ADMIN', [readPermission, writePermission], false)).toBe(true);
+    }
+    // Employee holiday self-service is read/selection access, not tenant calendar management.
+    expect(canAccessModule('holidays', 'EMPLOYEE', ['organizations.read'], false)).toBe(true);
+  });
+
+  it('hides setup and approval destinations when the user has read access but no action permission', () => {
+    expect(canAccessModule('org-setup', 'ADMIN', ['organizations.read'], false)).toBe(false);
+    expect(canAccessModule('org-setup', 'ADMIN', ['branches.write'], false)).toBe(true);
+    expect(canAccessModule('approvals', 'ADMIN', ['approval-policies.read'], false)).toBe(false);
+    expect(canAccessModule('approvals', 'ADMIN', ['attendance.corrections.decide'], false)).toBe(
+      true,
+    );
+  });
+
   it('a module nobody has declared a permission for stays shut rather than opening by default', () => {
     expect(canAccessModule('some-future-module', 'ADMIN', ['*'], false)).toBe(true);
     expect(canAccessModule('some-future-module', 'ADMIN', ['organizations.read'], false)).toBe(
@@ -135,6 +166,23 @@ describe('canAdministerOrganization', () => {
 
   it('is false for a person with no permissions at all', () => {
     expect(canAdministerOrganization([])).toBe(false);
+  });
+});
+
+describe('workspace identity and employee resignation access', () => {
+  it('shows the HR role even when the HR account also has broad permissions', () => {
+    expect(
+      workspaceTitle({
+        permissions: ['*'],
+        roles: [{ code: 'HR_ADMIN', name: 'HR Admin' }],
+      }),
+    ).toEqual({ workspace: 'HR workspace', badge: 'HR Admin' });
+  });
+
+  it('does not offer employee resignation to people who manage employee records', () => {
+    expect(canSubmitSelfResignation(['employees.write'])).toBe(false);
+    expect(canSubmitSelfResignation(['*'])).toBe(false);
+    expect(canSubmitSelfResignation(['leave.requests.write'])).toBe(true);
   });
 });
 

@@ -352,6 +352,7 @@ export type UserWhereInput = {
   leaveApprovals?: Prisma.LeaveApprovalListRelationFilter
   timesheetApprovals?: Prisma.TimesheetApprovalListRelationFilter
   createdPayrollRuns?: Prisma.PayrollRunListRelationFilter
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalListRelationFilter
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentListRelationFilter
   payrollApprovals?: Prisma.PayrollApprovalListRelationFilter
   approvedSalaryAdvances?: Prisma.SalaryAdvanceListRelationFilter
@@ -415,6 +416,7 @@ export type UserOrderByWithRelationInput = {
   leaveApprovals?: Prisma.LeaveApprovalOrderByRelationAggregateInput
   timesheetApprovals?: Prisma.TimesheetApprovalOrderByRelationAggregateInput
   createdPayrollRuns?: Prisma.PayrollRunOrderByRelationAggregateInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalOrderByRelationAggregateInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentOrderByRelationAggregateInput
   payrollApprovals?: Prisma.PayrollApprovalOrderByRelationAggregateInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceOrderByRelationAggregateInput
@@ -482,6 +484,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   leaveApprovals?: Prisma.LeaveApprovalListRelationFilter
   timesheetApprovals?: Prisma.TimesheetApprovalListRelationFilter
   createdPayrollRuns?: Prisma.PayrollRunListRelationFilter
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalListRelationFilter
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentListRelationFilter
   payrollApprovals?: Prisma.PayrollApprovalListRelationFilter
   approvedSalaryAdvances?: Prisma.SalaryAdvanceListRelationFilter
@@ -595,6 +598,7 @@ export type UserCreateInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -658,6 +662,7 @@ export type UserUncheckedCreateInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -721,6 +726,7 @@ export type UserUpdateInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -784,6 +790,7 @@ export type UserUncheckedUpdateInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -1394,6 +1401,22 @@ export type UserUpdateOneWithoutCreatedPayrollRunsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedPayrollRunsInput, Prisma.UserUpdateWithoutCreatedPayrollRunsInput>, Prisma.UserUncheckedUpdateWithoutCreatedPayrollRunsInput>
 }
 
+export type UserCreateNestedOneWithoutDecidedPayrollRuleProposalsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDecidedPayrollRuleProposalsInput, Prisma.UserUncheckedCreateWithoutDecidedPayrollRuleProposalsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDecidedPayrollRuleProposalsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutDecidedPayrollRuleProposalsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDecidedPayrollRuleProposalsInput, Prisma.UserUncheckedCreateWithoutDecidedPayrollRuleProposalsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDecidedPayrollRuleProposalsInput
+  upsert?: Prisma.UserUpsertWithoutDecidedPayrollRuleProposalsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDecidedPayrollRuleProposalsInput, Prisma.UserUpdateWithoutDecidedPayrollRuleProposalsInput>, Prisma.UserUncheckedUpdateWithoutDecidedPayrollRuleProposalsInput>
+}
+
 export type UserCreateNestedOneWithoutApprovedSalaryAdvancesInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutApprovedSalaryAdvancesInput, Prisma.UserUncheckedCreateWithoutApprovedSalaryAdvancesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutApprovedSalaryAdvancesInput
@@ -1646,6 +1669,7 @@ export type UserCreateWithoutAttendanceApprovalsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -1708,6 +1732,7 @@ export type UserUncheckedCreateWithoutAttendanceApprovalsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -1786,6 +1811,7 @@ export type UserUpdateWithoutAttendanceApprovalsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -1848,6 +1874,7 @@ export type UserUncheckedUpdateWithoutAttendanceApprovalsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -1910,6 +1937,7 @@ export type UserCreateWithoutLeaveApprovalsInput = {
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -1972,6 +2000,7 @@ export type UserUncheckedCreateWithoutLeaveApprovalsInput = {
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -2050,6 +2079,7 @@ export type UserUpdateWithoutLeaveApprovalsInput = {
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -2112,6 +2142,7 @@ export type UserUncheckedUpdateWithoutLeaveApprovalsInput = {
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -2174,6 +2205,7 @@ export type UserCreateWithoutDelegationsGivenInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -2236,6 +2268,7 @@ export type UserUncheckedCreateWithoutDelegationsGivenInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -2303,6 +2336,7 @@ export type UserCreateWithoutDelegationsReceivedInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -2365,6 +2399,7 @@ export type UserUncheckedCreateWithoutDelegationsReceivedInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -2443,6 +2478,7 @@ export type UserUpdateWithoutDelegationsGivenInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -2505,6 +2541,7 @@ export type UserUncheckedUpdateWithoutDelegationsGivenInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -2578,6 +2615,7 @@ export type UserUpdateWithoutDelegationsReceivedInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -2640,6 +2678,7 @@ export type UserUncheckedUpdateWithoutDelegationsReceivedInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -2702,6 +2741,7 @@ export type UserCreateWithoutCreatedWebhookKeysInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -2764,6 +2804,7 @@ export type UserUncheckedCreateWithoutCreatedWebhookKeysInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -2842,6 +2883,7 @@ export type UserUpdateWithoutCreatedWebhookKeysInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -2904,6 +2946,7 @@ export type UserUncheckedUpdateWithoutCreatedWebhookKeysInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -2966,6 +3009,7 @@ export type UserCreateWithoutAuditLogsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -3028,6 +3072,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -3106,6 +3151,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -3168,6 +3214,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -3230,6 +3277,7 @@ export type UserCreateWithoutCreatedFederationClientsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -3292,6 +3340,7 @@ export type UserUncheckedCreateWithoutCreatedFederationClientsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -3370,6 +3419,7 @@ export type UserUpdateWithoutCreatedFederationClientsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -3432,6 +3482,7 @@ export type UserUncheckedUpdateWithoutCreatedFederationClientsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -3494,6 +3545,7 @@ export type UserCreateWithoutCreatedClientCredentialsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -3556,6 +3608,7 @@ export type UserUncheckedCreateWithoutCreatedClientCredentialsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -3634,6 +3687,7 @@ export type UserUpdateWithoutCreatedClientCredentialsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -3696,6 +3750,7 @@ export type UserUncheckedUpdateWithoutCreatedClientCredentialsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -3758,6 +3813,7 @@ export type UserCreateWithoutCreatedGrantsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -3820,6 +3876,7 @@ export type UserUncheckedCreateWithoutCreatedGrantsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -3898,6 +3955,7 @@ export type UserUpdateWithoutCreatedGrantsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -3960,6 +4018,7 @@ export type UserUncheckedUpdateWithoutCreatedGrantsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -4023,6 +4082,7 @@ export type UserCreateWithoutUpdatedOrganizationCapabilitiesInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -4085,6 +4145,7 @@ export type UserUncheckedCreateWithoutUpdatedOrganizationCapabilitiesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -4163,6 +4224,7 @@ export type UserUpdateWithoutUpdatedOrganizationCapabilitiesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -4225,6 +4287,7 @@ export type UserUncheckedUpdateWithoutUpdatedOrganizationCapabilitiesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -4286,6 +4349,7 @@ export type UserCreateWithoutUploadedFilesInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -4348,6 +4412,7 @@ export type UserUncheckedCreateWithoutUploadedFilesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -4426,6 +4491,7 @@ export type UserUpdateWithoutUploadedFilesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -4488,6 +4554,7 @@ export type UserUncheckedUpdateWithoutUploadedFilesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -4550,6 +4617,7 @@ export type UserCreateWithoutCreatedFileVersionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -4612,6 +4680,7 @@ export type UserUncheckedCreateWithoutCreatedFileVersionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -4690,6 +4759,7 @@ export type UserUpdateWithoutCreatedFileVersionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -4752,6 +4822,7 @@ export type UserUncheckedUpdateWithoutCreatedFileVersionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -4814,6 +4885,7 @@ export type UserCreateWithoutCreatedInvitationsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -4876,6 +4948,7 @@ export type UserUncheckedCreateWithoutCreatedInvitationsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -4943,6 +5016,7 @@ export type UserCreateWithoutAcceptedInvitationsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -5005,6 +5079,7 @@ export type UserUncheckedCreateWithoutAcceptedInvitationsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -5083,6 +5158,7 @@ export type UserUpdateWithoutCreatedInvitationsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -5145,6 +5221,7 @@ export type UserUncheckedUpdateWithoutCreatedInvitationsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -5218,6 +5295,7 @@ export type UserUpdateWithoutAcceptedInvitationsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -5280,6 +5358,7 @@ export type UserUncheckedUpdateWithoutAcceptedInvitationsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -5343,6 +5422,7 @@ export type UserCreateWithoutCreatedEmployeeAccessCodesInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -5405,6 +5485,7 @@ export type UserUncheckedCreateWithoutCreatedEmployeeAccessCodesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -5472,6 +5553,7 @@ export type UserCreateWithoutActivatedEmployeeAccessCodesInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -5534,6 +5616,7 @@ export type UserUncheckedCreateWithoutActivatedEmployeeAccessCodesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -5612,6 +5695,7 @@ export type UserUpdateWithoutCreatedEmployeeAccessCodesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -5674,6 +5758,7 @@ export type UserUncheckedUpdateWithoutCreatedEmployeeAccessCodesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -5747,6 +5832,7 @@ export type UserUpdateWithoutActivatedEmployeeAccessCodesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -5809,6 +5895,7 @@ export type UserUncheckedUpdateWithoutActivatedEmployeeAccessCodesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -5870,6 +5957,7 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -5932,6 +6020,7 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -6010,6 +6099,7 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -6072,6 +6162,7 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -6134,6 +6225,7 @@ export type UserCreateWithoutMembershipsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -6196,6 +6288,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -6274,6 +6367,7 @@ export type UserUpdateWithoutMembershipsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -6336,6 +6430,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -6398,6 +6493,7 @@ export type UserCreateWithoutAuthSessionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -6460,6 +6556,7 @@ export type UserUncheckedCreateWithoutAuthSessionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -6538,6 +6635,7 @@ export type UserUpdateWithoutAuthSessionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -6600,6 +6698,7 @@ export type UserUncheckedUpdateWithoutAuthSessionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -6662,6 +6761,7 @@ export type UserCreateWithoutPlatformRoleAssignmentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -6724,6 +6824,7 @@ export type UserUncheckedCreateWithoutPlatformRoleAssignmentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -6791,6 +6892,7 @@ export type UserCreateWithoutGrantedPlatformRolesInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -6853,6 +6955,7 @@ export type UserUncheckedCreateWithoutGrantedPlatformRolesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -6931,6 +7034,7 @@ export type UserUpdateWithoutPlatformRoleAssignmentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -6993,6 +7097,7 @@ export type UserUncheckedUpdateWithoutPlatformRoleAssignmentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -7066,6 +7171,7 @@ export type UserUpdateWithoutGrantedPlatformRolesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -7128,6 +7234,7 @@ export type UserUncheckedUpdateWithoutGrantedPlatformRolesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -7190,6 +7297,7 @@ export type UserCreateWithoutNotificationsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -7252,6 +7360,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -7330,6 +7439,7 @@ export type UserUpdateWithoutNotificationsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -7392,6 +7502,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -7454,6 +7565,7 @@ export type UserCreateWithoutCapturedAttendancePunchesInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -7516,6 +7628,7 @@ export type UserUncheckedCreateWithoutCapturedAttendancePunchesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -7594,6 +7707,7 @@ export type UserUpdateWithoutCapturedAttendancePunchesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -7656,6 +7770,7 @@ export type UserUncheckedUpdateWithoutCapturedAttendancePunchesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -7718,6 +7833,7 @@ export type UserCreateWithoutRequestedAttendanceCorrectionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -7780,6 +7896,7 @@ export type UserUncheckedCreateWithoutRequestedAttendanceCorrectionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -7858,6 +7975,7 @@ export type UserUpdateWithoutRequestedAttendanceCorrectionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -7920,6 +8038,7 @@ export type UserUncheckedUpdateWithoutRequestedAttendanceCorrectionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -7982,6 +8101,7 @@ export type UserCreateWithoutCreatedLeaveTransactionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -8044,6 +8164,7 @@ export type UserUncheckedCreateWithoutCreatedLeaveTransactionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -8122,6 +8243,7 @@ export type UserUpdateWithoutCreatedLeaveTransactionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -8184,6 +8306,7 @@ export type UserUncheckedUpdateWithoutCreatedLeaveTransactionsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -8246,6 +8369,7 @@ export type UserCreateWithoutTimesheetApprovalsInput = {
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -8308,6 +8432,7 @@ export type UserUncheckedCreateWithoutTimesheetApprovalsInput = {
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -8386,6 +8511,7 @@ export type UserUpdateWithoutTimesheetApprovalsInput = {
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -8448,6 +8574,7 @@ export type UserUncheckedUpdateWithoutTimesheetApprovalsInput = {
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -8510,6 +8637,7 @@ export type UserCreateWithoutRequestedHolidayReviewsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -8572,6 +8700,7 @@ export type UserUncheckedCreateWithoutRequestedHolidayReviewsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -8639,6 +8768,7 @@ export type UserCreateWithoutDecidedHolidayReviewsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -8701,6 +8831,7 @@ export type UserUncheckedCreateWithoutDecidedHolidayReviewsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -8779,6 +8910,7 @@ export type UserUpdateWithoutRequestedHolidayReviewsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -8841,6 +8973,7 @@ export type UserUncheckedUpdateWithoutRequestedHolidayReviewsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -8914,6 +9047,7 @@ export type UserUpdateWithoutDecidedHolidayReviewsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -8976,6 +9110,7 @@ export type UserUncheckedUpdateWithoutDecidedHolidayReviewsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -9038,6 +9173,7 @@ export type UserCreateWithoutCreatedPayrollRunsInput = {
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -9100,6 +9236,7 @@ export type UserUncheckedCreateWithoutCreatedPayrollRunsInput = {
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -9178,6 +9315,7 @@ export type UserUpdateWithoutCreatedPayrollRunsInput = {
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -9240,6 +9378,275 @@ export type UserUncheckedUpdateWithoutCreatedPayrollRunsInput = {
   createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutRejectedByNestedInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutMarkedByNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedUpdateManyWithoutUpdatedByNestedInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutActivatedByNestedInput
+}
+
+export type UserCreateWithoutDecidedPayrollRuleProposalsInput = {
+  id?: string
+  email: string
+  emailNormalized: string
+  displayName: string
+  passwordHash?: string | null
+  identityType?: $Enums.IdentityType
+  externalIdentityProvider?: string | null
+  externalIdentityId?: string | null
+  externalOrganizationId?: string | null
+  isActive?: boolean
+  tokenVersion?: number
+  passwordChangeRequired?: boolean
+  notificationDelivery?: string
+  emailNotifications?: boolean
+  lastLoginAt?: Date | string | null
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  delegationsGiven?: Prisma.ApprovalDelegationCreateNestedManyWithoutDelegatorInput
+  delegationsReceived?: Prisma.ApprovalDelegationCreateNestedManyWithoutDelegateInput
+  memberships?: Prisma.UserOrganizationCreateNestedManyWithoutUserInput
+  employee?: Prisma.EmployeeCreateNestedOneWithoutUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleCreateNestedManyWithoutUserInput
+  organizationRoleAssignments?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutRecipientInput
+  uploadedFiles?: Prisma.FileObjectCreateNestedManyWithoutUploadedByInput
+  createdFileVersions?: Prisma.FileObjectVersionCreateNestedManyWithoutCreatedByInput
+  createdInvitations?: Prisma.UserInvitationCreateNestedManyWithoutInvitedByInput
+  acceptedInvitations?: Prisma.UserInvitationCreateNestedManyWithoutAcceptedByInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleCreateNestedManyWithoutGrantedByInput
+  createdRoles?: Prisma.RoleCreateNestedManyWithoutCreatedByInput
+  grantedOrganizationRoles?: Prisma.UserRoleCreateNestedManyWithoutGrantedByInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyCreateNestedManyWithoutCreatedByInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeCreateNestedManyWithoutRequestedByInput
+  createdFederationClients?: Prisma.FederationClientCreateNestedManyWithoutCreatedByInput
+  createdClientCredentials?: Prisma.FederationClientCredentialCreateNestedManyWithoutCreatedByInput
+  createdGrants?: Prisma.FederationGrantCreateNestedManyWithoutCreatedByInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyCreateNestedManyWithoutCreatedByInput
+  capturedAttendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutCapturedByInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutDecidedByInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApproverInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionCreateNestedManyWithoutCreatedByUserInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
+  createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutRejectedByInput
+  markedPayrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutMarkedByInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityCreateNestedManyWithoutUpdatedByInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutActivatedByInput
+}
+
+export type UserUncheckedCreateWithoutDecidedPayrollRuleProposalsInput = {
+  id?: string
+  email: string
+  emailNormalized: string
+  displayName: string
+  passwordHash?: string | null
+  identityType?: $Enums.IdentityType
+  externalIdentityProvider?: string | null
+  externalIdentityId?: string | null
+  externalOrganizationId?: string | null
+  isActive?: boolean
+  tokenVersion?: number
+  passwordChangeRequired?: boolean
+  notificationDelivery?: string
+  emailNotifications?: boolean
+  lastLoginAt?: Date | string | null
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  delegationsGiven?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutDelegatorInput
+  delegationsReceived?: Prisma.ApprovalDelegationUncheckedCreateNestedManyWithoutDelegateInput
+  memberships?: Prisma.UserOrganizationUncheckedCreateNestedManyWithoutUserInput
+  employee?: Prisma.EmployeeUncheckedCreateNestedOneWithoutUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUncheckedCreateNestedManyWithoutUserInput
+  organizationRoleAssignments?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutRecipientInput
+  uploadedFiles?: Prisma.FileObjectUncheckedCreateNestedManyWithoutUploadedByInput
+  createdFileVersions?: Prisma.FileObjectVersionUncheckedCreateNestedManyWithoutCreatedByInput
+  createdInvitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutInvitedByInput
+  acceptedInvitations?: Prisma.UserInvitationUncheckedCreateNestedManyWithoutAcceptedByInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUncheckedCreateNestedManyWithoutGrantedByInput
+  createdRoles?: Prisma.RoleUncheckedCreateNestedManyWithoutCreatedByInput
+  grantedOrganizationRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutGrantedByInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUncheckedCreateNestedManyWithoutCreatedByInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUncheckedCreateNestedManyWithoutRequestedByInput
+  createdFederationClients?: Prisma.FederationClientUncheckedCreateNestedManyWithoutCreatedByInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUncheckedCreateNestedManyWithoutCreatedByInput
+  createdGrants?: Prisma.FederationGrantUncheckedCreateNestedManyWithoutCreatedByInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedCreateNestedManyWithoutCreatedByInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutCapturedByInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedCreateNestedManyWithoutRequestedByUserInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutRequestedByInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutDecidedByInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApproverInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedCreateNestedManyWithoutCreatedByUserInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
+  createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutRejectedByInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutMarkedByInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUncheckedCreateNestedManyWithoutApproverUserInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUncheckedCreateNestedManyWithoutUpdatedByInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutRevokedByInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutActivatedByInput
+}
+
+export type UserCreateOrConnectWithoutDecidedPayrollRuleProposalsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDecidedPayrollRuleProposalsInput, Prisma.UserUncheckedCreateWithoutDecidedPayrollRuleProposalsInput>
+}
+
+export type UserUpsertWithoutDecidedPayrollRuleProposalsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDecidedPayrollRuleProposalsInput, Prisma.UserUncheckedUpdateWithoutDecidedPayrollRuleProposalsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDecidedPayrollRuleProposalsInput, Prisma.UserUncheckedCreateWithoutDecidedPayrollRuleProposalsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDecidedPayrollRuleProposalsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDecidedPayrollRuleProposalsInput, Prisma.UserUncheckedUpdateWithoutDecidedPayrollRuleProposalsInput>
+}
+
+export type UserUpdateWithoutDecidedPayrollRuleProposalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalIdentityProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalIdentityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  passwordChangeRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notificationDelivery?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNotifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  delegationsGiven?: Prisma.ApprovalDelegationUpdateManyWithoutDelegatorNestedInput
+  delegationsReceived?: Prisma.ApprovalDelegationUpdateManyWithoutDelegateNestedInput
+  memberships?: Prisma.UserOrganizationUpdateManyWithoutUserNestedInput
+  employee?: Prisma.EmployeeUpdateOneWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUpdateManyWithoutUserNestedInput
+  organizationRoleAssignments?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutRecipientNestedInput
+  uploadedFiles?: Prisma.FileObjectUpdateManyWithoutUploadedByNestedInput
+  createdFileVersions?: Prisma.FileObjectVersionUpdateManyWithoutCreatedByNestedInput
+  createdInvitations?: Prisma.UserInvitationUpdateManyWithoutInvitedByNestedInput
+  acceptedInvitations?: Prisma.UserInvitationUpdateManyWithoutAcceptedByNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUpdateManyWithoutGrantedByNestedInput
+  createdRoles?: Prisma.RoleUpdateManyWithoutCreatedByNestedInput
+  grantedOrganizationRoles?: Prisma.UserRoleUpdateManyWithoutGrantedByNestedInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUpdateManyWithoutCreatedByNestedInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUpdateManyWithoutRequestedByNestedInput
+  createdFederationClients?: Prisma.FederationClientUpdateManyWithoutCreatedByNestedInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUpdateManyWithoutCreatedByNestedInput
+  createdGrants?: Prisma.FederationGrantUpdateManyWithoutCreatedByNestedInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUpdateManyWithoutCreatedByNestedInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUpdateManyWithoutCapturedByNestedInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutDecidedByNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUpdateManyWithoutApproverNestedInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUpdateManyWithoutCreatedByUserNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
+  createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
+  payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
+  approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
+  rejectedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutRejectedByNestedInput
+  markedPayrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutMarkedByNestedInput
+  approvalPolicySteps?: Prisma.ApprovalPolicyStepUpdateManyWithoutApproverUserNestedInput
+  updatedOrganizationCapabilities?: Prisma.OrganizationFederationCapabilityUpdateManyWithoutUpdatedByNestedInput
+  revokedWebauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutRevokedByNestedInput
+  createdEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutCreatedByNestedInput
+  activatedEmployeeAccessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutActivatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDecidedPayrollRuleProposalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNormalized?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalIdentityProvider?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalIdentityId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalOrganizationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  passwordChangeRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  notificationDelivery?: Prisma.StringFieldUpdateOperationsInput | string
+  emailNotifications?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  delegationsGiven?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutDelegatorNestedInput
+  delegationsReceived?: Prisma.ApprovalDelegationUncheckedUpdateManyWithoutDelegateNestedInput
+  memberships?: Prisma.UserOrganizationUncheckedUpdateManyWithoutUserNestedInput
+  employee?: Prisma.EmployeeUncheckedUpdateOneWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  platformRoleAssignments?: Prisma.UserPlatformRoleUncheckedUpdateManyWithoutUserNestedInput
+  organizationRoleAssignments?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutRecipientNestedInput
+  uploadedFiles?: Prisma.FileObjectUncheckedUpdateManyWithoutUploadedByNestedInput
+  createdFileVersions?: Prisma.FileObjectVersionUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdInvitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutInvitedByNestedInput
+  acceptedInvitations?: Prisma.UserInvitationUncheckedUpdateManyWithoutAcceptedByNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  grantedPlatformRoles?: Prisma.UserPlatformRoleUncheckedUpdateManyWithoutGrantedByNestedInput
+  createdRoles?: Prisma.RoleUncheckedUpdateManyWithoutCreatedByNestedInput
+  grantedOrganizationRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutGrantedByNestedInput
+  createdApprovalPolicies?: Prisma.ApprovalPolicyUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdSourceChanges?: Prisma.OrganizationSourceChangeUncheckedUpdateManyWithoutRequestedByNestedInput
+  createdFederationClients?: Prisma.FederationClientUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdClientCredentials?: Prisma.FederationClientCredentialUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdGrants?: Prisma.FederationGrantUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdWebhookKeys?: Prisma.WebhookSigningKeyUncheckedUpdateManyWithoutCreatedByNestedInput
+  capturedAttendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutCapturedByNestedInput
+  requestedAttendanceCorrections?: Prisma.AttendanceCorrectionUncheckedUpdateManyWithoutRequestedByUserNestedInput
+  requestedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutRequestedByNestedInput
+  decidedHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutDecidedByNestedInput
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  createdLeaveTransactions?: Prisma.LeaveBalanceTransactionUncheckedUpdateManyWithoutCreatedByUserNestedInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -9303,6 +9710,7 @@ export type UserCreateWithoutApprovedSalaryAdvancesInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   rejectedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutRejectedByInput
@@ -9365,6 +9773,7 @@ export type UserUncheckedCreateWithoutApprovedSalaryAdvancesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutRejectedByInput
@@ -9432,6 +9841,7 @@ export type UserCreateWithoutRejectedSalaryAdvancesInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -9494,6 +9904,7 @@ export type UserUncheckedCreateWithoutRejectedSalaryAdvancesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -9572,6 +9983,7 @@ export type UserUpdateWithoutApprovedSalaryAdvancesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   rejectedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutRejectedByNestedInput
@@ -9634,6 +10046,7 @@ export type UserUncheckedUpdateWithoutApprovedSalaryAdvancesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutRejectedByNestedInput
@@ -9707,6 +10120,7 @@ export type UserUpdateWithoutRejectedSalaryAdvancesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -9769,6 +10183,7 @@ export type UserUncheckedUpdateWithoutRejectedSalaryAdvancesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -9831,6 +10246,7 @@ export type UserCreateWithoutMarkedPayrollPaymentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -9893,6 +10309,7 @@ export type UserUncheckedCreateWithoutMarkedPayrollPaymentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -9971,6 +10388,7 @@ export type UserUpdateWithoutMarkedPayrollPaymentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -10033,6 +10451,7 @@ export type UserUncheckedUpdateWithoutMarkedPayrollPaymentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -10095,6 +10514,7 @@ export type UserCreateWithoutCreatedPayrollAdjustmentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
   rejectedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutRejectedByInput
@@ -10157,6 +10577,7 @@ export type UserUncheckedCreateWithoutCreatedPayrollAdjustmentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
   rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutRejectedByInput
@@ -10235,6 +10656,7 @@ export type UserUpdateWithoutCreatedPayrollAdjustmentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
   rejectedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutRejectedByNestedInput
@@ -10297,6 +10719,7 @@ export type UserUncheckedUpdateWithoutCreatedPayrollAdjustmentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
   rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutRejectedByNestedInput
@@ -10359,6 +10782,7 @@ export type UserCreateWithoutPayrollApprovalsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
   rejectedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutRejectedByInput
@@ -10421,6 +10845,7 @@ export type UserUncheckedCreateWithoutPayrollApprovalsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
   rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutRejectedByInput
@@ -10499,6 +10924,7 @@ export type UserUpdateWithoutPayrollApprovalsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
   rejectedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutRejectedByNestedInput
@@ -10561,6 +10987,7 @@ export type UserUncheckedUpdateWithoutPayrollApprovalsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
   rejectedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutRejectedByNestedInput
@@ -10622,6 +11049,7 @@ export type UserCreateWithoutCreatedRolesInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -10684,6 +11112,7 @@ export type UserUncheckedCreateWithoutCreatedRolesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -10762,6 +11191,7 @@ export type UserUpdateWithoutCreatedRolesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -10824,6 +11254,7 @@ export type UserUncheckedUpdateWithoutCreatedRolesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -10886,6 +11317,7 @@ export type UserCreateWithoutOrganizationRoleAssignmentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -10948,6 +11380,7 @@ export type UserUncheckedCreateWithoutOrganizationRoleAssignmentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -11015,6 +11448,7 @@ export type UserCreateWithoutGrantedOrganizationRolesInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -11077,6 +11511,7 @@ export type UserUncheckedCreateWithoutGrantedOrganizationRolesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -11155,6 +11590,7 @@ export type UserUpdateWithoutOrganizationRoleAssignmentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -11217,6 +11653,7 @@ export type UserUncheckedUpdateWithoutOrganizationRoleAssignmentsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -11290,6 +11727,7 @@ export type UserUpdateWithoutGrantedOrganizationRolesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -11352,6 +11790,7 @@ export type UserUncheckedUpdateWithoutGrantedOrganizationRolesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -11414,6 +11853,7 @@ export type UserCreateWithoutCreatedApprovalPoliciesInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -11476,6 +11916,7 @@ export type UserUncheckedCreateWithoutCreatedApprovalPoliciesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -11554,6 +11995,7 @@ export type UserUpdateWithoutCreatedApprovalPoliciesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -11616,6 +12058,7 @@ export type UserUncheckedUpdateWithoutCreatedApprovalPoliciesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -11679,6 +12122,7 @@ export type UserCreateWithoutApprovalPolicyStepsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -11741,6 +12185,7 @@ export type UserUncheckedCreateWithoutApprovalPolicyStepsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -11819,6 +12264,7 @@ export type UserUpdateWithoutApprovalPolicyStepsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -11881,6 +12327,7 @@ export type UserUncheckedUpdateWithoutApprovalPolicyStepsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -11942,6 +12389,7 @@ export type UserCreateWithoutCreatedSourceChangesInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -12004,6 +12452,7 @@ export type UserUncheckedCreateWithoutCreatedSourceChangesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -12082,6 +12531,7 @@ export type UserUpdateWithoutCreatedSourceChangesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -12144,6 +12594,7 @@ export type UserUncheckedUpdateWithoutCreatedSourceChangesInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -12207,6 +12658,7 @@ export type UserCreateWithoutRevokedWebauthnCredentialsInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -12269,6 +12721,7 @@ export type UserUncheckedCreateWithoutRevokedWebauthnCredentialsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -12347,6 +12800,7 @@ export type UserUpdateWithoutRevokedWebauthnCredentialsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -12409,6 +12863,7 @@ export type UserUncheckedUpdateWithoutRevokedWebauthnCredentialsInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -12470,6 +12925,7 @@ export type UserCreateWithoutEmployeeInput = {
   leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutApprovedByInput
@@ -12532,6 +12988,7 @@ export type UserUncheckedCreateWithoutEmployeeInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApproverInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApproverInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedCreateNestedManyWithoutCreatedByInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedCreateNestedManyWithoutDecidedByInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutCreatedByUserInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApproverInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutApprovedByInput
@@ -12610,6 +13067,7 @@ export type UserUpdateWithoutEmployeeInput = {
   leaveApprovals?: Prisma.LeaveApprovalUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutApprovedByNestedInput
@@ -12672,6 +13130,7 @@ export type UserUncheckedUpdateWithoutEmployeeInput = {
   leaveApprovals?: Prisma.LeaveApprovalUncheckedUpdateManyWithoutApproverNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApproverNestedInput
   createdPayrollRuns?: Prisma.PayrollRunUncheckedUpdateManyWithoutCreatedByNestedInput
+  decidedPayrollRuleProposals?: Prisma.PayrollRuleUpdateProposalUncheckedUpdateManyWithoutDecidedByNestedInput
   createdPayrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutCreatedByUserNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApproverNestedInput
   approvedSalaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutApprovedByNestedInput
@@ -12721,6 +13180,7 @@ export type UserCountOutputType = {
   leaveApprovals: number
   timesheetApprovals: number
   createdPayrollRuns: number
+  decidedPayrollRuleProposals: number
   createdPayrollAdjustments: number
   payrollApprovals: number
   approvedSalaryAdvances: number
@@ -12765,6 +13225,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   leaveApprovals?: boolean | UserCountOutputTypeCountLeaveApprovalsArgs
   timesheetApprovals?: boolean | UserCountOutputTypeCountTimesheetApprovalsArgs
   createdPayrollRuns?: boolean | UserCountOutputTypeCountCreatedPayrollRunsArgs
+  decidedPayrollRuleProposals?: boolean | UserCountOutputTypeCountDecidedPayrollRuleProposalsArgs
   createdPayrollAdjustments?: boolean | UserCountOutputTypeCountCreatedPayrollAdjustmentsArgs
   payrollApprovals?: boolean | UserCountOutputTypeCountPayrollApprovalsArgs
   approvedSalaryAdvances?: boolean | UserCountOutputTypeCountApprovedSalaryAdvancesArgs
@@ -13007,6 +13468,13 @@ export type UserCountOutputTypeCountCreatedPayrollRunsArgs<ExtArgs extends runti
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountDecidedPayrollRuleProposalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PayrollRuleUpdateProposalWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountCreatedPayrollAdjustmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PayrollAdjustmentWhereInput
 }
@@ -13126,6 +13594,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   leaveApprovals?: boolean | Prisma.User$leaveApprovalsArgs<ExtArgs>
   timesheetApprovals?: boolean | Prisma.User$timesheetApprovalsArgs<ExtArgs>
   createdPayrollRuns?: boolean | Prisma.User$createdPayrollRunsArgs<ExtArgs>
+  decidedPayrollRuleProposals?: boolean | Prisma.User$decidedPayrollRuleProposalsArgs<ExtArgs>
   createdPayrollAdjustments?: boolean | Prisma.User$createdPayrollAdjustmentsArgs<ExtArgs>
   payrollApprovals?: boolean | Prisma.User$payrollApprovalsArgs<ExtArgs>
   approvedSalaryAdvances?: boolean | Prisma.User$approvedSalaryAdvancesArgs<ExtArgs>
@@ -13236,6 +13705,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   leaveApprovals?: boolean | Prisma.User$leaveApprovalsArgs<ExtArgs>
   timesheetApprovals?: boolean | Prisma.User$timesheetApprovalsArgs<ExtArgs>
   createdPayrollRuns?: boolean | Prisma.User$createdPayrollRunsArgs<ExtArgs>
+  decidedPayrollRuleProposals?: boolean | Prisma.User$decidedPayrollRuleProposalsArgs<ExtArgs>
   createdPayrollAdjustments?: boolean | Prisma.User$createdPayrollAdjustmentsArgs<ExtArgs>
   payrollApprovals?: boolean | Prisma.User$payrollApprovalsArgs<ExtArgs>
   approvedSalaryAdvances?: boolean | Prisma.User$approvedSalaryAdvancesArgs<ExtArgs>
@@ -13286,6 +13756,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     leaveApprovals: Prisma.$LeaveApprovalPayload<ExtArgs>[]
     timesheetApprovals: Prisma.$TimesheetApprovalPayload<ExtArgs>[]
     createdPayrollRuns: Prisma.$PayrollRunPayload<ExtArgs>[]
+    decidedPayrollRuleProposals: Prisma.$PayrollRuleUpdateProposalPayload<ExtArgs>[]
     createdPayrollAdjustments: Prisma.$PayrollAdjustmentPayload<ExtArgs>[]
     payrollApprovals: Prisma.$PayrollApprovalPayload<ExtArgs>[]
     approvedSalaryAdvances: Prisma.$SalaryAdvancePayload<ExtArgs>[]
@@ -13745,6 +14216,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   leaveApprovals<T extends Prisma.User$leaveApprovalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$leaveApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   timesheetApprovals<T extends Prisma.User$timesheetApprovalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$timesheetApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimesheetApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdPayrollRuns<T extends Prisma.User$createdPayrollRunsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdPayrollRunsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  decidedPayrollRuleProposals<T extends Prisma.User$decidedPayrollRuleProposalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$decidedPayrollRuleProposalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollRuleUpdateProposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdPayrollAdjustments<T extends Prisma.User$createdPayrollAdjustmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdPayrollAdjustmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollAdjustmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payrollApprovals<T extends Prisma.User$payrollApprovalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$payrollApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayrollApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   approvedSalaryAdvances<T extends Prisma.User$approvedSalaryAdvancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$approvedSalaryAdvancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SalaryAdvancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -14955,6 +15427,30 @@ export type User$createdPayrollRunsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.PayrollRunScalarFieldEnum | Prisma.PayrollRunScalarFieldEnum[]
+}
+
+/**
+ * User.decidedPayrollRuleProposals
+ */
+export type User$decidedPayrollRuleProposalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PayrollRuleUpdateProposal
+   */
+  select?: Prisma.PayrollRuleUpdateProposalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PayrollRuleUpdateProposal
+   */
+  omit?: Prisma.PayrollRuleUpdateProposalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayrollRuleUpdateProposalInclude<ExtArgs> | null
+  where?: Prisma.PayrollRuleUpdateProposalWhereInput
+  orderBy?: Prisma.PayrollRuleUpdateProposalOrderByWithRelationInput | Prisma.PayrollRuleUpdateProposalOrderByWithRelationInput[]
+  cursor?: Prisma.PayrollRuleUpdateProposalWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PayrollRuleUpdateProposalScalarFieldEnum | Prisma.PayrollRuleUpdateProposalScalarFieldEnum[]
 }
 
 /**

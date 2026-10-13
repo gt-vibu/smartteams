@@ -27,6 +27,26 @@ export class PayrollPayslipsService {
     return this.database.run(context, async (tx) => {
       const canReadAll =
         context.permissions.has('*') || context.permissions.has('payroll.payslips.read.all');
+      // Organization admins can always review payroll. For an employee's self-service request,
+      // the currently effective organization policy controls whether payslips are exposed at all.
+      // Apply this only to native self-service; federation keeps its existing authorization path.
+      if (context.accessMode === AccessMode.NATIVE && !canReadAll) {
+        const today = new Date();
+        const startOfToday = new Date(
+          Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+        );
+        const policy = await tx.payrollPolicy.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            isDefault: true,
+            effectiveFrom: { lte: startOfToday },
+            OR: [{ effectiveTo: null }, { effectiveTo: { gte: startOfToday } }],
+          },
+          orderBy: { effectiveFrom: 'desc' },
+          select: { salarySlipDefault: true },
+        });
+        if (policy?.salarySlipDefault === false) return [];
+      }
       let employeeId = requestedEmployeeId;
       if (context.accessMode === AccessMode.FEDERATION && !requestedEmployeeId && !canReadAll)
         return [];
@@ -123,6 +143,31 @@ export class PayrollPayslipsService {
           deductionAmount: payslip.payrollLineItem.deductionAmount,
           netAmount: payslip.payrollLineItem.netAmount,
         },
+        ...(native &&
+        (canReadAll || detailedSalarySlipAllowed(payslip.payrollLineItem.inputSnapshot))
+          ? (() => {
+              const breakdown = (payslip.payrollLineItem.calculationBreakdown ?? {}) as {
+                periodWorkingDays?: unknown;
+                paidLeaveDays?: unknown;
+                unpaidLeaveDays?: unknown;
+                unpaidAttendanceDays?: unknown;
+                unemployedDays?: unknown;
+                unpaidLeaveAdjustment?: unknown;
+              };
+              return {
+                payrollSummary: {
+                  workingDays: Number(breakdown.periodWorkingDays ?? 0),
+                  paidLeaveDays: Number(breakdown.paidLeaveDays ?? 0),
+                  unpaidDays:
+                    Number(breakdown.unpaidLeaveDays ?? 0) +
+                    Number(breakdown.unpaidAttendanceDays ?? 0) +
+                    Number(breakdown.unemployedDays ?? 0),
+                  unpaidTimeReduction:
+                    Math.round(Number(breakdown.unpaidLeaveAdjustment ?? 0) * 100) / 100,
+                },
+              };
+            })()
+          : {}),
         components:
           canReadAll || detailedSalarySlipAllowed(payslip.payrollLineItem.inputSnapshot)
             ? mergeSalaryComponents(

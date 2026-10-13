@@ -88,6 +88,7 @@ export function AccessEditRoleDialog({
                     >
                       <Checkbox
                         aria-label={entry.label}
+                        className="shrink-0"
                         checked={selected.has(entry.key)}
                         disabled={locked || saving}
                         onCheckedChange={(checked) =>
@@ -99,9 +100,8 @@ export function AccessEditRoleDialog({
                           })
                         }
                       />
-                      <span className="text-xs text-foreground">{entry.label}</span>
-                      <span className="ml-auto font-mono text-[10px] text-muted-foreground">
-                        {entry.key}
+                      <span className="min-w-0 flex-1 text-sm leading-5 text-foreground">
+                        {entry.label}
                       </span>
                     </label>
                   );

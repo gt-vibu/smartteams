@@ -28,9 +28,50 @@ function DialogWithPicker() {
 
 afterEach(() => {
   vi.restoreAllMocks();
+  vi.useRealTimers();
 });
 
+function LeaveRangePickers() {
+  const [start, setStart] = React.useState('');
+  const [end, setEnd] = React.useState('');
+  return (
+    <>
+      <DatePicker aria-label="From date" min="2026-10-09" onChange={setStart} value={start} />
+      <DatePicker
+        aria-label="To date"
+        initialMonth={start}
+        min={start || undefined}
+        onChange={setEnd}
+        value={end}
+      />
+    </>
+  );
+}
+
 describe('DatePicker inside a scrolling dialog', () => {
+  it('disables blocked dates and prevents Today from bypassing range restrictions', () => {
+    const onChange = vi.fn();
+    render(
+      <DatePicker
+        aria-label="Leave end"
+        value="2026-09-10"
+        min="2026-09-10"
+        max="2026-09-20"
+        disabledDate={(date) => (date === '2026-09-15' ? 'Already requested for leave' : undefined)}
+        onChange={onChange}
+      />,
+    );
+    fireEvent.click(screen.getByLabelText('Leave end'));
+    expect(screen.getByRole('button', { name: '9' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '15' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: '21' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Today' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: '15' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Today' }));
+    expect(onChange).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: '10' }));
+    expect(onChange).toHaveBeenCalledWith('2026-09-10');
+  });
   it('renders the calendar outside the dialog, so nothing can clip it', () => {
     render(<DialogWithPicker />);
     fireEvent.click(screen.getByLabelText('End date'));
@@ -66,5 +107,19 @@ describe('DatePicker inside a scrolling dialog', () => {
     fireEvent.click(trigger);
     expect(screen.getByRole('dialog', { name: 'Choose date' })).toBeTruthy();
     expect(screen.getByText('September 2026')).toBeTruthy();
+  });
+
+  it('opens the end-date calendar on the selected start month', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 9, 9, 12));
+    render(<LeaveRangePickers />);
+
+    fireEvent.click(screen.getByLabelText('From date'));
+    fireEvent.click(screen.getByTitle('Next Month'));
+    fireEvent.click(screen.getByRole('button', { name: '15' }));
+    fireEvent.click(screen.getByLabelText('To date'));
+
+    expect(screen.getByText('November 2026')).toBeTruthy();
+    expect(screen.queryByText('October 2026')).toBeNull();
   });
 });

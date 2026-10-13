@@ -1,6 +1,6 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AssignmentsState } from '../../hooks/use-assignments';
 import type { ProjectMembership, TeamMembership } from '../../services/membership-state';
 import { AssignEmployeeModal } from './assign-employee-modal';
@@ -22,9 +22,9 @@ function teamMembership(overrides: Partial<TeamMembership> = {}): TeamMembership
       members: [],
     },
     state: 'NOT_A_MEMBER',
+    isLead: false,
     memberId: null,
     endedOn: null,
-    isLead: false,
     ...overrides,
   };
 }
@@ -40,9 +40,9 @@ function projectMembership(overrides: Partial<ProjectMembership> = {}): ProjectM
       members: [],
     },
     state: 'NOT_A_MEMBER',
+    isLead: false,
     memberId: null,
     endedOn: null,
-    isLead: false,
     ...overrides,
   };
 }

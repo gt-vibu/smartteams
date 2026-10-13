@@ -51,6 +51,7 @@ model User {
   leaveApprovals                  LeaveApproval[]
   timesheetApprovals              TimesheetApproval[]
   createdPayrollRuns              PayrollRun[]
+  decidedPayrollRuleProposals     PayrollRuleUpdateProposal[]
   createdPayrollAdjustments       PayrollAdjustment[]
   payrollApprovals                PayrollApproval[]
   approvedSalaryAdvances          SalaryAdvance[]                    @relation("AdvanceApprovedBy")

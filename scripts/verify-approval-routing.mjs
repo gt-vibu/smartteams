@@ -35,6 +35,12 @@ const apply = (who) => {
 const decide = (as, id) =>
   as('POST', `/leave/requests/${id}/decision`, { status: 'APPROVED', comment: 'Routing check' });
 const admin = (method, path, body) => t.org(method, path, body);
+const notificationFor = async (as, entityId) => {
+  const response = await as('GET', '/notifications');
+  return rows(response.payload?.items).filter(
+    (item) => item.entityId === entityId && item.kind === 'LEAVE_PENDING',
+  );
+};
 
 console.log('who can be named on a step');
 let r = await admin('GET', '/approval-policies/approver-candidates');
@@ -73,6 +79,11 @@ ok('a policy with no history is edited in place', good(r) && r.payload?.id === p
 r = await apply(t.a);
 ok('Ada can now ask', good(r), status(r));
 const first = r.payload?.id;
+ok('the backup role receives the request', (await notificationFor(admin, first)).length === 1);
+ok(
+  'the requester is not notified as an approver',
+  (await notificationFor(t.a.as, first)).length === 0,
+);
 r = await decide(t.b.as, first);
 ok('a colleague cannot decide it', refused(r), status(r));
 r = await decide(admin, first);
@@ -84,8 +95,39 @@ ok('setup: Bea becomes Ada’s manager', good(r), status(r));
 r = await apply(t.a);
 ok('Ada asks again', good(r), status(r));
 const waiting = r.payload?.id;
+ok('her active manager receives it', (await notificationFor(t.b.as, waiting)).length === 1);
+ok(
+  'the backup role is not notified while the manager is active',
+  (await notificationFor(admin, waiting)).length === 0,
+);
 r = await decide(admin, waiting);
 ok('the backup no longer decides: her manager is there', refused(r), status(r));
+
+console.log('\na manager with no manager requests leave');
+r = await apply(t.b);
+ok('Bea can submit as a manager without a manager above her', good(r), status(r));
+const managerRequest = r.payload?.id;
+ok(
+  'the configured backup role receives Bea’s request',
+  (await notificationFor(admin, managerRequest)).length === 1,
+);
+ok(
+  'Bea does not receive her own approval notification',
+  (await notificationFor(t.b.as, managerRequest)).length === 0,
+);
+r = await decide(admin, managerRequest);
+ok('the backup role can decide Bea’s request', good(r), status(r));
+
+console.log('\nHR requests leave for herself');
+const hrRole = t.roles.find((role) => role.code === 'HR_ADMIN');
+ok('setup: the HR role exists', Boolean(hrRole));
+if (!hrRole) throw new Error('The HR_ADMIN role was not seeded');
+r = await admin('POST', '/role-assignments', { userId: t.a.userId, roleId: hrRole.id });
+ok('setup: Ada has HR permissions', good(r), status(r));
+r = await admin('POST', '/role-assignments', { userId: t.b.userId, roleId: hrRole.id });
+ok('setup: her manager can act as HR too', good(r), status(r));
+r = await decide(t.a.as, waiting);
+ok('HR cannot approve her own leave request', refused(r), status(r));
 
 console.log('\nediting a policy that has already routed requests');
 r = await admin('PATCH', `/approval-policies/${policyId}`, {
@@ -106,7 +148,7 @@ ok(
   current?.code === 'LEAVE_MGR' && current?.isDefault,
 );
 r = await decide(t.b.as, waiting);
-ok('the request already waiting is decided on its original steps', good(r), status(r));
+ok('the manager decides HR’s request on its original steps', good(r), status(r));
 
 console.log('\na step naming one person');
 r = await apply(t.a);

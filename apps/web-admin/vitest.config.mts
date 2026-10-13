@@ -12,9 +12,9 @@ export default defineConfig({
     restoreMocks: true,
     server: {
       deps: {
-        // Workspace packages ship compiled JS. Letting Vite transform them makes it resolve
-        // their tsconfig, which extends a workspace preset it cannot locate from here.
-        external: [/packages[\/](contracts|ui|config)[\/]/],
+        // Contracts/config ship compiled JS; UI exports TypeScript and is transformed.
+        // External compiled packages do not need workspace tsconfig resolution.
+        external: [/packages[\/](contracts|config)[\/]/],
       },
     },
   },

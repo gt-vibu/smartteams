@@ -147,6 +147,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const permissions = persona?.permissions ?? [];
+  // Keep the shell's auth gate aligned with `useAuth`: a persona without a tenant-scoped
+  // session is not enough to render workspace components that rely on authenticated identity.
+  const isAuthenticated = persona !== null && authRepository.isAuthenticated();
 
   /**
    * Whether the signed-in employee is on a team, from the teams API.
@@ -198,9 +201,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       : [];
     return {
       persona,
-      session: authRepository.getAuthSession(),
+      session: isAuthenticated ? authRepository.getAuthSession() : null,
       memberships: authRepository.getMemberships(),
-      isAuthenticated: persona !== null,
+      isAuthenticated,
       isRestoring,
       restoreFailed,
       retryRestore,
@@ -230,6 +233,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // helpers below depend on.
   }, [
     persona,
+    isAuthenticated,
     permissions,
     isRestoring,
     restoreFailed,
@@ -253,4 +257,6 @@ export function useSession(): SessionState {
 }
 
 /** Optional access for reusable controls that also support supplied options outside the app. */
-export function useOptionalSession() { return useContext(AuthContext); }
+export function useOptionalSession() {
+  return useContext(AuthContext);
+}

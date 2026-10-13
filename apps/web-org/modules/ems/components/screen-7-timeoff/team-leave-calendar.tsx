@@ -49,7 +49,11 @@ export function TeamLeaveCalendar() {
   const entries = useMemo(() => calendar.data ?? [], [calendar.data]);
   const today = localDateKey(now);
   const offToday = entries.filter(
-    (entry) => entry.status === 'APPROVED' && entry.startDate <= today && entry.endDate >= today,
+    (entry) =>
+      entry.status === 'APPROVED' &&
+      entry.startDate <= today &&
+      entry.endDate >= today &&
+      !entry.workedDates?.includes(today),
   );
   const step = (by: number) =>
     setMonth(({ year, month: m }) => {
@@ -106,7 +110,11 @@ export function TeamLeaveCalendar() {
       )}
 
       {calendar.loading ? (
-        <LoadingIndicator variant="panel" label="Loading the calendar" className="py-6 text-center text-xs text-muted-foreground" />
+        <LoadingIndicator
+          variant="panel"
+          label="Loading the calendar"
+          className="py-6 text-center text-xs text-muted-foreground"
+        />
       ) : calendar.error ? (
         <p
           className="rounded-lg border border-border bg-card px-4 py-3 text-xs text-destructive"
@@ -130,6 +138,9 @@ export function TeamLeaveCalendar() {
                 <span className="text-[11px] text-muted-foreground">
                   {formatDateRange(entry.startDate, entry.endDate)} · {entry.days}{' '}
                   {entry.days === 1 ? 'day' : 'days'}
+                  {entry.workedDates?.length
+                    ? ` · worked instead: ${entry.workedDates.join(', ')}`
+                    : ''}
                   {entry.type ? ` · ${entry.type}` : ''}
                 </span>
               </span>

@@ -69,6 +69,16 @@ export const payslipSchema = z.object({
     deductionAmount: money,
     netAmount: money,
   }),
+  /** Native payslips may show the calendar basis and time adjustment used for their pay. */
+  payrollSummary: z
+    .object({
+      workingDays: z.number(),
+      paidLeaveDays: z.number(),
+      unpaidDays: z.number(),
+      unpaidTimeReduction: money,
+    })
+    .nullable()
+    .optional(),
   /**
    * Empty when the employee's salary-slip mode hides the breakdown. An empty list means "not
    * disclosed", never "zero" — the screen has to say so rather than render nothing.
@@ -127,6 +137,7 @@ export const payrollPolicySchema = z.object({
   basePercentage: money,
   baseMinimum: money,
   hraPercentage: money,
+  defaultGrossSalary: money.nullable().optional(),
   roundingMode: z.string(),
   pfDefault: z.boolean(),
   esiDefault: z.boolean(),
@@ -138,6 +149,7 @@ export const payrollPolicySchema = z.object({
 
 export const salaryProfileSchema = z.object({
   employeeId: z.string().uuid(),
+  configurationWarnings: z.array(z.string()).optional(),
   compensation: z
     .object({
       grossSalary: money.nullable().optional(),
@@ -227,6 +239,7 @@ export const statutoryRuleSchema = z.object({
   wageCeiling: money.nullable().optional(),
   employeeThreshold: money.nullable().optional(),
   flatAmount: money.nullable().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type PayrollPolicy = z.infer<typeof payrollPolicySchema>;

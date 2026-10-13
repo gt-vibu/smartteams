@@ -13,6 +13,7 @@ import type { LeaveType } from '@smarteam/contracts';
 const repository = vi.hoisted(() => ({
   listTypes: vi.fn(),
   listRequests: vi.fn(),
+  listRequestPage: vi.fn().mockResolvedValue({ requests: [] }),
   requestInbox: vi.fn(),
   listBalances: vi.fn(),
   assignTypeToBranch: vi.fn(),

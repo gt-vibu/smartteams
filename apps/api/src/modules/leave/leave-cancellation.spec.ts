@@ -1,6 +1,6 @@
+import type { DomainContext } from '../../common/context/domain-context';
 import { Prisma } from '../../generated/prisma/client';
 import { LeaveService } from './leave.service';
-import type { DomainContext } from '../../common/context/domain-context';
 
 const ORG = '11111111-1111-4111-8111-111111111111';
 const REQUEST = '22222222-2222-4222-8222-222222222222';
@@ -22,6 +22,9 @@ function context(permissions: string[]): DomainContext {
 
 function setup(status: 'PENDING' | 'APPROVED', callerEmployeeId: string | null = OWNER) {
   const tx = {
+    organizationSettings: { findUnique: jest.fn().mockResolvedValue({ metadata: {} }) },
+    organization: { findUniqueOrThrow: jest.fn().mockResolvedValue({ timezone: 'Asia/Kolkata' }) },
+    $queryRaw: jest.fn().mockResolvedValue([]),
     // The caller's own employee record; by default the caller owns the request.
     employee: {
       findFirst: jest.fn().mockResolvedValue(callerEmployeeId ? { id: callerEmployeeId } : null),
@@ -32,8 +35,8 @@ function setup(status: 'PENDING' | 'APPROVED', callerEmployeeId: string | null =
         organizationId: ORG,
         employeeId: '55555555-5555-4555-8555-555555555555',
         leaveTypeId: '66666666-6666-4666-8666-666666666666',
-        startDate: new Date('2026-09-07'),
-        endDate: new Date('2026-09-09'),
+        startDate: new Date('2026-11-16'),
+        endDate: new Date('2026-11-18'),
         requestedDays: new Prisma.Decimal(3),
         status,
         version: 1,
@@ -60,7 +63,10 @@ function setup(status: 'PENDING' | 'APPROVED', callerEmployeeId: string | null =
     leaveBalanceTransaction: { create: jest.fn().mockResolvedValue({}) },
     // Cancelling an approved request also invalidates any calculated payroll run covering those
     // dates. `count: 0` means "no calculated run over this period", the ordinary case here.
-    payrollRun: { updateMany: jest.fn().mockResolvedValue({ count: 0 }) },
+    payrollRun: {
+      findFirst: jest.fn().mockResolvedValue(null),
+      updateMany: jest.fn().mockResolvedValue({ count: 0 }),
+    },
     // Cancelling an approved request now takes the days back off the attendance calendar.
     // `null` here means "no attendance row for that date", which is the ordinary case and keeps
     // these tests about the balance ledger rather than about attendance.

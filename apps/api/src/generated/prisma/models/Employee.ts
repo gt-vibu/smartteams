@@ -427,6 +427,7 @@ export type EmployeeWhereInput = {
   attendancePunches?: Prisma.AttendancePunchListRelationFilter
   holidaySelections?: Prisma.EmployeeHolidaySelectionListRelationFilter
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewListRelationFilter
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewListRelationFilter
   leaveBalances?: Prisma.LeaveBalanceListRelationFilter
   leaveRequests?: Prisma.LeaveRequestListRelationFilter
   shifts?: Prisma.EmployeeShiftAssignmentListRelationFilter
@@ -506,6 +507,7 @@ export type EmployeeOrderByWithRelationInput = {
   attendancePunches?: Prisma.AttendancePunchOrderByRelationAggregateInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionOrderByRelationAggregateInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewOrderByRelationAggregateInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewOrderByRelationAggregateInput
   leaveBalances?: Prisma.LeaveBalanceOrderByRelationAggregateInput
   leaveRequests?: Prisma.LeaveRequestOrderByRelationAggregateInput
   shifts?: Prisma.EmployeeShiftAssignmentOrderByRelationAggregateInput
@@ -590,6 +592,7 @@ export type EmployeeWhereUniqueInput = Prisma.AtLeast<{
   attendancePunches?: Prisma.AttendancePunchListRelationFilter
   holidaySelections?: Prisma.EmployeeHolidaySelectionListRelationFilter
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewListRelationFilter
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewListRelationFilter
   leaveBalances?: Prisma.LeaveBalanceListRelationFilter
   leaveRequests?: Prisma.LeaveRequestListRelationFilter
   shifts?: Prisma.EmployeeShiftAssignmentListRelationFilter
@@ -738,6 +741,7 @@ export type EmployeeCreateInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -812,6 +816,7 @@ export type EmployeeUncheckedCreateInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -886,6 +891,7 @@ export type EmployeeUpdateInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -960,6 +966,7 @@ export type EmployeeUncheckedUpdateInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -1424,6 +1431,20 @@ export type EmployeeUpdateOneRequiredWithoutAttendanceHolidayReviewsNestedInput 
   upsert?: Prisma.EmployeeUpsertWithoutAttendanceHolidayReviewsInput
   connect?: Prisma.EmployeeWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.EmployeeUpdateToOneWithWhereWithoutAttendanceHolidayReviewsInput, Prisma.EmployeeUpdateWithoutAttendanceHolidayReviewsInput>, Prisma.EmployeeUncheckedUpdateWithoutAttendanceHolidayReviewsInput>
+}
+
+export type EmployeeCreateNestedOneWithoutAttendanceLeaveOverlapReviewsInput = {
+  create?: Prisma.XOR<Prisma.EmployeeCreateWithoutAttendanceLeaveOverlapReviewsInput, Prisma.EmployeeUncheckedCreateWithoutAttendanceLeaveOverlapReviewsInput>
+  connectOrCreate?: Prisma.EmployeeCreateOrConnectWithoutAttendanceLeaveOverlapReviewsInput
+  connect?: Prisma.EmployeeWhereUniqueInput
+}
+
+export type EmployeeUpdateOneRequiredWithoutAttendanceLeaveOverlapReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.EmployeeCreateWithoutAttendanceLeaveOverlapReviewsInput, Prisma.EmployeeUncheckedCreateWithoutAttendanceLeaveOverlapReviewsInput>
+  connectOrCreate?: Prisma.EmployeeCreateOrConnectWithoutAttendanceLeaveOverlapReviewsInput
+  upsert?: Prisma.EmployeeUpsertWithoutAttendanceLeaveOverlapReviewsInput
+  connect?: Prisma.EmployeeWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.EmployeeUpdateToOneWithWhereWithoutAttendanceLeaveOverlapReviewsInput, Prisma.EmployeeUpdateWithoutAttendanceLeaveOverlapReviewsInput>, Prisma.EmployeeUncheckedUpdateWithoutAttendanceLeaveOverlapReviewsInput>
 }
 
 export type EmployeeCreateNestedOneWithoutPayrollLinesInput = {
@@ -2052,6 +2073,7 @@ export type EmployeeCreateWithoutResignationsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -2125,6 +2147,7 @@ export type EmployeeUncheckedCreateWithoutResignationsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2214,6 +2237,7 @@ export type EmployeeUpdateWithoutResignationsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -2287,6 +2311,7 @@ export type EmployeeUncheckedUpdateWithoutResignationsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2361,6 +2386,7 @@ export type EmployeeCreateWithoutFilesInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -2434,6 +2460,7 @@ export type EmployeeUncheckedCreateWithoutFilesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2523,6 +2550,7 @@ export type EmployeeUpdateWithoutFilesInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -2596,6 +2624,7 @@ export type EmployeeUncheckedUpdateWithoutFilesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2668,6 +2697,7 @@ export type EmployeeCreateWithoutCompOffCreditsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -2741,6 +2771,7 @@ export type EmployeeUncheckedCreateWithoutCompOffCreditsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -2830,6 +2861,7 @@ export type EmployeeUpdateWithoutCompOffCreditsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -2903,6 +2935,7 @@ export type EmployeeUncheckedUpdateWithoutCompOffCreditsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -2976,6 +3009,7 @@ export type EmployeeCreateWithoutLeaveEncashmentsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -3049,6 +3083,7 @@ export type EmployeeUncheckedCreateWithoutLeaveEncashmentsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -3138,6 +3173,7 @@ export type EmployeeUpdateWithoutLeaveEncashmentsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -3211,6 +3247,7 @@ export type EmployeeUncheckedUpdateWithoutLeaveEncashmentsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -3284,6 +3321,7 @@ export type EmployeeCreateWithoutUserInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -3357,6 +3395,7 @@ export type EmployeeUncheckedCreateWithoutUserInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -3446,6 +3485,7 @@ export type EmployeeUpdateWithoutUserInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -3519,6 +3559,7 @@ export type EmployeeUncheckedUpdateWithoutUserInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -3593,6 +3634,7 @@ export type EmployeeCreateWithoutAccessCodesInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -3666,6 +3708,7 @@ export type EmployeeUncheckedCreateWithoutAccessCodesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -3755,6 +3798,7 @@ export type EmployeeUpdateWithoutAccessCodesInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -3828,6 +3872,7 @@ export type EmployeeUncheckedUpdateWithoutAccessCodesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -3900,6 +3945,7 @@ export type EmployeeCreateWithoutAttendanceRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -3973,6 +4019,7 @@ export type EmployeeUncheckedCreateWithoutAttendanceRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -4062,6 +4109,7 @@ export type EmployeeUpdateWithoutAttendanceRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -4135,6 +4183,7 @@ export type EmployeeUncheckedUpdateWithoutAttendanceRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -4208,6 +4257,7 @@ export type EmployeeCreateWithoutAttendancePunchesInput = {
   attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -4281,6 +4331,7 @@ export type EmployeeUncheckedCreateWithoutAttendancePunchesInput = {
   attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -4370,6 +4421,7 @@ export type EmployeeUpdateWithoutAttendancePunchesInput = {
   attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -4443,6 +4495,7 @@ export type EmployeeUncheckedUpdateWithoutAttendancePunchesInput = {
   attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -4516,6 +4569,7 @@ export type EmployeeCreateWithoutHolidaySelectionsInput = {
   attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutEmployeeInput
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -4589,6 +4643,7 @@ export type EmployeeUncheckedCreateWithoutHolidaySelectionsInput = {
   attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutEmployeeInput
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -4678,6 +4733,7 @@ export type EmployeeUpdateWithoutHolidaySelectionsInput = {
   attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutEmployeeNestedInput
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -4751,6 +4807,7 @@ export type EmployeeUncheckedUpdateWithoutHolidaySelectionsInput = {
   attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutEmployeeNestedInput
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -4825,6 +4882,7 @@ export type EmployeeCreateWithoutLeaveBalancesInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutEmployeeInput
@@ -4898,6 +4956,7 @@ export type EmployeeUncheckedCreateWithoutLeaveBalancesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutEmployeeInput
@@ -4987,6 +5046,7 @@ export type EmployeeUpdateWithoutLeaveBalancesInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutEmployeeNestedInput
@@ -5060,6 +5120,7 @@ export type EmployeeUncheckedUpdateWithoutLeaveBalancesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -5133,6 +5194,7 @@ export type EmployeeCreateWithoutLeaveRequestsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutEmployeeInput
@@ -5206,6 +5268,7 @@ export type EmployeeUncheckedCreateWithoutLeaveRequestsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutEmployeeInput
@@ -5295,6 +5358,7 @@ export type EmployeeUpdateWithoutLeaveRequestsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutEmployeeNestedInput
@@ -5368,6 +5432,7 @@ export type EmployeeUncheckedUpdateWithoutLeaveRequestsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -5441,6 +5506,7 @@ export type EmployeeCreateWithoutShiftsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   timesheets?: Prisma.TimesheetCreateNestedManyWithoutEmployeeInput
@@ -5514,6 +5580,7 @@ export type EmployeeUncheckedCreateWithoutShiftsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutEmployeeInput
@@ -5603,6 +5670,7 @@ export type EmployeeUpdateWithoutShiftsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   timesheets?: Prisma.TimesheetUpdateManyWithoutEmployeeNestedInput
@@ -5676,6 +5744,7 @@ export type EmployeeUncheckedUpdateWithoutShiftsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -5749,6 +5818,7 @@ export type EmployeeCreateWithoutTimesheetsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -5822,6 +5892,7 @@ export type EmployeeUncheckedCreateWithoutTimesheetsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -5911,6 +5982,7 @@ export type EmployeeUpdateWithoutTimesheetsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -5984,6 +6056,7 @@ export type EmployeeUncheckedUpdateWithoutTimesheetsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -6056,6 +6129,7 @@ export type EmployeeCreateWithoutAttendanceHolidayReviewsInput = {
   attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutEmployeeInput
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -6129,6 +6203,7 @@ export type EmployeeUncheckedCreateWithoutAttendanceHolidayReviewsInput = {
   attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutEmployeeInput
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -6218,6 +6293,7 @@ export type EmployeeUpdateWithoutAttendanceHolidayReviewsInput = {
   attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutEmployeeNestedInput
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -6291,6 +6367,319 @@ export type EmployeeUncheckedUpdateWithoutAttendanceHolidayReviewsInput = {
   attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutEmployeeNestedInput
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
+  shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  timesheets?: Prisma.TimesheetUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollLines?: Prisma.PayrollLineItemUncheckedUpdateManyWithoutEmployeeNestedInput
+  payslips?: Prisma.PayslipUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedUpdateManyWithoutEmployeeNestedInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedUpdateManyWithoutEmployeeNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedUpdateManyWithoutEmployeeNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedUpdateManyWithoutEmployeeNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedUpdateManyWithoutEmployeeNestedInput
+  files?: Prisma.FileObjectUncheckedUpdateManyWithoutEmployeeNestedInput
+  teamLeadOf?: Prisma.TeamUncheckedUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUncheckedUpdateManyWithoutProjectLeadNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedUpdateManyWithoutEmployeeNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedUpdateManyWithoutEmployeeNestedInput
+  personalProfile?: Prisma.EmployeePersonalProfileUncheckedUpdateOneWithoutEmployeeNestedInput
+  bankAccounts?: Prisma.EmployeeBankAccountUncheckedUpdateManyWithoutEmployeeNestedInput
+  references?: Prisma.EmployeeReferenceUncheckedUpdateManyWithoutEmployeeNestedInput
+  accessCodes?: Prisma.EmployeeAccessCodeUncheckedUpdateManyWithoutEmployeeNestedInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUncheckedUpdateOneWithoutEmployeeNestedInput
+}
+
+export type EmployeeCreateWithoutAttendanceLeaveOverlapReviewsInput = {
+  id?: string
+  employeeNumber: string
+  firstName: string
+  middleName?: string | null
+  lastName: string
+  preferredName?: string | null
+  workEmail?: string | null
+  personalEmail?: string | null
+  phone?: string | null
+  identitySource: $Enums.IdentityType
+  externalId?: string | null
+  status?: $Enums.EmployeeStatus
+  employmentType: $Enums.EmploymentType
+  dateOfJoining?: Date | string | null
+  dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  geofenceMode?: $Enums.GeofenceMode | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deactivatedAt?: Date | string | null
+  version?: number
+  organization: Prisma.OrganizationCreateNestedOneWithoutEmployeesInput
+  user?: Prisma.UserCreateNestedOneWithoutEmployeeInput
+  manager?: Prisma.EmployeeCreateNestedOneWithoutReportsInput
+  reports?: Prisma.EmployeeCreateNestedManyWithoutManagerInput
+  primaryBranch?: Prisma.BranchCreateNestedOneWithoutPrimaryEmployeesInput
+  department?: Prisma.DepartmentCreateNestedOneWithoutMembersInput
+  departmentsHeaded?: Prisma.DepartmentCreateNestedManyWithoutHeadInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationCreateNestedManyWithoutEmployeeInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentCreateNestedManyWithoutEmployeeInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipCreateNestedManyWithoutEmployeeInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutEmployeeInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordCreateNestedManyWithoutManagerInput
+  compensations?: Prisma.EmployeeCompensationCreateNestedManyWithoutEmployeeInput
+  payComponents?: Prisma.EmployeePayComponentCreateNestedManyWithoutEmployeeInput
+  teamMemberships?: Prisma.TeamMemberCreateNestedManyWithoutEmployeeInput
+  projectMemberships?: Prisma.ProjectMemberCreateNestedManyWithoutEmployeeInput
+  attendanceRecords?: Prisma.AttendanceRecordCreateNestedManyWithoutEmployeeInput
+  attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
+  leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
+  shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
+  timesheets?: Prisma.TimesheetCreateNestedManyWithoutEmployeeInput
+  payrollLines?: Prisma.PayrollLineItemCreateNestedManyWithoutEmployeeInput
+  payslips?: Prisma.PayslipCreateNestedManyWithoutEmployeeInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentCreateNestedManyWithoutEmployeeInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileCreateNestedManyWithoutEmployeeInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordCreateNestedManyWithoutEmployeeInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyCreateNestedManyWithoutEmployeeInput
+  salaryAdvances?: Prisma.SalaryAdvanceCreateNestedManyWithoutEmployeeInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryCreateNestedManyWithoutEmployeeInput
+  payrollPayments?: Prisma.PayrollPaymentCreateNestedManyWithoutEmployeeInput
+  files?: Prisma.FileObjectCreateNestedManyWithoutEmployeeInput
+  teamLeadOf?: Prisma.TeamCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectCreateNestedManyWithoutProjectLeadInput
+  webauthnCredentials?: Prisma.WebauthnCredentialCreateNestedManyWithoutEmployeeInput
+  webauthnChallenges?: Prisma.WebauthnChallengeCreateNestedManyWithoutEmployeeInput
+  personalProfile?: Prisma.EmployeePersonalProfileCreateNestedOneWithoutEmployeeInput
+  bankAccounts?: Prisma.EmployeeBankAccountCreateNestedManyWithoutEmployeeInput
+  references?: Prisma.EmployeeReferenceCreateNestedManyWithoutEmployeeInput
+  accessCodes?: Prisma.EmployeeAccessCodeCreateNestedManyWithoutEmployeeInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyCreateNestedOneWithoutEmployeeInput
+}
+
+export type EmployeeUncheckedCreateWithoutAttendanceLeaveOverlapReviewsInput = {
+  id?: string
+  organizationId: string
+  userId?: string | null
+  employeeNumber: string
+  firstName: string
+  middleName?: string | null
+  lastName: string
+  preferredName?: string | null
+  workEmail?: string | null
+  personalEmail?: string | null
+  phone?: string | null
+  identitySource: $Enums.IdentityType
+  externalId?: string | null
+  status?: $Enums.EmployeeStatus
+  employmentType: $Enums.EmploymentType
+  dateOfJoining?: Date | string | null
+  dateOfLeaving?: Date | string | null
+  probationEndsOn?: Date | string | null
+  confirmedOn?: Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  managerEmployeeId?: string | null
+  geofenceMode?: $Enums.GeofenceMode | null
+  primaryBranchId?: string | null
+  departmentId?: string | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deactivatedAt?: Date | string | null
+  version?: number
+  reports?: Prisma.EmployeeUncheckedCreateNestedManyWithoutManagerInput
+  departmentsHeaded?: Prisma.DepartmentUncheckedCreateNestedManyWithoutHeadInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedCreateNestedManyWithoutEmployeeInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedCreateNestedManyWithoutEmployeeInput
+  resignations?: Prisma.EmployeeResignationUncheckedCreateNestedManyWithoutEmployeeInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedCreateNestedManyWithoutEmployeeInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedCreateNestedManyWithoutManagerInput
+  compensations?: Prisma.EmployeeCompensationUncheckedCreateNestedManyWithoutEmployeeInput
+  payComponents?: Prisma.EmployeePayComponentUncheckedCreateNestedManyWithoutEmployeeInput
+  teamMemberships?: Prisma.TeamMemberUncheckedCreateNestedManyWithoutEmployeeInput
+  projectMemberships?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
+  leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
+  shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
+  timesheets?: Prisma.TimesheetUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollLines?: Prisma.PayrollLineItemUncheckedCreateNestedManyWithoutEmployeeInput
+  payslips?: Prisma.PayslipUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUncheckedCreateNestedManyWithoutEmployeeInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUncheckedCreateNestedManyWithoutEmployeeInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUncheckedCreateNestedManyWithoutEmployeeInput
+  salaryAdvances?: Prisma.SalaryAdvanceUncheckedCreateNestedManyWithoutEmployeeInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUncheckedCreateNestedManyWithoutEmployeeInput
+  payrollPayments?: Prisma.PayrollPaymentUncheckedCreateNestedManyWithoutEmployeeInput
+  files?: Prisma.FileObjectUncheckedCreateNestedManyWithoutEmployeeInput
+  teamLeadOf?: Prisma.TeamUncheckedCreateNestedManyWithoutTeamLeadInput
+  projectLeadOf?: Prisma.ProjectUncheckedCreateNestedManyWithoutProjectLeadInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUncheckedCreateNestedManyWithoutEmployeeInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUncheckedCreateNestedManyWithoutEmployeeInput
+  personalProfile?: Prisma.EmployeePersonalProfileUncheckedCreateNestedOneWithoutEmployeeInput
+  bankAccounts?: Prisma.EmployeeBankAccountUncheckedCreateNestedManyWithoutEmployeeInput
+  references?: Prisma.EmployeeReferenceUncheckedCreateNestedManyWithoutEmployeeInput
+  accessCodes?: Prisma.EmployeeAccessCodeUncheckedCreateNestedManyWithoutEmployeeInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUncheckedCreateNestedOneWithoutEmployeeInput
+}
+
+export type EmployeeCreateOrConnectWithoutAttendanceLeaveOverlapReviewsInput = {
+  where: Prisma.EmployeeWhereUniqueInput
+  create: Prisma.XOR<Prisma.EmployeeCreateWithoutAttendanceLeaveOverlapReviewsInput, Prisma.EmployeeUncheckedCreateWithoutAttendanceLeaveOverlapReviewsInput>
+}
+
+export type EmployeeUpsertWithoutAttendanceLeaveOverlapReviewsInput = {
+  update: Prisma.XOR<Prisma.EmployeeUpdateWithoutAttendanceLeaveOverlapReviewsInput, Prisma.EmployeeUncheckedUpdateWithoutAttendanceLeaveOverlapReviewsInput>
+  create: Prisma.XOR<Prisma.EmployeeCreateWithoutAttendanceLeaveOverlapReviewsInput, Prisma.EmployeeUncheckedCreateWithoutAttendanceLeaveOverlapReviewsInput>
+  where?: Prisma.EmployeeWhereInput
+}
+
+export type EmployeeUpdateToOneWithWhereWithoutAttendanceLeaveOverlapReviewsInput = {
+  where?: Prisma.EmployeeWhereInput
+  data: Prisma.XOR<Prisma.EmployeeUpdateWithoutAttendanceLeaveOverlapReviewsInput, Prisma.EmployeeUncheckedUpdateWithoutAttendanceLeaveOverlapReviewsInput>
+}
+
+export type EmployeeUpdateWithoutAttendanceLeaveOverlapReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  employeeNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identitySource?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
+  dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutEmployeesNestedInput
+  user?: Prisma.UserUpdateOneWithoutEmployeeNestedInput
+  manager?: Prisma.EmployeeUpdateOneWithoutReportsNestedInput
+  reports?: Prisma.EmployeeUpdateManyWithoutManagerNestedInput
+  primaryBranch?: Prisma.BranchUpdateOneWithoutPrimaryEmployeesNestedInput
+  department?: Prisma.DepartmentUpdateOneWithoutMembersNestedInput
+  departmentsHeaded?: Prisma.DepartmentUpdateManyWithoutHeadNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUpdateManyWithoutEmployeeNestedInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUpdateManyWithoutEmployeeNestedInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUpdateManyWithoutEmployeeNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutEmployeeNestedInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUpdateManyWithoutManagerNestedInput
+  compensations?: Prisma.EmployeeCompensationUpdateManyWithoutEmployeeNestedInput
+  payComponents?: Prisma.EmployeePayComponentUpdateManyWithoutEmployeeNestedInput
+  teamMemberships?: Prisma.TeamMemberUpdateManyWithoutEmployeeNestedInput
+  projectMemberships?: Prisma.ProjectMemberUpdateManyWithoutEmployeeNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUpdateManyWithoutEmployeeNestedInput
+  attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
+  leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
+  shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
+  timesheets?: Prisma.TimesheetUpdateManyWithoutEmployeeNestedInput
+  payrollLines?: Prisma.PayrollLineItemUpdateManyWithoutEmployeeNestedInput
+  payslips?: Prisma.PayslipUpdateManyWithoutEmployeeNestedInput
+  payrollAdjustments?: Prisma.PayrollAdjustmentUpdateManyWithoutEmployeeNestedInput
+  statutoryProfiles?: Prisma.EmployeeStatutoryProfileUpdateManyWithoutEmployeeNestedInput
+  statutoryRecords?: Prisma.EmployeeStatutoryRecordUpdateManyWithoutEmployeeNestedInput
+  payrollPolicies?: Prisma.EmployeePayrollPolicyUpdateManyWithoutEmployeeNestedInput
+  salaryAdvances?: Prisma.SalaryAdvanceUpdateManyWithoutEmployeeNestedInput
+  advanceRecoveries?: Prisma.SalaryAdvanceRecoveryUpdateManyWithoutEmployeeNestedInput
+  payrollPayments?: Prisma.PayrollPaymentUpdateManyWithoutEmployeeNestedInput
+  files?: Prisma.FileObjectUpdateManyWithoutEmployeeNestedInput
+  teamLeadOf?: Prisma.TeamUpdateManyWithoutTeamLeadNestedInput
+  projectLeadOf?: Prisma.ProjectUpdateManyWithoutProjectLeadNestedInput
+  webauthnCredentials?: Prisma.WebauthnCredentialUpdateManyWithoutEmployeeNestedInput
+  webauthnChallenges?: Prisma.WebauthnChallengeUpdateManyWithoutEmployeeNestedInput
+  personalProfile?: Prisma.EmployeePersonalProfileUpdateOneWithoutEmployeeNestedInput
+  bankAccounts?: Prisma.EmployeeBankAccountUpdateManyWithoutEmployeeNestedInput
+  references?: Prisma.EmployeeReferenceUpdateManyWithoutEmployeeNestedInput
+  accessCodes?: Prisma.EmployeeAccessCodeUpdateManyWithoutEmployeeNestedInput
+  holidayPolicy?: Prisma.EmployeeHolidayPolicyUpdateOneWithoutEmployeeNestedInput
+}
+
+export type EmployeeUncheckedUpdateWithoutAttendanceLeaveOverlapReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  organizationId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  preferredName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  workEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  personalEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identitySource?: Prisma.EnumIdentityTypeFieldUpdateOperationsInput | $Enums.IdentityType
+  externalId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumEmployeeStatusFieldUpdateOperationsInput | $Enums.EmployeeStatus
+  employmentType?: Prisma.EnumEmploymentTypeFieldUpdateOperationsInput | $Enums.EmploymentType
+  dateOfJoining?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dateOfLeaving?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  probationEndsOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedOn?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  managerEmployeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  geofenceMode?: Prisma.NullableEnumGeofenceModeFieldUpdateOperationsInput | $Enums.GeofenceMode | null
+  primaryBranchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  departmentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownedFields?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  reports?: Prisma.EmployeeUncheckedUpdateManyWithoutManagerNestedInput
+  departmentsHeaded?: Prisma.DepartmentUncheckedUpdateManyWithoutHeadNestedInput
+  emergencyContacts?: Prisma.EmployeeEmergencyContactUncheckedUpdateManyWithoutEmployeeNestedInput
+  compOffCredits?: Prisma.CompOffCreditUncheckedUpdateManyWithoutEmployeeNestedInput
+  leaveEncashments?: Prisma.LeaveEncashmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  resignations?: Prisma.EmployeeResignationUncheckedUpdateManyWithoutEmployeeNestedInput
+  branchAssignments?: Prisma.EmployeeBranchAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
+  fieldOwnership?: Prisma.EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput
+  employmentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  managedEmploymentRecords?: Prisma.EmployeeEmploymentRecordUncheckedUpdateManyWithoutManagerNestedInput
+  compensations?: Prisma.EmployeeCompensationUncheckedUpdateManyWithoutEmployeeNestedInput
+  payComponents?: Prisma.EmployeePayComponentUncheckedUpdateManyWithoutEmployeeNestedInput
+  teamMemberships?: Prisma.TeamMemberUncheckedUpdateManyWithoutEmployeeNestedInput
+  projectMemberships?: Prisma.ProjectMemberUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceRecords?: Prisma.AttendanceRecordUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
+  holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -6365,6 +6754,7 @@ export type EmployeeCreateWithoutPayrollLinesInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -6438,6 +6828,7 @@ export type EmployeeUncheckedCreateWithoutPayrollLinesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -6527,6 +6918,7 @@ export type EmployeeUpdateWithoutPayrollLinesInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -6600,6 +6992,7 @@ export type EmployeeUncheckedUpdateWithoutPayrollLinesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -6673,6 +7066,7 @@ export type EmployeeCreateWithoutSalaryAdvancesInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -6746,6 +7140,7 @@ export type EmployeeUncheckedCreateWithoutSalaryAdvancesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -6835,6 +7230,7 @@ export type EmployeeUpdateWithoutSalaryAdvancesInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -6908,6 +7304,7 @@ export type EmployeeUncheckedUpdateWithoutSalaryAdvancesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -6981,6 +7378,7 @@ export type EmployeeCreateWithoutAdvanceRecoveriesInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -7054,6 +7452,7 @@ export type EmployeeUncheckedCreateWithoutAdvanceRecoveriesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -7143,6 +7542,7 @@ export type EmployeeUpdateWithoutAdvanceRecoveriesInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -7216,6 +7616,7 @@ export type EmployeeUncheckedUpdateWithoutAdvanceRecoveriesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -7289,6 +7690,7 @@ export type EmployeeCreateWithoutPayrollPaymentsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -7362,6 +7764,7 @@ export type EmployeeUncheckedCreateWithoutPayrollPaymentsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -7451,6 +7854,7 @@ export type EmployeeUpdateWithoutPayrollPaymentsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -7524,6 +7928,7 @@ export type EmployeeUncheckedUpdateWithoutPayrollPaymentsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -7597,6 +8002,7 @@ export type EmployeeCreateWithoutPayrollAdjustmentsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -7670,6 +8076,7 @@ export type EmployeeUncheckedCreateWithoutPayrollAdjustmentsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -7759,6 +8166,7 @@ export type EmployeeUpdateWithoutPayrollAdjustmentsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -7832,6 +8240,7 @@ export type EmployeeUncheckedUpdateWithoutPayrollAdjustmentsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -7905,6 +8314,7 @@ export type EmployeeCreateWithoutPayslipsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -7978,6 +8388,7 @@ export type EmployeeUncheckedCreateWithoutPayslipsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -8067,6 +8478,7 @@ export type EmployeeUpdateWithoutPayslipsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -8140,6 +8552,7 @@ export type EmployeeUncheckedUpdateWithoutPayslipsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -8212,6 +8625,7 @@ export type EmployeeCreateWithoutOrganizationInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -8285,6 +8699,7 @@ export type EmployeeUncheckedCreateWithoutOrganizationInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -8420,6 +8835,7 @@ export type EmployeeCreateWithoutPrimaryBranchInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -8493,6 +8909,7 @@ export type EmployeeUncheckedCreateWithoutPrimaryBranchInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -8593,6 +9010,7 @@ export type EmployeeCreateWithoutWebauthnCredentialsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -8666,6 +9084,7 @@ export type EmployeeUncheckedCreateWithoutWebauthnCredentialsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -8755,6 +9174,7 @@ export type EmployeeUpdateWithoutWebauthnCredentialsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -8828,6 +9248,7 @@ export type EmployeeUncheckedUpdateWithoutWebauthnCredentialsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -8901,6 +9322,7 @@ export type EmployeeCreateWithoutWebauthnChallengesInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -8974,6 +9396,7 @@ export type EmployeeUncheckedCreateWithoutWebauthnChallengesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -9063,6 +9486,7 @@ export type EmployeeUpdateWithoutWebauthnChallengesInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -9136,6 +9560,7 @@ export type EmployeeUncheckedUpdateWithoutWebauthnChallengesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -9208,6 +9633,7 @@ export type EmployeeCreateWithoutReportsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -9281,6 +9707,7 @@ export type EmployeeUncheckedCreateWithoutReportsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -9359,6 +9786,7 @@ export type EmployeeCreateWithoutManagerInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -9432,6 +9860,7 @@ export type EmployeeUncheckedCreateWithoutManagerInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -9526,6 +9955,7 @@ export type EmployeeUpdateWithoutReportsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -9599,6 +10029,7 @@ export type EmployeeUncheckedUpdateWithoutReportsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -9689,6 +10120,7 @@ export type EmployeeCreateWithoutPersonalProfileInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -9762,6 +10194,7 @@ export type EmployeeUncheckedCreateWithoutPersonalProfileInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -9851,6 +10284,7 @@ export type EmployeeUpdateWithoutPersonalProfileInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -9924,6 +10358,7 @@ export type EmployeeUncheckedUpdateWithoutPersonalProfileInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -9997,6 +10432,7 @@ export type EmployeeCreateWithoutBankAccountsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -10070,6 +10506,7 @@ export type EmployeeUncheckedCreateWithoutBankAccountsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -10159,6 +10596,7 @@ export type EmployeeUpdateWithoutBankAccountsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -10232,6 +10670,7 @@ export type EmployeeUncheckedUpdateWithoutBankAccountsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -10305,6 +10744,7 @@ export type EmployeeCreateWithoutReferencesInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -10378,6 +10818,7 @@ export type EmployeeUncheckedCreateWithoutReferencesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -10467,6 +10908,7 @@ export type EmployeeUpdateWithoutReferencesInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -10540,6 +10982,7 @@ export type EmployeeUncheckedUpdateWithoutReferencesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -10613,6 +11056,7 @@ export type EmployeeCreateWithoutHolidayPolicyInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -10686,6 +11130,7 @@ export type EmployeeUncheckedCreateWithoutHolidayPolicyInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -10775,6 +11220,7 @@ export type EmployeeUpdateWithoutHolidayPolicyInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -10848,6 +11294,7 @@ export type EmployeeUncheckedUpdateWithoutHolidayPolicyInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -10920,6 +11367,7 @@ export type EmployeeCreateWithoutEmergencyContactsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -10993,6 +11441,7 @@ export type EmployeeUncheckedCreateWithoutEmergencyContactsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -11082,6 +11531,7 @@ export type EmployeeUpdateWithoutEmergencyContactsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -11155,6 +11605,7 @@ export type EmployeeUncheckedUpdateWithoutEmergencyContactsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -11228,6 +11679,7 @@ export type EmployeeCreateWithoutBranchAssignmentsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -11301,6 +11753,7 @@ export type EmployeeUncheckedCreateWithoutBranchAssignmentsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -11390,6 +11843,7 @@ export type EmployeeUpdateWithoutBranchAssignmentsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -11463,6 +11917,7 @@ export type EmployeeUncheckedUpdateWithoutBranchAssignmentsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -11536,6 +11991,7 @@ export type EmployeeCreateWithoutFieldOwnershipInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -11609,6 +12065,7 @@ export type EmployeeUncheckedCreateWithoutFieldOwnershipInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -11698,6 +12155,7 @@ export type EmployeeUpdateWithoutFieldOwnershipInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -11771,6 +12229,7 @@ export type EmployeeUncheckedUpdateWithoutFieldOwnershipInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -11844,6 +12303,7 @@ export type EmployeeCreateWithoutEmploymentRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -11917,6 +12377,7 @@ export type EmployeeUncheckedCreateWithoutEmploymentRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -11995,6 +12456,7 @@ export type EmployeeCreateWithoutManagedEmploymentRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -12068,6 +12530,7 @@ export type EmployeeUncheckedCreateWithoutManagedEmploymentRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -12157,6 +12620,7 @@ export type EmployeeUpdateWithoutEmploymentRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -12230,6 +12694,7 @@ export type EmployeeUncheckedUpdateWithoutEmploymentRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -12314,6 +12779,7 @@ export type EmployeeUpdateWithoutManagedEmploymentRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -12387,6 +12853,7 @@ export type EmployeeUncheckedUpdateWithoutManagedEmploymentRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -12460,6 +12927,7 @@ export type EmployeeCreateWithoutCompensationsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -12533,6 +13001,7 @@ export type EmployeeUncheckedCreateWithoutCompensationsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -12622,6 +13091,7 @@ export type EmployeeUpdateWithoutCompensationsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -12695,6 +13165,7 @@ export type EmployeeUncheckedUpdateWithoutCompensationsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -12769,6 +13240,7 @@ export type EmployeeCreateWithoutPayrollPoliciesInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -12842,6 +13314,7 @@ export type EmployeeUncheckedCreateWithoutPayrollPoliciesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -12931,6 +13404,7 @@ export type EmployeeUpdateWithoutPayrollPoliciesInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -13004,6 +13478,7 @@ export type EmployeeUncheckedUpdateWithoutPayrollPoliciesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -13077,6 +13552,7 @@ export type EmployeeCreateWithoutStatutoryProfilesInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -13150,6 +13626,7 @@ export type EmployeeUncheckedCreateWithoutStatutoryProfilesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -13239,6 +13716,7 @@ export type EmployeeUpdateWithoutStatutoryProfilesInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -13312,6 +13790,7 @@ export type EmployeeUncheckedUpdateWithoutStatutoryProfilesInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -13385,6 +13864,7 @@ export type EmployeeCreateWithoutStatutoryRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -13458,6 +13938,7 @@ export type EmployeeUncheckedCreateWithoutStatutoryRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -13547,6 +14028,7 @@ export type EmployeeUpdateWithoutStatutoryRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -13620,6 +14102,7 @@ export type EmployeeUncheckedUpdateWithoutStatutoryRecordsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -13692,6 +14175,7 @@ export type EmployeeCreateWithoutPayComponentsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -13765,6 +14249,7 @@ export type EmployeeUncheckedCreateWithoutPayComponentsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -13854,6 +14339,7 @@ export type EmployeeUpdateWithoutPayComponentsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -13927,6 +14413,7 @@ export type EmployeeUncheckedUpdateWithoutPayComponentsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -14001,6 +14488,7 @@ export type EmployeeCreateWithoutTeamLeadOfInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -14074,6 +14562,7 @@ export type EmployeeUncheckedCreateWithoutTeamLeadOfInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -14163,6 +14652,7 @@ export type EmployeeUpdateWithoutTeamLeadOfInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -14236,6 +14726,7 @@ export type EmployeeUncheckedUpdateWithoutTeamLeadOfInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -14308,6 +14799,7 @@ export type EmployeeCreateWithoutTeamMembershipsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -14381,6 +14873,7 @@ export type EmployeeUncheckedCreateWithoutTeamMembershipsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -14470,6 +14963,7 @@ export type EmployeeUpdateWithoutTeamMembershipsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -14543,6 +15037,7 @@ export type EmployeeUncheckedUpdateWithoutTeamMembershipsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -14617,6 +15112,7 @@ export type EmployeeCreateWithoutProjectLeadOfInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -14690,6 +15186,7 @@ export type EmployeeUncheckedCreateWithoutProjectLeadOfInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -14779,6 +15276,7 @@ export type EmployeeUpdateWithoutProjectLeadOfInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -14852,6 +15350,7 @@ export type EmployeeUncheckedUpdateWithoutProjectLeadOfInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -14924,6 +15423,7 @@ export type EmployeeCreateWithoutProjectMembershipsInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -14997,6 +15497,7 @@ export type EmployeeUncheckedCreateWithoutProjectMembershipsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -15086,6 +15587,7 @@ export type EmployeeUpdateWithoutProjectMembershipsInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -15159,6 +15661,7 @@ export type EmployeeUncheckedUpdateWithoutProjectMembershipsInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -15232,6 +15735,7 @@ export type EmployeeCreateWithoutDepartmentsHeadedInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -15305,6 +15809,7 @@ export type EmployeeUncheckedCreateWithoutDepartmentsHeadedInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -15383,6 +15888,7 @@ export type EmployeeCreateWithoutDepartmentInput = {
   attendancePunches?: Prisma.AttendancePunchCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentCreateNestedManyWithoutEmployeeInput
@@ -15456,6 +15962,7 @@ export type EmployeeUncheckedCreateWithoutDepartmentInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedCreateNestedManyWithoutEmployeeInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedCreateNestedManyWithoutEmployeeInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedCreateNestedManyWithoutEmployeeInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedCreateNestedManyWithoutEmployeeInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedCreateNestedManyWithoutEmployeeInput
   leaveRequests?: Prisma.LeaveRequestUncheckedCreateNestedManyWithoutEmployeeInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedCreateNestedManyWithoutEmployeeInput
@@ -15550,6 +16057,7 @@ export type EmployeeUpdateWithoutDepartmentsHeadedInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -15623,6 +16131,7 @@ export type EmployeeUncheckedUpdateWithoutDepartmentsHeadedInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -15744,6 +16253,7 @@ export type EmployeeUpdateWithoutOrganizationInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -15817,6 +16327,7 @@ export type EmployeeUncheckedUpdateWithoutOrganizationInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -15954,6 +16465,7 @@ export type EmployeeUpdateWithoutPrimaryBranchInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -16027,6 +16539,7 @@ export type EmployeeUncheckedUpdateWithoutPrimaryBranchInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -16164,6 +16677,7 @@ export type EmployeeUpdateWithoutManagerInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -16237,6 +16751,7 @@ export type EmployeeUncheckedUpdateWithoutManagerInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -16374,6 +16889,7 @@ export type EmployeeUpdateWithoutDepartmentInput = {
   attendancePunches?: Prisma.AttendancePunchUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUpdateManyWithoutEmployeeNestedInput
@@ -16447,6 +16963,7 @@ export type EmployeeUncheckedUpdateWithoutDepartmentInput = {
   attendancePunches?: Prisma.AttendancePunchUncheckedUpdateManyWithoutEmployeeNestedInput
   holidaySelections?: Prisma.EmployeeHolidaySelectionUncheckedUpdateManyWithoutEmployeeNestedInput
   attendanceHolidayReviews?: Prisma.AttendanceHolidayReviewUncheckedUpdateManyWithoutEmployeeNestedInput
+  attendanceLeaveOverlapReviews?: Prisma.AttendanceLeaveOverlapReviewUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveBalances?: Prisma.LeaveBalanceUncheckedUpdateManyWithoutEmployeeNestedInput
   leaveRequests?: Prisma.LeaveRequestUncheckedUpdateManyWithoutEmployeeNestedInput
   shifts?: Prisma.EmployeeShiftAssignmentUncheckedUpdateManyWithoutEmployeeNestedInput
@@ -16528,6 +17045,7 @@ export type EmployeeCountOutputType = {
   attendancePunches: number
   holidaySelections: number
   attendanceHolidayReviews: number
+  attendanceLeaveOverlapReviews: number
   leaveBalances: number
   leaveRequests: number
   shifts: number
@@ -16570,6 +17088,7 @@ export type EmployeeCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   attendancePunches?: boolean | EmployeeCountOutputTypeCountAttendancePunchesArgs
   holidaySelections?: boolean | EmployeeCountOutputTypeCountHolidaySelectionsArgs
   attendanceHolidayReviews?: boolean | EmployeeCountOutputTypeCountAttendanceHolidayReviewsArgs
+  attendanceLeaveOverlapReviews?: boolean | EmployeeCountOutputTypeCountAttendanceLeaveOverlapReviewsArgs
   leaveBalances?: boolean | EmployeeCountOutputTypeCountLeaveBalancesArgs
   leaveRequests?: boolean | EmployeeCountOutputTypeCountLeaveRequestsArgs
   shifts?: boolean | EmployeeCountOutputTypeCountShiftsArgs
@@ -16727,6 +17246,13 @@ export type EmployeeCountOutputTypeCountHolidaySelectionsArgs<ExtArgs extends ru
  */
 export type EmployeeCountOutputTypeCountAttendanceHolidayReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AttendanceHolidayReviewWhereInput
+}
+
+/**
+ * EmployeeCountOutputType without action
+ */
+export type EmployeeCountOutputTypeCountAttendanceLeaveOverlapReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AttendanceLeaveOverlapReviewWhereInput
 }
 
 /**
@@ -16931,6 +17457,7 @@ export type EmployeeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   attendancePunches?: boolean | Prisma.Employee$attendancePunchesArgs<ExtArgs>
   holidaySelections?: boolean | Prisma.Employee$holidaySelectionsArgs<ExtArgs>
   attendanceHolidayReviews?: boolean | Prisma.Employee$attendanceHolidayReviewsArgs<ExtArgs>
+  attendanceLeaveOverlapReviews?: boolean | Prisma.Employee$attendanceLeaveOverlapReviewsArgs<ExtArgs>
   leaveBalances?: boolean | Prisma.Employee$leaveBalancesArgs<ExtArgs>
   leaveRequests?: boolean | Prisma.Employee$leaveRequestsArgs<ExtArgs>
   shifts?: boolean | Prisma.Employee$shiftsArgs<ExtArgs>
@@ -17091,6 +17618,7 @@ export type EmployeeInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   attendancePunches?: boolean | Prisma.Employee$attendancePunchesArgs<ExtArgs>
   holidaySelections?: boolean | Prisma.Employee$holidaySelectionsArgs<ExtArgs>
   attendanceHolidayReviews?: boolean | Prisma.Employee$attendanceHolidayReviewsArgs<ExtArgs>
+  attendanceLeaveOverlapReviews?: boolean | Prisma.Employee$attendanceLeaveOverlapReviewsArgs<ExtArgs>
   leaveBalances?: boolean | Prisma.Employee$leaveBalancesArgs<ExtArgs>
   leaveRequests?: boolean | Prisma.Employee$leaveRequestsArgs<ExtArgs>
   shifts?: boolean | Prisma.Employee$shiftsArgs<ExtArgs>
@@ -17157,6 +17685,7 @@ export type $EmployeePayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     attendancePunches: Prisma.$AttendancePunchPayload<ExtArgs>[]
     holidaySelections: Prisma.$EmployeeHolidaySelectionPayload<ExtArgs>[]
     attendanceHolidayReviews: Prisma.$AttendanceHolidayReviewPayload<ExtArgs>[]
+    attendanceLeaveOverlapReviews: Prisma.$AttendanceLeaveOverlapReviewPayload<ExtArgs>[]
     leaveBalances: Prisma.$LeaveBalancePayload<ExtArgs>[]
     leaveRequests: Prisma.$LeaveRequestPayload<ExtArgs>[]
     shifts: Prisma.$EmployeeShiftAssignmentPayload<ExtArgs>[]
@@ -17649,6 +18178,7 @@ export interface Prisma__EmployeeClient<T, Null = never, ExtArgs extends runtime
   attendancePunches<T extends Prisma.Employee$attendancePunchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$attendancePunchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendancePunchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   holidaySelections<T extends Prisma.Employee$holidaySelectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$holidaySelectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeHolidaySelectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attendanceHolidayReviews<T extends Prisma.Employee$attendanceHolidayReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$attendanceHolidayReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceHolidayReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  attendanceLeaveOverlapReviews<T extends Prisma.Employee$attendanceLeaveOverlapReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$attendanceLeaveOverlapReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendanceLeaveOverlapReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   leaveBalances<T extends Prisma.Employee$leaveBalancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$leaveBalancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveBalancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   leaveRequests<T extends Prisma.Employee$leaveRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$leaveRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeaveRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   shifts<T extends Prisma.Employee$shiftsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Employee$shiftsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmployeeShiftAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -18637,6 +19167,30 @@ export type Employee$attendanceHolidayReviewsArgs<ExtArgs extends runtime.Types.
   take?: number
   skip?: number
   distinct?: Prisma.AttendanceHolidayReviewScalarFieldEnum | Prisma.AttendanceHolidayReviewScalarFieldEnum[]
+}
+
+/**
+ * Employee.attendanceLeaveOverlapReviews
+ */
+export type Employee$attendanceLeaveOverlapReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AttendanceLeaveOverlapReview
+   */
+  select?: Prisma.AttendanceLeaveOverlapReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AttendanceLeaveOverlapReview
+   */
+  omit?: Prisma.AttendanceLeaveOverlapReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AttendanceLeaveOverlapReviewInclude<ExtArgs> | null
+  where?: Prisma.AttendanceLeaveOverlapReviewWhereInput
+  orderBy?: Prisma.AttendanceLeaveOverlapReviewOrderByWithRelationInput | Prisma.AttendanceLeaveOverlapReviewOrderByWithRelationInput[]
+  cursor?: Prisma.AttendanceLeaveOverlapReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AttendanceLeaveOverlapReviewScalarFieldEnum | Prisma.AttendanceLeaveOverlapReviewScalarFieldEnum[]
 }
 
 /**

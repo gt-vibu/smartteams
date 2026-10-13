@@ -7,6 +7,9 @@ import { PayrollController } from './payroll.controller';
 import { PayrollService } from './payroll.service';
 import { PayrollPolicyService } from './payroll-policy.service';
 import { PayrollPolicyController } from './payroll-policy.controller';
+import { PayrollRuleUpdatesProcessor } from './payroll-rule-updates.processor';
+import { PayrollRuleUpdatesService } from './payroll-rule-updates.service';
+import { QueueModule } from '../../infrastructure/queue/queue.module';
 import { PayrollPreviewService } from './payroll-preview.service';
 import {
   PayrollAdvanceRulesController,
@@ -18,6 +21,7 @@ import {
 } from './payroll-overtime-rates';
 
 @Module({
+  imports: [QueueModule],
   controllers: [
     PayrollReadinessController,
     PayrollController,
@@ -35,6 +39,8 @@ import {
     PayrollPreviewService,
     PayrollOvertimeRatesService,
     PayrollAdvanceRulesService,
+    PayrollRuleUpdatesService,
+    PayrollRuleUpdatesProcessor,
   ],
 })
 export class PayrollModule {}
