@@ -22,6 +22,7 @@ import { organizationRepository } from '../../repositories/organization.reposito
 import { attendanceRepository } from '../../repositories/attendance.repository';
 import { TimezoneSelect } from '../common/timezone-select';
 import { pinCodeProblem } from '@smarteam/contracts';
+import { captureAttendanceLocation } from '../../services/attendance-location';
 
 type Location = { name: string; latitude: string; longitude: string; radiusMeters: string };
 const ADDRESS = ['line1', 'line2', 'city', 'state', 'postalCode', 'country'] as const;
@@ -67,6 +68,7 @@ export function BranchSettingsDrawer({
   const [biometric, setBiometric] = useState(INHERIT);
   const [locations, setLocations] = useState<Location[]>([]);
   const [busy, setBusy] = useState(false);
+  const [capturingLocation, setCapturingLocation] = useState<number | null>(null);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
 
   useEffect(() => {
@@ -143,7 +145,7 @@ export function BranchSettingsDrawer({
             name: l.name.trim(),
             latitude: Number(l.latitude),
             longitude: Number(l.longitude),
-            radiusMeters: Number(l.radiusMeters),
+            radiusMeters: 100,
           })),
         }),
       'Attendance rules saved.',
@@ -151,6 +153,24 @@ export function BranchSettingsDrawer({
 
   const setLocation = (index: number, key: keyof Location, value: string) =>
     setLocations((all) => all.map((l, i) => (i === index ? { ...l, [key]: value } : l)));
+
+  const useCurrentLocation = async (index: number) => {
+    setCapturingLocation(index);
+    setMessage(null);
+    try {
+      const current = await captureAttendanceLocation();
+      setLocation(index, 'latitude', String(current.latitude));
+      setLocation(index, 'longitude', String(current.longitude));
+      setMessage({ ok: true, text: 'Location captured. Save attendance rules to apply it.' });
+    } catch (caught) {
+      setMessage({
+        ok: false,
+        text: caught instanceof Error ? caught.message : 'Unable to get this device’s location.',
+      });
+    } finally {
+      setCapturingLocation(null);
+    }
+  };
 
   return (
     <Sheet onOpenChange={(open) => !open && onClose()} open>
@@ -320,16 +340,23 @@ export function BranchSettingsDrawer({
                         placeholder="Longitude"
                         value={location.longitude}
                       />
+                      <Button
+                        className="col-span-2 justify-self-start"
+                        disabled={!canEditAttendance || busy || capturingLocation !== null}
+                        onClick={() => void useCurrentLocation(index)}
+                        size="sm"
+                        type="button"
+                        variant="outline"
+                      >
+                        {capturingLocation === index
+                          ? 'Getting location…'
+                          : 'Use this device’s current location'}
+                      </Button>
                       <Input
+                        aria-label="Allowed radius in metres"
+                        disabled
                         type="number"
-                        min={10}
-                        max={10000}
-                        step={1}
-                        disabled={!canEditAttendance || busy}
-                        inputMode="numeric"
-                        onChange={(e) => setLocation(index, 'radiusMeters', e.target.value)}
-                        placeholder="Radius in metres"
-                        value={location.radiusMeters}
+                        value="100"
                       />
                       {canEditAttendance && (
                         <Button

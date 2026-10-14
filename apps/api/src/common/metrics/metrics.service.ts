@@ -30,6 +30,13 @@ export class MetricsService {
     buckets: [0.005, 0.025, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30],
     registers: [this.registry],
   });
+  readonly httpResponseDuration = new Histogram({
+    name: 'smarteam_http_response_duration_seconds',
+    help: 'HTTP server time through response serialization and flush',
+    labelNames: ['method', 'route'],
+    buckets: [0.005, 0.025, 0.1, 0.25, 0.5, 1, 2.5, 5, 10, 30],
+    registers: [this.registry],
+  });
 
   // --- Database -------------------------------------------------------------------------------
   readonly dbStatements = new Counter({

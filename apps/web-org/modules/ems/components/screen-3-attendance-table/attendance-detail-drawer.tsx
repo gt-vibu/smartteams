@@ -34,7 +34,7 @@ interface AttendanceDetailDrawerProps {
     reason: string,
   ) => Promise<unknown>;
   /** Explains a check-in on an approved optional holiday; same contract. */
-  onExplainHolidayCheckIn?: (recordId: string, reason: string, comment: string) => Promise<unknown>;
+  onExplainHolidayCheckIn?: (recordId: string, reason: string) => Promise<unknown>;
 }
 
 export function AttendanceDetailDrawer({

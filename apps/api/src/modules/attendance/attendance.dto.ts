@@ -107,6 +107,17 @@ export class AttendanceDecisionDto {
   checkOutAt?: string;
 }
 
+/** Native web approval decisions do not ask the reviewer to write a comment. */
+export class NativeAttendanceDecisionDto {
+  @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
+  @IsOptional() @IsString() @MinLength(1) @MaxLength(255) decidedByExternalEmployeeId?: string;
+  @IsOptional()
+  @IsISO8601({ strict: true })
+  @Matches(/(Z|[+-]\d{2}:\d{2})$/, { message: 'checkOutAt must include a time zone offset' })
+  checkOutAt?: string;
+}
+
 /** The date range of the optional-holiday conflicts to list. */
 export class HolidayConflictQueryDto {
   @IsOptional() @IsUUID() employeeId?: string;
@@ -127,7 +138,7 @@ export class HolidayReviewRequestDto {
 export class HolidayReviewDecisionDto {
   @IsEnum(['KEEP_HOLIDAY', 'CONVERT_TO_WORKING_DAY']) outcome!:
     'KEEP_HOLIDAY' | 'CONVERT_TO_WORKING_DAY';
-  @IsString() @MinLength(2) @MaxLength(500) comment!: string;
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
 }
 
 export class LeaveOverlapDecisionDto {

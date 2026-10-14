@@ -10,6 +10,7 @@ import { useOvertimeRates } from '../../hooks/use-overtime-rates';
 interface CompensationSalaryFormProps {
   compensation: CompensationState;
   profile: SalaryProfile;
+  readOnly?: boolean;
   pfEnabled: boolean;
   ptEnabled: boolean;
   esiEnabled: boolean;
@@ -65,6 +66,7 @@ function SchemeSwitch({
 export function CompensationSalaryForm({
   compensation,
   profile,
+  readOnly = false,
   pfEnabled,
   ptEnabled,
   esiEnabled,
@@ -95,7 +97,7 @@ export function CompensationSalaryForm({
   // standard rate is only the starting point for a new salary; this is what payroll pays.
   const companyRates = useOvertimeRates();
   const [overtimeInput, setOvertimeInput] = useState('');
-  const locked = compensation.saving || !compensation.can.saveSalary;
+  const locked = compensation.saving || !compensation.can.saveSalary || readOnly;
 
   useEffect(() => {
     const gross = Number(
@@ -301,7 +303,7 @@ export function CompensationSalaryForm({
         </p>
       )}
 
-      {compensation.can.saveSalary && (
+      {compensation.can.saveSalary && !readOnly && (
         <div className="flex justify-end">
           <Button
             className="h-10 w-full gap-1.5 sm:w-auto"

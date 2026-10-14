@@ -153,6 +153,19 @@ export const attendancePreferencesSchema = z.object({
   autoCheckOutMode: z.enum(['DISABLED', 'REVIEW_REQUIRED']).nullable().optional(),
   autoCheckOutAt: z.string().nullable().optional(),
   missedCheckOutPolicy: missedCheckOutPolicySchema.optional(),
+  workLocations: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        branchId: z.string().nullable().optional(),
+        name: z.string(),
+        latitude: z.number(),
+        longitude: z.number(),
+        radiusMeters: z.number(),
+      }),
+    )
+    .optional()
+    .default([]),
 });
 
 export type AttendancePunch = z.infer<typeof attendancePunchSchema>;

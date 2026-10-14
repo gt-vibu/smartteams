@@ -29,7 +29,7 @@ export const COMMAND_MODULE_BY_ID: Record<string, string> = {
   'nav-approvals': 'approvals',
   'nav-team': 'teams',
   'nav-admin-team': 'teams',
-  'nav-admin-org': 'home',
+  'nav-admin-org': 'org-setup',
   'act-punch': 'attendance',
   'act-leave': 'time-off',
   'act-logtime': 'timesheet',
@@ -56,7 +56,7 @@ export function buildCommandItems({
   isAssignedToAnyTeam: boolean;
   isCheckedIn: boolean;
   onClose: () => void;
-  onNavigateModule: (module: string) => void;
+  onNavigateModule: (module: string, subView?: string) => void;
   onNavigateSpace: (space: string) => void;
   workspaceContext: string;
 }): CommandItem[] {
@@ -74,6 +74,7 @@ export function buildCommandItems({
         icon: <span className="text-sky-500">💳</span>,
         onSelect: () => {
           onNavigateSpace('Organization');
+          onNavigateModule('payroll', 'RUNS');
           onClose();
         },
       },
@@ -85,6 +86,7 @@ export function buildCommandItems({
         icon: <span className="text-purple-500">🌴</span>,
         onSelect: () => {
           onNavigateSpace('Organization');
+          onNavigateModule('time-off', 'types');
           onClose();
         },
       },
@@ -96,6 +98,7 @@ export function buildCommandItems({
         icon: <span className="text-emerald-500">⏱️</span>,
         onSelect: () => {
           onNavigateSpace('Organization');
+          onNavigateModule('attendance', 'records');
           onClose();
         },
       },
@@ -108,6 +111,7 @@ export function buildCommandItems({
         icon: <span className="text-muted-foreground">🏢</span>,
         onSelect: () => {
           onNavigateSpace('Organization');
+          onNavigateModule('org-setup', 'branches');
           onClose();
         },
       },

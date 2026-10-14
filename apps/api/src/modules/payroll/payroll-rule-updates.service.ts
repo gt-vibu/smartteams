@@ -61,14 +61,14 @@ export class PayrollRuleUpdatesService {
       const [checks, proposals] = await Promise.all([
         tx.$queryRaw<Array<Record<string, unknown>>>`
           SELECT source_key AS "sourceKey", scheme_code AS "schemeCode", jurisdiction,
-                 source_label AS "sourceLabel", source_url AS "sourceUrl", checked_at AS "checkedAt",
+                 checked_at AS "checkedAt",
                  source_changed_at AS "sourceChangedAt", last_error AS "lastError"
           FROM payroll_compliance_source_checks
           WHERE organization_id = ${context.organizationId}::uuid
           ORDER BY jurisdiction, scheme_code`,
         tx.$queryRaw<Array<Record<string, unknown>>>`
           SELECT id, source_key AS "sourceKey", source_hash AS "sourceHash", scheme_code AS "schemeCode",
-                 jurisdiction, source_label AS "sourceLabel", source_url AS "sourceUrl", status,
+                 jurisdiction, status,
                  change_summary AS "changeSummary", current_rule AS "currentRule",
                  proposed_rule AS "proposedRule", impact_preview AS "impactPreview",
                  effective_from AS "effectiveFrom", decided_at AS "decidedAt", decision_note AS "decisionNote",
@@ -82,7 +82,11 @@ export class PayrollRuleUpdatesService {
       return {
         checks,
         proposals,
-        sources: configured.sources,
+        sources: configured.sources.map(({ key, schemeCode, jurisdiction }) => ({
+          key,
+          schemeCode,
+          jurisdiction,
+        })),
         unsupportedJurisdictions: configured.unsupportedJurisdictions,
         nextAutomaticCheck: nextMonthStartUtc(),
       };
@@ -322,14 +326,18 @@ export class PayrollRuleUpdatesService {
               etag: string | null;
               last_modified: string | null;
               checked_at: Date | null;
+              source_url: string;
             }>
           >`
-            SELECT content_hash, etag, last_modified, checked_at FROM payroll_compliance_source_checks
+            SELECT content_hash, etag, last_modified, checked_at, source_url FROM payroll_compliance_source_checks
             WHERE organization_id = ${context.organizationId}::uuid AND source_key = ${source.key}`;
           return rows[0] ?? null;
         });
-        if (!force && prior?.checked_at && sameUtcMonth(prior.checked_at, new Date())) continue;
-        const response = await fetchAllowlistedSource(source, prior);
+        // A source URL change is a new baseline, not evidence that the law changed. Do not send
+        // validators or compare a new official page against the prior page's content hash.
+        const sameSource = prior?.source_url === source.url;
+        if (!force && sameSource && prior?.checked_at && sameUtcMonth(prior.checked_at, new Date())) continue;
+        const response = await fetchAllowlistedSource(source, sameSource ? prior : null);
         checked += 1;
         if (response.notModified) {
           await this.storeCheck(
@@ -344,7 +352,7 @@ export class PayrollRuleUpdatesService {
           continue;
         }
         const hash = createHash('sha256').update(response.body).digest('hex');
-        const hasPrior = Boolean(prior?.content_hash);
+        const hasPrior = sameSource && Boolean(prior?.content_hash);
         const didChange = hasPrior && prior!.content_hash !== hash;
         if (!didChange) {
           await this.storeCheck(

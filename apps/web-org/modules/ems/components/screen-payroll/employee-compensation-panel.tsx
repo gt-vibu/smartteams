@@ -28,6 +28,7 @@ export function EmployeeCompensationPanel({
   const [assigning, setAssigning] = useState(false);
   const profile = compensation.profile;
   const policy = profile?.employeePolicy;
+  const formerEmployee = employee?.status !== undefined && employee.status !== 'ACTIVE';
 
   const [pfEnabled, setPfEnabled] = useState<boolean>(false);
   const [ptEnabled, setPtEnabled] = useState<boolean>(false);
@@ -155,6 +156,14 @@ export function EmployeeCompensationPanel({
     <div className="w-full min-w-0 space-y-3.5">
       {/* 1. Header with Employee Context & 4 Headline Metric Cards */}
       <CompensationHeaderCard employee={employee} profile={shown} />
+      {formerEmployee && (
+        <p
+          className="rounded-lg border border-border bg-muted/40 px-3 py-2 text-xs text-muted-foreground"
+          role="status"
+        >
+          Former employee. Compensation is shown for reference and cannot be changed.
+        </p>
+      )}
       {changed && (
         <p
           className="rounded-lg border border-amber-300/60 bg-amber-50 px-3 py-2 text-xs text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200"
@@ -170,6 +179,7 @@ export function EmployeeCompensationPanel({
         <CompensationSalaryForm
           compensation={compensation}
           esiEnabled={esiEnabled}
+          readOnly={formerEmployee}
           onGrossChange={setGrossInput}
           onToggleEsi={() => setEsiEnabled(!esiEnabled)}
           onTogglePf={() => setPfEnabled(!pfEnabled)}
@@ -179,18 +189,20 @@ export function EmployeeCompensationPanel({
           ptEnabled={ptEnabled}
         />
         <SalaryBreakdownCard
-          canAssign={compensation.can.assign}
+          canAssign={compensation.can.assign && !formerEmployee}
           onAssignComponent={() => setAssigning(true)}
           profile={shown}
         />
       </div>
 
       {/* Assign Component Modal */}
-      <AssignComponentDialog
-        compensation={compensation}
-        onOpenChange={setAssigning}
-        open={assigning}
-      />
+      {!formerEmployee && (
+        <AssignComponentDialog
+          compensation={compensation}
+          onOpenChange={setAssigning}
+          open={assigning}
+        />
+      )}
     </div>
   );
 }

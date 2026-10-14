@@ -4,11 +4,16 @@ import {
   IsOptional,
   IsString,
   IsTimeZone,
+  IsNumber,
+  Max,
+  Min,
   IsUUID,
   Length,
   MinLength,
   ValidateIf,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { LIMITS } from '@smarteam/contracts';
 import { IsCode, IsPersonName, IsText, withRules } from '../../common/validation/field-rules';
 
@@ -65,11 +70,21 @@ export class UpdateBranchDto {
 }
 
 /** A branch created in the app. Federation provisions branches through its own, frozen DTO. */
+class BranchWorkLocationDto {
+  @IsNumber() @Min(-90) @Max(90) latitude!: number;
+  @IsNumber() @Min(-180) @Max(180) longitude!: number;
+}
+
 export class NativeBranchDto extends BranchDto {
   @IsOptional()
   @ValidateIf((_, value) => value !== '')
   @IsTimeZone({ message: 'Choose a time zone from the list, like Asia/Kolkata.' })
   timezone?: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => BranchWorkLocationDto)
+  workLocation?: BranchWorkLocationDto;
 }
 withRules(NativeBranchDto, {
   name: [IsText('Branch name', LIMITS.title, 2)],

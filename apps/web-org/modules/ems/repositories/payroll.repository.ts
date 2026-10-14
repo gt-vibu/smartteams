@@ -42,8 +42,6 @@ export type PayrollRuleUpdateProposal = {
   sourceKey: string;
   schemeCode: string;
   jurisdiction: string;
-  sourceLabel: string;
-  sourceUrl: string;
   status: string;
   changeSummary: string;
   currentRule: Record<string, unknown> | null;
@@ -58,16 +56,11 @@ export type PayrollRuleUpdates = {
     key: string;
     schemeCode: string;
     jurisdiction: string;
-    label: string;
-    url: string;
-    note?: string;
   }>;
   checks: Array<{
     sourceKey: string;
     schemeCode: string;
     jurisdiction: string;
-    sourceLabel: string;
-    sourceUrl: string;
     checkedAt: string | null;
     sourceChangedAt: string | null;
     lastError: string | null;
@@ -331,10 +324,17 @@ export const payrollRepository = {
    * Calculates a draft run, or recalculates one whose inputs changed after it was calculated.
    * The returned run is authoritative — the caller replaces its copy rather than assuming.
    */
-  async calculateRun(organizationId: string, runId: string): Promise<PayrollRun> {
+  async calculateRun(
+    organizationId: string,
+    runId: string,
+    deferAdvanceEmployeeIds: string[] = [],
+  ): Promise<PayrollRun> {
     return expectShape(
       parsePayrollRun(
-        await apiRequest(`${base(organizationId)}/runs/${runId}/calculate`, { method: 'POST' }),
+        await apiRequest(`${base(organizationId)}/runs/${runId}/calculate`, {
+          method: 'POST',
+          body: { deferAdvanceEmployeeIds },
+        }),
       ),
       'payroll run',
     );
@@ -354,7 +354,7 @@ export const payrollRepository = {
       parsePayrollRun(
         await apiRequest(`${base(organizationId)}/runs/${runId}/action`, {
           method: 'POST',
-          body: { target, comment },
+          body: { target, ...(comment.trim() ? { comment: comment.trim() } : {}) },
         }),
       ),
       'payroll run',

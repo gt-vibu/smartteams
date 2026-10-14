@@ -157,7 +157,6 @@ export class LeaveCompOffService {
 
   decideCompOff(context: DomainContext, id: string, input: { approve: boolean; comment?: string }) {
     const comment = input.comment?.trim() ?? '';
-    if (!input.approve && comment.length < 3) throw new ConflictError('Say why it is declined.');
     return this.database.run(context, async (tx) => {
       const found = await tx.compOffCredit.findFirst({
         where: { id, organizationId: context.organizationId },

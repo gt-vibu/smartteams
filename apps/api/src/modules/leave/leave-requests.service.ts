@@ -79,6 +79,65 @@ export class LeaveRequestsService {
     private readonly outbox: OutboxService,
   ) {}
 
+  async adminSummary(context: DomainContext) {
+    requirePermission(context, 'leave.requests.read.all');
+    const now = new Date();
+    const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+    const nextMonthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+    const branchScope = context.branchId ? { branchId: context.branchId } : {};
+
+    return this.database.run(context, async (tx) => {
+      const [pending, approvedThisMonth, onLeaveToday, touchingMonth] = await Promise.all([
+        tx.leaveRequest.count({
+          where: {
+            organizationId: context.organizationId,
+            status: LeaveRequestStatus.PENDING,
+            ...branchScope,
+          },
+        }),
+        tx.leaveRequest.count({
+          where: {
+            organizationId: context.organizationId,
+            status: LeaveRequestStatus.APPROVED,
+            decidedAt: { gte: monthStart, lt: nextMonthStart },
+            ...branchScope,
+          },
+        }),
+        tx.leaveRequest.findMany({
+          where: {
+            organizationId: context.organizationId,
+            status: LeaveRequestStatus.APPROVED,
+            startDate: { lte: today },
+            endDate: { gte: today },
+            ...branchScope,
+          },
+          select: { employeeId: true },
+          distinct: ['employeeId'],
+        }),
+        tx.leaveRequest.aggregate({
+          where: {
+            organizationId: context.organizationId,
+            status: LeaveRequestStatus.APPROVED,
+            startDate: { lt: nextMonthStart },
+            endDate: { gte: monthStart },
+            ...branchScope,
+          },
+          _sum: { requestedDays: true },
+        }),
+      ]);
+
+      return {
+        pending,
+        approvedThisMonth,
+        employeesOnLeaveToday: onLeaveToday.length,
+        approvedDaysTouchingMonth: Number(touchingMonth._sum.requestedDays ?? 0),
+        month: `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`,
+        asOf: today.toISOString().slice(0, 10),
+      };
+    });
+  }
+
   async listRequests(
     context: DomainContext,
     requestedEmployeeId?: string,

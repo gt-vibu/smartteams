@@ -45,12 +45,6 @@ export class LeaveDecisionsService {
     expectedStepNumber?: number,
   ) {
     requirePermission(context, 'leave.requests.decide');
-    if (status === 'REJECTED') {
-      requireReason(
-        { ...context, reason: comment ?? undefined },
-        'Leave rejections require a comment',
-      );
-    }
     const approverUserId = context.actor.userId;
     if (!approverUserId) throw new ConflictError('A human approver is required');
     return this.database.run(context, (tx) =>

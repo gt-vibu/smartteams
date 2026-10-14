@@ -29,7 +29,7 @@ type Tab = 'employees' | 'catalog';
 export function ScreenCompensation() {
   const compensation = useCompensation();
   const { session } = useSession();
-  const employees = useEmployees();
+  const employees = useEmployees({ limit: 200 });
   const [requestedTab, setTab] = useScreenTab<Tab>(
     'compensationTab',
     ['employees', 'catalog'],
@@ -56,6 +56,7 @@ export function ScreenCompensation() {
   );
   const tab = active;
   const [search, setSearch] = useState('');
+  const [employeeGroup, setEmployeeGroup] = useState<'current' | 'former'>('current');
   const [allottingRole, setAllottingRole] = useState(false);
   const [configuringPolicy, setConfiguringPolicy] = useState(false);
   const isWide = useMediaQuery(WIDE_LAYOUT_QUERY);
@@ -141,16 +142,26 @@ export function ScreenCompensation() {
   ]);
 
   const query = search.trim().toLowerCase();
+  const allEmployees = employees.data ?? [];
+  const currentEmployees = useMemo(
+    () => allEmployees.filter((employee) => employee.status === 'ACTIVE'),
+    [allEmployees],
+  );
+  const formerEmployees = useMemo(
+    () => allEmployees.filter((employee) => employee.status !== 'ACTIVE'),
+    [allEmployees],
+  );
+  const groupEmployees = employeeGroup === 'current' ? currentEmployees : formerEmployees;
   const rows = useMemo(
     () =>
-      (employees.data ?? []).filter(
+      groupEmployees.filter(
         (employee) =>
           !query ||
           `${employee.firstName} ${employee.lastName}`.toLowerCase().includes(query) ||
           employee.employeeNumber.toLowerCase().includes(query) ||
           (employee.workEmail && employee.workEmail.toLowerCase().includes(query)),
       ),
-    [employees.data, query],
+    [groupEmployees, query],
   );
 
   // On a laptop the detail pane is always on screen, so it opens on the first employee rather
@@ -166,9 +177,16 @@ export function ScreenCompensation() {
     if (!isWide) setView('detail');
   };
 
+  const changeEmployeeGroup = (next: 'current' | 'former') => {
+    if (next === employeeGroup) return;
+    setEmployeeGroup(next);
+    compensation.selectEmployee(null);
+    if (!isWide) setView('list');
+  };
+
   const selectedEmployee = useMemo(
-    () => (employees.data ?? []).find((e) => e.id === compensation.employeeId) ?? null,
-    [employees.data, compensation.employeeId],
+    () => allEmployees.find((e) => e.id === compensation.employeeId) ?? null,
+    [allEmployees, compensation.employeeId],
   );
 
   return (
@@ -239,8 +257,36 @@ export function ScreenCompensation() {
                 </div>
               </div>
 
+              <div
+                aria-label="Employee group"
+                className="flex gap-1 border-b border-border"
+                role="tablist"
+              >
+                {([
+                  { id: 'current', label: 'Current employees', count: currentEmployees.length },
+                  { id: 'former', label: 'Former employees', count: formerEmployees.length },
+                ] as const).map((group) => (
+                  <button
+                    aria-selected={employeeGroup === group.id}
+                    className={`min-h-9 border-b-2 px-2 text-[11px] font-semibold transition-colors ${
+                      employeeGroup === group.id
+                        ? 'border-primary text-foreground'
+                        : 'border-transparent text-muted-foreground hover:text-foreground'
+                    }`}
+                    key={group.id}
+                    onClick={() => changeEmployeeGroup(group.id)}
+                    role="tab"
+                    type="button"
+                  >
+                    {group.label} ({group.count})
+                  </button>
+                ))}
+              </div>
+
               <div className="flex items-center justify-between px-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                <span>Employees ({rows.length})</span>
+                <span>
+                  {employeeGroup === 'current' ? 'Current' : 'Former'} employees ({rows.length})
+                </span>
               </div>
 
               {employees.loading && (
@@ -254,7 +300,13 @@ export function ScreenCompensation() {
                 </p>
               )}
               {!employees.loading && employees.canRead && rows.length === 0 && (
-                <p className="px-1 py-3 text-xs text-muted-foreground">No employees found.</p>
+                <p className="px-1 py-3 text-xs text-muted-foreground">
+                  {query
+                    ? 'No matching employees found.'
+                    : employeeGroup === 'current'
+                      ? 'No current employees.'
+                      : 'No former employees.'}
+                </p>
               )}
 
               {/* Its own scroller only beside the detail pane; on a phone the page scrolls, once. */}

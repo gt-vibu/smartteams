@@ -27,10 +27,12 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
   }
 
   const isWeekend = day.dayStatus === 'WEEKEND';
-  // A check-in on an approved optional holiday is labelled by its review state, never "Present".
   const conflict = day.holidayConflict;
+  // Keep a worked day visibly present even while an optional-holiday check-in awaits review.
+  // A manager's decision to keep the holiday is the one state where the check-in is not counted.
+  const workedOnDay = day.dayStatus === 'PRESENT' && conflict?.state !== 'HOLIDAY_KEPT';
   const statusLabel = conflict
-    ? `${conflict.holidayName}: ${conflict.label}`
+    ? `${workedOnDay ? `Present${day.hoursLabel ? `, ${day.hoursLabel}` : ''}; ` : ''}${conflict.holidayName}: ${conflict.label}`
     : day.dayStatus === 'PRESENT'
       ? `Present${day.hoursLabel ? `, ${day.hoursLabel}` : ''}`
       : day.dayStatus === 'LEAVE'
@@ -42,23 +44,25 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
             : isWeekend
               ? 'Weekly off'
               : '';
-  const dot = conflict
-    ? conflict.tone === 'attention'
-      ? 'bg-amber-500'
-      : conflict.tone === 'holiday'
-        ? 'bg-cyan-500'
-        : 'bg-emerald-500'
-    : day.dayStatus === 'PRESENT'
-      ? 'bg-emerald-500'
-      : day.dayStatus === 'LEAVE'
-        ? 'bg-violet-500'
-        : day.dayStatus === 'ABSENT'
-          ? 'bg-rose-500'
-          : day.dayStatus === 'HOLIDAY'
-            ? 'bg-cyan-500'
-            : isWeekend
-              ? 'bg-amber-400'
-              : '';
+  const dot = workedOnDay
+    ? 'bg-emerald-500'
+    : conflict
+      ? conflict.tone === 'attention'
+        ? 'bg-amber-500'
+        : conflict.tone === 'holiday'
+          ? 'bg-cyan-500'
+          : 'bg-emerald-500'
+      : day.dayStatus === 'PRESENT'
+        ? 'bg-emerald-500'
+        : day.dayStatus === 'LEAVE'
+          ? 'bg-violet-500'
+          : day.dayStatus === 'ABSENT'
+            ? 'bg-rose-500'
+            : day.dayStatus === 'HOLIDAY'
+              ? 'bg-cyan-500'
+              : isWeekend
+                ? 'bg-amber-400'
+                : '';
 
   return (
     <button
@@ -96,6 +100,13 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
 
       {/* From `sm`: the labelled badge. */}
       <div className="mt-0.5 hidden w-full min-w-0 flex-col gap-0.5 sm:flex">
+        {workedOnDay && conflict && (
+          <div className="flex items-center gap-1 rounded border border-emerald-200/80 bg-emerald-50 p-0.5 px-1 text-[9.5px] font-semibold text-emerald-800 shadow-2xs">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
+            <span className="truncate">Present {day.hoursLabel ? `· ${day.hoursLabel}` : ''}</span>
+          </div>
+        )}
+
         {conflict && (
           <div
             className={`rounded border p-0.5 px-1 text-[9.5px] font-semibold shadow-2xs ${HOLIDAY_CONFLICT_PILL[conflict.tone]}`}
@@ -106,7 +117,7 @@ export function CalendarDayCell({ day, onClick }: CalendarDayCellProps) {
           </div>
         )}
 
-        {!conflict && day.dayStatus === 'PRESENT' && (
+        {!conflict && workedOnDay && (
           <div className="flex items-center gap-1 rounded border border-emerald-200/80 bg-emerald-50 p-0.5 px-1 text-[9.5px] font-semibold text-emerald-800 shadow-2xs">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
             <span className="truncate">Present {day.hoursLabel ? `· ${day.hoursLabel}` : ''}</span>

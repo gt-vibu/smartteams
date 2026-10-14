@@ -1,6 +1,19 @@
 import { OmitType } from '@nestjs/swagger';
 import { LIMITS } from '@smarteam/contracts';
-import { IsBoolean, IsInt, IsObject, IsOptional, IsString, IsUUID, Max, Min } from 'class-validator';
+import {
+  ArrayMaxSize,
+  ArrayUnique,
+  IsArray,
+  IsBoolean,
+  IsInt,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  MaxLength,
+  Min,
+} from 'class-validator';
 import {
   IsAmount,
   IsCalendarDate,
@@ -42,6 +55,16 @@ withRules(NativePayrollRunDto, {
   periodEnd: [IsCalendarDate('Period end', PERIOD)],
 });
 
+/** Per-employee choice to defer all advance recovery for this payroll period. */
+export class NativePayrollCalculationDto {
+  @IsOptional()
+  @IsArray()
+  @ArrayUnique()
+  @ArrayMaxSize(10000)
+  @IsUUID('4', { each: true })
+  deferAdvanceEmployeeIds?: string[];
+}
+
 /**
  * An adjustment added to a pay run: the run comes from the address. This route used to declare
  * `Omit<PayrollAdjustmentDto, …>`, a type that does not exist when the app runs, so its body
@@ -60,10 +83,11 @@ withRules(NativeRunAdjustmentDto, {
   externalId: [IsOptional(), IsText('Reference', 120)],
 });
 
-export class NativePayrollActionDto extends PayrollActionDto {}
-withRules(NativePayrollActionDto, {
-  comment: [IsText('Comment', LIMITS.reason, 3)],
-});
+// Native payroll decisions do not require reviewer comments. Omit the shared comment field
+// before adding an optional version so class-validator does not retain its inherited MinLength.
+export class NativePayrollActionDto extends OmitType(PayrollActionDto, ['comment'] as const) {
+  @IsOptional() @IsString() @MaxLength(LIMITS.reason) comment?: string;
+}
 
 export class NativePayrollPaymentDto extends PayrollPaymentDto {}
 withRules(NativePayrollPaymentDto, {

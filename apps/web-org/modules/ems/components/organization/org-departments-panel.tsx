@@ -2,8 +2,10 @@
 
 import type { Department } from '@smarteam/contracts';
 import { LoadingIndicator, Button, Dialog, DialogContent, DialogTitle, Input } from '@smarteam/ui';
-import { Plus, Search } from 'lucide-react';
+import { Building2, Plus, Search, UserRoundX, UsersRound } from 'lucide-react';
 import { useState } from 'react';
+import { EmptyState } from '../common/empty-state';
+import { SummaryMetricCard } from '../common/summary-metric-card';
 import { useDepartments } from '../../hooks/use-departments';
 import { DepartmentDialog } from './department-dialog';
 import { useDebouncedValue } from '../../hooks/use-debounced-value';
@@ -51,38 +53,31 @@ export function OrgDepartmentsPanel() {
 
   return (
     <section className="space-y-3">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-        <button
-          aria-pressed={!needsHeadOnly}
-          className="rounded-lg border border-border bg-card px-3 py-2.5 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      <div className="grid gap-3 sm:grid-cols-3">
+        <SummaryMetricCard
+          active={!needsHeadOnly}
+          detail="Organization units"
+          icon={Building2}
+          label="Departments"
           onClick={() => setNeedsHeadOnly(false)}
-          type="button"
-        >
-          <span className="text-[11px] text-muted-foreground">Departments</span>
-          <span className="mt-0.5 block text-xl font-semibold tabular-nums">
-            {departments.departments.length}
-          </span>
-          <span className="text-[10px] text-muted-foreground">Organization units</span>
-        </button>
-        <div className="rounded-lg border border-border bg-card px-3 py-2.5">
-          <span className="text-[11px] text-muted-foreground">Employee assignments</span>
-          <span className="mt-0.5 block text-xl font-semibold tabular-nums">
-            {assignedPeople.toLocaleString()}
-          </span>
-          <span className="text-[10px] text-muted-foreground">Across listed departments</span>
-        </div>
-        <button
-          aria-pressed={needsHeadOnly}
-          className="rounded-lg border border-border bg-card px-3 py-2.5 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          value={departments.departments.length}
+          tone="primary"
+        />
+        <SummaryMetricCard
+          detail="Across listed departments"
+          icon={UsersRound}
+          label="Employee assignments"
+          value={assignedPeople}
+        />
+        <SummaryMetricCard
+          active={needsHeadOnly}
+          detail={departmentsWithoutHead ? 'Review department ownership' : 'Every department has a head'}
+          icon={UserRoundX}
+          label="Departments without a head"
           onClick={() => setNeedsHeadOnly((value) => !value)}
-          type="button"
-        >
-          <span className="text-[11px] text-muted-foreground">Departments without a head</span>
-          <span className="mt-0.5 block text-xl font-semibold tabular-nums">
-            {departmentsWithoutHead}
-          </span>
-          <span className="text-[10px] text-muted-foreground">Click to review ownership</span>
-        </button>
+          value={departmentsWithoutHead}
+          tone={departmentsWithoutHead ? 'warning' : 'success'}
+        />
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -120,30 +115,45 @@ export function OrgDepartmentsPanel() {
         </p>
       )}
       {!departments.loading && departments.departments.length === 0 && (
-        <p className="rounded-lg border border-dashed border-border bg-card/60 p-8 text-center text-xs text-muted-foreground">
-          No departments yet. Create one to group people and give new joiners numbered IDs.
-        </p>
+        <EmptyState
+          detail="Create departments to organize employees and set their employee-number series."
+          icon={Building2}
+          title="Set up your first department"
+          action={departments.canWrite ? (
+            <Button onClick={() => openDialog(null)} size="sm" type="button">
+              <Plus aria-hidden="true" className="mr-1.5 size-4" />
+              New department
+            </Button>
+          ) : undefined}
+        />
       )}
 
       {!departments.loading &&
         departments.departments.length > 0 &&
         visibleDepartments.length === 0 && (
-          <p className="rounded-lg border border-dashed border-border bg-card/60 p-8 text-center text-xs text-muted-foreground">
-            No departments match these filters.
-          </p>
+          <EmptyState
+            detail="Try a different name or clear the head filter."
+            icon={Search}
+            title="No matching departments"
+          />
         )}
 
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className={`grid gap-3 ${visibleDepartments.length === 1 ? 'md:grid-cols-1' : 'md:grid-cols-2'}`}>
         {visibleDepartments.map((department) => (
-          <article className="rounded-lg border border-border bg-card p-4" key={department.id}>
+          <article className="rounded-2xl border border-border/70 bg-card p-4 shadow-sm" key={department.id}>
             <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <h3 className="truncate text-sm font-bold text-foreground">{department.name}</h3>
-                <p className="text-[11px] text-muted-foreground">
-                  {department.employeeNumberPrefix
-                    ? `Series ${department.employeeNumberPrefix} · next ${department.nextEmployeeNumber}`
-                    : 'No number series'}
-                </p>
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+                  <Building2 aria-hidden="true" className="size-5" />
+                </span>
+                <div className="min-w-0">
+                  <h3 className="truncate font-semibold text-foreground">{department.name}</h3>
+                  <p className="text-xs text-muted-foreground">
+                    {department.employeeNumberPrefix
+                      ? `${department.employeeNumberPrefix} series · next ${department.nextEmployeeNumber}`
+                      : 'No employee-number series'}
+                  </p>
+                </div>
               </div>
               {departments.canWrite && (
                 <Button
@@ -156,16 +166,21 @@ export function OrgDepartmentsPanel() {
                 </Button>
               )}
             </div>
-            <p className="mt-3 text-xs">
-              <span className="text-muted-foreground">Head: </span>
-              <span className="font-semibold text-foreground">
-                {department.head?.name ?? 'Not set'}
-              </span>
-            </p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {(department.memberCount ?? department.members.length).toLocaleString()} employees
-            </p>
-            <ul className="mt-2 divide-y divide-border/60 text-xs">
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <div className="rounded-xl bg-muted/50 px-3 py-2">
+                <p className="text-[11px] text-muted-foreground">Department head</p>
+                <p className="mt-0.5 truncate text-sm font-medium text-foreground">
+                  {department.head?.name ?? 'Not assigned'}
+                </p>
+              </div>
+              <div className="rounded-xl bg-muted/50 px-3 py-2">
+                <p className="text-[11px] text-muted-foreground">Employees</p>
+                <p className="mt-0.5 font-mono text-sm font-semibold tabular-nums text-foreground">
+                  {(department.memberCount ?? department.members.length).toLocaleString()}
+                </p>
+              </div>
+            </div>
+            <ul className="mt-3 divide-y divide-border/60 text-sm">
               {department.members.map((member) => (
                 <li className="flex items-center justify-between gap-2 py-1.5" key={member.id}>
                   <span className="min-w-0 truncate">

@@ -392,6 +392,10 @@ export function ConfigureSalaryPolicyDialog({
                 onChange={setEffectiveFrom}
                 className="h-8 w-full text-xs"
               />
+              <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">
+                To apply this policy to an existing draft, choose a date on or before the start of
+                its pay period. Statutory rates use their government effective dates.
+              </p>
             </div>
           </div>
 
@@ -399,9 +403,10 @@ export function ConfigureSalaryPolicyDialog({
             <div>
               <h3 className="text-xs font-bold text-foreground">Organization statutory defaults</h3>
               <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-                These defaults apply to employees without an individual payroll setting. Saving
-                creates any missing verified EPF, ESI and state PT rules automatically; existing
-                custom rules are kept.
+                These defaults fill in where an employee or role has no matching setting. Saving
+                creates missing verified EPF, ESI and state PT rules using their government
+                effective dates. Existing custom rules are kept, and the policy&apos;s Effective From
+                date controls when its deduction defaults apply.
               </p>
             </div>
             {compensation.organizationPolicyLoading && (

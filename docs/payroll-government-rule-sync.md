@@ -2,11 +2,14 @@
 
 ## Safety model
 
-The checker is a change detector, not a legal-rules interpreter. It downloads only HTTPS URLs in
-`apps/api/src/modules/payroll/payroll-government-sources.ts`; state PT checks are keyed by the
-configured statutory jurisdiction. It does not search the web dynamically or fall back to another
-state. If the company or an employee has a PT jurisdiction without an allowlisted source, the UI
-reports that gap and no PT source is fetched for that jurisdiction.
+The checker is a change detector, not a legal-rules interpreter. When the admin selects **Sync
+rules now**, the API worker fetches the HTTPS pages configured in
+`apps/api/src/modules/payroll/payroll-government-sources.ts`; the browser does not open those sites.
+State PT checks are keyed by each effective configured statutory jurisdiction. It does not run a
+general search-engine query or fall back to another state. If the company or an employee has a PT
+jurisdiction without an allowlisted source, the UI reports that gap and no PT source is fetched for
+that jurisdiction. Payroll shows the scheme, jurisdiction and sync result without exposing external
+source links as navigation actions.
 
 A first successful fetch establishes a baseline. A later content change creates a pending review
 item and an in-app notification for users with `payroll.policy.write`. The checker does not infer
@@ -26,7 +29,7 @@ National schemes are checked only when enabled by an organization default or an 
 
 | Scheme | Official source | Notes |
 | --- | --- | --- |
-| EPF | [EPFO Employer Information Booklet](https://www.epfindia.gov.in/site_docs/PDFs/MiscPDFs/Employer_Information_Booklet.pdf) | Reference material; individual coverage, wage basis, ceiling, and exceptions still require review. |
+| EPF | [Employees' Provident Fund Organisation](https://www.epfo.gov.in/) | Official update page; individual coverage, wage basis, ceiling, and exceptions still require review. |
 | ESIC | [ESIC contribution publication](https://www.esic.gov.in/attachments/publicationfile/6f673bcd3d6110170f790d2909767b4f.pdf) | Reference material; coverage and contribution-period rules still require review. |
 
 Professional Tax is checked only for the exact configured state/UT below:
@@ -111,7 +114,7 @@ independently reviewed and added to the allowlist before that jurisdiction is mo
 - A BullMQ scheduler runs a lightweight due-check daily. Each source is fetched at most once per
   UTC calendar month automatically. This daily heartbeat means downtime is recovered on the next
   run instead of missing a calendar-date-only job.
-- The admin's **Check official sources now** action enqueues a forced organization-only check. It
+- The admin's **Sync rules now** action enqueues a forced organization-only check. It
   bypasses the monthly due guard, uses the same allowlist and source matching, and is rate-limited
   by queue concurrency rather than making the browser call government sites directly.
 - Source selection comes from effective organization payroll defaults and enabled employee payroll

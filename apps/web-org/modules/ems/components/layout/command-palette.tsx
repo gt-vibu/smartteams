@@ -13,7 +13,7 @@ import { workspaceTitle } from '../../services/authorization.policy';
 interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
-  onNavigateModule: (module: string) => void;
+  onNavigateModule: (module: string, subView?: string) => void;
   onNavigateSpace: (space: string) => void;
   onSelectEmployee?: (employeeId: string) => void;
   onSelectProject?: (projectId: string) => void;

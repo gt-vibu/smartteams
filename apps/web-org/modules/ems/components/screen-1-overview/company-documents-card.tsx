@@ -56,7 +56,7 @@ export function CompanyDocumentsCard() {
             Company Documents & Shared Files
           </CardTitle>
           <p className="text-[11px] text-muted-foreground">
-            Official policies, company assets, and documents published for your organization.
+            Official policies, forms, and documents published for your organization.
           </p>
         </div>
         <Badge variant="outline" className="text-[10px] tabular-nums">

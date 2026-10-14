@@ -57,6 +57,7 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
   const canRead = hasPermission(permissions, 'attendance.read');
   const canWrite = hasPermission(permissions, 'attendance.write');
   const canRequestCorrection = hasPermission(permissions, 'attendance.corrections.write');
+  const isOrganizationAdmin = permissions.includes('*');
 
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -199,10 +200,12 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
         // Read effective branch/employee rules on the action too, rather than relying
         // on settings loaded before an administrator changed the attendance policy.
         const preferences = await attendanceRepository.getPreferences(organizationId!);
-        const required = preferences.requireGps || preferences.geofenceMode === 'REQUIRED';
+        const required =
+          !isOrganizationAdmin &&
+          (preferences.requireGps || preferences.geofenceMode === 'REQUIRED');
         const location = required
           ? await captureAttendanceLocation()
-          : preferences.geofenceMode === 'FLAG_ONLY'
+          : !isOrganizationAdmin && preferences.geofenceMode === 'FLAG_ONLY'
             ? await captureAttendanceLocation().catch(() => undefined)
             : undefined;
         const now = new Date();
@@ -222,7 +225,7 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
         if (direction === 'IN' && conflict?.state === 'AWAITING_REASON')
           announceHolidayCheckIn(conflict);
       }),
-    [employeeId, organizationId, run],
+    [employeeId, isOrganizationAdmin, organizationId, run],
   );
 
   const checkIn = useCallback(() => punch('IN'), [punch]);

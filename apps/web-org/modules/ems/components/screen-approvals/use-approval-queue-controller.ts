@@ -10,7 +10,6 @@ export function useApprovalQueueController(inbox: ApprovalInboxState) {
   const [deciding, setDeciding] = useState<PendingDecision | null>(null);
   const [selected, setSelected] = useState<Set<string>>(() => new Set());
   const [bulkResult, setBulkResult] = useState<string | null>(null);
-  const [comment, setComment] = useState('');
   const [checkOutDate, setCheckOutDate] = useState('');
   const [checkOutTime, setCheckOutTime] = useState('');
   const [operating, setOperating] = useState(false);
@@ -40,7 +39,6 @@ export function useApprovalQueueController(inbox: ApprovalInboxState) {
   const execute = async (
     items: ApprovalInboxItem[],
     status: 'APPROVED' | 'REJECTED',
-    reason: string,
     checkOutAt?: string,
   ) => {
     if (busy) return false;
@@ -61,14 +59,14 @@ export function useApprovalQueueController(inbox: ApprovalInboxState) {
             label: `${item.requester} · ${item.title}`.slice(0, 200),
           })),
           status,
-          reason,
+          '',
         );
       }
       const failed: string[] = [];
       for (const item of items) {
         const ok = checkOutAt
-          ? await inbox.decide(item, status, reason, checkOutAt)
-          : await inbox.decide(item, status, reason);
+          ? await inbox.decide(item, status, '', checkOutAt)
+          : await inbox.decide(item, status, '');
         if (!ok) failed.push(approvalItemKey(item));
       }
       if (items.length > 1)
@@ -84,7 +82,6 @@ export function useApprovalQueueController(inbox: ApprovalInboxState) {
   const reset = () => {
     inbox.dismissError();
     setBulkResult(null);
-    setComment('');
     setCheckOutDate('');
     setCheckOutTime('');
   };
@@ -94,7 +91,7 @@ export function useApprovalQueueController(inbox: ApprovalInboxState) {
       setDeciding({ items, status: 'APPROVED' });
       return;
     }
-    await execute(items, 'APPROVED', '');
+    await execute(items, 'APPROVED');
   };
   const openRejection = (items: ApprovalInboxItem[]) => {
     reset();
@@ -105,7 +102,6 @@ export function useApprovalQueueController(inbox: ApprovalInboxState) {
     const ok = await execute(
       deciding.items,
       deciding.status,
-      deciding.status === 'REJECTED' ? comment.trim() : '',
       single && replacement && deciding.status === 'APPROVED'
         ? replacement.toISOString()
         : undefined,
@@ -121,8 +117,6 @@ export function useApprovalQueueController(inbox: ApprovalInboxState) {
     chosen,
     single,
     bulkResult,
-    comment,
-    setComment,
     checkOutDate,
     setCheckOutDate,
     checkOutTime,

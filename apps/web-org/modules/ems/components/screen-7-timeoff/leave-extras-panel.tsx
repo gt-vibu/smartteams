@@ -72,7 +72,6 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
     days: '1',
     reason: '',
     typeId: '',
-    comment: '',
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -176,13 +175,9 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
 
   const submitDecision = async () => {
     if (!deciding) return;
-    if (form.comment.trim().length < 3) {
-      setError('A reason is required to decline.');
-      return;
-    }
     const input = {
       approve: false,
-      comment: form.comment.trim(),
+      comment: '',
     };
     const done = await run(() =>
       deciding.kind === 'comp-off'
@@ -264,7 +259,6 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
                 <Button
                   disabled={busy}
                   onClick={() => {
-                    setForm({ ...form, comment: '' });
                     setError('');
                     setDeciding({ kind: item.kind, id: item.id, approve: false, who: item.who });
                   }}
@@ -407,18 +401,9 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
         <DialogContent className="sm:max-w-md">
           <DialogTitle>Decline {deciding?.who}&apos;s request</DialogTitle>
           <div className="mt-3 space-y-3">
-            <Label className="block" htmlFor="extra-comment">
-              Reason for decline (required)
-            </Label>
-            <Textarea
-              maxLength={LIMITS.reason}
-              disabled={busy}
-              id="extra-comment"
-              onChange={(event) => setForm({ ...form, comment: event.target.value })}
-              placeholder="State the reason for declining..."
-              rows={2}
-              value={form.comment}
-            />
+            <p className="text-xs text-muted-foreground">
+              Decline this request? The decision will be recorded in the audit trail.
+            </p>
             {error && (
               <p className="text-[11px] font-semibold text-destructive" role="alert">
                 {error}
@@ -434,7 +419,7 @@ export function LeaveExtrasPanel({ types }: { types: readonly LeaveType[] }) {
                 Cancel
               </Button>
               <Button
-                disabled={busy || form.comment.trim().length < 3}
+                disabled={busy}
                 onClick={() => void submitDecision()}
                 type="button"
                 variant="destructive"

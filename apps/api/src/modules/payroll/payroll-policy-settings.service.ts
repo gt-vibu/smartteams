@@ -114,36 +114,31 @@ export class PayrollPolicySettingsService {
           effectiveFrom: { lte: effectiveTo ?? new Date('9999-12-31') },
           OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveFrom } }],
         },
+        orderBy: { effectiveFrom: 'desc' },
       });
       if (overlap) {
-        // The generated baseline replaces the previous implicit fallback. A first
-        // organization-policy save may supersede it, but never an actual configured
-        // policy or history before the requested date.
-        const baseline =
-          !input.id &&
-          !requestedName &&
-          overlap.isDefault &&
-          overlap.effectiveFrom.toISOString().slice(0, 10) === '1970-01-01' &&
-          overlap.effectiveTo === null &&
-          effectiveFrom > overlap.effectiveFrom &&
-          overlap.name === 'Standard payroll' &&
-          overlap.basePercentage.toNumber() === DEFAULT_PAYROLL_POLICY.basePercentage &&
-          overlap.baseMinimum.toNumber() === DEFAULT_PAYROLL_POLICY.baseMinimum &&
-          overlap.hraPercentage.toNumber() === DEFAULT_PAYROLL_POLICY.hraPercentage &&
-          overlap.payrollDayBasis === DEFAULT_PAYROLL_POLICY.payrollDayBasis &&
-          overlap.roundingMode === DEFAULT_PAYROLL_POLICY.roundingMode &&
-          overlap.salarySlipDefault === DEFAULT_PAYROLL_POLICY.salarySlipDefault &&
-          overlap.payrollEnabledDefault === DEFAULT_PAYROLL_POLICY.payrollEnabledDefault &&
-          overlap.pfDefault === DEFAULT_PAYROLL_POLICY.pfDefault &&
-          overlap.esiDefault === DEFAULT_PAYROLL_POLICY.esiDefault &&
-          overlap.ptDefault === DEFAULT_PAYROLL_POLICY.ptDefault &&
-          overlap.statutoryJurisdiction === DEFAULT_PAYROLL_POLICY.statutoryJurisdiction &&
-          overlap.defaultGrossSalary === DEFAULT_PAYROLL_POLICY.defaultGrossSalary;
-        if (!baseline) throw new ConflictError('Payroll policy periods must not overlap');
+        // A new organization-default revision supersedes the version currently in force.
+        // Preserve its history by closing it the day before this version starts. Previously,
+        // this only handled the untouched 1970 fallback; after the first save, every later
+        // update collided with the configured open-ended row and produced an overlap error.
+        if (!isDefault || effectiveFrom <= overlap.effectiveFrom)
+          throw new ConflictError('Payroll policy periods must not overlap');
+        const previousEffectiveTo = new Date(effectiveFrom.getTime() - 86_400_000);
         await tx.payrollPolicy.update({
           where: { id: overlap.id },
-          data: { effectiveTo: new Date(effectiveFrom.getTime() - 86_400_000) },
+          data: { effectiveTo: previousEffectiveTo },
         });
+        await this.audit.record(
+          context,
+          {
+            entityType: 'PAYROLL_POLICY',
+            entityId: overlap.id,
+            action: 'PAYROLL_POLICY_PERIOD_CLOSED',
+            beforeState: jsonSnapshot(overlap),
+            afterState: jsonSnapshot({ ...overlap, effectiveTo: previousEffectiveTo }),
+          },
+          tx,
+        );
       }
       if (
         existing &&

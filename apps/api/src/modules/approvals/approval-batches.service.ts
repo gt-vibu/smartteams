@@ -36,8 +36,6 @@ export class ApprovalBatchesService {
         context,
         item.domain === 'LEAVE' ? 'leave.requests.decide' : 'attendance.corrections.decide',
       );
-    if (input.status === 'REJECTED' && (input.comment?.trim().length ?? 0) < 2)
-      throw new ConflictError('A reason is required for rejection');
     if (new Set(input.items.map((item) => `${item.domain}:${item.id}`)).size !== input.items.length)
       throw new ConflictError('A batch must not contain duplicate requests');
     const fingerprint = createHash('sha256').update(JSON.stringify(input)).digest('hex');

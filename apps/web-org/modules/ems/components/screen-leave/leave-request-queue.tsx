@@ -3,11 +3,10 @@
 import {
   dateKey,
   employeeDisplayName,
-  LIMITS,
   type Employee,
   type LeaveRequest,
 } from '@smarteam/contracts';
-import { Badge, Button, Input } from '@smarteam/ui';
+import { Badge, Button } from '@smarteam/ui';
 import React, { useState } from 'react';
 import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
 import { statusLabel } from '../../lib/status-label';
@@ -36,8 +35,6 @@ export function LeaveRequestQueue({
 }) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [viewing, setViewing] = useState<LeaveRequest | null>(null);
-  const [comment, setComment] = useState('');
-  const [error, setError] = useState('');
 
   const employeesById = new Map<string, Employee>(
     admin.employees.map((employee) => [employee.id, employee]),
@@ -46,19 +43,9 @@ export function LeaveRequestQueue({
   const inboxIds = new Set(admin.inbox.map((entry) => entry.id));
 
   const decide = async (requestId: string, status: 'APPROVED' | 'REJECTED') => {
-    if (status === 'REJECTED' && comment.trim().length < 2) {
-      setError('A reason is required to reject the request.');
-      return;
-    }
-    setError('');
-    const decided = await admin.decide(
-      requestId,
-      status,
-      status === 'REJECTED' ? comment.trim() : '',
-    );
+    const decided = await admin.decide(requestId, status, '');
     if (decided) {
       setActiveId(null);
-      setComment('');
     }
   };
 
@@ -161,8 +148,6 @@ export function LeaveRequestQueue({
                           onClick={(event) => {
                             event.stopPropagation();
                             setActiveId(request.id);
-                            setComment('');
-                            setError('');
                           }}
                           size="sm"
                           title={mine ? undefined : 'This request is not awaiting your decision.'}
@@ -183,15 +168,9 @@ export function LeaveRequestQueue({
                   >
                     <td className="px-4 py-3" colSpan={7}>
                       <div className="flex flex-wrap items-center gap-2">
-                        <Input
-                          maxLength={LIMITS.reason}
-                          aria-label="Reason for rejection"
-                          className="max-w-sm"
-                          disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
-                          onChange={(event) => setComment(event.target.value)}
-                          placeholder="Reason for rejection (required)"
-                          value={comment}
-                        />
+                        <span className="mr-auto text-xs text-muted-foreground">
+                          Reject this leave request?
+                        </span>
                         <Button
                           disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
                           onClick={() => void decide(request.id, 'REJECTED')}
@@ -205,8 +184,6 @@ export function LeaveRequestQueue({
                           disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
                           onClick={() => {
                             setActiveId(null);
-                            setComment('');
-                            setError('');
                           }}
                           size="sm"
                           type="button"
@@ -214,9 +191,9 @@ export function LeaveRequestQueue({
                         >
                           Cancel
                         </Button>
-                        {(error || admin.saveError) && (
+                        {admin.saveError && (
                           <span className="text-[11px] font-medium text-destructive" role="alert">
-                            {error || admin.saveError}
+                            {admin.saveError}
                           </span>
                         )}
                       </div>

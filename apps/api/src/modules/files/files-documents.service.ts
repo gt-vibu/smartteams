@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FileStatus, type FileAccessScope, type FilePurpose } from '../../generated/prisma/enums';
+import { FilePurpose, FileStatus, type FileAccessScope } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ForbiddenDomainError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
@@ -81,6 +81,10 @@ export class FilesDocumentsService {
       const rows = await tx.fileObject.findMany({
         where: {
           ...candidateFilter(context, viewer),
+          // Logo and cover images are organization settings used by the dashboard, not company
+          // documents. Their ORGANIZATION scope is needed for branding display, so purpose must
+          // keep them out of every generic file section (including "all" and "shared").
+          purpose: { not: FilePurpose.ORGANIZATION_BRANDING },
           ...(employeeId ? { employeeId } : {}),
           // One project's files, for its own page.
           ...(projectId ? { accessScope: 'PROJECT' as const, projectId } : {}),
@@ -247,7 +251,12 @@ export class FilesDocumentsService {
         select: FILE_SELECT,
       });
       const access = file ? decideFileAccess(file, viewer) : null;
-      if (!file || !access?.view) throw new NotFoundError('File');
+      if (
+        !file ||
+        !access?.view ||
+        file.purpose === FilePurpose.ORGANIZATION_BRANDING
+      )
+        throw new NotFoundError('File');
       if (!access[need])
         throw new ForbiddenDomainError(
           need === 'download' ? 'This document can be viewed but not downloaded' : 'Not allowed',

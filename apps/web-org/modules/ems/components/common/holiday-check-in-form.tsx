@@ -11,7 +11,7 @@ import { HOLIDAY_CHECK_IN_REASON_SUGGESTIONS } from '../../services/holiday-conf
 interface HolidayCheckInFormProps {
   holidayName: string;
   /** Resolves when the server recorded the explanation; rejects with the reason to show. */
-  onSubmit: (reason: string, comment: string) => Promise<unknown>;
+  onSubmit: (reason: string) => Promise<unknown>;
   /** Called after an accepted explanation, so the caller can close. */
   onSubmitted?: () => void;
 }
@@ -28,7 +28,6 @@ export function HolidayCheckInForm({
   onSubmitted,
 }: HolidayCheckInFormProps) {
   const [reason, setReason] = useState('');
-  const [comment, setComment] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
@@ -39,7 +38,7 @@ export function HolidayCheckInForm({
     setSaving(true);
     setError(null);
     try {
-      await onSubmit(reason.trim(), comment.trim());
+      await onSubmit(reason.trim());
       setSent(true);
       onSubmitted?.();
     } catch (caught) {
@@ -82,20 +81,6 @@ export function HolidayCheckInForm({
           maxLength={ATTENDANCE_CORRECTION_REASON_MAX_LENGTH}
           onChange={(event) => setReason(event.target.value)}
           placeholder="Reason for working on this holiday"
-          disabled={saving}
-        />
-      </div>
-      <div>
-        <Label htmlFor="holiday-check-in-comment" className="mb-1 block text-[11px]">
-          Comment (optional)
-        </Label>
-        <Textarea
-          id="holiday-check-in-comment"
-          rows={2}
-          value={comment}
-          maxLength={500}
-          onChange={(event) => setComment(event.target.value)}
-          placeholder="Anything your manager should know"
           disabled={saving}
         />
       </div>

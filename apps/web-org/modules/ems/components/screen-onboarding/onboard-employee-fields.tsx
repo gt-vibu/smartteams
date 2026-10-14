@@ -212,23 +212,33 @@ export function OnboardEmploymentFields({
       <Field label="Job title">
         <JobTitlePicker onChange={(value) => set('jobTitle', value)} value={form.jobTitle} />
       </Field>
-      <Field label="Branch">
+      <Field label="Branch" required>
         <SelectMenu
+          disabled={branches.filter((branch) => branch.status !== 'DEACTIVATED').length === 0}
           onValueChange={(value) => set('primaryBranchId', value === 'none' ? '' : value)}
           value={form.primaryBranchId || 'none'}
         >
           <SelectTrigger>
-            <SelectValue placeholder="No branch" />
+            <SelectValue placeholder="Choose a branch" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="none">No branch</SelectItem>
-            {branches.map((branch) => (
-              <SelectItem key={branch.id} value={branch.id}>
-                {branch.name}
-              </SelectItem>
-            ))}
+            <SelectItem value="none" disabled>
+              Choose a branch
+            </SelectItem>
+            {branches
+              .filter((branch) => branch.status !== 'DEACTIVATED')
+              .map((branch) => (
+                <SelectItem key={branch.id} value={branch.id}>
+                  {branch.name}
+                </SelectItem>
+              ))}
           </SelectContent>
         </SelectMenu>
+        {branches.filter((branch) => branch.status !== 'DEACTIVATED').length === 0 && (
+          <p className="text-xs text-destructive">
+            Create an active branch before onboarding an employee.
+          </p>
+        )}
       </Field>
       <Field label="Shift">
         <ShiftPicker

@@ -45,6 +45,12 @@ export function useAttendancePreferences(branchId?: string) {
       autoCheckOutMode?: 'DISABLED' | 'REVIEW_REQUIRED';
       autoCheckOutAt?: string;
       missedCheckOutPolicy?: MissedCheckOutPolicy;
+      workLocations?: Array<{
+        name: string;
+        latitude: number;
+        longitude: number;
+        radiusMeters: number;
+      }>;
     }) => {
       if (!organizationId) return false;
       setSaving(true);

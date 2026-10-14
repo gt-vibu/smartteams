@@ -95,6 +95,10 @@ export type PayrollLineInput = {
   periodWorkingDays: number;
   /** Native payroll uses the employee's configured work calendar; Federation retains policy basis. */
   useWorkCalendarBasis?: boolean;
+  /** Monthly salary periods covered by this run (1 for a full month, less for off-cycle runs). */
+  periodSalaryUnits?: number;
+  /** An administrator may defer this employee's advances for the current run. */
+  deferAdvanceRecovery?: boolean;
   adjustments: Array<{
     type: PayrollAdjustmentType;
     amount: Prisma.Decimal;
@@ -133,22 +137,40 @@ export function computePayrollLine(item: PayrollLineInput, standardDayMinutes: n
   const workingDayBasis = item.useWorkCalendarBasis
     ? Math.max(1, item.periodWorkingDays)
     : item.policy.payrollDayBasis;
-  const payableDays = Math.max(
-    0,
-    workingDayBasis - item.leave.unpaidDays - unpaidAttendanceDays - item.unemployedDays,
-  );
+  const payableDays =
+    item.useWorkCalendarBasis && item.periodWorkingDays <= 0
+      ? 0
+      : Math.max(
+          0,
+          workingDayBasis - item.leave.unpaidDays - unpaidAttendanceDays - item.unemployedDays,
+        );
+  const salaryUnits = item.useWorkCalendarBasis
+    ? Math.max(0, item.periodSalaryUnits ?? 1)
+    : 1;
+  const periodStructure = {
+    gross: monthlyStructure.gross.mul(salaryUnits),
+    base: monthlyStructure.base.mul(salaryUnits),
+    hra: monthlyStructure.hra.mul(salaryUnits),
+    otherAllowance: monthlyStructure.otherAllowance.mul(salaryUnits),
+  };
   const proratedStructure = prorateSalaryStructure(
-    monthlyStructure,
+    periodStructure,
     payableDays,
     workingDayBasis,
     item.policy.roundingMode,
   );
-  const unpaidLeaveAdjustment = monthlyStructure.gross.minus(proratedStructure.gross);
+  const unpaidLeaveAdjustment = periodStructure.gross.minus(proratedStructure.gross);
   const regular = proratedStructure.base;
+  const overtimeDayBasis =
+    item.useWorkCalendarBasis && salaryUnits > 0
+      ? item.periodWorkingDays / salaryUnits
+      : workingDayBasis;
   const overtime =
     item.compensation && item.timesheet
       ? overtimePay({
-          minutePay: monthlyStructure.gross.div(standardDayMinutes * workingDayBasis),
+          minutePay: monthlyStructure.gross.div(
+            standardDayMinutes * Math.max(1, overtimeDayBasis),
+          ),
           overtimeMinutes: item.timesheet.overtimeMinutes,
           employeeMultiplier: item.compensation.overtimeMultiplier,
           days: item.overtimeDays ?? NO_OVERTIME_DAYS,
@@ -203,7 +225,11 @@ export function computePayrollLine(item: PayrollLineInput, standardDayMinutes: n
     esi: item.employeePolicy?.esiEnabled ?? item.policy.esiDefault,
     pt: item.employeePolicy?.ptEnabled ?? item.policy.ptDefault,
   };
-  assertStatutoryRulesConfigured(enabled, item.statutoryRules);
+  assertStatutoryRulesConfigured(
+    enabled,
+    item.statutoryRules,
+    item.employeePolicy?.statutoryJurisdiction ?? item.policy.statutoryJurisdiction,
+  );
   const statutory = item.statutoryRules
     .filter((rule) => {
       const code = rule.schemeCode.toUpperCase();
@@ -221,6 +247,7 @@ export function computePayrollLine(item: PayrollLineInput, standardDayMinutes: n
         monthlyStructure,
         undefined,
         item.periodMonth,
+        gross,
       ),
     );
   const statutoryDeduction = statutory.reduce(
@@ -230,16 +257,35 @@ export function computePayrollLine(item: PayrollLineInput, standardDayMinutes: n
   const beforeAdvanceDeductions = componentDeduction
     .add(deductionAdjustmentTotal)
     .add(statutoryDeduction);
+  // The Code on Wages, 2019 (s.18(3)) caps total deductions in a wage period at 50% of wages.
+  // This native payroll path treats authorized fixed deductions as first priority and defers
+  // the excess salary-advance recovery to later periods. Federation keeps its existing behavior.
+  const maximumDeduction = item.useWorkCalendarBasis
+    ? gross.mul(0.5).toDecimalPlaces(2, Prisma.Decimal.ROUND_DOWN)
+    : gross;
+  if (item.useWorkCalendarBasis && beforeAdvanceDeductions.greaterThan(maximumDeduction)) {
+    throw new ConflictError(
+      `Fixed deductions exceed the 50% wage-period limit for employee ${item.employeeId}. Review statutory rules, deduction components, and payroll adjustments.`,
+    );
+  }
+  const advanceDeductionLimit = item.useWorkCalendarBasis
+    ? item.deferAdvanceRecovery
+      ? new Prisma.Decimal(0)
+      : Prisma.Decimal.max(0, maximumDeduction.sub(beforeAdvanceDeductions))
+    : gross;
   let availableNetPay = gross.sub(beforeAdvanceDeductions);
+  let remainingAdvanceDeductionLimit = advanceDeductionLimit;
   const advanceRecoveries = item.advances.map((advance) => {
+    const installmentLimit = advance.instalment
+      ? Prisma.Decimal.min(advance.instalment, remainingAdvanceDeductionLimit)
+      : remainingAdvanceDeductionLimit;
     const amount = allocateAdvanceRecovery(
       advance.approvedAmount ?? 0,
       advance.recoveredAmount,
-      advance.instalment
-        ? Prisma.Decimal.min(availableNetPay, advance.instalment)
-        : availableNetPay,
+      Prisma.Decimal.min(availableNetPay, installmentLimit),
     );
     availableNetPay = availableNetPay.sub(amount);
+    remainingAdvanceDeductionLimit = remainingAdvanceDeductionLimit.sub(amount);
     return { advance, amount };
   });
   const advanceRecoveryTotal = advanceRecoveries.reduce(
@@ -312,10 +358,12 @@ export function buildPayrollLineRows(
   const {
     monthlyStructure,
     proratedStructure,
+    payableDays,
     unpaidAttendanceDays,
     regular,
     overtime,
     components,
+    componentDeduction,
     earningAdjustmentTotal,
     deductionAdjustmentTotal,
     unpaidLeaveAdjustment,
@@ -368,7 +416,9 @@ export function buildPayrollLineRows(
         deductionAdjustmentTotal,
         monthlyStructure,
         proratedStructure,
+        payableDays,
         statutory,
+        componentDeduction,
         advanceRecoveries,
         advanceRecoveryTotal,
         unpaidLeaveAdjustment,
@@ -378,6 +428,9 @@ export function buildPayrollLineRows(
         halfAttendanceDays: item.attendance.halfDays,
         unpaidAttendanceDays,
         periodWorkingDays: item.periodWorkingDays,
+        ...(item.useWorkCalendarBasis
+          ? { periodSalaryUnits: item.periodSalaryUnits ?? 1 }
+          : {}),
         ...(item.useWorkCalendarBasis ? { unemployedDays: item.unemployedDays } : {}),
       }),
     },

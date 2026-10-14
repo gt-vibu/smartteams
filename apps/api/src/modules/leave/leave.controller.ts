@@ -69,6 +69,15 @@ export class LeaveController {
     );
   }
 
+  @Get('requests/summary') requestSummary(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.leave.adminSummary(context));
+  }
+
   /** Who is off between two dates, among the people the caller works with. */
   @Get('calendar') calendar(
     @Param('organizationId') organizationId: string,

@@ -1,8 +1,8 @@
 'use client';
 
 import type { AttendanceCorrection } from '@smarteam/contracts';
-import { formatDate, LIMITS } from '@smarteam/contracts';
-import { Badge, Button, Label, Textarea } from '@smarteam/ui';
+import { formatDate } from '@smarteam/contracts';
+import { Badge, Button } from '@smarteam/ui';
 import { useState } from 'react';
 import type { AttendanceAdminState } from '../../hooks/use-attendance-admin';
 import { statusLabel } from '../../lib/status-label';
@@ -10,12 +10,10 @@ import { statusLabel } from '../../lib/status-label';
 /**
  * The correction queue, and the approve/reject action.
  *
- * Approvals execute immediately without requiring comments.
- * Rejections require a clear reason recorded in the audit trail.
+ * Approvals and rejections are recorded directly without requiring a reviewer comment.
  */
 export function AttendanceCorrectionsPanel({ admin }: { admin: AttendanceAdminState }) {
   const [rejectingId, setRejectingId] = useState<string | null>(null);
-  const [rejectionReason, setRejectionReason] = useState('');
   const [error, setError] = useState('');
 
   const approve = async (correctionId: string) => {
@@ -24,16 +22,9 @@ export function AttendanceCorrectionsPanel({ admin }: { admin: AttendanceAdminSt
   };
 
   const reject = async (correctionId: string) => {
-    if (rejectionReason.trim().length < 2) {
-      setError('A reason is required when rejecting a correction.');
-      return;
-    }
     setError('');
-    const decided = await admin.decide(correctionId, 'REJECTED', rejectionReason.trim());
-    if (decided) {
-      setRejectingId(null);
-      setRejectionReason('');
-    }
+    const decided = await admin.decide(correctionId, 'REJECTED', '');
+    if (decided) setRejectingId(null);
   };
 
   const rows: AttendanceCorrection[] = admin.corrections;
@@ -102,22 +93,9 @@ export function AttendanceCorrectionsPanel({ admin }: { admin: AttendanceAdminSt
                   <div className="mt-2">
                     {isRejecting ? (
                       <div className="space-y-2 rounded-md border border-destructive/30 bg-destructive/5 p-3">
-                        <Label
-                          className="block text-xs font-medium text-destructive"
-                          htmlFor={`rejection-${correction.id}`}
-                        >
-                          Reason for rejection (required)
-                        </Label>
-                        <Textarea
-                          maxLength={LIMITS.reason}
-                          disabled={admin.saving}
-                          id={`rejection-${correction.id}`}
-                          onChange={(event) => setRejectionReason(event.target.value)}
-                          placeholder="State the reason for rejection..."
-                          rows={2}
-                          value={rejectionReason}
-                          autoFocus
-                        />
+                        <p className="text-xs text-muted-foreground">
+                          Reject this correction request?
+                        </p>
                         {(error || admin.saveError) && (
                           <p className="text-[11px] font-semibold text-destructive" role="alert">
                             {error || admin.saveError}
@@ -137,7 +115,6 @@ export function AttendanceCorrectionsPanel({ admin }: { admin: AttendanceAdminSt
                             disabled={admin.saving}
                             onClick={() => {
                               setRejectingId(null);
-                              setRejectionReason('');
                               setError('');
                             }}
                             size="sm"
@@ -162,7 +139,6 @@ export function AttendanceCorrectionsPanel({ admin }: { admin: AttendanceAdminSt
                           disabled={admin.saving}
                           onClick={() => {
                             setRejectingId(correction.id);
-                            setRejectionReason('');
                             setError('');
                           }}
                           size="sm"

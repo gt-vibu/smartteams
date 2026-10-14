@@ -17,7 +17,9 @@ export const CENTRAL_PAYROLL_SOURCES: GovernmentRuleSource[] = [
     schemeCode: 'EPF',
     jurisdiction: 'INDIA',
     label: 'Employees’ Provident Fund Organisation',
-    url: 'https://www.epfindia.gov.in/site_docs/PDFs/MiscPDFs/Employer_Information_Booklet.pdf',
+    // EPFO now serves its public updates from this official domain. The old booklet URL returned
+    // 404, so a manual or scheduled sync could never establish a current baseline.
+    url: 'https://www.epfo.gov.in/',
   },
   {
     key: 'central:esic',

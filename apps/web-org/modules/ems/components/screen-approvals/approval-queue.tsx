@@ -2,7 +2,9 @@
 import { formatDate } from '@smarteam/contracts';
 import { LoadingIndicator, Badge, Button, Checkbox, Input, Select } from '@smarteam/ui';
 import { useMemo, useState } from 'react';
+import { Inbox } from 'lucide-react';
 import type { ApprovalInboxItem, ApprovalInboxState } from '../../hooks/use-approval-inbox';
+import { EmptyState } from '../common/empty-state';
 import { ApprovalBatchProgress } from './approval-batch-progress';
 import { ApprovalDecisionDialog } from './approval-decision-dialog';
 import { ApprovalDetailsDialog } from './approval-details-dialog';
@@ -82,12 +84,11 @@ export function ApprovalQueue({ inbox }: { inbox: ApprovalInboxState }) {
           </div>
         )}
         {!inbox.loading && !inbox.error && inbox.items.length === 0 && (
-          <div className="py-10 text-center">
-            <p className="text-sm font-semibold">Nothing awaiting your decision</p>
-            <p className="text-xs text-muted-foreground">
-              Leave, regularization and other requests waiting for your approval appear here.
-            </p>
-          </div>
+          <EmptyState
+            detail="New requests assigned to you will appear here."
+            icon={Inbox}
+            title="Nothing awaiting your decision"
+          />
         )}
         {!inbox.loading && inbox.items.length > 0 && (
           <>

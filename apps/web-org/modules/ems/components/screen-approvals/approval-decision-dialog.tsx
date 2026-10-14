@@ -1,5 +1,5 @@
 'use client';
-import { formatDateTime, LIMITS } from '@smarteam/contracts';
+import { formatDateTime } from '@smarteam/contracts';
 import {
   Button,
   DatePicker,
@@ -7,7 +7,6 @@ import {
   DialogContent,
   DialogTitle,
   Label,
-  Textarea,
   TimePicker,
 } from '@smarteam/ui';
 import type { useApprovalQueueController } from './use-approval-queue-controller';
@@ -35,7 +34,7 @@ export function ApprovalDecisionDialog({
         <p className="text-xs text-muted-foreground">
           {approving
             ? 'Review or adjust the check-out time before approving.'
-            : 'The reason is recorded against the rejection and shown to the requester.'}
+            : 'The request will be rejected and the decision recorded in the audit trail.'}
         </p>
         <div className="space-y-3">
           {approving && c.single?.proposedCheckOut && (
@@ -74,19 +73,6 @@ export function ApprovalDecisionDialog({
               )}
             </>
           )}
-          {!approving && (
-            <>
-              <Label htmlFor="decision-comment">Reason for rejection</Label>
-              <Textarea
-                id="decision-comment"
-                value={c.comment}
-                disabled={c.busy}
-                maxLength={LIMITS.reason}
-                onChange={(event) => c.setComment(event.target.value)}
-                placeholder="Enter reason for rejection"
-              />
-            </>
-          )}
           <div className="flex justify-end gap-2">
             <Button
               type="button"
@@ -101,7 +87,6 @@ export function ApprovalDecisionDialog({
               variant={approving ? 'default' : 'destructive'}
               disabled={
                 c.busy ||
-                (!approving && c.comment.trim().length < 2) ||
                 (approving &&
                   (c.replacementInvalid || Boolean(c.checkOutDate) !== Boolean(c.checkOutTime)))
               }

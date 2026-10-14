@@ -69,6 +69,50 @@ export function countWorkingDays(
 }
 
 /**
+ * Monthly salary coverage expressed as a fraction of a normal monthly work calendar.
+ * A one-day off-cycle run on a normal weekday therefore covers one workday out of the month's
+ * scheduled days; a complete calendar month covers exactly one monthly salary period.
+ */
+export function monthlyWorkdayUnits(
+  start: Date,
+  end: Date,
+  workWeekDays: number[],
+  holidays: Array<{ holidayDate: Date; branchId: string | null; isOptional?: boolean }>,
+  branchId: string | null,
+  employeeSelectedDates?: Set<string> | string[],
+) {
+  let units = 0;
+  const cursor = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1));
+  while (cursor <= end) {
+    const monthStart = new Date(cursor);
+    const monthEnd = new Date(Date.UTC(cursor.getUTCFullYear(), cursor.getUTCMonth() + 1, 0));
+    const windowStart = start > monthStart ? start : monthStart;
+    const windowEnd = end < monthEnd ? end : monthEnd;
+    const monthWorkdays = countWorkingDays(
+      monthStart,
+      monthEnd,
+      workWeekDays,
+      holidays,
+      branchId,
+      employeeSelectedDates,
+    );
+    if (monthWorkdays > 0) {
+      units +=
+        countWorkingDays(
+          windowStart,
+          windowEnd,
+          workWeekDays,
+          holidays,
+          branchId,
+          employeeSelectedDates,
+        ) / monthWorkdays;
+    }
+    cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+  }
+  return units;
+}
+
+/**
  * Optional holidays are paid non-working days only while the employee stays within the
  * organization (or employee-specific) annual allowance. Selection order is stable so historical
  * runs can be recalculated consistently when multiple selections exist.

@@ -45,6 +45,14 @@ const rate = (value: number | null | undefined) =>
 const amount = (value: number | null | undefined) =>
   value === null || value === undefined ? '--' : formatMoney(value);
 
+const normalizeScheme = (value: string) => {
+  const code = value.trim().toUpperCase();
+  if (code === 'PF') return 'EPF';
+  if (code === 'ESI') return 'ESIC';
+  if (code === 'PROFESSIONAL_TAX') return 'PT';
+  return code;
+};
+
 type StatutoryRuleDraft = {
   schemeCode: 'EPF' | 'ESIC' | 'PT';
   jurisdiction: string;
@@ -333,7 +341,7 @@ function RulesTable({
           <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
             <th className="px-4 py-2.5 font-bold">Scheme</th>
             <th className="px-4 py-2.5 font-bold">Jurisdiction</th>
-            <th className="px-4 py-2.5 font-bold">Effective from</th>
+            <th className="px-4 py-2.5 font-bold">Effective period</th>
             <th className="px-4 py-2.5 text-right font-bold">Employee</th>
             <th className="px-4 py-2.5 text-right font-bold">Employer</th>
             <th className="px-4 py-2.5 text-right font-bold">Wage ceiling</th>
@@ -356,10 +364,11 @@ function RulesTable({
                 {rule.jurisdiction}
               </td>
               <td
-                data-label="Effective from"
+                data-label="Effective period"
                 className="px-4 py-2.5 font-mono text-muted-foreground"
               >
-                {formatDate(rule.effectiveFrom)}
+                {formatDate(rule.effectiveFrom)} –{' '}
+                {rule.effectiveTo ? formatDate(rule.effectiveTo) : 'No end date'}
               </td>
               <td
                 data-label="Employee"
@@ -454,6 +463,22 @@ export function ScreenPayrollLegalConfig() {
     [organizationId],
     { enabled: Boolean(organizationId) && canRead },
   );
+  const overlappingRule = (rulesResource.data ?? []).find((rule) => {
+    if (
+      rule.id === editingRuleId ||
+      normalizeScheme(rule.schemeCode) !== normalizeScheme(draft.schemeCode) ||
+      rule.jurisdiction.trim().toUpperCase() !== draft.jurisdiction.trim().toUpperCase() ||
+      !draft.effectiveFrom
+    ) {
+      return false;
+    }
+    const start = rule.effectiveFrom.slice(0, 10);
+    const end = rule.effectiveTo?.slice(0, 10);
+    return (
+      (!draft.effectiveTo || start <= draft.effectiveTo) &&
+      (!end || end >= draft.effectiveFrom)
+    );
+  });
 
   useEffect(() => {
     const policy = policyResource.data;
@@ -640,6 +665,12 @@ export function ScreenPayrollLegalConfig() {
       setMutationError('Choose a jurisdiction and effective start date.');
       return;
     }
+    if (overlappingRule) {
+      setMutationError(
+        `${draft.schemeCode} already has a ${draft.jurisdiction} rule covering this date range. Edit that rule or choose a non-overlapping period.`,
+      );
+      return;
+    }
     const numericValues = [
       draft.employeeRate,
       draft.employerRate,
@@ -795,7 +826,8 @@ export function ScreenPayrollLegalConfig() {
               {editingRuleId ? 'Edit statutory rule' : 'Add statutory rule'}
             </h3>
             <p className="mt-1 text-xs text-muted-foreground">
-              Choose a rule type, pick a preset or enter your own values, then save.
+              Rules for the same scheme and state are date-based versions. Their effective periods
+              cannot overlap; edit the current version before adding its successor.
             </p>
           </div>
           <div className="max-w-sm">
@@ -1165,6 +1197,18 @@ export function ScreenPayrollLegalConfig() {
               </p>
             </details>
           )}
+          {overlappingRule && (
+            <p
+              className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive"
+              role="alert"
+            >
+              This range overlaps the existing {draft.schemeCode} rule for {draft.jurisdiction} (
+              {formatDate(overlappingRule.effectiveFrom)} –{' '}
+              {overlappingRule.effectiveTo
+                ? formatDate(overlappingRule.effectiveTo)
+                : 'no end date'}). Edit that rule or choose a non-overlapping period.
+            </p>
+          )}
           <div className="flex flex-wrap justify-end gap-2">
             {editingRuleId && (
               <Button
@@ -1181,7 +1225,7 @@ export function ScreenPayrollLegalConfig() {
                 Cancel edit
               </Button>
             )}
-            <Button disabled={savingRule} type="submit">
+            <Button disabled={savingRule || Boolean(overlappingRule)} type="submit">
               {savingRule ? 'Saving…' : editingRuleId ? 'Update rule' : 'Add rule'}
             </Button>
           </div>

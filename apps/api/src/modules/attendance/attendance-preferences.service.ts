@@ -159,7 +159,13 @@ export class AttendancePreferencesService {
           },
           tx,
         );
-        return this.readPreferences(tx, context.organizationId, branch.id, true);
+        return this.readPreferences(
+          tx,
+          context.organizationId,
+          branch.id,
+          true,
+          context.accessMode === 'NATIVE',
+        );
       }
       const settings = await tx.organizationSettings.findUniqueOrThrow({
         where: { organizationId: context.organizationId },
@@ -291,7 +297,13 @@ export class AttendancePreferencesService {
         context.branchId ??
         self?.primaryBranchId ??
         self?.branchAssignments.find((assignment) => assignment.isPrimary)?.branchId;
-      const preferences = await this.readPreferences(tx, context.organizationId, effectiveBranchId);
+      const preferences = await this.readPreferences(
+        tx,
+        context.organizationId,
+        effectiveBranchId,
+        false,
+        context.accessMode === 'NATIVE',
+      );
       return self?.geofenceMode ? { ...preferences, geofenceMode: self.geofenceMode } : preferences;
     });
   }
@@ -301,20 +313,28 @@ export class AttendancePreferencesService {
     organizationId: string,
     branchId?: string,
     validateLocations = false,
+    strictBranchScope = false,
   ) {
     const settings = await tx.organizationSettings.findUniqueOrThrow({ where: { organizationId } });
     const branch = branchId
       ? await tx.branch.findFirst({ where: { id: branchId, organizationId } })
       : null;
     if (branchId && !branch) throw new NotFoundError('Branch');
-    const workLocations = await tx.workLocation.findMany({
-      where: {
-        organizationId,
-        isActive: true,
-        ...(branchId ? { OR: [{ branchId }, { branchId: null }] } : { branchId: null }),
-      },
-      orderBy: { name: 'asc' },
-    });
+    const workLocations =
+      strictBranchScope && !branchId
+        ? []
+        : await tx.workLocation.findMany({
+            where: {
+              organizationId,
+              isActive: true,
+              ...(strictBranchScope
+                ? { branchId }
+                : branchId
+                  ? { OR: [{ branchId }, { branchId: null }] }
+                  : { branchId: null }),
+            },
+            orderBy: { name: 'asc' },
+          });
     if (
       validateLocations &&
       (branch?.geofenceMode ?? settings.geofenceMode) === GeofenceMode.REQUIRED &&

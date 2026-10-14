@@ -111,8 +111,6 @@ export class LeaveWorkflowsService {
     requirePermission(context, 'leave.requests.decide');
     requirePermission(context, 'leave.requests.read.all');
     requirePermission(context, 'leave.requests.write');
-    if (status === 'REJECTED' && (reason?.trim().length ?? 0) < 3)
-      throw new ConflictError('Explain why the cancellation is rejected.');
     return this.database.run(context, async (tx) => {
       await tx.$queryRaw`SELECT id FROM leave_requests WHERE id = ${id}::uuid AND organization_id = ${context.organizationId}::uuid FOR UPDATE`;
       const request = await tx.leaveRequest.findFirst({
@@ -157,7 +155,7 @@ export class LeaveWorkflowsService {
           action: `LEAVE_CANCELLATION_${status}`,
           beforeState: jsonSnapshot(cancellation.data),
           afterState: jsonSnapshot(decision),
-          reason: reason ?? cancellation.data.reason,
+          reason: reason?.trim() || undefined,
         },
         tx,
       );
@@ -167,7 +165,10 @@ export class LeaveWorkflowsService {
         kind: 'LEAVE_CANCELLATION_DECIDED',
         title:
           status === 'APPROVED' ? 'Leave cancellation approved' : 'Leave cancellation rejected',
-        body: reason?.trim() || 'Your cancellation request has been reviewed.',
+        body:
+          status === 'APPROVED'
+            ? 'Your leave cancellation was approved.'
+            : 'Your leave cancellation was reviewed and declined.',
         module: 'time-off',
         entityType: 'LEAVE_REQUEST',
         entityId: id,

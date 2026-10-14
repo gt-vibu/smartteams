@@ -44,6 +44,22 @@ export class PayrollRunsService {
       tx.payrollRun.findMany({
         where: { organizationId: context.organizationId },
         orderBy: { periodStart: 'desc' },
+        // Return only the public payroll-run fields the native screen consumes. The raw Prisma
+        // row also carries the internal calculation input hash and creator metadata.
+        select: {
+          id: true,
+          periodStart: true,
+          periodEnd: true,
+          payFrequency: true,
+          currencyCode: true,
+          status: true,
+          calculatedAt: true,
+          calculationStaleAt: true,
+          approvedAt: true,
+          releasedAt: true,
+          lockedAt: true,
+          version: true,
+        },
       }),
     );
   }
@@ -73,7 +89,13 @@ export class PayrollRunsService {
         );
       const organization = await tx.organization.findUniqueOrThrow({
         where: { id: context.organizationId },
-        include: { settings: true },
+        // Select the two values needed to create the run. Selecting the full organization
+        // record also reads optional fields owned by newer, not-yet-applied migrations, which
+        // can turn an otherwise valid payroll draft into a P2022 on an existing local database.
+        select: {
+          currencyCode: true,
+          settings: { select: { payrollFrequency: true } },
+        },
       });
       const run = await tx.payrollRun
         .create({
@@ -260,7 +282,6 @@ export class PayrollRunsService {
 
   async advance(context: DomainContext, runId: string, target: PayrollRunStatus, comment: string) {
     requirePermission(context, payrollTransitionPermission(target));
-    requireReason({ ...context, reason: comment }, 'Payroll state changes require a reason');
     return this.database.run(context, async (tx) => {
       // Lock before reading the state the transition is judged against, so two callers cannot both
       // see CALCULATED and both move the run to APPROVED. The unique constraint on
@@ -302,7 +323,7 @@ export class PayrollRunsService {
                     organizationId: context.organizationId,
                     approverUserId: context.actor.userId,
                     status: 'APPROVED',
-                    comment,
+                    comment: comment.trim() || null,
                   },
                 }
               : undefined,
@@ -332,7 +353,7 @@ export class PayrollRunsService {
           action: `PAYROLL_RUN_${target}`,
           beforeState: jsonSnapshot(run),
           afterState: jsonSnapshot(updated),
-          reason: comment,
+          reason: comment.trim() || undefined,
         },
         tx,
       );

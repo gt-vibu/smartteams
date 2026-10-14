@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Dialog, DialogContent, DialogTitle, Label, Textarea } from '@smarteam/ui';
+import { Button, Dialog, DialogContent, DialogTitle } from '@smarteam/ui';
 import {
   formatMinutes,
   type HolidayReviewDecision,
@@ -45,20 +45,18 @@ export function HolidayReviewDialog({
   onClose: () => void;
 }) {
   const [outcome, setOutcome] = useState<HolidayReviewOutcome | null>(null);
-  const [comment, setComment] = useState('');
   const [result, setResult] = useState<HolidayReviewDecision | null>(null);
   const review = item?.holidayReview;
 
   const close = () => {
     setOutcome(null);
-    setComment('');
     setResult(null);
     onClose();
   };
 
   const confirm = async () => {
     if (!item || !outcome) return;
-    const decided = await inbox.decideHolidayReview(item, outcome, comment.trim());
+    const decided = await inbox.decideHolidayReview(item, outcome, '');
     if (!decided) return;
     // Anything the approver should know stays on screen; otherwise the dialog is done.
     const needsNotice =
@@ -155,18 +153,6 @@ export function HolidayReviewDialog({
                     </label>
                   ))}
                 </fieldset>
-                <div>
-                  <Label className="mb-1 block" htmlFor="holiday-review-comment">
-                    Reason for the decision
-                  </Label>
-                  <Textarea
-                    id="holiday-review-comment"
-                    disabled={inbox.saving}
-                    maxLength={500}
-                    value={comment}
-                    onChange={(event) => setComment(event.target.value)}
-                  />
-                </div>
                 {inbox.saveError && (
                   <p role="alert" className="text-[11px] font-medium text-destructive">
                     {inbox.saveError}
@@ -178,7 +164,7 @@ export function HolidayReviewDialog({
                   </Button>
                   <Button
                     type="button"
-                    disabled={inbox.saving || !outcome || comment.trim().length < 2}
+                    disabled={inbox.saving || !outcome}
                     onClick={() => void confirm()}
                   >
                     {inbox.saving ? 'Recording...' : 'Record decision'}

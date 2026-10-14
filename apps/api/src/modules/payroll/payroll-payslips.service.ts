@@ -148,20 +148,26 @@ export class PayrollPayslipsService {
           ? (() => {
               const breakdown = (payslip.payrollLineItem.calculationBreakdown ?? {}) as {
                 periodWorkingDays?: unknown;
+                payableDays?: unknown;
                 paidLeaveDays?: unknown;
                 unpaidLeaveDays?: unknown;
                 unpaidAttendanceDays?: unknown;
                 unemployedDays?: unknown;
                 unpaidLeaveAdjustment?: unknown;
+                monthlyStructure?: { gross?: unknown };
               };
+              const workingDays = Number(breakdown.periodWorkingDays ?? 0);
+              const unpaidDays =
+                Number(breakdown.unpaidLeaveDays ?? 0) +
+                Number(breakdown.unpaidAttendanceDays ?? 0) +
+                Number(breakdown.unemployedDays ?? 0);
               return {
                 payrollSummary: {
-                  workingDays: Number(breakdown.periodWorkingDays ?? 0),
+                  workingDays,
+                  payableDays: Number(breakdown.payableDays ?? Math.max(0, workingDays - unpaidDays)),
+                  monthlyGross: Number(breakdown.monthlyStructure?.gross ?? 0),
                   paidLeaveDays: Number(breakdown.paidLeaveDays ?? 0),
-                  unpaidDays:
-                    Number(breakdown.unpaidLeaveDays ?? 0) +
-                    Number(breakdown.unpaidAttendanceDays ?? 0) +
-                    Number(breakdown.unemployedDays ?? 0),
+                  unpaidDays,
                   unpaidTimeReduction:
                     Math.round(Number(breakdown.unpaidLeaveAdjustment ?? 0) * 100) / 100,
                 },

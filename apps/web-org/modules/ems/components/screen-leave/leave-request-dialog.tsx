@@ -4,11 +4,10 @@ import {
   dateKey,
   employeeDisplayName,
   entitlementOf,
-  LIMITS,
   type Employee,
   type LeaveRequest,
 } from '@smarteam/contracts';
-import { Badge, Button, Dialog, DialogContent, DialogTitle, Input } from '@smarteam/ui';
+import { Badge, Button, Dialog, DialogContent, DialogTitle } from '@smarteam/ui';
 import React, { useState } from 'react';
 import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
 import { statusLabel } from '../../lib/status-label';
@@ -18,7 +17,7 @@ import { leaveRepository } from '../../repositories/leave.repository';
 /**
  * One leave request in full: who asked, for which type and dates, how many days it costs, what
  * they said, and what is left of that balance. A request awaiting this approver's decision can be
- * approved or rejected here, with the comment the audit trail records.
+ * approved or rejected here; the decision itself is recorded in the audit trail.
  */
 export function LeaveRequestDialog({
   admin,
@@ -32,7 +31,6 @@ export function LeaveRequestDialog({
   onClose: () => void;
 }) {
   const [rejecting, setRejecting] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState('');
   const [error, setError] = useState('');
   const type = admin.types.find((entry) => entry.id === request.leaveTypeId);
   const balances = useAsyncResource(
@@ -53,12 +51,8 @@ export function LeaveRequestDialog({
   };
 
   const reject = async () => {
-    if (rejectionReason.trim().length < 2) {
-      setError('A reason is required when rejecting a request.');
-      return;
-    }
     setError('');
-    if (await admin.decide(request.id, 'REJECTED', rejectionReason.trim())) onClose();
+    if (await admin.decide(request.id, 'REJECTED', '')) onClose();
   };
 
   const facts: Array<[string, React.ReactNode]> = [
@@ -125,18 +119,9 @@ export function LeaveRequestDialog({
             <div className="space-y-2 rounded-md border border-border p-3">
               {rejecting ? (
                 <div className="space-y-2">
-                  <p className="text-xs font-medium text-destructive">
-                    Please state the reason for rejection:
+                  <p className="text-xs text-muted-foreground">
+                    Reject this leave request? The decision will be recorded in the audit trail.
                   </p>
-                  <Input
-                    maxLength={LIMITS.reason}
-                    aria-label="Rejection reason"
-                    disabled={busy}
-                    onChange={(event) => setRejectionReason(event.target.value)}
-                    placeholder="Reason for rejection (required)"
-                    value={rejectionReason}
-                    autoFocus
-                  />
                   {(error || admin.saveError) && (
                     <p className="font-medium text-destructive" role="alert">
                       {error || admin.saveError}

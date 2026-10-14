@@ -157,9 +157,6 @@ export class PayrollAdvancesService {
 
   async decideAdvance(context: DomainContext, advanceId: string, input: AdvanceDecisionInput) {
     requirePermission(context, 'payroll.advances.approve');
-    if (input.status === 'REJECTED') {
-      requireReason({ ...context, reason: input.comment }, 'Advance rejections require a reason');
-    }
     return this.database.run(context, async (tx) => {
       // Two callers deciding at once both read REQUESTED and both pass the guard below, which for
       // a financial record means two approvals of the same advance. Locking first makes the second

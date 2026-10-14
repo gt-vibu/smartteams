@@ -42,6 +42,7 @@ export class AttendanceLocationService {
     latitude: number | undefined,
     longitude: number | undefined,
     mode: GeofenceMode,
+    strictBranchScope = false,
   ) {
     validateAttendanceCoordinates({ latitude, longitude });
     if (mode === GeofenceMode.DISABLED || latitude === undefined || longitude === undefined)
@@ -50,11 +51,19 @@ export class AttendanceLocationService {
         distance: null,
         workLocationId: undefined,
       };
+    // Native employees punch against their assigned branch only. Do not fall back to an
+    // organization-wide or another branch location when a branch has no configured location.
+    if (strictBranchScope && !branchId)
+      return { isWithin: false, distance: null, workLocationId: undefined };
     const locations = await tx.workLocation.findMany({
       where: {
         organizationId,
         isActive: true,
-        ...(branchId ? { OR: [{ branchId }, { branchId: null }] } : { branchId: null }),
+        ...(strictBranchScope
+          ? { branchId }
+          : branchId
+            ? { OR: [{ branchId }, { branchId: null }] }
+            : { branchId: null }),
       },
     });
     const candidates = locations

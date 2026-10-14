@@ -156,6 +156,16 @@ export class AttendancePunchService {
         context.accessMode === 'FEDERATION'
           ? Boolean(input.manualEntry || input.capturedByUserId)
           : actsForOthers;
+      // An HR user may manage attendance for everyone and still be an employee punching for
+      // themselves. Enforce their device location on self-service punches; only the tenant admin
+      // wildcard is exempt. Keep federation's existing managed-capture rule unchanged.
+      const enforceLocation =
+        context.accessMode === 'FEDERATION'
+          ? !managedCapture
+          : context.actor.type === 'USER' &&
+            employee.userId === context.actor.userId &&
+            !context.permissions.has('*') &&
+            !input.manualEntry;
       const workDate = managedCapture
         ? new Date(input.workDate)
         : new Date(workDateInTimeZone(occurredAt, organization.timezone));
@@ -178,7 +188,7 @@ export class AttendancePunchService {
       // Federation is the transport for ordinary BlizBooks self captures as well as imports.
       // Its broad tenant permission alone must not bypass location enforcement.
       if (
-        !managedCapture &&
+        enforceLocation &&
         (requireGps || mode === GeofenceMode.REQUIRED) &&
         (input.latitude === undefined || input.longitude === undefined)
       )
@@ -195,11 +205,12 @@ export class AttendancePunchService {
         input.latitude,
         input.longitude,
         mode,
+        context.accessMode === 'NATIVE',
       );
-      if (!managedCapture && mode === GeofenceMode.REQUIRED && geofence.isWithin !== true)
+      if (enforceLocation && mode === GeofenceMode.REQUIRED && geofence.isWithin !== true)
         throw new DomainError(
           'OUTSIDE_GEOFENCE',
-          'You must be inside an allowed attendance location to check in or check out.',
+          'You are outside the permitted attendance area. Move within range of an approved company work location and try again. No attendance punch was recorded.',
           HttpStatus.FORBIDDEN,
         );
       let webauthnCredentialId: string | undefined;
@@ -337,7 +348,9 @@ export class AttendancePunchService {
       // date is no longer derived from the attendance it claims to be.
       await markPayrollStale(tx, context.organizationId, record.workDate, record.workDate);
       const reviewReasons = [
-        mode === GeofenceMode.REQUIRED && geofence.isWithin !== true
+        mode === GeofenceMode.REQUIRED &&
+        !context.permissions.has('*') &&
+        geofence.isWithin !== true
           ? 'Punch requires geofence review'
           : undefined,
         biometricMode === BiometricVerificationMode.REQUIRED

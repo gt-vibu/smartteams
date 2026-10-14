@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import {
   Button,
+  Checkbox,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -14,9 +15,13 @@ import {
   SelectMenu,
   SelectTrigger,
   SelectValue,
-  Textarea,
 } from '@smarteam/ui';
-import { employeeDisplayName, isCalculationStale, type PayrollRun } from '@smarteam/contracts';
+import {
+  employeeDisplayName,
+  formatMoney,
+  isCalculationStale,
+  type PayrollRun,
+} from '@smarteam/contracts';
 import { useEmployees } from '../../hooks/use-workforce';
 import type { PayrollAdminState } from '../../hooks/use-payroll-admin';
 
@@ -32,29 +37,73 @@ import type { PayrollAdminState } from '../../hooks/use-payroll-admin';
  * must not present an action the server will reject.
  */
 export function PayrollRunActions({ run, admin }: { run: PayrollRun; admin: PayrollAdminState }) {
-  const [comment, setComment] = useState('');
   const [pending, setPending] = useState<'APPROVED' | 'RELEASED' | 'LOCKED' | null>(null);
+  const [calculateOpen, setCalculateOpen] = useState(false);
+  const [deferAdvanceEmployeeIds, setDeferAdvanceEmployeeIds] = useState<string[]>([]);
   const stale = isCalculationStale(run);
+
+  const advancesToRecover = admin.advances
+    .filter((advance) => {
+      const status = advance.status.toUpperCase();
+      const outstanding = Math.max(
+        0,
+        (advance.approvedAmount ?? advance.requestedAmount) - advance.recoveredAmount,
+      );
+      const approvedAt = advance.approvedAt ? new Date(advance.approvedAt) : null;
+      return (
+        (status === 'APPROVED' || status === 'PARTIALLY_RECOVERED') &&
+        outstanding > 0 &&
+        (!approvedAt || approvedAt <= new Date(`${run.periodEnd}T23:59:59.999`)) &&
+        advance.employeeId &&
+        advance.employee
+      );
+    })
+    .reduce((byEmployee, advance) => {
+      const id = advance.employeeId!;
+      const previous = byEmployee.get(id);
+      const amount = Math.max(
+        0,
+        (advance.approvedAmount ?? advance.requestedAmount) - advance.recoveredAmount,
+      );
+      byEmployee.set(id, {
+        id,
+        name: [advance.employee!.firstName, advance.employee!.lastName].filter(Boolean).join(' '),
+        employeeNumber: advance.employee!.employeeNumber ?? '',
+        outstanding: (previous?.outstanding ?? 0) + amount,
+      });
+      return byEmployee;
+    }, new Map<string, { id: string; name: string; employeeNumber: string; outstanding: number }>());
+  const recoveryChoices = [...advancesToRecover.values()].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+
+  const startCalculation = () => {
+    setDeferAdvanceEmployeeIds([]);
+    if (recoveryChoices.length > 0 && !admin.advancesUnavailable) setCalculateOpen(true);
+    else void admin.calculateRun(run.id);
+  };
+
+  const calculate = async () => {
+    const ok = await admin.calculateRun(run.id, deferAdvanceEmployeeIds);
+    if (ok) setCalculateOpen(false);
+  };
 
   const confirm = async () => {
     if (!pending) return;
-    const ok = await admin.advanceRun(run.id, pending, comment.trim());
-    if (ok) {
-      setComment('');
-      setPending(null);
-    }
+    const ok = await admin.advanceRun(run.id, pending, '');
+    if (ok) setPending(null);
   };
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {(run.status === 'DRAFT' || stale) && admin.can.calculate && (
+      {(run.status === 'DRAFT' || run.status === 'CALCULATED' || stale) && admin.can.calculate && (
         <Button
-          disabled={admin.saving}
-          onClick={() => void admin.calculateRun(run.id)}
+          disabled={admin.saving || (!admin.advancesUnavailable && admin.advancesLoading)}
+          onClick={startCalculation}
           size="sm"
           type="button"
         >
-          {stale ? 'Recalculate' : 'Calculate'}
+          {run.status === 'DRAFT' && !stale ? 'Calculate' : 'Recalculate'}
         </Button>
       )}
       {run.status === 'CALCULATED' && !stale && admin.can.approve && (
@@ -96,18 +145,9 @@ export function PayrollRunActions({ run, admin }: { run: PayrollRun; admin: Payr
             payroll run
           </DialogTitle>
           <p className="mt-1 text-xs text-muted-foreground">
-            The reason is recorded against the run in the audit trail.
+            This action and your account will be recorded in the audit trail.
           </p>
           <div className="mt-4 space-y-3">
-            <Label className="block" htmlFor="run-action-comment">
-              Reason
-            </Label>
-            <Textarea
-              disabled={admin.saving}
-              id="run-action-comment"
-              onChange={(event) => setComment(event.target.value)}
-              value={comment}
-            />
             {admin.saveError && (
               <p className="text-xs text-destructive" role="alert">
                 {admin.saveError}
@@ -122,14 +162,74 @@ export function PayrollRunActions({ run, admin }: { run: PayrollRun; admin: Payr
               >
                 Cancel
               </Button>
-              <Button
-                disabled={admin.saving || comment.trim().length < 3}
-                onClick={() => void confirm()}
-                type="button"
-              >
+              <Button disabled={admin.saving} onClick={() => void confirm()} type="button">
                 {admin.saving ? 'Working...' : 'Confirm'}
               </Button>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog onOpenChange={setCalculateOpen} open={calculateOpen}>
+        <DialogContent className="sm:max-w-xl">
+          <DialogTitle>Choose advance recovery for this run</DialogTitle>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+            Payroll will recover as much as it can while keeping total deductions within the 50%
+            wage limit, after statutory and other fixed deductions. Select employees whose advance
+            recovery should be deferred; their outstanding balance carries forward.
+          </p>
+          <div className="mt-4 max-h-[50vh] space-y-2 overflow-y-auto">
+            {recoveryChoices.map((employee) => {
+              const deferred = deferAdvanceEmployeeIds.includes(employee.id);
+              return (
+                <label
+                  className="flex cursor-pointer items-center justify-between gap-3 rounded-md border border-border px-3 py-3"
+                  key={employee.id}
+                >
+                  <span className="flex items-start gap-3">
+                    <Checkbox
+                      checked={deferred}
+                      onCheckedChange={(checked) =>
+                        setDeferAdvanceEmployeeIds((current) =>
+                          checked
+                            ? [...new Set([...current, employee.id])]
+                            : current.filter((id) => id !== employee.id),
+                        )
+                      }
+                    />
+                    <span>
+                      <span className="block text-sm font-semibold text-foreground">
+                        {employee.name}
+                      </span>
+                      <span className="block text-xs text-muted-foreground">
+                        {employee.employeeNumber} · outstanding {formatMoney(employee.outstanding)}
+                      </span>
+                    </span>
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {deferred ? 'Defer this run' : 'Recover maximum allowed'}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+          {admin.saveError && (
+            <p className="text-xs text-destructive" role="alert">
+              {admin.saveError}
+            </p>
+          )}
+          <div className="mt-4 flex justify-end gap-2">
+            <Button
+              disabled={admin.saving}
+              onClick={() => setCalculateOpen(false)}
+              type="button"
+              variant="outline"
+            >
+              Cancel
+            </Button>
+            <Button disabled={admin.saving} onClick={() => void calculate()} type="button">
+              {admin.saving ? 'Calculating...' : 'Calculate payroll'}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

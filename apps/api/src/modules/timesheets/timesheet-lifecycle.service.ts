@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  requirePermission,
-  requireReason,
-  type DomainContext,
-} from '../../common/context/domain-context';
+import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, ForbiddenDomainError } from '../../common/errors/domain-error';
 import type { Prisma } from '../../generated/prisma/client';
 import { AccessMode, TimesheetStatus } from '../../generated/prisma/enums';
@@ -206,12 +202,6 @@ export class TimesheetLifecycleService {
     comment?: string | null,
   ) {
     requirePermission(context, 'timesheets.decide');
-    if (status === 'REJECTED') {
-      requireReason(
-        { ...context, reason: comment ?? undefined },
-        'Timesheet rejections require a comment',
-      );
-    }
     const approverUserId = context.actor.userId;
     if (!approverUserId) throw new ConflictError('A human approver is required');
     return this.database.run(context, async (tx) => {

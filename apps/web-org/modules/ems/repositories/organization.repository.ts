@@ -35,6 +35,8 @@ export type BranchInput = {
   address?: Record<string, unknown>;
   /** IANA name; empty clears it and the branch follows the organization. */
   timezone?: string;
+  /** Optional location captured when a new branch is created. */
+  workLocation?: { latitude: number; longitude: number };
 };
 
 /** One branch as its settings panel shows it. */
@@ -66,7 +68,11 @@ export const organizationRepository = {
   },
 
   /** Name, timezone and currency are the only fields the API accepts. */
-  async update(organizationId: string, input: OrganizationUpdate, version: number): Promise<Organization> {
+  async update(
+    organizationId: string,
+    input: OrganizationUpdate,
+    version: number,
+  ): Promise<Organization> {
     return expectShape(
       parseOrganization(
         await apiRequest(orgPath(organizationId), {

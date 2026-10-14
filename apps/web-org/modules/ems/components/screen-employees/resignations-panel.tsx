@@ -10,7 +10,6 @@ import {
   DialogContent,
   DialogTitle,
   Label,
-  Textarea,
 } from '@smarteam/ui';
 import { useState } from 'react';
 import { useSession } from '../../hooks/auth-context';
@@ -40,28 +39,23 @@ export function ResignationsPanel() {
   );
   const [deciding, setDeciding] = useState<{ item: Resignation; accept: boolean } | null>(null);
   const [lastDay, setLastDay] = useState('');
-  const [comment, setComment] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
   const open = (item: Resignation, accept: boolean) => {
     setDeciding({ item, accept });
     setLastDay(item.requestedLastDay < today() ? today() : item.requestedLastDay);
-    setComment('');
     setError('');
   };
 
   const confirm = async () => {
     if (!deciding) return;
-    if (!deciding.accept && comment.trim().length < 3)
-      return setError('Say why the resignation is not accepted.');
     setBusy(true);
     setError('');
     try {
       await resignationsRepository.decide(organizationId!, deciding.item.id, {
         accept: deciding.accept,
         ...(deciding.accept ? { lastWorkingDay: lastDay } : {}),
-        ...(comment.trim() ? { comment: comment.trim() } : {}),
       });
       setDeciding(null);
       await list.refetch();
@@ -150,22 +144,6 @@ export function ResignationsPanel() {
                   They asked for {formatDate(deciding.item.requestedLastDay)}. After this day they
                   are off-boarded automatically: login closed, teams and projects ended.
                 </p>
-              </div>
-            )}
-            {!deciding?.accept && (
-              <div>
-                <Label className="mb-1 block" htmlFor="exit-comment">
-                  Reason for decline (required)
-                </Label>
-                <Textarea
-                  maxLength={1000}
-                  disabled={busy}
-                  id="exit-comment"
-                  onChange={(event) => setComment(event.target.value)}
-                  placeholder="State why the resignation is not accepted..."
-                  rows={3}
-                  value={comment}
-                />
               </div>
             )}
             {error && (

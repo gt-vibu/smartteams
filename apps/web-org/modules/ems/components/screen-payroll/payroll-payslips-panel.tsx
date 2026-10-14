@@ -141,17 +141,17 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
         const expanded = expandedId === payslip.id;
         return (
           <div className="rounded-lg border border-border bg-card" key={payslip.id}>
-            <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+            <div className="payroll-payslip-header flex flex-wrap items-center justify-between gap-3 px-4 py-3">
               <div>
                 <p className="text-xs font-bold text-foreground">{periodLabel(payslip)}</p>
                 <p className="mt-0.5 text-[10px] text-muted-foreground">
                   {payslip.issuedAt ? `Issued ${formatDate(payslip.issuedAt)}` : 'Not issued yet'}
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-                <div className="text-right">
+              <div className="payroll-payslip-controls flex flex-nowrap items-center gap-1.5 sm:gap-4">
+                <div className="payroll-payslip-net shrink-0 text-right">
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Net</p>
-                  <p className="font-mono text-sm font-bold text-foreground">
+                  <p className="whitespace-nowrap font-mono text-xs font-bold text-foreground sm:text-sm">
                     {formatMoney(payslip.totals.netAmount, payslip.run.currencyCode ?? 'INR')}
                   </p>
                 </div>
@@ -166,6 +166,7 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
                   }
                   size="sm"
                   type="button"
+                  className="payroll-payslip-action px-2 text-[11px] sm:px-3 sm:text-xs"
                 >
                   {busy === payslip.id ? 'Preparing…' : 'Download PDF'}
                 </Button>
@@ -174,6 +175,7 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
                   size="sm"
                   type="button"
                   variant="outline"
+                  className="payroll-payslip-action px-2 text-[11px] sm:px-3 sm:text-xs"
                 >
                   {expanded ? 'Hide' : 'Breakdown'}
                 </Button>
@@ -182,11 +184,20 @@ export function PayrollPayslipsPanel({ payslips }: { payslips: Payslip[] }) {
             {expanded && (
               <div className="border-t border-border">
                 {payslip.payrollSummary && (
-                  <div className="grid gap-2 border-b border-border px-4 py-3 text-xs sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="grid gap-2 border-b border-border px-4 py-3 text-xs sm:grid-cols-2 lg:grid-cols-3">
                     <span className="text-muted-foreground">
-                      Working days{' '}
+                      Monthly gross before attendance{' '}
                       <strong className="text-foreground">
-                        {payslip.payrollSummary.workingDays}
+                        {formatMoney(
+                          payslip.payrollSummary.monthlyGross,
+                          payslip.run.currencyCode ?? 'INR',
+                        )}
+                      </strong>
+                    </span>
+                    <span className="text-muted-foreground">
+                      Payable days{' '}
+                      <strong className="text-foreground">
+                        {payslip.payrollSummary.payableDays} / {payslip.payrollSummary.workingDays}
                       </strong>
                     </span>
                     <span className="text-muted-foreground">

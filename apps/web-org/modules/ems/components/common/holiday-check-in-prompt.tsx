@@ -22,11 +22,10 @@ export function HolidayCheckInPrompt() {
   const [conflict, setConflict] = useState<HolidayConflict | null>(null);
   useHolidayCheckInAnnouncements(setConflict);
 
-  const explain = async (reason: string, comment: string) => {
+  const explain = async (reason: string) => {
     if (!organizationId || !conflict) throw new Error('No organization is selected.');
     await holidayConflictsRepository.explain(organizationId, conflict.attendanceId, {
       reason,
-      ...(comment ? { comment } : {}),
     });
     emitDataChanged('attendance', 'approvals');
   };

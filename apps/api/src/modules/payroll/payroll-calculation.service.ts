@@ -20,6 +20,7 @@ import {
   countWorkingDays,
   eligibleOptionalHolidayDates,
   hash,
+  monthlyWorkdayUnits,
   payrollPeriodCutoffs,
   summarizeAttendance,
   summarizeLeave,
@@ -58,11 +59,11 @@ export class PayrollCalculationService {
     private readonly config: ConfigService,
   ) {}
 
-  async calculate(context: DomainContext, runId: string) {
+  async calculate(context: DomainContext, runId: string, deferAdvanceEmployeeIds: string[] = []) {
     requirePermission(context, 'payroll.runs.calculate');
     const stopTimer = this.metrics.payrollDuration.startTimer();
     try {
-      const result = await this.calculateInTransaction(context, runId);
+      const result = await this.calculateInTransaction(context, runId, deferAdvanceEmployeeIds);
       this.metrics.payrollRuns.inc({ outcome: 'succeeded' });
       return result;
     } catch (error) {
@@ -77,7 +78,11 @@ export class PayrollCalculationService {
     }
   }
 
-  private async calculateInTransaction(context: DomainContext, runId: string) {
+  private async calculateInTransaction(
+    context: DomainContext,
+    runId: string,
+    deferAdvanceEmployeeIds: string[],
+  ) {
     return this.database.run(
       context,
       async (tx) => {
@@ -93,13 +98,14 @@ export class PayrollCalculationService {
         const run = await tx.payrollRun.findFirst({
           where: { id: runId, organizationId: context.organizationId },
         });
-        // A calculated run is recalculable only while it is marked stale: an input changed after the
-        // figures were produced, so the figures have to catch up before anyone can approve them.
-        const recalculable =
-          run?.status === PayrollRunStatus.CALCULATED && run.calculationStaleAt !== null;
-        if (!run || !(run.status === PayrollRunStatus.DRAFT || recalculable))
+        // A calculated but unapproved run can be recalculated on explicit admin request. This is
+        // also how runs pick up corrected calculation rules; approved/released runs remain locked.
+        if (
+          !run ||
+          (run.status !== PayrollRunStatus.DRAFT && run.status !== PayrollRunStatus.CALCULATED)
+        )
           throw new ConflictError(
-            'Only a draft payroll run, or a calculated run with pending changes, can be calculated',
+            'Only a draft or calculated, unapproved payroll run can be calculated',
           );
         const unapproved = await tx.timesheet.count({
           where: {
@@ -272,6 +278,18 @@ export class PayrollCalculationService {
           payrollEnabledDefault: true,
           components: [],
         };
+        // A historical default policy may not have had a jurisdiction saved yet. The current
+        // organization default is the fallback location in that case; explicit historical or
+        // employee jurisdictions still take precedence below.
+        const organizationJurisdictionFallback = await tx.payrollPolicy.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            isDefault: true,
+            statutoryJurisdiction: { not: null },
+          },
+          orderBy: { effectiveFrom: 'desc' },
+          select: { statutoryJurisdiction: true },
+        });
         const assignedPolicyIds = [
           ...new Set(
             employees
@@ -353,6 +371,7 @@ export class PayrollCalculationService {
             organizationId: context.organizationId,
             status: { in: ['APPROVED', 'PARTIALLY_RECOVERED'] },
             approvedAt: { not: null, lte: advanceCutoff },
+            ...(context.accessMode === 'NATIVE' ? { employee: { status: 'ACTIVE' } } : {}),
           },
           orderBy: [{ requestedAt: 'asc' }, { id: 'asc' }],
         });
@@ -392,6 +411,16 @@ export class PayrollCalculationService {
           })),
           (advance) => advance.employeeId,
         );
+        if (context.accessMode === 'NATIVE') {
+          const recoverableEmployeeIds = new Set(advancesByEmployee.keys());
+          const invalidChoice = deferAdvanceEmployeeIds.find(
+            (employeeId) => !recoverableEmployeeIds.has(employeeId),
+          );
+          if (invalidChoice)
+            throw new ConflictError(
+              'Advance recovery can only be deferred for an active employee with an approved outstanding advance in this payroll period',
+            );
+        }
         const allowanceByEmployee = new Map(
           employees.map((employee) => [
             employee.id,
@@ -447,8 +476,15 @@ export class PayrollCalculationService {
               assignedPolicy.isDefault
                 ? policy
                 : assignedPolicy;
-            const statutoryJurisdiction =
-              employeePolicy?.statutoryJurisdiction ?? selectedPolicy.statutoryJurisdiction;
+            const normalizedJurisdiction = [
+              employeePolicy?.statutoryJurisdiction,
+              selectedPolicy.statutoryJurisdiction,
+              policy.statutoryJurisdiction,
+              organizationJurisdictionFallback?.statutoryJurisdiction,
+            ]
+              .find((value) => Boolean(value?.trim()))
+              ?.trim()
+              .toUpperCase();
             const selectedDate =
               employeePolicy && employeePolicy.effectiveFrom > run.periodStart
                 ? employeePolicy.effectiveFrom
@@ -493,9 +529,15 @@ export class PayrollCalculationService {
               periodMonth: run.periodEnd.getUTCMonth() + 1,
               compensation: employee.compensations[0] ?? null,
               employeePolicy,
-              policy: selectedPolicy,
+              policy: {
+                ...selectedPolicy,
+                statutoryJurisdiction: normalizedJurisdiction ?? null,
+              },
               statutoryRules: statutoryRules.filter((rule) =>
-                Boolean(statutoryJurisdiction && rule.jurisdiction === statutoryJurisdiction),
+                Boolean(
+                  normalizedJurisdiction &&
+                  rule.jurisdiction.trim().toUpperCase() === normalizedJurisdiction,
+                ),
               ),
               components,
               timesheet: sumTimesheets(timesheetsByEmployee.get(employee.id) ?? empty),
@@ -573,9 +615,27 @@ export class PayrollCalculationService {
                         holidayDatesByEmployee.get(employee.id),
                       ),
                     ),
+              ...(context.accessMode === 'NATIVE'
+                ? {
+                    periodSalaryUnits:
+                      employee.compensations[0]?.payFrequency === 'MONTHLY'
+                        ? monthlyWorkdayUnits(
+                            run.periodStart,
+                            run.periodEnd,
+                            settings.workWeekDays,
+                            holidays,
+                            employee.primaryBranchId,
+                            holidayDatesByEmployee.get(employee.id),
+                          )
+                        : 1,
+                  }
+                : {}),
               ...(context.accessMode === 'NATIVE' ? { useWorkCalendarBasis: true } : {}),
               adjustments: adjustmentsByEmployee.get(employee.id) ?? empty,
               advances: advancesByEmployee.get(employee.id) ?? empty,
+              ...(context.accessMode === 'NATIVE'
+                ? { deferAdvanceRecovery: deferAdvanceEmployeeIds.includes(employee.id) }
+                : {}),
             };
           })
           .filter((item): item is NonNullable<typeof item> => item !== null);
@@ -589,6 +649,32 @@ export class PayrollCalculationService {
           throw new ConflictError(
             'No eligible employees were found for this payroll period. Check that employees are active, payroll is enabled, and salary or pay components are effective during the period.',
           );
+        const invalidAmountRows = rows.filter(
+          ({ line }) =>
+            Number(line.grossAmount) < 0 ||
+            Number(line.deductionAmount) < 0 ||
+            Number(line.netAmount) < 0,
+        );
+        if (invalidAmountRows.length > 0) {
+          const employeeNumbers = new Map(
+            employees.map((employee) => [employee.id, employee.employeeNumber]),
+          );
+          const examples = invalidAmountRows.slice(0, 3).map(({ line }) => {
+            const employee = employeeNumbers.get(line.employeeId) ?? 'an employee';
+            const gross = Number(line.grossAmount);
+            const deduction = Number(line.deductionAmount);
+            if (gross < 0) return `${employee} has negative gross pay`;
+            if (deduction < 0) return `${employee} has a negative deduction total`;
+            return `${employee} has deductions of ₹${deduction.toFixed(2)} exceeding gross pay of ₹${gross.toFixed(2)}`;
+          });
+          const additional =
+            invalidAmountRows.length > examples.length
+              ? ` and ${invalidAmountRows.length - examples.length} more employee(s)`
+              : '';
+          throw new ConflictError(
+            `Payroll was not calculated because the line amounts would be invalid: ${examples.join('; ')}${additional}. Review the employee's salary, statutory rule, pay components, and payroll adjustments so gross pay and deductions produce non-negative take-home pay.`,
+          );
+        }
         const inputSnapshotHash = hash(snapshot);
         await tx.payrollPayment.deleteMany({ where: { payrollRunId: run.id } });
         // Component rows hold the line item under `onDelete: Restrict`, so they go first. This only

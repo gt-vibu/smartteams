@@ -1,9 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  requirePermission,
-  requireReason,
-  type DomainContext,
-} from '../../common/context/domain-context';
+import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import type { Prisma } from '../../generated/prisma/client';
 import {
@@ -50,12 +46,6 @@ export class AttendanceDecisionsService {
     expectedStepNumber?: number,
   ) {
     requirePermission(context, 'attendance.corrections.decide');
-    if (status === 'REJECTED') {
-      requireReason(
-        { ...context, reason: comment ?? undefined },
-        'Attendance correction rejections require a comment',
-      );
-    }
     return this.database.run(context, (tx) =>
       this.decideInTransaction(
         tx,

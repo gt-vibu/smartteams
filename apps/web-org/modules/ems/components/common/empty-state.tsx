@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import type { LucideIcon } from 'lucide-react';
 
 /**
  * What a screen shows when it has nothing to show.
@@ -19,12 +20,15 @@ import React from 'react';
 export function EmptyState({
   action,
   detail,
+  icon: Icon,
   role = 'status',
   title,
 }: {
   /** A single primary action, when there is an obvious way to fill the emptiness. */
   action?: React.ReactNode;
   detail?: string;
+  /** A contextual mark for the empty screen. */
+  icon?: LucideIcon;
   /** `alert` when the emptiness is a failure rather than an absence. */
   role?: 'status' | 'alert';
   title: string;
@@ -35,6 +39,11 @@ export function EmptyState({
       role={role}
     >
       <div className="max-w-sm">
+        {Icon && (
+          <span className="mx-auto mb-3 grid size-11 place-items-center rounded-2xl bg-primary/10 text-primary">
+            <Icon aria-hidden="true" className="size-5" />
+          </span>
+        )}
         <p className="text-sm font-semibold text-foreground">{title}</p>
         {detail && <p className="mt-1 text-xs text-muted-foreground">{detail}</p>}
         {action && <div className="mt-4 flex justify-center">{action}</div>}

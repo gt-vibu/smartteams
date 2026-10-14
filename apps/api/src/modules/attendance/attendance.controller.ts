@@ -17,7 +17,7 @@ import {
   AttendanceCorrectionDto,
   MissingCheckOutCorrectionDto,
   AttendanceCorrectionQueryDto,
-  AttendanceDecisionDto,
+  NativeAttendanceDecisionDto,
   AttendancePreferencesDto,
   AttendancePreferencesQueryDto,
   AttendanceQueryDto,
@@ -224,17 +224,17 @@ export class AttendanceController {
   @Post(':correctionId/decision') decision(
     @Param('organizationId') organizationId: string,
     @Param('correctionId') correctionId: string,
-    @Body() body: AttendanceDecisionDto,
+    @Body() body: NativeAttendanceDecisionDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
-      .native(request.user.userId, organizationId, undefined, body.comment)
+      .native(request.user.userId, organizationId, undefined, body.comment ?? '')
       .then((context) =>
         this.attendance.decideCorrection(
           context,
           correctionId,
           body.status,
-          body.comment,
+          body.comment ?? '',
           body.checkOutAt,
         ),
       );

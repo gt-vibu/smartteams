@@ -111,9 +111,8 @@ export function ScreenApprovals() {
             <section className="flex flex-col gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-1">
                 <h2 className="text-sm font-semibold text-foreground">Automatic approvals</h2>
-                <p className="max-w-2xl text-xs text-muted-foreground">
-                  Choose Manual, Automatic, or Conditional for leave and attendance policies.
-                  Requests outside the rules still go to their assigned approvers.
+                <p className="max-w-2xl text-sm text-muted-foreground">
+                  Set which leave and attendance requests can skip manual review.
                 </p>
               </div>
               <Button

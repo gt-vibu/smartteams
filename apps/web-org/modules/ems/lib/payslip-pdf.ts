@@ -58,6 +58,25 @@ export async function payslipPdf(payslip: Payslip) {
   });
   y += 50;
 
+  if (payslip.payrollSummary) {
+    const summary = payslip.payrollSummary;
+    const items: Array<[string, string]> = [
+      ['Monthly gross before attendance', money(summary.monthlyGross)],
+      ['Payable days', `${summary.payableDays} of ${summary.workingDays} scheduled`],
+      ['Unpaid-time reduction', money(summary.unpaidTimeReduction)],
+    ];
+    const summaryCell = (right - left - 16) / items.length;
+    items.forEach(([name, text], index) => {
+      const x = left + index * (summaryCell + 8);
+      doc.setDrawColor(...RULE);
+      doc.setLineWidth(0.75);
+      doc.roundedRect(x, y - 14, summaryCell, 38, 4, 4, 'S');
+      label(doc, name, x + 10, y);
+      value(doc, text, x + 10, y + 14, { bold: true, maxWidth: summaryCell - 20 });
+    });
+    y += 50;
+  }
+
   if (payslip.components.length === 0) {
     value(
       doc,

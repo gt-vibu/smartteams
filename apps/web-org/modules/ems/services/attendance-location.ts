@@ -29,7 +29,7 @@ export function captureAttendanceLocation(
         },
         (error) => {
           const messages: Record<number, string> = {
-            1: 'Location permission was denied. Allow location access to record attendance.',
+            1: 'Location permission was denied. Allow location access in your browser and try again.',
             2: 'Your device could not determine its location. Check location services and try again.',
             3: 'Location capture timed out. Try again where your device can obtain a GPS signal.',
           };

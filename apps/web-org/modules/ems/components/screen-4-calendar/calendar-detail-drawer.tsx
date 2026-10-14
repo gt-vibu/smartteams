@@ -31,7 +31,7 @@ interface CalendarDetailDrawerProps {
     reason: string,
   ) => Promise<unknown>;
   /** Explains a check-in on an approved optional holiday; same contract. */
-  onExplainHolidayCheckIn?: (recordId: string, reason: string, comment: string) => Promise<unknown>;
+  onExplainHolidayCheckIn?: (recordId: string, reason: string) => Promise<unknown>;
 }
 
 export function CalendarDetailDrawer({
@@ -85,7 +85,11 @@ export function CalendarDetailDrawer({
       );
       setSubmitted(true);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'The regularization request could not be submitted.');
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : 'The regularization request could not be submitted.',
+      );
     } finally {
       setSaving(false);
     }
@@ -233,31 +237,78 @@ export function CalendarDetailDrawer({
                 an absent placeholder and only changes attendance after an approver accepts. */}
             {day.dayStatus === 'ABSENT' && onSubmitMissingDay && (
               <div className="pt-2 border-t border-border">
-                <div className="text-xs font-bold text-foreground mb-1.5">Request attendance regularization</div>
+                <div className="text-xs font-bold text-foreground mb-1.5">
+                  Request attendance regularization
+                </div>
                 {submitted ? (
                   <div className="rounded border border-emerald-200 bg-emerald-50 p-3 text-xs font-medium text-emerald-800">
-                    Sent for approval. Attendance will be updated after your admin accepts the request.
+                    Sent for approval. Attendance will be updated after your admin accepts the
+                    request.
                   </div>
                 ) : activeForm !== 'regularization' ? (
-                  <Button type="button" onClick={() => setActiveForm('regularization')} className="w-full">
+                  <Button
+                    type="button"
+                    onClick={() => setActiveForm('regularization')}
+                    className="w-full"
+                  >
                     Request regularization
                   </Button>
                 ) : (
                   <div className="space-y-2.5">
-                    <p className="text-[11px] text-muted-foreground">Enter the actual times you worked. Your admin must approve this request before the attendance record changes.</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      Enter the actual times you worked. Your admin must approve this request before
+                      the attendance record changes.
+                    </p>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label htmlFor="regularization-check-in" className="mb-1 block text-[11px]">Actual check-in *</label>
-                        <TimePicker id="regularization-check-in" value={missingCheckIn} onChange={setMissingCheckIn} disabled={saving} />
+                        <label htmlFor="regularization-check-in" className="mb-1 block text-[11px]">
+                          Actual check-in *
+                        </label>
+                        <TimePicker
+                          id="regularization-check-in"
+                          value={missingCheckIn}
+                          onChange={setMissingCheckIn}
+                          disabled={saving}
+                        />
                       </div>
                       <div>
-                        <label htmlFor="regularization-check-out" className="mb-1 block text-[11px]">Actual check-out</label>
-                        <TimePicker id="regularization-check-out" value={missingCheckOut} onChange={setMissingCheckOut} disabled={saving} />
+                        <label
+                          htmlFor="regularization-check-out"
+                          className="mb-1 block text-[11px]"
+                        >
+                          Actual check-out
+                        </label>
+                        <TimePicker
+                          id="regularization-check-out"
+                          value={missingCheckOut}
+                          onChange={setMissingCheckOut}
+                          disabled={saving}
+                        />
                       </div>
                     </div>
-                    <Textarea maxLength={LIMITS.reason} rows={3} value={reason} onChange={(e) => setReason(e.target.value)} placeholder={`Reason (at least ${ATTENDANCE_CORRECTION_REASON_MIN_LENGTH} characters)`} disabled={saving} />
-                    {error && <p role="alert" className="text-[11px] font-medium text-destructive">{error}</p>}
-                    <Button type="button" disabled={saving || !missingCheckIn || reason.trim().length < ATTENDANCE_CORRECTION_REASON_MIN_LENGTH} onClick={() => void handleMissingDay()} className="w-full">
+                    <Textarea
+                      maxLength={LIMITS.reason}
+                      rows={3}
+                      value={reason}
+                      onChange={(e) => setReason(e.target.value)}
+                      placeholder={`Reason (at least ${ATTENDANCE_CORRECTION_REASON_MIN_LENGTH} characters)`}
+                      disabled={saving}
+                    />
+                    {error && (
+                      <p role="alert" className="text-[11px] font-medium text-destructive">
+                        {error}
+                      </p>
+                    )}
+                    <Button
+                      type="button"
+                      disabled={
+                        saving ||
+                        !missingCheckIn ||
+                        reason.trim().length < ATTENDANCE_CORRECTION_REASON_MIN_LENGTH
+                      }
+                      onClick={() => void handleMissingDay()}
+                      className="w-full"
+                    >
                       {saving ? 'Submitting…' : 'Submit regularization request'}
                     </Button>
                   </div>
@@ -272,7 +323,11 @@ export function CalendarDetailDrawer({
                   Add missing check-out
                 </div>
                 {activeForm !== 'missing-checkout' ? (
-                  <Button type="button" onClick={() => setActiveForm('missing-checkout')} className="w-full">
+                  <Button
+                    type="button"
+                    onClick={() => setActiveForm('missing-checkout')}
+                    className="w-full"
+                  >
                     Request correction
                   </Button>
                 ) : (
@@ -301,7 +356,11 @@ export function CalendarDetailDrawer({
                     ✓ Regularization request submitted successfully.
                   </div>
                 ) : activeForm !== 'regularization' ? (
-                  <Button type="button" onClick={() => setActiveForm('regularization')} className="w-full">
+                  <Button
+                    type="button"
+                    onClick={() => setActiveForm('regularization')}
+                    className="w-full"
+                  >
                     Request correction
                   </Button>
                 ) : (

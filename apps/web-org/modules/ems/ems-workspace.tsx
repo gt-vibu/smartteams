@@ -140,7 +140,9 @@ function EmsWorkspaceInner() {
 
           {effectiveModule === 'projects' && <ScreenProjects />}
 
-          {effectiveModule === 'payroll' && <ScreenPayrollAdmin />}
+          {effectiveModule === 'payroll' && (
+            <ScreenPayrollAdmin onNavigateModule={navigateToModule} />
+          )}
 
           {effectiveModule === 'shifts' && <ScreenShifts />}
 

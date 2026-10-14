@@ -27,24 +27,46 @@ export class HttpMetricsInterceptor implements NestInterceptor {
     if (context.getType() !== 'http') return next.handle();
     const http = context.switchToHttp();
     const request = http.getRequest<Request>();
+    const response = http.getResponse<Response>();
     const method = request.method;
     const started = process.hrtime.bigint();
+    let handlerRecorded = false;
+    let responseRecorded = false;
 
-    const record = (status: number) => {
-      // `route.path` is populated by Express once the handler matched; falling back to the
-      // controller path keeps an unmatched request from being labelled with its raw URL.
-      // Express types `route` as `any`; read it through `unknown` so the label stays a string.
+    const route = () => {
       const matched = (request as unknown as { route?: { path?: unknown } }).route?.path;
-      const route = typeof matched === 'string' ? matched : 'unmatched';
-      const seconds: number = Number(process.hrtime.bigint() - started) / 1e9;
-      this.metrics.httpRequests.inc({ method, route, status: statusClass(status) });
-      this.metrics.httpDuration.observe({ method, route }, seconds);
+      return typeof matched === 'string' ? matched : 'unmatched';
     };
+
+    const recordHandler = (status: number) => {
+      if (handlerRecorded) return;
+      handlerRecorded = true;
+      const seconds: number = Number(process.hrtime.bigint() - started) / 1e9;
+      const path = route();
+      this.metrics.httpRequests.inc({ method, route: path, status: statusClass(status) });
+      this.metrics.httpDuration.observe({ method, route: path }, seconds);
+    };
+
+    const recordResponse = (aborted: boolean) => {
+      if (responseRecorded) return;
+      responseRecorded = true;
+      const seconds: number = Number(process.hrtime.bigint() - started) / 1e9;
+      this.metrics.httpResponseDuration.observe({ method, route: route() }, seconds);
+      if (aborted && !handlerRecorded) recordHandler(499);
+    };
+
+    // Express emits `finish` only after the body has been serialized and handed to the socket.
+    // `close` covers a client that disconnects before that completes.
+    response.once('finish', () => recordResponse(false));
+    response.once('close', () => {
+      if (!response.writableFinished) recordResponse(true);
+    });
 
     return next.handle().pipe(
       tap({
-        next: () => record(http.getResponse<Response>().statusCode),
-        error: (error: unknown) => record(error instanceof HttpException ? error.getStatus() : 500),
+        next: () => recordHandler(response.statusCode),
+        error: (error: unknown) =>
+          recordHandler(error instanceof HttpException ? error.getStatus() : 500),
       }),
     );
   }

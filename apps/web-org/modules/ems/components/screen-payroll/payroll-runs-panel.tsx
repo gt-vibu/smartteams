@@ -5,7 +5,6 @@ import { Badge, Button } from '@smarteam/ui';
 import {
   formatDate,
   formatDateRange,
-  formatMoney,
   isCalculationStale,
   type PayrollRun,
 } from '@smarteam/contracts';
@@ -15,7 +14,6 @@ import {
   CreatePayrollRunDialog,
   PayrollRunActions,
 } from './payroll-run-actions';
-import { isPaid, PayrollRunBreakdown } from './payroll-run-breakdown';
 import { PayrollRunExports } from './payroll-run-exports';
 import { PayrollRunReview } from './payroll-run-review';
 
@@ -35,10 +33,15 @@ const statusTone = (run: PayrollRun) => {
   return 'secondary' as const;
 };
 
-export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
+export function PayrollRunsPanel({
+  admin,
+  onNavigateModule,
+}: {
+  admin: PayrollAdminState;
+  onNavigateModule: (module: string, subView?: string) => void;
+}) {
   const [creating, setCreating] = useState(false);
   const [adjustingRunId, setAdjustingRunId] = useState<string | null>(null);
-  const [openRunId, setOpenRunId] = useState<string | null>(null);
 
   if (admin.forbidden) {
     return (
@@ -65,14 +68,38 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
         )}
       </div>
 
-      {admin.saveError && (
-        <p
-          className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive"
-          role="alert"
-        >
-          {admin.saveError}
-        </p>
-      )}
+      {admin.saveError &&
+        (admin.saveError.toLowerCase().includes('payroll can consume only approved timesheets') ? (
+          <div
+            className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-3"
+            role="alert"
+          >
+            <div>
+              <p className="text-xs font-semibold text-foreground">
+                Timesheets need approval before payroll can be calculated
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Review and approve the outstanding timesheets for this pay period, then return and
+                calculate the run again.
+              </p>
+            </div>
+            <Button
+              onClick={() => onNavigateModule('timesheet')}
+              size="sm"
+              type="button"
+              variant="outline"
+            >
+              Open timesheets
+            </Button>
+          </div>
+        ) : (
+          <p
+            className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive"
+            role="alert"
+          >
+            {admin.saveError}
+          </p>
+        ))}
 
       {admin.loading && (
         <p className="py-10 text-center text-xs text-muted-foreground" role="status">
@@ -113,17 +140,6 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
         admin.runs.map((run) => {
           const slips = admin.payslipsForRun(run.id);
           const released = run.status === 'RELEASED' || run.status === 'LOCKED';
-          const paidCount = slips.filter(isPaid).length;
-          const unpaidCount = slips.length - paidCount;
-          const showing = openRunId === run.id;
-          const totals = slips.reduce(
-            (sum, slip) => ({
-              gross: sum.gross + slip.totals.grossAmount,
-              deduction: sum.deduction + slip.totals.deductionAmount,
-              net: sum.net + slip.totals.netAmount,
-            }),
-            { gross: 0, deduction: 0, net: 0 },
-          );
           return (
             <div className="rounded-lg border border-border bg-card" key={run.id}>
               <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
@@ -163,47 +179,13 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
               )}
 
               {released && !admin.payslipsUnavailable && (
-                <dl className="grid grid-cols-2 gap-px border-t border-border bg-border sm:grid-cols-4">
-                  {[
-                    {
-                      label: 'Employees paid',
-                      value: unpaidCount ? `${paidCount} of ${slips.length}` : String(paidCount),
-                    },
-                    { label: 'Gross', value: formatMoney(totals.gross) },
-                    { label: 'Deductions', value: formatMoney(totals.deduction) },
-                    { label: 'Net', value: formatMoney(totals.net) },
-                  ].map((tile) => (
-                    <div className="bg-card px-4 py-2.5" key={tile.label}>
-                      <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                        {tile.label}
-                      </dt>
-                      <dd className="mt-0.5 font-mono text-xs font-bold text-foreground">
-                        {tile.value}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              )}
-
-              {released && !admin.payslipsUnavailable && (
                 <>
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-2">
-                    <p className="text-[11px] text-muted-foreground">
-                      {unpaidCount > 0
-                        ? `${unpaidCount} employee${unpaidCount === 1 ? ' had' : 's had'} nothing to pay this period.`
-                        : ''}
-                    </p>
-                    <Button
-                      aria-expanded={showing}
-                      onClick={() => setOpenRunId(showing ? null : run.id)}
-                      size="sm"
-                      type="button"
-                      variant="ghost"
-                    >
-                      {showing ? 'Hide breakdown' : 'View breakdown'}
-                    </Button>
-                  </div>
-                  {showing && <PayrollRunBreakdown slips={slips} />}
+                  <PayrollRunReview
+                    calculatedAt={run.calculatedAt!}
+                    released
+                    runId={run.id}
+                    slips={slips}
+                  />
                   <PayrollRunExports canPay={admin.can.pay} runId={run.id} />
                 </>
               )}

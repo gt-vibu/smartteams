@@ -73,6 +73,8 @@ export const payslipSchema = z.object({
   payrollSummary: z
     .object({
       workingDays: z.number(),
+      payableDays: z.number(),
+      monthlyGross: money,
       paidLeaveDays: z.number(),
       unpaidDays: z.number(),
       unpaidTimeReduction: money,

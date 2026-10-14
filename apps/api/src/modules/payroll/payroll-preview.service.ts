@@ -9,6 +9,7 @@ import { calculateSalaryStructure } from './payroll-salary-structure';
 import {
   countWorkingDays,
   eligibleOptionalHolidayDates,
+  monthlyWorkdayUnits,
   payrollPeriodCutoffs,
   summarizeAttendance,
   summarizeLeave,
@@ -329,6 +330,21 @@ export class PayrollPreviewService {
         attendance,
         unemployedDays: notEmployedDays,
         periodWorkingDays,
+        ...(context.accessMode === 'NATIVE'
+          ? {
+              periodSalaryUnits:
+                compensation?.payFrequency === 'MONTHLY'
+                  ? monthlyWorkdayUnits(
+                      periodStart,
+                      periodEnd,
+                      settings.workWeekDays,
+                      holidays,
+                      employee.primaryBranchId,
+                      employeeSelectedDates,
+                    )
+                  : 1,
+            }
+          : {}),
         ...(context.accessMode === 'NATIVE' ? { useWorkCalendarBasis: true } : {}),
         adjustments,
         // Spread the same way the run will spread it, so the preview matches the payslip.

@@ -18,6 +18,7 @@ type Stored = {
   unpaidAttendanceDays?: unknown;
   unemployedDays?: unknown;
   periodWorkingDays?: unknown;
+  componentDeduction?: unknown;
 };
 
 /** The calculation's own record of a line, in the terms a reviewer checks. */
@@ -30,6 +31,7 @@ function breakdownOf(value: unknown) {
     otherDeductions: money(stored.deductionAdjustmentTotal),
     advanceRecovery: money(stored.advanceRecoveryTotal),
     unpaidLeaveDeduction: money(stored.unpaidLeaveAdjustment),
+    componentDeductionsTotal: money(stored.componentDeduction),
     statutory: (stored.statutory ?? [])
       .filter((entry) => entry.eligible)
       .map((entry) => ({ scheme: String(entry.schemeCode), amount: money(entry.employeeAmount) })),
@@ -65,33 +67,57 @@ export class PayrollRunReviewService {
         select: { id: true, status: true },
       });
       if (!run) throw new NotFoundError('Payroll run not found');
-      const lines = await tx.payrollLineItem.findMany({
-        where: { organizationId: context.organizationId, payrollRunId: run.id },
-        select: {
-          employeeId: true,
-          grossAmount: true,
-          deductionAmount: true,
-          netAmount: true,
-          calculationBreakdown: true,
-          employee: { select: { firstName: true, lastName: true, employeeNumber: true } },
-        },
-        orderBy: { employee: { employeeNumber: 'asc' } },
+      const [lines, employees] = await Promise.all([
+        tx.payrollLineItem.findMany({
+          where: { organizationId: context.organizationId, payrollRunId: run.id },
+          select: {
+            employeeId: true,
+            grossAmount: true,
+            deductionAmount: true,
+            netAmount: true,
+            calculationBreakdown: true,
+            components: {
+              where: { componentType: 'DEDUCTION' },
+              select: { componentCode: true, componentName: true, amount: true },
+              orderBy: { displayOrder: 'asc' },
+            },
+            employee: { select: { firstName: true, lastName: true, employeeNumber: true } },
+          },
+          orderBy: { employee: { employeeNumber: 'asc' } },
+        }),
+        tx.employee.findMany({
+          where: { organizationId: context.organizationId, status: 'ACTIVE' },
+          select: { id: true, firstName: true, lastName: true, employeeNumber: true },
+          orderBy: { employeeNumber: 'asc' },
+        }),
+      ]);
+      const lineByEmployee = new Map(lines.map((line) => [line.employeeId, line]));
+      const items = employees.map((employee) => {
+        const line = lineByEmployee.get(employee.id);
+        return {
+          employeeId: employee.id,
+          employeeNumber: employee.employeeNumber,
+          name: `${employee.firstName} ${employee.lastName}`.trim(),
+          hasPayrollLine: Boolean(line),
+          gross: money(line?.grossAmount),
+          deductions: money(line?.deductionAmount),
+          net: money(line?.netAmount),
+          breakdown: {
+            ...breakdownOf(line?.calculationBreakdown),
+            componentDeductions: (line?.components ?? []).map((component) => ({
+              code: component.componentCode,
+              name: component.componentName,
+              amount: money(component.amount),
+            })),
+          },
+        };
       });
-      const items = lines.map((line) => ({
-        employeeId: line.employeeId,
-        employeeNumber: line.employee.employeeNumber,
-        name: `${line.employee.firstName} ${line.employee.lastName}`.trim(),
-        gross: money(line.grossAmount),
-        deductions: money(line.deductionAmount),
-        net: money(line.netAmount),
-        // What the figures are made of, so a reviewer can see why a number is what it is.
-        breakdown: breakdownOf(line.calculationBreakdown),
-      }));
       const total = (key: 'gross' | 'deductions' | 'net') =>
         money(items.reduce((sum, item) => sum + item[key], 0));
       return {
         runId: run.id,
         status: run.status,
+        activeEmployeeCount: employees.length,
         items,
         totals: { gross: total('gross'), deductions: total('deductions'), net: total('net') },
       };

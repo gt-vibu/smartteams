@@ -75,6 +75,10 @@ export class LeaveService {
     return this.requests.listRequests(...args);
   }
 
+  adminSummary(context: DomainContext) {
+    return this.requests.adminSummary(context);
+  }
+
   listPendingApprovals(context: DomainContext, approverUserId: string) {
     return this.requests.listPendingApprovals(context, approverUserId);
   }

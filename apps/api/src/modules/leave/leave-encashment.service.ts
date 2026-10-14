@@ -143,7 +143,6 @@ export class LeaveEncashmentService {
     if (!has(context, 'leave.balances.adjust'))
       throw new ForbiddenDomainError('Missing permission: leave.balances.adjust');
     const comment = input.comment?.trim() ?? '';
-    if (!input.approve && comment.length < 3) throw new ConflictError('Say why it is declined.');
     return this.database.run(context, async (tx) => {
       const found = await tx.leaveEncashment.findFirst({
         where: { id, organizationId: context.organizationId },

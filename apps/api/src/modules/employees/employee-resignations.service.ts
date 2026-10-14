@@ -176,8 +176,6 @@ export class EmployeeResignationsService {
   ) {
     requirePermission(context, 'employees.write');
     const comment = input.comment?.trim() ?? '';
-    if (!input.accept && comment.length < 3)
-      throw new ConflictError('Say why the resignation is not accepted.');
     return this.database.run(context, async (tx) => {
       const found = await tx.employeeResignation.findFirst({
         where: { id: resignationId, organizationId: context.organizationId },
@@ -213,8 +211,8 @@ export class EmployeeResignationsService {
         kind: 'RESIGNATION_DECIDED',
         title: input.accept ? 'Your resignation was accepted' : 'Your resignation was not accepted',
         body: lastDay
-          ? `Your last working day is ${describeDays(lastDay, lastDay)}.${comment ? ` ${comment}` : ''}`
-          : comment,
+          ? `Your last working day is ${describeDays(lastDay, lastDay)}.`
+          : 'Your resignation request was reviewed and declined.',
         module: 'home',
         entityType: 'EMPLOYEE_RESIGNATION',
         entityId: found.id,

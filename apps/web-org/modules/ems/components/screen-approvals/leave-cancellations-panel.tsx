@@ -17,7 +17,6 @@ export function LeaveCancellationsPanel() {
   const { session, hasPermission } = useSession();
   const org = session?.organizationId;
   const [cursor, setCursor] = useState<string | null>(null);
-  const [reason, setReason] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const feed = useAsyncResource(
@@ -46,7 +45,6 @@ export function LeaveCancellationsPanel() {
     setError('');
     try {
       await operation();
-      setReason('');
       emitDataChanged('leave', 'approvals', 'payroll');
       await feed.refetch();
     } catch (caught) {
@@ -159,16 +157,6 @@ export function LeaveCancellationsPanel() {
       {feed.data?.items.length === 0 && (
         <p className="text-xs">No cancellations awaiting your review on this page.</p>
       )}
-      <div>
-        <Label htmlFor="cancellation-review-reason">Reason for rejection (shown to employee)</Label>
-        <Input
-          id="cancellation-review-reason"
-          maxLength={500}
-          value={reason}
-          disabled={busy}
-          onChange={(event) => setReason(event.target.value)}
-        />
-      </div>
       {feed.data?.items.map((item) => (
         <div
           key={item.id}
@@ -199,12 +187,12 @@ export function LeaveCancellationsPanel() {
             <Button
               size="sm"
               variant="outline"
-              disabled={busy || reason.trim().length < 3}
+              disabled={busy}
               onClick={() =>
                 void act(() =>
                   apiRequest(orgPath(org!, `/leave/workflows/cancellations/${item.id}/decision`), {
                     method: 'POST',
-                    body: { status: 'REJECTED', reason },
+                    body: { status: 'REJECTED' },
                   }),
                 )
               }

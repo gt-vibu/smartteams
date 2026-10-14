@@ -37,6 +37,7 @@ export class FilesAccessService {
     filters: { purpose?: FilePurpose; employeeId?: string; limit?: number } = {},
   ) {
     requireFilePermission(context, 'read');
+    if (filters.purpose === FilePurpose.ORGANIZATION_BRANDING) return [];
     const canReadAll =
       context.accessMode === AccessMode.FEDERATION ||
       context.permissions.has('*') ||
@@ -60,6 +61,8 @@ export class FilesAccessService {
           deletedAt: null,
           ...(employeeId ? { employeeId } : {}),
           ...(filters.purpose ? { purpose: filters.purpose } : {}),
+          // Branding has its own organization-settings flow and must not appear in file lists.
+          AND: [{ purpose: { not: FilePurpose.ORGANIZATION_BRANDING } }],
           // Someone's "only me" file is private even from administrators, name included. The
           // documents routes already apply this; this older list did not.
           ...(context.accessMode === AccessMode.NATIVE

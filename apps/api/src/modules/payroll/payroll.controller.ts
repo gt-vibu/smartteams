@@ -24,6 +24,7 @@ import {
   NativePayComponentDto,
   NativeRunAdjustmentDto,
   NativePayrollActionDto,
+  NativePayrollCalculationDto,
   NativePayrollRunDto,
 } from './payroll-native.dto';
 @Controller('v1/organizations/:organizationId/payroll')
@@ -88,11 +89,12 @@ export class PayrollController {
   @Post('runs/:runId/calculate') calculate(
     @Param('organizationId') organizationId: string,
     @Param('runId', ParseUUIDPipe) runId: string,
+    @Body() body: NativePayrollCalculationDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
-      .then((context) => this.payroll.calculate(context, runId));
+      .then((context) => this.payroll.calculate(context, runId, body.deferAdvanceEmployeeIds));
   }
   @Post('runs/:runId/adjustments') adjustment(
     @Param('organizationId') organizationId: string,
@@ -118,7 +120,7 @@ export class PayrollController {
   ) {
     return this.contexts
       .native(request.user.userId, organizationId, undefined, body.comment)
-      .then((context) => this.payroll.advance(context, runId, body.target, body.comment));
+      .then((context) => this.payroll.advance(context, runId, body.target, body.comment ?? ''));
   }
 
   /**

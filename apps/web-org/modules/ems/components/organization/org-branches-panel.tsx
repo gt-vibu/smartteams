@@ -20,6 +20,7 @@ import type { OrganizationState } from '../../hooks/use-organization';
 import { Unavailable } from './org-profile-panel';
 import { BranchSettingsDrawer } from './branch-settings-drawer';
 import { LIMITS, codeProblem, textProblem } from '@smarteam/contracts';
+import { captureAttendanceLocation } from '../../services/attendance-location';
 
 /**
  * Branches.
@@ -238,6 +239,10 @@ function BranchDialog({
 }) {
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
+  const [locationMode, setLocationMode] = useState<'UNSET' | 'CURRENT' | 'MANUAL'>('UNSET');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
+  const [capturingLocation, setCapturingLocation] = useState(false);
   const [problem, setProblem] = useState('');
   const titleRef = useRef<HTMLHeadingElement>(null);
 
@@ -245,6 +250,9 @@ function BranchDialog({
     if (!open) return;
     setName(branch?.name ?? '');
     setCode(branch?.code ?? '');
+    setLocationMode('UNSET');
+    setLatitude('');
+    setLongitude('');
     setProblem('');
   }, [branch, open]);
 
@@ -256,18 +264,58 @@ function BranchDialog({
       );
       return;
     }
+    if (!branch && locationMode !== 'UNSET') {
+      const lat = Number(latitude);
+      const lon = Number(longitude);
+      if (
+        !latitude.trim() ||
+        !longitude.trim() ||
+        !Number.isFinite(lat) ||
+        lat < -90 ||
+        lat > 90 ||
+        !Number.isFinite(lon) ||
+        lon < -180 ||
+        lon > 180
+      ) {
+        setProblem('Enter valid latitude and longitude, or remove the location setup.');
+        return;
+      }
+    }
     setProblem('');
-    const input = { name: name.trim(), code: code.trim() };
+    const input = {
+      name: name.trim(),
+      code: code.trim(),
+      ...(!branch && locationMode !== 'UNSET'
+        ? { workLocation: { latitude: Number(latitude), longitude: Number(longitude) } }
+        : {}),
+    };
     const ok = branch
       ? await state.updateBranch(branch.id, input)
       : await state.createBranch(input);
     if (ok) onOpenChange(false);
   };
 
+  const captureLocation = async () => {
+    setCapturingLocation(true);
+    setProblem('');
+    try {
+      const position = await captureAttendanceLocation();
+      setLatitude(String(position.latitude));
+      setLongitude(String(position.longitude));
+      setLocationMode('CURRENT');
+    } catch (caught) {
+      setProblem(
+        caught instanceof Error ? caught.message : 'Could not get this device’s location.',
+      );
+    } finally {
+      setCapturingLocation(false);
+    }
+  };
+
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent
-        className="sm:max-w-md"
+        className="sm:max-w-xl"
         onOpenAutoFocus={(event) => {
           if (!branch) return;
           event.preventDefault();
@@ -291,6 +339,58 @@ function BranchDialog({
               value={name}
             />
           </div>
+          {!branch && (
+            <div className="space-y-2 rounded-lg border border-border p-3">
+              <div>
+                <p className="text-sm font-medium">Branch location (optional)</p>
+                <p className="text-xs text-muted-foreground">
+                  Add it now for attendance geofencing, or set it later in branch settings.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  disabled={state.saving || capturingLocation}
+                  onClick={() => void captureLocation()}
+                  type="button"
+                  variant={locationMode === 'CURRENT' ? 'default' : 'outline'}
+                >
+                  {capturingLocation ? 'Getting location…' : 'Use this device’s current location'}
+                </Button>
+                <Button
+                  disabled={state.saving}
+                  onClick={() => setLocationMode('MANUAL')}
+                  type="button"
+                  variant={locationMode === 'MANUAL' ? 'default' : 'outline'}
+                >
+                  Enter coordinates manually
+                </Button>
+              </div>
+              {locationMode !== 'UNSET' && (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <Input
+                    aria-label="Branch latitude"
+                    inputMode="decimal"
+                    max={90}
+                    min={-90}
+                    onChange={(event) => setLatitude(event.target.value)}
+                    placeholder="Latitude (−90 to 90)"
+                    type="number"
+                    value={latitude}
+                  />
+                  <Input
+                    aria-label="Branch longitude"
+                    inputMode="decimal"
+                    max={180}
+                    min={-180}
+                    onChange={(event) => setLongitude(event.target.value)}
+                    placeholder="Longitude (−180 to 180)"
+                    type="number"
+                    value={longitude}
+                  />
+                </div>
+              )}
+            </div>
+          )}
           <div>
             <Label className="mb-1 block" htmlFor="branch-code">
               Code

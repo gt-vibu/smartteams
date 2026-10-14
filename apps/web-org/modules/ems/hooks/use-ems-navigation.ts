@@ -182,7 +182,7 @@ export function useEmsNavigation() {
         // Team is a single screen with no modules, so a module chosen from it — the phone's
         // bottom bar is available there — is a module of My Space. Merging it into Team would
         // change the URL and nothing on screen.
-        ...(navState.space === 'Team' ? { space: 'My Space' as const } : {}),
+        ...(current.current.space === 'Team' ? { space: 'My Space' as const } : {}),
         module: normalizedModule,
         ...(normalizedModule === 'attendance' && (subView === 'timeline' || subView === 'table' || subView === 'calendar')
           ? { attendanceView: subView }
@@ -192,15 +192,19 @@ export function useEmsNavigation() {
       // module hop so dashboard summaries open the matching list, not its unfiltered default.
       const targetKey = normalizedModule === 'employees' ? 'people'
         : normalizedModule === 'org-setup' ? 'setup'
+        : normalizedModule === 'payroll' ? 'payrollAdminTab'
+        : normalizedModule === 'time-off' ? 'leaveTab'
+        : normalizedModule === 'attendance' && ['records', 'corrections', 'policy'].includes(subView ?? '') ? 'attendanceTab'
         : null;
       if (targetKey && subView && typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
         params.set(targetKey, subView);
         const query = params.toString();
-        window.history.replaceState(null, '', query ? `?${query}` : window.location.pathname);
+        window.history.replaceState(window.history.state, '', query ? `?${query}` : window.location.pathname);
+        window.dispatchEvent(new Event('ems:screen-tab'));
       }
     },
-    [pushNavState, navState.space],
+    [pushNavState],
   );
 
   const navigateToOrgTab = useCallback(

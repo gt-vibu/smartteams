@@ -187,7 +187,14 @@ export function OnboardEmployeeDialog({
     // Required whenever a login can be made: it is the address they sign in with.
     (!accountPossible || accountEmail.length > 0);
   const employmentComplete =
-    Boolean(form.employmentType && form.dateOfJoining) &&
+    Boolean(
+      form.employmentType &&
+      form.dateOfJoining &&
+      form.primaryBranchId &&
+      branches.some(
+        (branch) => branch.id === form.primaryBranchId && branch.status !== 'DEACTIVATED',
+      ),
+    ) &&
     problems.employeeNumber === null &&
     problems.dateOfJoining === null;
   const accessComplete = !accountPossible || Boolean(roleId && accountEmail);
@@ -306,7 +313,11 @@ export function OnboardEmployeeDialog({
                   disabled={!personComplete}
                   value="employment"
                 >
-                  <StepMarker active={tab === 'employment'} complete={personComplete && employmentComplete} number="2" />
+                  <StepMarker
+                    active={tab === 'employment'}
+                    complete={personComplete && employmentComplete}
+                    number="2"
+                  />
                   <span className="text-xs font-semibold">Employment</span>
                 </TabsTrigger>
                 <TabsTrigger
@@ -412,11 +423,19 @@ export function OnboardEmployeeDialog({
                 </Button>
               )}
               {tab === 'person' ? (
-                <Button disabled={!personComplete || busy} onClick={() => setTab('employment')} type="button">
+                <Button
+                  disabled={!personComplete || busy}
+                  onClick={() => setTab('employment')}
+                  type="button"
+                >
                   Continue
                 </Button>
               ) : tab === 'employment' ? (
-                <Button disabled={!employmentComplete || busy} onClick={() => setTab('access')} type="button">
+                <Button
+                  disabled={!employmentComplete || busy}
+                  onClick={() => setTab('access')}
+                  type="button"
+                >
                   Continue
                 </Button>
               ) : (

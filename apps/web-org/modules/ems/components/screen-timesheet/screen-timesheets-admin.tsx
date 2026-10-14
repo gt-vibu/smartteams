@@ -11,7 +11,7 @@ import {
 } from '@smarteam/ui';
 import { useMemo, useState } from 'react';
 import { useTimesheetAdmin } from '../../hooks/use-timesheet-admin';
-import { DecisionReasonDialog } from '../common/decision-reason-dialog';
+import { DecisionConfirmDialog } from '../common/decision-confirm-dialog';
 import { PageShell } from '../layout/page-shell';
 import { OpenPeriodDialog } from './open-period-dialog';
 import { StatusPill, TimesheetAuditDrawer } from './timesheet-audit-drawer';
@@ -206,16 +206,17 @@ export function ScreenTimesheetsAdmin() {
         </div>
       </div>
 
-      <DecisionReasonDialog
+      <DecisionConfirmDialog
         busy={admin.saving}
         confirmLabel="Reject timesheet"
         destructive
+        description="This will reject the timesheet and record the decision in the audit trail."
         error={admin.saveError}
         isOpen={pendingDecision === 'REJECTED' && activeRow !== null}
         onClose={() => setPendingDecision(null)}
-        onConfirm={async (reason) => {
+        onConfirm={async () => {
           if (!activeRow) return;
-          const ok = await admin.decide(activeRow.id, 'REJECTED', reason);
+          const ok = await admin.decide(activeRow.id, 'REJECTED', '');
           if (ok !== false) {
             setPendingDecision(null);
             setActiveRow(null);

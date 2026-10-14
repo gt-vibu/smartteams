@@ -107,7 +107,7 @@ export function PayrollRuleUpdatesCard({ onAccepted }: { onAccepted: () => Promi
     setMessage(null);
     try {
       const { jobId } = await payrollRepository.syncRuleSources(organizationId);
-      setMessage('Checking the configured official sources…');
+      setMessage('Syncing official payroll rules for the configured jurisdictions…');
       for (let attempt = 0; attempt < 30; attempt += 1) {
         await new Promise((resolve) => window.setTimeout(resolve, 2000));
         const status = await payrollRepository.getRuleSyncStatus(organizationId, jobId);
@@ -115,12 +115,13 @@ export function PayrollRuleUpdatesCard({ onAccepted }: { onAccepted: () => Promi
           await resource.refetch();
           const changed = status.result?.changed ?? 0;
           const failed = status.result?.failed ?? 0;
+          const checked = status.result?.checked ?? 0;
           setMessage(
             failed
-              ? `${failed} source check${failed === 1 ? '' : 's'} failed. See the source status below; no payroll values were changed.`
+              ? `Sync finished: ${checked} official page${checked === 1 ? '' : 's'} checked and ${failed} could not be reached. See the status below; payroll values were not changed.`
               : changed
-                ? `${changed} source change${changed === 1 ? '' : 's'} found. Review the proposal below; no payroll values were changed.`
-                : 'Source check completed. No new source changes were found.',
+                ? `Sync finished: ${changed} possible change${changed === 1 ? '' : 's'} found. Review the update below; payroll values were not changed.`
+                : `Sync finished: ${checked} official page${checked === 1 ? '' : 's'} checked. No possible changes were found.`,
           );
           return;
         }
@@ -203,12 +204,13 @@ export function PayrollRuleUpdatesCard({ onAccepted }: { onAccepted: () => Promi
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 id="payroll-rule-updates-title" className="text-sm font-bold text-foreground">
-            Government rule updates
+            Government rule sync
           </h3>
           <p className="mt-1 max-w-3xl text-xs leading-relaxed text-muted-foreground">
-            Official sources are checked automatically once per calendar month. Check now to run an
-            immediate check. A changed page creates a review item; payroll rates never update
-            automatically.
+            Smarteam checks the official payroll pages for enabled rules in the background. EPF and
+            ESIC are nationwide; Professional Tax checks only the states configured for this
+            organization and its employees. Potential changes appear here for review. Payroll values
+            change only after an admin approves them.
           </p>
         </div>
         {canWrite && (
@@ -219,18 +221,18 @@ export function PayrollRuleUpdatesCard({ onAccepted }: { onAccepted: () => Promi
             type="button"
             variant="outline"
           >
-            {checking ? 'Queueing…' : 'Check official sources now'}
+            {checking ? 'Syncing rules…' : 'Sync rules now'}
           </Button>
         )}
       </div>
       {resource.loading && (
         <p role="status" className="text-xs text-muted-foreground">
-          Loading source status…
+          Loading sync status…
         </p>
       )}
       {resource.error && (
         <p role="alert" className="text-xs text-destructive">
-          Could not load government source status: {resource.error}
+          Could not load government rule sync status: {resource.error}
         </p>
       )}
       {(error || message) && (
@@ -243,8 +245,8 @@ export function PayrollRuleUpdatesCard({ onAccepted }: { onAccepted: () => Promi
       )}
       {resource.data?.unsupportedJurisdictions.length ? (
         <p className="rounded-md bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-          No verified source is configured for {resource.data.unsupportedJurisdictions.join(', ')}.
-          No other state’s source or rates are substituted.
+          Smarteam cannot check Professional Tax for {resource.data.unsupportedJurisdictions.join(', ')}
+          yet. It will not use another state’s rules.
         </p>
       ) : null}
       {!!resource.data?.sources.length && (
@@ -262,23 +264,18 @@ export function PayrollRuleUpdatesCard({ onAccepted }: { onAccepted: () => Promi
                   </strong>
                   <span className={check?.lastError ? 'text-destructive' : 'text-muted-foreground'}>
                     {check?.lastError
-                      ? 'Check failed'
+                      ? 'Could not sync'
                       : check?.checkedAt
-                        ? `Checked ${new Date(check.checkedAt).toLocaleDateString()}`
-                        : 'Not checked yet'}
+                        ? `Synced ${new Date(check.checkedAt).toLocaleDateString()}`
+                        : 'Not synced yet'}
                   </span>
                 </div>
-                <a
-                  className="mt-1 block truncate text-primary underline"
-                  href={source.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {source.label} ↗
-                </a>
                 {check?.lastError && <p className="mt-1 text-destructive">{check.lastError}</p>}
-                {source.note && (
-                  <p className="mt-1 leading-relaxed text-muted-foreground">{source.note}</p>
+                {check?.sourceChangedAt && (
+                  <p className="mt-1 text-muted-foreground">
+                    A page changed on {new Date(check.sourceChangedAt).toLocaleDateString()}.
+                    Review the update below.
+                  </p>
                 )}
               </div>
             );
@@ -287,7 +284,7 @@ export function PayrollRuleUpdatesCard({ onAccepted }: { onAccepted: () => Promi
       )}
       {proposals.length === 0 && resource.data && (
         <p className="rounded-md border border-dashed border-border px-3 py-4 text-center text-xs text-muted-foreground">
-          No source changes are waiting for review.
+          No possible rule changes are waiting for review.
         </p>
       )}
       {proposals.map((proposal) => {
@@ -313,14 +310,6 @@ export function PayrollRuleUpdatesCard({ onAccepted }: { onAccepted: () => Promi
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">{proposal.changeSummary}</p>
               </div>
-              <a
-                className="shrink-0 text-xs font-medium text-primary underline"
-                href={proposal.sourceUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Review official source ↗
-              </a>
             </div>
             <div className="grid gap-2 md:grid-cols-2">
               <RuleSnapshot title="Currently saved" rows={currentRows} />
@@ -336,9 +325,9 @@ export function PayrollRuleUpdatesCard({ onAccepted }: { onAccepted: () => Promi
                   Confirm the official values and effective date
                 </p>
                 <p className="text-[11px] leading-relaxed text-muted-foreground">
-                  Open the source above and verify the applicable scheme, scope, salary basis,
-                  exemptions, and effective date. A source page changing does not prove that its
-                  rates changed.
+                  Verify the current government rule, its scope, salary basis, exemptions, and
+                  effective date before saving. A page change can include unrelated content and does
+                  not by itself prove that payroll rates changed.
                 </p>
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   <Field

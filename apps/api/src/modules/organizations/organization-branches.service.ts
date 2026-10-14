@@ -59,6 +59,7 @@ export class OrganizationBranchesService {
       externalId?: string;
       address?: Record<string, unknown>;
       timezone?: string;
+      workLocation?: { latitude: number; longitude: number };
     },
   ) {
     requirePermission(context, 'branches.write');
@@ -76,6 +77,19 @@ export class OrganizationBranchesService {
             input.address === undefined ? undefined : jsonSnapshot(checkedAddress(input.address)),
         },
       });
+      if (input.workLocation) {
+        await tx.workLocation.create({
+          data: {
+            organizationId: context.organizationId,
+            branchId: branch.id,
+            name: `${branch.code} main location`,
+            latitude: input.workLocation.latitude,
+            longitude: input.workLocation.longitude,
+            radiusMeters: 100,
+            isActive: true,
+          },
+        });
+      }
       // A new branch offers every leave type the company has. A type is requestable only where it
       // is assigned, so people hired into a branch added later could not apply for any leave
       // until an administrator assigned each type to it by hand.

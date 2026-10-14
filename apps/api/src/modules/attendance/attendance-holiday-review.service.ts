@@ -236,7 +236,6 @@ export class AttendanceHolidayReviewService {
   ) {
     requirePermission(context, 'attendance.corrections.decide');
     const comment = input.comment?.trim() || '';
-    if (!comment) throw new ConflictError('A decision reason is required');
     const userId = context.actor.userId;
     if (!userId) throw new ConflictError('A human approver is required');
     return this.database.run(context, async (tx) => {

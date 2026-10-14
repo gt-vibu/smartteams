@@ -247,13 +247,18 @@ export class PayrollSalaryProfileService {
           : (compensation?.grossSalary ?? compensation?.baseAmount ?? new Prisma.Decimal(0));
 
       const structure = calculateSalaryStructure(gross, policy);
-      const statutoryJurisdiction =
-        employeePolicy?.statutoryJurisdiction ?? organizationPolicy.statutoryJurisdiction;
-      const rules = statutoryJurisdiction
+      const normalizedJurisdiction = [
+        employeePolicy?.statutoryJurisdiction,
+        organizationPolicy.statutoryJurisdiction,
+      ]
+        .find((value) => Boolean(value?.trim()))
+        ?.trim()
+        .toUpperCase();
+      const rules = normalizedJurisdiction
         ? await tx.payrollStatutoryRule.findMany({
             where: {
               organizationId: context.organizationId,
-              jurisdiction: statutoryJurisdiction,
+              jurisdiction: normalizedJurisdiction,
               effectiveFrom: { lte: effectiveDate },
               OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveDate } }],
             },
@@ -272,7 +277,7 @@ export class PayrollSalaryProfileService {
       // Keep the existing Federation contract and behavior unchanged. The setup warning is for
       // the native compensation UI only; Federation reads retain their strict validation.
       if (context.accessMode !== 'NATIVE') {
-        assertStatutoryRulesConfigured(enabled, rules);
+        assertStatutoryRulesConfigured(enabled, rules, normalizedJurisdiction);
       }
       const statutory = rules
         .filter(
