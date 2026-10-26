@@ -1,0 +1,216 @@
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import type { Request } from 'express';
+import { DomainContextFactory } from '../../common/context/domain-context.factory';
+import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
+import {
+  LeaveAdjustmentDto,
+  LeaveBalanceQueryDto,
+  LeaveCalendarQueryDto,
+  LeaveCancelDto,
+  LeaveRequestQueryDto,
+  LeavePolicyAssignmentDto,
+  LeaveTypeDto,
+  LeaveTypeUpdateDto,
+} from './leave.dto';
+import { LeaveService } from './leave.service';
+import { LeaveCalendarService } from './leave-calendar.service';
+import {
+  LeaveDateAvailabilityDto,
+  NativeLeavePreviewDto,
+  NativeLeaveDecisionDto,
+  NativeLeaveRequestDto,
+} from './leave-native.dto';
+import { LeavePreviewService } from './leave-preview.service';
+
+@Controller('v1/organizations/:organizationId/leave')
+@UseGuards(NativeJwtGuard)
+export class LeaveController {
+  constructor(
+    private readonly leave: LeaveService,
+    private readonly contexts: DomainContextFactory,
+    private readonly calendarService: LeaveCalendarService,
+    private readonly preview: LeavePreviewService,
+  ) {}
+
+  /**
+   * Leave requests, balances and the approval inbox.
+   *
+   * All three service methods have existed since the module was written and are reachable over
+   * the federation surface, but the native controller exposed only writes — the app could submit
+   * a leave request and never list one, and could adjust a balance it could not read. No service
+   * or federation change; these are the missing HTTP entry points.
+   */
+  @Get('requests') requests(
+    @Param('organizationId') organizationId: string,
+    @Query() query: LeaveRequestQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.leave.listRequests(context, query.employeeId, {
+        ...(query.cursor ? { cursor: query.cursor } : {}),
+        ...(query.limit ? { limit: query.limit } : {}),
+        ...(query.status ? { status: query.status } : {}),
+        ...(query.search ? { search: query.search } : {}),
+        ...(query.departmentId ? { departmentId: query.departmentId } : {}),
+        ...(query.from ? { from: query.from } : {}),
+        ...(query.to ? { to: query.to } : {}),
+      }),
+    );
+  }
+
+  @Get('requests/summary') requestSummary(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.leave.adminSummary(context));
+  }
+
+  /** Who is off between two dates, among the people the caller works with. */
+  @Get('calendar') calendar(
+    @Param('organizationId') organizationId: string,
+    @Query() query: LeaveCalendarQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.calendarService.calendar(context, query.from, query.to));
+  }
+
+  /** Requests awaiting the signed-in user's decision. */
+  @Get('requests/inbox') requestInbox(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.leave.listPendingApprovals(context, request.user.userId));
+  }
+
+  @Post('requests/date-availability') dateAvailability(
+    @Param('organizationId') organizationId: string,
+    @Body() body: LeaveDateAvailabilityDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.preview.availability(context, body.from, body.to));
+  }
+
+  @Post('requests/preview') requestPreview(
+    @Param('organizationId') organizationId: string,
+    @Body() body: NativeLeavePreviewDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.preview.requestPreview(context, body));
+  }
+
+  @Get('balances') balances(
+    @Param('organizationId') organizationId: string,
+    @Query() query: LeaveBalanceQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.leave.listBalances(context, query.employeeId));
+  }
+
+  @Get('types') types(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.leave.listTypes(context));
+  }
+  @Post('types') createType(
+    @Param('organizationId') organizationId: string,
+    @Body() body: LeaveTypeDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.leave.createType(context, body));
+  }
+  @Patch('types/:typeId') updateType(
+    @Param('organizationId') organizationId: string,
+    @Param('typeId', ParseUUIDPipe) typeId: string,
+    @Body() body: LeaveTypeUpdateDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.leave.updateType(context, typeId, body));
+  }
+  @Get('assignments') assignments(
+    @Param('organizationId') organizationId: string,
+    @Query('branchId') branchId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, branchId)
+      .then((context) => this.leave.listAssignments(context));
+  }
+  @Post('types/:code/assign') assignType(
+    @Param('organizationId') organizationId: string,
+    @Param('code') code: string,
+    @Body() body: LeavePolicyAssignmentDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, body.branchId)
+      .then((context) => this.leave.assignTypeToBranch(context, code));
+  }
+  @Post('requests') request(
+    @Param('organizationId') organizationId: string,
+    @Body() body: NativeLeaveRequestDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.leave.createRequest(context, { ...body, source: 'NATIVE' }));
+  }
+  @Post('requests/:requestId/decision') decision(
+    @Param('organizationId') organizationId: string,
+    @Param('requestId') requestId: string,
+    @Body() body: NativeLeaveDecisionDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, body.comment)
+      .then((context) => this.leave.decide(context, requestId, body.status, body.comment));
+  }
+  @Post('requests/:requestId/cancel') cancel(
+    @Param('organizationId') organizationId: string,
+    @Param('requestId') requestId: string,
+    @Body() body: LeaveCancelDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, body.reason)
+      .then((context) => this.leave.cancel(context, requestId, body.reason));
+  }
+  @Post('balances/adjust') adjust(
+    @Param('organizationId') organizationId: string,
+    @Body() body: LeaveAdjustmentDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, body.reason)
+      .then((context) => this.leave.adjustBalance(context, body));
+  }
+}

@@ -1,0 +1,275 @@
+import {
+  parseAttendanceCorrectionPage,
+  parseAttendancePage,
+  parseAttendancePreferences,
+  type AttendanceCorrection,
+  type AttendancePage,
+  type AttendancePreferences,
+} from '@smarteam/contracts';
+import { apiRequest } from '../lib/api-client';
+import { expectShape, orgPath, queryString } from './api-helpers';
+
+/**
+ * Attendance data access.
+ *
+ * Replaces a repository that read a fixture and wrote to `localStorage`, which meant a punch
+ * existed only in the browser that made it — invisible to payroll, to an approver, and to the
+ * same user on another device.
+ *
+ * Every path is tenant-scoped by the organization id from the session, and the API re-checks it.
+ * There is no fixture fallback: a failed request stays failed.
+ */
+
+export type PunchInput = {
+  employeeId: string;
+  occurredAt: string;
+  workDate: string;
+  latitude?: number;
+  longitude?: number;
+  accuracyMeters?: number;
+};
+
+export type WorkWeek = { workWeekDays: number[]; unmarkedDaysAreAbsent: boolean };
+
+export const attendanceRepository = {
+  async list(
+    organizationId: string,
+    filters: {
+      search?: string;
+      employeeId?: string;
+      branchId?: string;
+      departmentId?: string;
+      dayStatus?: string;
+      from?: string;
+      to?: string;
+      cursor?: string;
+      limit?: number;
+    } = {},
+  ): Promise<AttendancePage> {
+    return expectShape(
+      parseAttendancePage(
+        await apiRequest(`${orgPath(organizationId, '/attendance')}${queryString(filters)}`, {
+          method: 'GET',
+        }),
+      ),
+      'attendance list',
+    );
+  },
+
+  async checkIn(organizationId: string, input: PunchInput): Promise<unknown> {
+    return apiRequest(`${orgPath(organizationId, '/attendance')}/check-ins`, {
+      method: 'POST',
+      body: input,
+    });
+  },
+
+  async checkOut(organizationId: string, input: PunchInput): Promise<unknown> {
+    return apiRequest(`${orgPath(organizationId, '/attendance')}/check-outs`, {
+      method: 'POST',
+      body: input,
+    });
+  },
+
+  /**
+   * Raises a correction request. The API requires at least ten characters of reason and writes
+   * it to the audit trail, so the caller cannot submit an empty justification.
+   */
+  /** Asks for a day's missing check-out to be added at `checkOutAt` (an ISO instant). */
+  async requestMissingCheckOut(
+    organizationId: string,
+    attendanceId: string,
+    checkOutAt: string,
+    reason: string,
+  ): Promise<unknown> {
+    return apiRequest(
+      `${orgPath(organizationId, '/attendance')}/${encodeURIComponent(attendanceId)}/corrections/missing-check-out`,
+      { method: 'POST', body: { checkOutAt, reason } },
+    );
+  },
+
+  async requestCorrection(
+    organizationId: string,
+    attendanceId: string,
+    reason: string,
+    // The times the day should have had; approval moves the punches to them.
+    afterSnapshot?: { correctedCheckIn?: string; correctedCheckOut?: string },
+  ): Promise<unknown> {
+    return apiRequest(
+      `${orgPath(organizationId, '/attendance')}/${encodeURIComponent(attendanceId)}/corrections`,
+      { method: 'POST', body: { reason, ...(afterSnapshot ? { afterSnapshot } : {}) } },
+    );
+  },
+
+  async requestCorrectionForDate(
+    organizationId: string,
+    input: {
+      employeeId: string;
+      workDate: string;
+      reason: string;
+      correctedCheckIn: string;
+      correctedCheckOut?: string;
+    },
+  ): Promise<unknown> {
+    return apiRequest(`${orgPath(organizationId, '/attendance')}/corrections/date`, {
+      method: 'POST',
+      body: {
+        employeeId: input.employeeId,
+        workDate: input.workDate,
+        reason: input.reason,
+        afterSnapshot: {
+          correctedCheckIn: input.correctedCheckIn,
+          ...(input.correctedCheckOut ? { correctedCheckOut: input.correctedCheckOut } : {}),
+        },
+      },
+    });
+  },
+
+  /**
+   * Decides a correction. `checkOutAt` approves a different time than the one asked for — the real
+   * time an employee left, where the automatic close proposed the end of the day.
+   */
+  async decideCorrection(
+    organizationId: string,
+    correctionId: string,
+    status: 'APPROVED' | 'REJECTED',
+    comment?: string,
+    checkOutAt?: string,
+  ): Promise<unknown> {
+    return apiRequest(
+      `${orgPath(organizationId, '/attendance')}/${encodeURIComponent(correctionId)}/decision`,
+      {
+        method: 'POST',
+        body: {
+          status,
+          ...(comment?.trim() ? { comment: comment.trim() } : {}),
+          ...(checkOutAt ? { checkOutAt } : {}),
+        },
+      },
+    );
+  },
+
+  async listCorrectionPage(organizationId: string, filters: { search?: string; status?: string; cursor?: string; limit?: number } = {}) {
+    return expectShape(parseAttendanceCorrectionPage(await apiRequest(
+      `${orgPath(organizationId, '/attendance')}/corrections${queryString(filters)}`, { method: 'GET' },
+    )), 'attendance correction page');
+  },
+
+  async listCorrections(
+    organizationId: string,
+    filters: { employeeId?: string; status?: string; limit?: number } = {},
+  ): Promise<AttendanceCorrection[]> {
+    return expectShape(
+      parseAttendanceCorrectionPage(
+        await apiRequest(
+          `${orgPath(organizationId, '/attendance')}/corrections${queryString(filters)}`,
+          {
+            method: 'GET',
+          },
+        ),
+      ),
+      'attendance correction list',
+    ).corrections;
+  },
+
+  /** Corrections awaiting the signed-in user's decision. */
+  async correctionInbox(organizationId: string): Promise<AttendanceCorrection[]> {
+    const items: AttendanceCorrection[] = [];
+    let cursor: string | undefined;
+    do {
+      const payload = (await apiRequest(
+        `${orgPath(organizationId, '/attendance')}/corrections/inbox${queryString({ cursor, limit: 100 })}`,
+        { method: 'GET' },
+      )) as { corrections: unknown[]; nextCursor?: string };
+      items.push(
+        ...expectShape(parseAttendanceCorrectionPage(payload), 'attendance approval inbox')
+          .corrections,
+      );
+      if (payload.nextCursor === cursor && cursor)
+        throw new Error('Approval paging did not advance.');
+      cursor = payload.nextCursor;
+    } while (cursor);
+    return items;
+  },
+
+  async getPreferences(organizationId: string, branchId?: string): Promise<AttendancePreferences> {
+    return expectShape(
+      parseAttendancePreferences(
+        await apiRequest(
+          `${orgPath(organizationId, '/attendance')}/preferences${queryString({ branchId })}`,
+          {
+            method: 'GET',
+          },
+        ),
+      ),
+      'attendance preferences',
+    );
+  },
+
+  async updatePreferences(
+    organizationId: string,
+    input: {
+      geofenceMode?: string;
+      biometricVerificationMode?: string;
+      branchId?: string;
+      attendanceSessionMode?: 'SINGLE' | 'MULTIPLE';
+      autoCheckOutMode?: 'DISABLED' | 'REVIEW_REQUIRED';
+      autoCheckOutAt?: string;
+      /** The complete set for the branch (or organization); the server replaces what was there. */
+      workLocations?: Array<{
+        name: string;
+        latitude: number;
+        longitude: number;
+        radiusMeters: number;
+      }>;
+    },
+  ): Promise<unknown> {
+    return apiRequest(`${orgPath(organizationId, '/attendance')}/preferences`, {
+      method: 'POST',
+      body: input,
+    });
+  },
+
+  /**
+   * The organization's working days, as ISO weekday numbers (1 Monday … 7 Sunday), and whether a
+   * working day with no attendance counts as an absence.
+   */
+  async getWorkWeek(organizationId: string): Promise<WorkWeek> {
+    const payload = (await apiRequest(`${orgPath(organizationId, '/attendance')}/work-week`, {
+      method: 'GET',
+    })) as { workWeekDays?: unknown; unmarkedDaysAreAbsent?: unknown } | null;
+    const days = Array.isArray(payload?.workWeekDays) ? payload.workWeekDays : [];
+    return {
+      workWeekDays: days.filter(
+        (day): day is number => Number.isInteger(day) && day >= 1 && day <= 7,
+      ),
+      unmarkedDaysAreAbsent: payload?.unmarkedDaysAreAbsent !== false,
+    };
+  },
+
+  async saveWorkWeek(organizationId: string, week: WorkWeek): Promise<unknown> {
+    return apiRequest(`${orgPath(organizationId, '/attendance')}/work-week`, {
+      method: 'PUT',
+      body: week,
+    });
+  },
+
+  /** Closes today's days with no check-out now, sending each to the attendance approvers. */
+  async runAutoCheckOut(organizationId: string): Promise<{
+    closed: number;
+    skippedNightShift: number;
+    skippedAlreadyPending: number;
+    failed: number;
+  }> {
+    const payload = await apiRequest(
+      `${orgPath(organizationId, '/attendance')}/auto-check-out/run`,
+      { method: 'POST', body: {} },
+    );
+    const outcome = payload as Partial<Record<string, number>>;
+    return {
+      closed: outcome.closed ?? 0,
+      skippedNightShift: outcome.skippedNightShift ?? 0,
+      skippedAlreadyPending: outcome.skippedAlreadyPending ?? 0,
+      failed: outcome.failed ?? 0,
+    };
+  },
+};

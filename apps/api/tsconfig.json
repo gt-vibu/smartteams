@@ -6,12 +6,15 @@
     "experimentalDecorators": true,
     "module": "commonjs",
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "noEmit": false,
     "outDir": "dist",
+    "rootDir": ".",
     "sourceMap": true,
     "strictPropertyInitialization": false,
-    "target": "ES2022"
+    "target": "ES2022",
+    "types": ["node", "jest"]
   },
-  "include": ["src/**/*.ts", "prisma.config.ts"],
+  "include": ["src/**/*.ts", "prisma.config.ts", "prisma/seed/**/*.ts"],
   "exclude": ["node_modules", "dist", "src/generated"]
 }

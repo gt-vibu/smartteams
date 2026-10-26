@@ -1,0 +1,218 @@
+'use client';
+
+import {
+  dateKey,
+  employeeDisplayName,
+  type Employee,
+  type LeaveRequest,
+} from '@smarteam/contracts';
+import { Badge, Button } from '@smarteam/ui';
+import React, { useState } from 'react';
+import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
+import { statusLabel } from '../../lib/status-label';
+import { LeaveRequestDialog } from './leave-request-dialog';
+
+function statusVariant(status: string): 'outline' | 'secondary' | 'destructive' {
+  if (status === 'REJECTED') return 'destructive';
+  if (status === 'APPROVED') return 'secondary';
+  return 'outline';
+}
+
+/**
+ * The organization-wide request queue, and the approve/reject action.
+ *
+ * `listRequests` and `decide` both existed on the API from the start, but no screen surfaced the
+ * queue — a request could be filed and then never be seen or decided from inside the app.
+ *
+ * Approval is immediate; rejection asks for a reason recorded in the audit trail.
+ */
+export function LeaveRequestQueue({
+  admin,
+  requests,
+}: {
+  admin: LeaveAdminState;
+  requests: LeaveRequest[];
+}) {
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [viewing, setViewing] = useState<LeaveRequest | null>(null);
+
+  const employeesById = new Map<string, Employee>(
+    admin.employees.map((employee) => [employee.id, employee]),
+  );
+  const typesById = new Map(admin.types.map((type) => [type.id, type]));
+  const inboxIds = new Set(admin.inbox.map((entry) => entry.id));
+
+  const decide = async (requestId: string, status: 'APPROVED' | 'REJECTED') => {
+    const decided = await admin.decide(requestId, status, '');
+    if (decided) {
+      setActiveId(null);
+    }
+  };
+
+  if (requests.length === 0) {
+    return (
+      <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
+        <p className="text-sm font-semibold text-foreground">No leave requests</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Requests submitted by employees will appear here.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="overflow-x-auto rounded-xl border border-border bg-card">
+      <table className="stack-table stack-wide w-full min-w-[860px] text-left text-xs">
+        <thead className="border-b border-border bg-table-header">
+          <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            <th className="px-4 py-2.5 font-semibold">Employee</th>
+            <th className="px-4 py-2.5 font-semibold">Type</th>
+            <th className="px-4 py-2.5 font-semibold">From</th>
+            <th className="px-4 py-2.5 font-semibold">To</th>
+            <th className="px-4 py-2.5 font-semibold">Days</th>
+            <th className="px-4 py-2.5 font-semibold">Status</th>
+            <th className="px-4 py-2.5 text-right font-semibold">Decision</th>
+          </tr>
+        </thead>
+        <tbody>
+          {requests.map((request) => {
+            const employee = employeesById.get(request.employeeId);
+            const type = typesById.get(request.leaveTypeId);
+            const mine = inboxIds.has(request.id);
+            const busy = admin.isBusy(leaveAdminBusyKey.decide(request.id));
+            return (
+              <React.Fragment key={request.id}>
+                <tr
+                  className="cursor-pointer border-b border-border transition-colors last:border-0 hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+                  onClick={() => setViewing(request)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      setViewing(request);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  title="Open the request"
+                >
+                  <td data-cell="primary" className="px-4 py-2.5">
+                    <span className="block font-semibold text-foreground">
+                      {employee
+                        ? employeeDisplayName(employee)
+                        : (request.employeeName ?? 'Employee')}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {employee?.employeeNumber ?? request.employeeNumber ?? '--'}
+                    </span>
+                  </td>
+                  <td data-label="Type" className="px-4 py-2.5 text-foreground">
+                    {type?.name ?? 'Leave'}
+                    {type && !type.paid && (
+                      <span className="ml-1.5 text-[10px] text-muted-foreground">Unpaid</span>
+                    )}
+                  </td>
+                  <td data-label="From" className="px-4 py-2.5 font-mono text-muted-foreground">
+                    {dateKey(request.startDate)}
+                  </td>
+                  <td data-label="To" className="px-4 py-2.5 font-mono text-muted-foreground">
+                    {dateKey(request.endDate)}
+                  </td>
+                  <td
+                    data-label="Days"
+                    className="px-4 py-2.5 font-semibold tabular-nums text-foreground"
+                  >
+                    {request.requestedDays}
+                  </td>
+                  <td data-cell="status" data-label="Status" className="px-4 py-2.5">
+                    <Badge variant={statusVariant(request.status)}>
+                      {statusLabel(request.status)}
+                    </Badge>
+                  </td>
+                  <td data-cell="actions" className="px-4 py-2.5 text-right">
+                    {request.status === 'PENDING' && admin.canDecide && activeId !== request.id && (
+                      <div className="flex items-center justify-end gap-1.5">
+                        <Button
+                          disabled={!mine || busy}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            void decide(request.id, 'APPROVED');
+                          }}
+                          size="sm"
+                          title={mine ? undefined : 'This request is not awaiting your decision.'}
+                          type="button"
+                        >
+                          Approve
+                        </Button>
+                        <Button
+                          disabled={!mine || busy}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setActiveId(request.id);
+                          }}
+                          size="sm"
+                          title={mine ? undefined : 'This request is not awaiting your decision.'}
+                          type="button"
+                          variant="outline"
+                        >
+                          Reject
+                        </Button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+
+                {activeId === request.id && (
+                  <tr
+                    className="border-b border-border bg-muted/30"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <td className="px-4 py-3" colSpan={7}>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="mr-auto text-xs text-muted-foreground">
+                          Reject this leave request?
+                        </span>
+                        <Button
+                          disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
+                          onClick={() => void decide(request.id, 'REJECTED')}
+                          size="sm"
+                          type="button"
+                          variant="destructive"
+                        >
+                          Confirm rejection
+                        </Button>
+                        <Button
+                          disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
+                          onClick={() => {
+                            setActiveId(null);
+                          }}
+                          size="sm"
+                          type="button"
+                          variant="outline"
+                        >
+                          Cancel
+                        </Button>
+                        {admin.saveError && (
+                          <span className="text-[11px] font-medium text-destructive" role="alert">
+                            {admin.saveError}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </tbody>
+      </table>
+      {viewing && (
+        <LeaveRequestDialog
+          admin={admin}
+          employee={employeesById.get(viewing.employeeId)}
+          onClose={() => setViewing(null)}
+          request={viewing}
+        />
+      )}
+    </div>
+  );
+}

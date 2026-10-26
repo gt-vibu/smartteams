@@ -1,0 +1,135 @@
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import type { Request } from 'express';
+import { DomainContextFactory } from '../../common/context/domain-context.factory';
+import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
+import {
+  CurrentShiftQueryDto,
+  EndShiftAssignmentDto,
+  ShiftAssignmentListQueryDto,
+  NativeShiftDto,
+} from './shifts.dto';
+import { ShiftAssignmentsService } from './shift-assignments.service';
+import { ShiftsService } from './shifts.service';
+import { ShiftRotationService } from './shift-rotation.service';
+import { ShiftRotationDto } from './shifts.dto';
+
+import {
+  NativeShiftAssignmentDto,
+  NativeShiftDeactivationDto,
+  NativeUpdateShiftDto,
+} from './shifts-native.dto';
+@Controller('v1/organizations/:organizationId/shifts')
+@UseGuards(NativeJwtGuard)
+export class ShiftsController {
+  constructor(
+    private readonly shifts: ShiftsService,
+    private readonly assignments: ShiftAssignmentsService,
+    private readonly contexts: DomainContextFactory,
+    private readonly rotation: ShiftRotationService,
+  ) {}
+
+  /** Plans a rotating roster: each person cycles through the shifts, a few weeks on each. */
+  @Post('rotations') rotate(
+    @Param('organizationId') organizationId: string,
+    @Body() body: ShiftRotationDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.rotation.rotate(context, body));
+  }
+  /** The shift an employee is assigned to on a day — the caller's own unless they may read others. */
+  @Get('assignments/current') current(
+    @Param('organizationId') organizationId: string,
+    @Query() query: CurrentShiftQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.assignments.current(context, query));
+  }
+  /** Who is on which shift; current and upcoming unless `includeEnded`. */
+  @Get('assignments') assignmentList(
+    @Param('organizationId') organizationId: string,
+    @Query() query: ShiftAssignmentListQueryDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.assignments.list(context, {
+        ...(query.shiftId ? { shiftId: query.shiftId } : {}),
+        ...(query.employeeId ? { employeeId: query.employeeId } : {}),
+        ...(query.includeEnded ? { includeEnded: query.includeEnded === 'true' } : {}),
+        ...(query.cursor ? { cursor: query.cursor } : {}),
+        ...(query.limit ? { limit: query.limit } : {}),
+      }),
+    );
+  }
+  @Post('assignments/:assignmentId/end') endAssignment(
+    @Param('organizationId') organizationId: string,
+    @Param('assignmentId', ParseUUIDPipe) assignmentId: string,
+    @Body() body: EndShiftAssignmentDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, body.reason)
+      .then((context) => this.assignments.end(context, assignmentId, body));
+  }
+  @Get() list(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.shifts.list(context));
+  }
+  @Post() create(
+    @Param('organizationId') organizationId: string,
+    @Body() body: NativeShiftDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.shifts.create(context, body));
+  }
+  @Patch(':shiftId') update(
+    @Param('organizationId') organizationId: string,
+    @Param('shiftId') shiftId: string,
+    @Body() body: NativeUpdateShiftDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.shifts.update(context, shiftId, body));
+  }
+  @Post(':shiftId/deactivate') deactivate(
+    @Param('organizationId') organizationId: string,
+    @Param('shiftId') shiftId: string,
+    @Body() body: NativeShiftDeactivationDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId, undefined, body.reason)
+      .then((context) => this.shifts.deactivate(context, shiftId, body.reason));
+  }
+  @Post('employees/:employeeId/assignments') assign(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: NativeShiftAssignmentDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.shifts.assign(context, employeeId, body));
+  }
+}

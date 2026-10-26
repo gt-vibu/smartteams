@@ -1,0 +1,44 @@
+model AttendanceApproval {
+  id                     String         @id @default(uuid()) @db.Uuid
+  organizationId         String         @map("organization_id") @db.Uuid
+  attendanceCorrectionId String         @map("attendance_correction_id") @db.Uuid
+  approverUserId         String?        @map("approver_user_id") @db.Uuid
+  decisionActor          String         @default("USER") @map("decision_actor")
+  approvalPolicyStepId   String?        @map("approval_policy_step_id") @db.Uuid
+  stepNumber             Int            @map("step_number") @db.SmallInt
+  status                 ApprovalStatus
+  comment                String?
+  createdAt              DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization         Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  attendanceCorrection AttendanceCorrection @relation(fields: [attendanceCorrectionId], references: [id], onDelete: Restrict)
+  approver             User?                @relation(fields: [approverUserId], references: [id], onDelete: Restrict)
+  approvalPolicyStep   ApprovalPolicyStep?  @relation(fields: [approvalPolicyStepId], references: [id], onDelete: Restrict)
+
+  @@unique([attendanceCorrectionId, stepNumber])
+  @@index([organizationId, approverUserId, status])
+  @@map("attendance_approvals")
+}
+
+model LeaveApproval {
+  id                   String         @id @default(uuid()) @db.Uuid
+  organizationId       String         @map("organization_id") @db.Uuid
+  leaveRequestId       String         @map("leave_request_id") @db.Uuid
+  approverUserId       String?        @map("approver_user_id") @db.Uuid
+  decisionActor        String         @default("USER") @map("decision_actor")
+  approvalPolicyStepId String?        @map("approval_policy_step_id") @db.Uuid
+  stepNumber           Int            @map("step_number") @db.SmallInt
+  status               ApprovalStatus
+  comment              String?
+  decidedAt            DateTime?      @map("decided_at") @db.Timestamptz(6)
+  createdAt            DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  leaveRequest       LeaveRequest        @relation(fields: [leaveRequestId], references: [id], onDelete: Restrict)
+  approver           User?               @relation(fields: [approverUserId], references: [id], onDelete: Restrict)
+  approvalPolicyStep ApprovalPolicyStep? @relation(fields: [approvalPolicyStepId], references: [id], onDelete: Restrict)
+
+  @@unique([leaveRequestId, stepNumber])
+  @@index([organizationId, approverUserId, status])
+  @@map("leave_approvals")
+}

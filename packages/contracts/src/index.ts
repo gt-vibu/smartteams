@@ -1,4 +1,5 @@
 import { z } from 'zod';
+export { employeeOnboardingDetailsSchema, type EmployeeOnboardingDetails } from './federation';
 
 export const correlationIdSchema = z.string().trim().min(1).max(128);
 export const idempotencyKeySchema = z.string().trim().min(16).max(255);
@@ -28,5 +29,49 @@ export const healthResponseSchema = z.object({
   ),
 });
 
+export const problemDetailsSchema = z.object({
+  type: z.string().url(),
+  title: z.string().min(1),
+  status: z.number().int().min(400).max(599),
+  detail: z.string().min(1),
+  instance: z.string().min(1),
+  code: z.string().min(1).optional(),
+  meta: z
+    .object({
+      requestId: z.string().min(1).optional(),
+      correlationId: correlationIdSchema.optional(),
+    })
+    .optional(),
+});
+
 export type ApiError = z.infer<typeof apiErrorSchema>;
 export type HealthResponse = z.infer<typeof healthResponseSchema>;
+export type ProblemDetails = z.infer<typeof problemDetailsSchema>;
+
+export * from './auth';
+export * from './workforce';
+export * from './branch-memberships';
+export * from './attendance';
+export * from './attendance-holiday-conflicts';
+export * from './leave';
+export * from './timesheets';
+export * from './payroll';
+export * from './approvals';
+export * from './shifts';
+export * from './organization';
+export * from './files';
+export * from './documents';
+export * from './departments';
+export * from './aadhaar';
+export * from './holidays';
+export * from './rbac';
+export * from './notifications';
+export * from './dates';
+export * from './identifiers';
+export * from './passwords';
+export * from './field-rules';
+
+export * from './leave-workflows';
+export * from './product-operations';
+
+export * from './workforce-operations';

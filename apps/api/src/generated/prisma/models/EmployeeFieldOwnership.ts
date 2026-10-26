@@ -497,10 +497,6 @@ export type EmployeeFieldOwnershipUncheckedUpdateManyWithoutEmployeeNestedInput 
   deleteMany?: Prisma.EmployeeFieldOwnershipScalarWhereInput | Prisma.EmployeeFieldOwnershipScalarWhereInput[]
 }
 
-export type EnumOwnerSourceFieldUpdateOperationsInput = {
-  set?: $Enums.OwnerSource
-}
-
 export type EmployeeFieldOwnershipCreateWithoutOwnerClientInput = {
   fieldName: string
   ownerSource: $Enums.OwnerSource

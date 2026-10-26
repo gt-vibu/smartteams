@@ -1,0 +1,150 @@
+/* Shared Smarteam brand tokens. App shells may extend the semantic surface tokens. */
+
+/* Shared Smarteam primary color. Status colors remain separate in each app shell. */
+:root {
+  --smarteam-primary: #173b2f;
+  --smarteam-primary-foreground: #ffffff;
+}
+
+.dark {
+  --smarteam-primary: #173b2f;
+  --smarteam-primary-foreground: #ffffff;
+}
+
+/* Shared 3D loading states. All continuous motion uses transform or opacity. */
+.smarteam-loader {
+  --loader-scene-size: 88px;
+  --loader-cube-size: 32px;
+  --loader-orbit-size: 76px;
+  --loader-green: var(--smarteam-primary);
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+.smarteam-loader--panel { width: 100%; min-height: 112px; padding: 12px; }
+.smarteam-loader--screen {
+  --loader-scene-size: 172px;
+  --loader-cube-size: 64px;
+  --loader-orbit-size: 148px;
+  display: flex;
+  width: 100%;
+  min-height: 100dvh;
+  gap: 12px;
+  padding: 24px;
+  overflow: hidden;
+  color: var(--foreground, #092f2a);
+  background: var(--background, #ffffff);
+}
+.smarteam-loader--inline {
+  --loader-scene-size: 24px;
+  --loader-cube-size: 12px;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+.smarteam-loader__scene {
+  position: relative;
+  display: block;
+  width: var(--loader-scene-size);
+  height: var(--loader-scene-size);
+  perspective: 480px;
+  pointer-events: none;
+}
+.smarteam-loader__float {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: var(--loader-cube-size);
+  height: var(--loader-cube-size);
+  margin-top: calc(var(--loader-cube-size) / -2);
+  margin-left: calc(var(--loader-cube-size) / -2);
+  transform-style: preserve-3d;
+  animation: smarteam-loader-float 3s ease-in-out infinite;
+}
+.smarteam-loader__cube {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform: rotateX(-20deg) rotateY(-35deg);
+  animation: smarteam-loader-turn 5s linear infinite;
+}
+.smarteam-loader__face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in oklab, var(--loader-green), white 30%);
+  color: var(--smarteam-primary-foreground);
+  background: var(--loader-green);
+  backface-visibility: hidden;
+}
+.smarteam-loader__face svg { width: 62%; height: 62%; }
+.smarteam-loader__face--front { transform: translateZ(calc(var(--loader-cube-size) / 2)); }
+.smarteam-loader__face--back { transform: rotateY(180deg) translateZ(calc(var(--loader-cube-size) / 2)); }
+.smarteam-loader__face--right { transform: rotateY(90deg) translateZ(calc(var(--loader-cube-size) / 2)); background: color-mix(in oklab, var(--loader-green), black 18%); }
+.smarteam-loader__face--left { transform: rotateY(-90deg) translateZ(calc(var(--loader-cube-size) / 2)); background: color-mix(in oklab, var(--loader-green), black 28%); }
+.smarteam-loader__face--top { transform: rotateX(90deg) translateZ(calc(var(--loader-cube-size) / 2)); background: color-mix(in oklab, var(--loader-green), white 52%); }
+.smarteam-loader__face--bottom { transform: rotateX(-90deg) translateZ(calc(var(--loader-cube-size) / 2)); background: color-mix(in oklab, var(--loader-green), black 35%); }
+.smarteam-loader__orbit {
+  position: absolute;
+  top: 68%;
+  left: 50%;
+  width: var(--loader-orbit-size);
+  height: var(--loader-orbit-size);
+  border: 1px solid color-mix(in oklab, var(--loader-green), transparent 75%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotateX(65deg);
+  animation: smarteam-loader-orbit 4s linear infinite;
+}
+.smarteam-loader__orbit::after {
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--loader-green);
+  content: '';
+}
+.smarteam-loader__shadow {
+  position: absolute;
+  bottom: 24%;
+  left: 25%;
+  width: 50%;
+  height: 8%;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--loader-green), transparent 88%);
+  animation: smarteam-loader-shadow 3s ease-in-out infinite;
+}
+.smarteam-loader__identity { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.smarteam-loader__wordmark { font-size: 22px; font-weight: 700; letter-spacing: -.04em; }
+.smarteam-loader__tagline { color: var(--muted-foreground, #60756b); font-size: 11px; letter-spacing: .12em; }
+.smarteam-loader__announcement { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.smarteam-loader--inline .smarteam-loader__float { top: 50%; animation: none; }
+.smarteam-loader--inline .smarteam-loader__orbit,
+.smarteam-loader--inline .smarteam-loader__shadow { display: none; }
+
+@keyframes smarteam-loader-turn {
+  from { transform: rotateX(-20deg) rotateY(-35deg); }
+  to { transform: rotateX(-20deg) rotateY(325deg); }
+}
+@keyframes smarteam-loader-float {
+  0%, 100% { transform: translateY(3px); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes smarteam-loader-orbit {
+  from { transform: translate(-50%, -50%) rotateX(65deg) rotateZ(0deg); }
+  to { transform: translate(-50%, -50%) rotateX(65deg) rotateZ(360deg); }
+}
+@keyframes smarteam-loader-shadow {
+  0%, 100% { transform: scaleX(1); opacity: .85; }
+  50% { transform: scaleX(.78); opacity: .5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .smarteam-loader *, .smarteam-loader *::after { animation: none !important; }
+}

@@ -18,6 +18,23 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model AttendanceApproval
+ * 
+ */
+export type AttendanceApproval = Prisma.AttendanceApprovalModel
+/**
+ * Model LeaveApproval
+ * 
+ */
+export type LeaveApproval = Prisma.LeaveApprovalModel
+/**
+ * Model ApprovalDelegation
+ * Someone away hands their approvals to a colleague for a span of days. Once the colleague accepts
+ * (or at once, when an administrator sets it up), the delegate may decide whatever the delegator
+ * could while it runs; the delegator keeps that right too.
+ */
+export type ApprovalDelegation = Prisma.ApprovalDelegationModel
+/**
  * Model FederationIdempotencyRecord
  * 
  */
@@ -57,6 +74,12 @@ export type WebhookDeliveryAttempt = Prisma.WebhookDeliveryAttemptModel
  * 
  */
 export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model EmployeeResignation
+ * An employee's resignation, from the day they hand it in to the day they leave. Accepting it
+ * sets their last working day; the day after, they are off-boarded the ordinary way.
+ */
+export type EmployeeResignation = Prisma.EmployeeResignationModel
 /**
  * Model FederationClient
  * 
@@ -108,10 +131,33 @@ export type ExternalIdMapping = Prisma.ExternalIdMappingModel
  */
 export type FileObject = Prisma.FileObjectModel
 /**
+ * Model FileShare
+ * An explicit grant of one file to a user, a role or a team. Revoked, never deleted, so the
+ * audit trail keeps who could see what and when.
+ */
+export type FileShare = Prisma.FileShareModel
+/**
  * Model FileObjectVersion
  * 
  */
 export type FileObjectVersion = Prisma.FileObjectVersionModel
+/**
+ * Model CompOffCredit
+ * A day off earned by working a weekly off or a holiday. Approved, it is credited to the
+ * organization's comp-off leave type; unused, it lapses after that type's expiry.
+ */
+export type CompOffCredit = Prisma.CompOffCreditModel
+/**
+ * Model LeaveEncashment
+ * Unused leave exchanged for pay. Approved, the days leave the balance and the amount is added
+ * to the employee's next payroll run.
+ */
+export type LeaveEncashment = Prisma.LeaveEncashmentModel
+/**
+ * Model CustomFieldDefinition
+ * A field the organization adds to every employee record: a T-shirt size, a vehicle number.
+ */
+export type CustomFieldDefinition = Prisma.CustomFieldDefinitionModel
 /**
  * Model User
  * 
@@ -122,6 +168,21 @@ export type User = Prisma.UserModel
  * 
  */
 export type UserInvitation = Prisma.UserInvitationModel
+/**
+ * Model EmployeeAccessCode
+ * *
+ *  * A one-time code that lets an employee activate their own Smarteam login.
+ *  * Distinct from `UserInvitation`, which is addressed to an email and delivered by email. This is
+ *  * addressed to an *employee record*: an administrator hands the code over out of band, and the
+ *  * employee chooses their own email and password when they redeem it. That is why there is no
+ *  * email column here — at the time the code is issued, nobody has decided what it will be.
+ *  * The code is a bootstrap credential, never a permanent one. Only its digest is stored, it is
+ *  * single-use (`activatedAt`), short-lived (`expiresAt`), revocable (`revokedAt`), and it is
+ *  * pinned to exactly one organization and one employee. It carries no authority of its own: the
+ *  * roles it results in are the ones recorded in `roleIds`, which the issuing administrator had to
+ *  * already hold themselves.
+ */
+export type EmployeeAccessCode = Prisma.EmployeeAccessCodeModel
 /**
  * Model PasswordResetToken
  * 
@@ -158,6 +219,12 @@ export type PlatformRolePermission = Prisma.PlatformRolePermissionModel
  */
 export type UserPlatformRole = Prisma.UserPlatformRoleModel
 /**
+ * Model Notification
+ * Something one person should know about: a request waiting for their decision, or the outcome of
+ * one they made. One row per recipient, so each person reads, and marks read, only their own.
+ */
+export type Notification = Prisma.NotificationModel
+/**
  * Model AttendanceRecord
  * 
  */
@@ -173,20 +240,25 @@ export type AttendancePunch = Prisma.AttendancePunchModel
  */
 export type AttendanceCorrection = Prisma.AttendanceCorrectionModel
 /**
- * Model AttendanceApproval
- * 
- */
-export type AttendanceApproval = Prisma.AttendanceApprovalModel
-/**
  * Model Holiday
  * 
  */
 export type Holiday = Prisma.HolidayModel
 /**
+ * Model EmployeeHolidaySelection
+ * 
+ */
+export type EmployeeHolidaySelection = Prisma.EmployeeHolidaySelectionModel
+/**
  * Model LeaveType
  * 
  */
 export type LeaveType = Prisma.LeaveTypeModel
+/**
+ * Model LeavePolicyAssignment
+ * 
+ */
+export type LeavePolicyAssignment = Prisma.LeavePolicyAssignmentModel
 /**
  * Model LeaveBalance
  * 
@@ -202,11 +274,6 @@ export type LeaveBalanceTransaction = Prisma.LeaveBalanceTransactionModel
  * 
  */
 export type LeaveRequest = Prisma.LeaveRequestModel
-/**
- * Model LeaveApproval
- * 
- */
-export type LeaveApproval = Prisma.LeaveApprovalModel
 /**
  * Model Shift
  * 
@@ -243,15 +310,67 @@ export type TimesheetEntry = Prisma.TimesheetEntryModel
  */
 export type TimesheetApproval = Prisma.TimesheetApprovalModel
 /**
+ * Model AttendanceHolidayReview
+ * A check-in on a granted optional holiday, explained by the employee and decided by a manager.
+ * At most one PENDING review per attendance record (a partial unique index in the migration).
+ */
+export type AttendanceHolidayReview = Prisma.AttendanceHolidayReviewModel
+/**
+ * Model AttendanceLeaveOverlapReview
+ * A check-in during approved leave, reviewed separately from leave cancellation so one worked
+ * date can be restored without cancelling the employee's entire leave request.
+ */
+export type AttendanceLeaveOverlapReview = Prisma.AttendanceLeaveOverlapReviewModel
+/**
  * Model PayrollRun
  * 
  */
 export type PayrollRun = Prisma.PayrollRunModel
 /**
+ * Model PayrollPolicy
+ * 
+ */
+export type PayrollPolicy = Prisma.PayrollPolicyModel
+/**
+ * Model PayrollPolicyComponent
+ * 
+ */
+export type PayrollPolicyComponent = Prisma.PayrollPolicyComponentModel
+/**
+ * Model PayrollStatutoryRule
+ * 
+ */
+export type PayrollStatutoryRule = Prisma.PayrollStatutoryRuleModel
+/**
+ * Model PayrollComplianceSourceCheck
+ * Per-tenant cursor for an allowlisted, jurisdiction-matched government source.
+ */
+export type PayrollComplianceSourceCheck = Prisma.PayrollComplianceSourceCheckModel
+/**
+ * Model PayrollRuleUpdateProposal
+ * A detected source change that an organization must review before any payroll rule is changed.
+ */
+export type PayrollRuleUpdateProposal = Prisma.PayrollRuleUpdateProposalModel
+/**
  * Model PayrollLineItem
  * 
  */
 export type PayrollLineItem = Prisma.PayrollLineItemModel
+/**
+ * Model SalaryAdvance
+ * 
+ */
+export type SalaryAdvance = Prisma.SalaryAdvanceModel
+/**
+ * Model SalaryAdvanceRecovery
+ * 
+ */
+export type SalaryAdvanceRecovery = Prisma.SalaryAdvanceRecoveryModel
+/**
+ * Model PayrollPayment
+ * 
+ */
+export type PayrollPayment = Prisma.PayrollPaymentModel
 /**
  * Model PayrollLineItemComponent
  * 
@@ -303,6 +422,11 @@ export type Organization = Prisma.OrganizationModel
  */
 export type OrganizationSettings = Prisma.OrganizationSettingsModel
 /**
+ * Model PayrollCalendar
+ * 
+ */
+export type PayrollCalendar = Prisma.PayrollCalendarModel
+/**
  * Model ApprovalPolicy
  * 
  */
@@ -328,10 +452,44 @@ export type WorkLocation = Prisma.WorkLocationModel
  */
 export type OrganizationSourceChange = Prisma.OrganizationSourceChangeModel
 /**
+ * Model WebauthnCredential
+ * 
+ */
+export type WebauthnCredential = Prisma.WebauthnCredentialModel
+/**
+ * Model WebauthnChallenge
+ * 
+ */
+export type WebauthnChallenge = Prisma.WebauthnChallengeModel
+/**
  * Model Employee
  * 
  */
 export type Employee = Prisma.EmployeeModel
+/**
+ * Model EmployeePersonalProfile
+ * 
+ */
+export type EmployeePersonalProfile = Prisma.EmployeePersonalProfileModel
+/**
+ * Model EmployeeBankAccount
+ * 
+ */
+export type EmployeeBankAccount = Prisma.EmployeeBankAccountModel
+/**
+ * Model EmployeeReference
+ * 
+ */
+export type EmployeeReference = Prisma.EmployeeReferenceModel
+/**
+ * Model EmployeeHolidayPolicy
+ * *
+ *  * Per-employee optional holiday policy override.
+ *  * When present, `allowanceOverride` takes precedence over `OrganizationSettings.optionalHolidayAllowance`.
+ *  * When `restrictedHolidayIds` is non-empty, only those holiday IDs are available in the employee's
+ *  * optional pool; otherwise the full org/branch pool applies.
+ */
+export type EmployeeHolidayPolicy = Prisma.EmployeeHolidayPolicyModel
 /**
  * Model EmployeeEmergencyContact
  * 
@@ -357,6 +515,21 @@ export type EmployeeEmploymentRecord = Prisma.EmployeeEmploymentRecordModel
  * 
  */
 export type EmployeeCompensation = Prisma.EmployeeCompensationModel
+/**
+ * Model EmployeePayrollPolicy
+ * 
+ */
+export type EmployeePayrollPolicy = Prisma.EmployeePayrollPolicyModel
+/**
+ * Model EmployeeStatutoryProfile
+ * 
+ */
+export type EmployeeStatutoryProfile = Prisma.EmployeeStatutoryProfileModel
+/**
+ * Model EmployeeStatutoryRecord
+ * 
+ */
+export type EmployeeStatutoryRecord = Prisma.EmployeeStatutoryRecordModel
 /**
  * Model PayComponent
  * 
@@ -387,3 +560,10 @@ export type Project = Prisma.ProjectModel
  * 
  */
 export type ProjectMember = Prisma.ProjectMemberModel
+/**
+ * Model Department
+ * A department the organization defines. Employees belong to one; one of them may head it.
+ * `employeeNumberPrefix` gives new joiners numbers in a series (TE1, TE2, ...);
+ * `nextEmployeeNumber` is the counter behind it, advanced atomically as numbers are handed out.
+ */
+export type Department = Prisma.DepartmentModel

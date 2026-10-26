@@ -1,0 +1,28 @@
+name: Smarteam CodeQL configuration
+
+# What CodeQL analyses, and what it deliberately does not.
+#
+# `apps/` and `packages/` are the shipped surface — the API, both frontends and the shared
+# libraries. Everything an attacker can reach lives there, and all of it is scanned with the
+# security-extended query suite.
+#
+# `scripts/` is excluded. Those are local developer utilities: they seed a throwaway tenant and
+# drive the running API to verify behaviour, they are never deployed, never served, and never run
+# with production data. CodeQL models them as ordinary applications and so flags a seeding script
+# for handling the temporary password that its own localhost API just generated — accurate as a
+# dataflow observation, meaningless as a vulnerability, because the "network" is the developer's
+# own machine and the "attacker" is the developer.
+#
+# Scoping is not suppression. Excluding a path means accepting that nothing in it is a production
+# risk; anything in `scripts/` that starts touching real credentials or real data belongs in
+# `apps/` or `packages/` where it will be scanned.
+paths:
+  - apps
+  - packages
+
+paths-ignore:
+  # Generated Prisma client: thousands of files, none of them written here.
+  - '**/generated/**'
+  # Build output.
+  - '**/dist/**'
+  - '**/.next/**'

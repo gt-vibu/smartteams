@@ -1,5 +1,3 @@
-import { WelcomePage } from '@smarteam/ui';
+import { LandingPage } from '../modules/landing/landing-page';
 
-export default function Page() {
-  return <WelcomePage audience="organization" />;
-}
+export default function Page() { return <LandingPage />; }

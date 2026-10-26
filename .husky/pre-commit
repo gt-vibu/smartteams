@@ -1,3 +1,62 @@
 #!/usr/bin/env sh
-pnpm exec lint-staged
-pnpm run typecheck
+
+set -e
+
+program_files="${ProgramFiles:-${ProgramW6432:-}}"
+
+if command -v cygpath >/dev/null 2>&1; then
+  if [ -n "${APPDATA:-}" ]; then
+    export PATH="$(cygpath -u "$APPDATA")/npm:$PATH"
+  fi
+  if [ -n "$program_files" ]; then
+    export PATH="$(cygpath -u "$program_files")/nodejs:$PATH"
+  fi
+fi
+
+run_pnpm() {
+  if command -v cygpath >/dev/null 2>&1 && [ -n "${LOCALAPPDATA:-}" ] && [ -n "$program_files" ]; then
+    pnpm_version=$(sed -n 's/.*"packageManager"[[:space:]]*:[[:space:]]*"pnpm@\([^"]*\)".*/\1/p' package.json | head -n 1)
+    pnpm_root="$(cygpath -u "$LOCALAPPDATA")/node/corepack/v1/pnpm"
+    node_bin="$(cygpath -u "$program_files")/nodejs/node.exe"
+    if [ ! -f "$node_bin" ]; then
+      node_bin="$(command -v node 2>/dev/null || true)"
+    fi
+    if [ -z "$node_bin" ] || [ ! -f "$node_bin" ]; then
+      echo "pre-commit: Node.js was not found. Install Node.js or add it to PATH." >&2
+      return 127
+    fi
+    for pnpm_entry in "$pnpm_root/$pnpm_version/bin/pnpm.cjs" "$pnpm_root/$pnpm_version/bin/pnpm.mjs"; do
+      if [ -f "$pnpm_entry" ]; then
+        if [ -z "${PNPM_HOOK_SHIM_DIR:-}" ]; then
+          pnpm_shim_dir="$(mktemp -d 2>/dev/null)"
+          pnpm_shim_path="$pnpm_shim_dir/pnpm.cmd"
+          node_bin_windows="$(cygpath -w "$node_bin")"
+          pnpm_entry_windows="$(cygpath -w "$pnpm_entry")"
+          {
+            printf '@echo off\r\n'
+            printf '"%s" "%s" %%*\r\n' "$node_bin_windows" "$pnpm_entry_windows"
+          } > "$pnpm_shim_path"
+          export PNPM_HOOK_SHIM_DIR="$pnpm_shim_dir"
+          export PATH="$pnpm_shim_dir:$PATH"
+          trap 'if [ -n "${PNPM_HOOK_SHIM_DIR:-}" ]; then rm -rf -- "$PNPM_HOOK_SHIM_DIR"; fi' EXIT
+        fi
+        "$node_bin" "$pnpm_entry" "$@"
+        return $?
+      fi
+    done
+    echo "pre-commit: the configured Corepack pnpm version was not found." >&2
+    return 127
+  elif command -v pnpm.cmd >/dev/null 2>&1; then
+    pnpm.cmd "$@"
+  elif command -v pnpm >/dev/null 2>&1; then
+    pnpm "$@"
+  elif command -v corepack >/dev/null 2>&1; then
+    corepack pnpm "$@"
+  else
+    echo "pre-commit: pnpm was not found. Install pnpm or enable Corepack." >&2
+    return 127
+  fi
+}
+
+run_pnpm exec lint-staged
+run_pnpm run typecheck

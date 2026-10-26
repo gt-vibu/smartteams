@@ -1,0 +1,776 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Prisma } from '../../generated/prisma/client';
+import {
+  PayrollRoundingMode,
+  PayrollRunStatus,
+  TimesheetStatus,
+} from '../../generated/prisma/enums';
+import { requirePermission, type DomainContext } from '../../common/context/domain-context';
+import { ConflictError } from '../../common/errors/domain-error';
+import { unmarkedDaysAreAbsent } from '../attendance/attendance-work-week.service';
+import { DEFAULT_PAYROLL_POLICY } from './payroll-policy-defaults';
+import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import { attachApprovedEncashments } from './payroll-encashments';
+import { lateHalfDays, lateMarks } from '../attendance/attendance-late';
+import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { MetricsService } from '../../common/metrics/metrics.service';
+import { OutboxService } from '../federation/outbox.service';
+import {
+  countWorkingDays,
+  eligibleOptionalHolidayDates,
+  hash,
+  monthlyWorkdayUnits,
+  payrollPeriodCutoffs,
+  summarizeAttendance,
+  summarizeLeave,
+  sumTimesheets,
+  unemployedDays,
+} from './payroll-calculation';
+import { endOfDay } from './payroll-shared';
+import { buildPayrollLineRows } from './payroll-line-calculator';
+import { sumOvertimeByDayType } from './payroll-overtime-split';
+import { readOvertimeRates } from './payroll-overtime-rates';
+import { chunked, groupBy } from './payroll-bulk';
+import { findPolicy } from './payroll-policy-access';
+import { readAdvanceRules, recoveryInstalment } from './payroll-advance-rules';
+import { effectivePolicyComponents, policyComponentDefaults } from './payroll-policy-components';
+
+/**
+ * Running the calculation for a whole payroll run.
+ *
+ * Gathers everything one run needs — compensation, policy, attendance, leave, timesheets — and
+ * hands each employee to the line calculator. The per-employee arithmetic deliberately lives in
+ * `payroll-line-calculator`, so this file stays about orchestration and staleness.
+ */
+/**
+ * Rows per `createMany`. PostgreSQL caps a statement's bind parameters at 65535; a payroll line
+ * carries enough columns that an unbounded batch would breach that on a large tenant.
+ */
+const BULK_INSERT_BATCH = 500;
+
+@Injectable()
+export class PayrollCalculationService {
+  constructor(
+    private readonly database: TenantDatabaseService,
+    private readonly audit: AuditService,
+    private readonly outbox: OutboxService,
+    private readonly metrics: MetricsService,
+    private readonly config: ConfigService,
+  ) {}
+
+  async calculate(context: DomainContext, runId: string, deferAdvanceEmployeeIds: string[] = []) {
+    requirePermission(context, 'payroll.runs.calculate');
+    const stopTimer = this.metrics.payrollDuration.startTimer();
+    try {
+      const result = await this.calculateInTransaction(context, runId, deferAdvanceEmployeeIds);
+      this.metrics.payrollRuns.inc({ outcome: 'succeeded' });
+      return result;
+    } catch (error) {
+      // Distinguished from a plain failure because it is the symptom of a run outgrowing its
+      // bounds rather than of bad input, and it is what an operator needs to see rising.
+      const timedOut =
+        error instanceof Error && /transaction.*(timeout|expired)/i.test(error.message);
+      this.metrics.payrollRuns.inc({ outcome: timedOut ? 'timed_out' : 'failed' });
+      throw error;
+    } finally {
+      stopTimer();
+    }
+  }
+
+  private async calculateInTransaction(
+    context: DomainContext,
+    runId: string,
+    deferAdvanceEmployeeIds: string[],
+  ) {
+    return this.database.run(
+      context,
+      async (tx) => {
+        // Serialise concurrent calculations of the same run.
+        //
+        // Without the lock two callers both read the run as DRAFT, both pass the guard below, and
+        // both proceed to delete and re-insert the run's line items — which races on the unique
+        // constraints and surfaces as a 500 rather than a clean refusal. Taking the row lock first
+        // means the second caller waits, then reads the state the first one left and is refused by
+        // the guard, which is what a duplicate request should get. Same idiom as
+        // `FilesUploadService.complete`.
+        await tx.$queryRaw`SELECT id FROM payroll_runs WHERE id = ${runId}::uuid AND organization_id = ${context.organizationId}::uuid FOR UPDATE`;
+        const run = await tx.payrollRun.findFirst({
+          where: { id: runId, organizationId: context.organizationId },
+        });
+        // A calculated but unapproved run can be recalculated on explicit admin request. This is
+        // also how runs pick up corrected calculation rules; approved/released runs remain locked.
+        if (
+          !run ||
+          (run.status !== PayrollRunStatus.DRAFT && run.status !== PayrollRunStatus.CALCULATED)
+        )
+          throw new ConflictError(
+            'Only a draft or calculated, unapproved payroll run can be calculated',
+          );
+        const unapproved = await tx.timesheet.count({
+          where: {
+            organizationId: context.organizationId,
+            period: { periodStart: { lte: run.periodEnd }, periodEnd: { gte: run.periodStart } },
+            status: { not: TimesheetStatus.APPROVED },
+            // An empty draft holds no work to approve, and cannot be submitted: the API refuses an
+            // empty timesheet. Deriving a period creates one for everyone with nothing logged, so
+            // counting it let a single idle employee block the whole company's payroll with no
+            // way to clear it. Federation keeps the stricter count it was built against.
+            ...(context.accessMode === 'NATIVE'
+              ? { NOT: { status: TimesheetStatus.DRAFT, totalMinutes: 0 } }
+              : {}),
+          },
+        });
+        if (unapproved > 0) throw new ConflictError('Payroll can consume only approved timesheets');
+        const [
+          employees,
+          settings,
+          holidays,
+          employeeHolidaySelections,
+          approvedLeaves,
+          attendanceRecords,
+          acceptedLeaveOverlapReviews,
+        ] = await Promise.all([
+          tx.employee.findMany({
+            where: { organizationId: context.organizationId, status: 'ACTIVE' },
+            orderBy: { id: 'asc' },
+            include: {
+              holidayPolicy: { select: { allowanceOverride: true } },
+              compensations: {
+                where: {
+                  effectiveFrom: { lte: run.periodEnd },
+                  OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
+                },
+                orderBy: { effectiveFrom: 'desc' },
+                take: 1,
+              },
+              payrollPolicies: {
+                where: {
+                  effectiveFrom: { lte: run.periodEnd },
+                  OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
+                },
+                orderBy: { effectiveFrom: 'desc' },
+                take: 1,
+                include: {
+                  payrollPolicy: {
+                    include: { components: { include: { payComponent: true } } },
+                  },
+                },
+              },
+              payComponents: {
+                where: {
+                  effectiveFrom: { lte: run.periodEnd },
+                  OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodStart } }],
+                },
+                include: { payComponent: true },
+                orderBy: { effectiveFrom: 'desc' },
+              },
+            },
+          }),
+          tx.organizationSettings.findUniqueOrThrow({
+            where: { organizationId: context.organizationId },
+          }),
+          tx.holiday.findMany({
+            where: {
+              organizationId: context.organizationId,
+              isActive: true,
+              holidayDate: { gte: run.periodStart, lte: run.periodEnd },
+            },
+            select: { holidayDate: true, branchId: true, isOptional: true },
+          }),
+          tx.employeeHolidaySelection.findMany({
+            where: {
+              organizationId: context.organizationId,
+              status: 'CONFIRMED',
+              holiday: {
+                isActive: true,
+                isOptional: true,
+                holidayDate:
+                  context.accessMode === 'NATIVE'
+                    ? {
+                        gte: new Date(Date.UTC(run.periodStart.getUTCFullYear(), 0, 1)),
+                        lt: new Date(Date.UTC(run.periodEnd.getUTCFullYear() + 1, 0, 1)),
+                      }
+                    : { gte: run.periodStart, lte: run.periodEnd },
+              },
+            },
+            select: {
+              id: true,
+              employeeId: true,
+              year: true,
+              selectedAt: true,
+              holiday: { select: { holidayDate: true } },
+            },
+            orderBy: [{ year: 'asc' }, { selectedAt: 'asc' }, { id: 'asc' }],
+          }),
+          tx.leaveRequest.findMany({
+            where: {
+              organizationId: context.organizationId,
+              status: 'APPROVED',
+              startDate: { lte: run.periodEnd },
+              endDate: { gte: run.periodStart },
+            },
+            select: {
+              id: true,
+              employeeId: true,
+              branchId: true,
+              startDate: true,
+              endDate: true,
+              requestedDays: true,
+              session: true,
+              chargedDates: true,
+              leaveType: { select: { paid: true } },
+            },
+          }),
+          tx.attendanceRecord.findMany({
+            where: {
+              organizationId: context.organizationId,
+              workDate: { gte: run.periodStart, lte: run.periodEnd },
+            },
+            select: {
+              employeeId: true,
+              workDate: true,
+              dayStatus: true,
+              overtimeMinutes: true,
+              overtimeDayType: true,
+            },
+          }),
+          context.accessMode === 'NATIVE'
+            ? tx.attendanceLeaveOverlapReview.findMany({
+                where: {
+                  organizationId: context.organizationId,
+                  status: 'APPROVED',
+                  workDate: { gte: run.periodStart, lte: run.periodEnd },
+                },
+                select: { leaveRequestId: true, leaveUnits: true },
+              })
+            : Promise.resolve([]),
+        ]);
+        const timesheets = await tx.timesheet.findMany({
+          where: {
+            organizationId: context.organizationId,
+            status: TimesheetStatus.APPROVED,
+            period: { periodStart: { lte: run.periodEnd }, periodEnd: { gte: run.periodStart } },
+          },
+        });
+        await attachApprovedEncashments(tx, context, run);
+        const adjustments = await tx.payrollAdjustment.findMany({
+          where: { payrollRunId: run.id },
+          orderBy: [{ employeeId: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
+        });
+        const basePolicy = await findPolicy(tx, context.organizationId, run.periodStart);
+        const policy = (basePolicy
+          ? await tx.payrollPolicy.findUnique({
+              where: { id: basePolicy.id },
+              include: { components: { include: { payComponent: true } } },
+            })
+          : null) ?? {
+          payrollDayBasis: 30,
+          basePercentage: new Prisma.Decimal(50),
+          baseMinimum: new Prisma.Decimal(15000),
+          hraPercentage: new Prisma.Decimal(40),
+          roundingMode: PayrollRoundingMode.HALF_UP,
+          pfDefault: false,
+          esiDefault: false,
+          ptDefault: false,
+          statutoryJurisdiction: null,
+          salarySlipDefault: true,
+          payrollEnabledDefault: true,
+          components: [],
+        };
+        // A historical default policy may not have had a jurisdiction saved yet. The current
+        // organization default is the fallback location in that case; explicit historical or
+        // employee jurisdictions still take precedence below.
+        const organizationJurisdictionFallback = await tx.payrollPolicy.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            isDefault: true,
+            statutoryJurisdiction: { not: null },
+          },
+          orderBy: { effectiveFrom: 'desc' },
+          select: { statutoryJurisdiction: true },
+        });
+        const assignedPolicyIds = [
+          ...new Set(
+            employees
+              .map((employee) => employee.payrollPolicies[0]?.payrollPolicyId)
+              .filter((id): id is string => Boolean(id)),
+          ),
+        ];
+        const assignedPolicies = assignedPolicyIds.length
+          ? await tx.payrollPolicy.findMany({
+              where: { organizationId: context.organizationId, id: { in: assignedPolicyIds } },
+              include: { components: { include: { payComponent: true } } },
+            })
+          : [];
+        const assignedPoliciesById = new Map(assignedPolicies.map((entry) => [entry.id, entry]));
+        const statutoryRules = await tx.payrollStatutoryRule.findMany({
+          where: {
+            organizationId: context.organizationId,
+            // Use the rule in force on the payroll period end. A period that crosses an
+            // effective-date boundary must not apply both the old and new contribution rates.
+            effectiveFrom: { lte: run.periodEnd },
+            OR: [{ effectiveTo: null }, { effectiveTo: { gte: run.periodEnd } }],
+          },
+          orderBy: { effectiveFrom: 'desc' },
+        });
+        const calendar = await tx.payrollCalendar.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            periodStart: run.periodStart,
+            periodEnd: run.periodEnd,
+          },
+          select: { salaryCreditDate: true },
+        });
+        // Before the outstanding advances are read: a recalculation found an advance this run had
+        // already recovered in full, left it out, then unwound the recovery — so it was never
+        // recovered at all.
+        // Unwind what a previous calculation of this run recovered, so a recalculation starts from
+        // the same place the first calculation did. Read the advances once by id and total the
+        // reversals per advance, rather than a lookup and a write per recovery row.
+        const previousRecoveries = await tx.salaryAdvanceRecovery.findMany({
+          where: { payrollRunId: run.id },
+          select: { salaryAdvanceId: true, amount: true },
+        });
+        if (previousRecoveries.length > 0) {
+          const reversalByAdvance = new Map<string, Prisma.Decimal>();
+          for (const recovery of previousRecoveries)
+            reversalByAdvance.set(
+              recovery.salaryAdvanceId,
+              (reversalByAdvance.get(recovery.salaryAdvanceId) ?? new Prisma.Decimal(0)).add(
+                recovery.amount,
+              ),
+            );
+          const affected = await tx.salaryAdvance.findMany({
+            where: {
+              organizationId: context.organizationId,
+              id: { in: [...reversalByAdvance.keys()] },
+            },
+            select: { id: true, recoveredAmount: true },
+          });
+          for (const advance of affected) {
+            const recovered = Prisma.Decimal.max(
+              new Prisma.Decimal(0),
+              advance.recoveredAmount.sub(
+                reversalByAdvance.get(advance.id) ?? new Prisma.Decimal(0),
+              ),
+            );
+            await tx.salaryAdvance.update({
+              where: { id: advance.id },
+              data: {
+                recoveredAmount: recovered,
+                status: recovered.isZero() ? 'APPROVED' : 'PARTIALLY_RECOVERED',
+              },
+            });
+          }
+        }
+        await tx.salaryAdvanceRecovery.deleteMany({ where: { payrollRunId: run.id } });
+        const advanceCutoff = endOfDay(calendar?.salaryCreditDate ?? run.periodEnd);
+        const advances = await tx.salaryAdvance.findMany({
+          where: {
+            organizationId: context.organizationId,
+            status: { in: ['APPROVED', 'PARTIALLY_RECOVERED'] },
+            approvedAt: { not: null, lte: advanceCutoff },
+            ...(context.accessMode === 'NATIVE' ? { employee: { status: 'ACTIVE' } } : {}),
+          },
+          orderBy: [{ requestedAt: 'asc' }, { id: 'asc' }],
+        });
+        // One pass each, rather than a scan of every collection per employee. With ten thousand
+        // employees and a month of attendance the filters this replaces were comparing on the order
+        // of a billion pairs; grouping first makes the cost of assembling the run proportional to
+        // the data rather than to the product of the data.
+        const attendanceByEmployee = groupBy(attendanceRecords, (record) => record.employeeId);
+        const { measuredEnd, absenceEnd } = payrollPeriodCutoffs(run.periodStart, run.periodEnd);
+        // Late check-ins cost half a day for every so many, when the organization counts them.
+        const lateByEmployee = new Map<string, number>();
+        if (settings.lateMarksPerHalfDay > 0 && absenceEnd)
+          for (const mark of await lateMarks(tx, context.organizationId, {
+            from: run.periodStart,
+            to: absenceEnd,
+          }))
+            lateByEmployee.set(mark.employeeId, (lateByEmployee.get(mark.employeeId) ?? 0) + 1);
+        const leavesByEmployee = groupBy(approvedLeaves, (leave) => leave.employeeId);
+        const acceptedOverlapUnitsByRequest = new Map<string, number>();
+        for (const review of acceptedLeaveOverlapReviews)
+          acceptedOverlapUnitsByRequest.set(
+            review.leaveRequestId,
+            (acceptedOverlapUnitsByRequest.get(review.leaveRequestId) ?? 0) +
+              Number(review.leaveUnits),
+          );
+        const timesheetsByEmployee = groupBy(timesheets, (timesheet) => timesheet.employeeId);
+        const adjustmentsByEmployee = groupBy(adjustments, (adjustment) => adjustment.employeeId);
+        // Recovered in equal monthly shares when the organization spreads it; all at once otherwise.
+        const { recoveryMonths } = await readAdvanceRules(tx, context.organizationId);
+        const advancesByEmployee = groupBy(
+          advances.map((advance) => ({
+            ...advance,
+            instalment:
+              recoveryMonths > 1 && advance.approvedAmount
+                ? recoveryInstalment(advance.approvedAmount, recoveryMonths)
+                : null,
+          })),
+          (advance) => advance.employeeId,
+        );
+        if (context.accessMode === 'NATIVE') {
+          const recoverableEmployeeIds = new Set(advancesByEmployee.keys());
+          const invalidChoice = deferAdvanceEmployeeIds.find(
+            (employeeId) => !recoverableEmployeeIds.has(employeeId),
+          );
+          if (invalidChoice)
+            throw new ConflictError(
+              'Advance recovery can only be deferred for an active employee with an approved outstanding advance in this payroll period',
+            );
+        }
+        const allowanceByEmployee = new Map(
+          employees.map((employee) => [
+            employee.id,
+            employee.holidayPolicy?.allowanceOverride ?? settings.optionalHolidayAllowance,
+          ]),
+        );
+        const holidayDatesByEmployee =
+          context.accessMode === 'NATIVE'
+            ? eligibleOptionalHolidayDates(
+                employeeHolidaySelections,
+                (employeeId) =>
+                  allowanceByEmployee.get(employeeId) ?? settings.optionalHolidayAllowance,
+              )
+            : new Map<string, string[]>();
+        if (context.accessMode !== 'NATIVE')
+          for (const selection of employeeHolidaySelections) {
+            const dates = holidayDatesByEmployee.get(selection.employeeId) ?? [];
+            dates.push(selection.holiday.holidayDate.toISOString().slice(0, 10));
+            holidayDatesByEmployee.set(selection.employeeId, dates);
+          }
+        const empty = Object.freeze([]) as [];
+
+        const snapshot = employees
+          .map((employee) => {
+            const employeePolicy = employee.payrollPolicies[0] ?? null;
+            const assignedPolicy = employeePolicy?.payrollPolicyId
+              ? assignedPoliciesById.get(employeePolicy.payrollPolicyId)
+              : context.accessMode === 'NATIVE'
+                ? {
+                    ...policy,
+                    id: 'organization-default',
+                    isDefault: true,
+                    statutoryJurisdiction:
+                      employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction,
+                  }
+                : {
+                    ...policy,
+                    ...DEFAULT_PAYROLL_POLICY,
+                    id: 'gross-salary-only',
+                    isDefault: false,
+                    basePercentage: new Prisma.Decimal(DEFAULT_PAYROLL_POLICY.basePercentage),
+                    baseMinimum: new Prisma.Decimal(DEFAULT_PAYROLL_POLICY.baseMinimum),
+                    hraPercentage: new Prisma.Decimal(DEFAULT_PAYROLL_POLICY.hraPercentage),
+                    statutoryJurisdiction:
+                      employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction,
+                    components: [],
+                  };
+            if (!assignedPolicy)
+              throw new ConflictError('The assigned payroll policy is unavailable');
+            const selectedPolicy =
+              employeePolicy?.payrollPolicyId &&
+              'isDefault' in assignedPolicy &&
+              assignedPolicy.isDefault
+                ? policy
+                : assignedPolicy;
+            const normalizedJurisdiction = [
+              employeePolicy?.statutoryJurisdiction,
+              selectedPolicy.statutoryJurisdiction,
+              policy.statutoryJurisdiction,
+              organizationJurisdictionFallback?.statutoryJurisdiction,
+            ]
+              .find((value) => Boolean(value?.trim()))
+              ?.trim()
+              .toUpperCase();
+            const selectedDate =
+              employeePolicy && employeePolicy.effectiveFrom > run.periodStart
+                ? employeePolicy.effectiveFrom
+                : run.periodStart;
+            if (
+              'effectiveFrom' in selectedPolicy &&
+              (selectedPolicy.effectiveFrom > selectedDate ||
+                (selectedPolicy.effectiveTo && selectedPolicy.effectiveTo < selectedDate))
+            )
+              throw new ConflictError(
+                'The assigned payroll policy is not effective for this period',
+              );
+            if (!(employeePolicy?.payrollEnabled ?? selectedPolicy.payrollEnabledDefault))
+              return null;
+            // Nobody is paid for a period they were not employed in, and someone with nothing to
+            // be paid — no salary, no pay component, no one-off adjustment — is not issued an
+            // empty payslip that would count them as paid.
+            if (
+              (employee.dateOfJoining && employee.dateOfJoining > run.periodEnd) ||
+              (employee.dateOfLeaving && employee.dateOfLeaving < run.periodStart)
+            )
+              return null;
+            if (
+              !employee.compensations[0] &&
+              employee.payComponents.length === 0 &&
+              !policyComponentDefaults(selectedPolicy).length &&
+              !adjustmentsByEmployee.get(employee.id)?.length
+            )
+              return null;
+            const components = effectivePolicyComponents(
+              policyComponentDefaults(selectedPolicy),
+              employee.payComponents,
+            ).map((assignment) => ({
+              id: assignment.id,
+              componentId: assignment.payComponentId,
+              amount: assignment.amount,
+              percentage: assignment.percentage,
+              component: assignment.payComponent,
+            }));
+            return {
+              employeeId: employee.id,
+              periodMonth: run.periodEnd.getUTCMonth() + 1,
+              compensation: employee.compensations[0] ?? null,
+              employeePolicy,
+              policy: {
+                ...selectedPolicy,
+                statutoryJurisdiction: normalizedJurisdiction ?? null,
+              },
+              statutoryRules: statutoryRules.filter((rule) =>
+                Boolean(
+                  normalizedJurisdiction &&
+                  rule.jurisdiction.trim().toUpperCase() === normalizedJurisdiction,
+                ),
+              ),
+              components,
+              timesheet: sumTimesheets(timesheetsByEmployee.get(employee.id) ?? empty),
+              overtimeDays: sumOvertimeByDayType(attendanceByEmployee.get(employee.id) ?? empty),
+              overtimeRates: readOvertimeRates(settings.metadata),
+              leave: summarizeLeave(
+                leavesByEmployee.get(employee.id) ?? empty,
+                run.periodStart,
+                measuredEnd,
+                acceptedOverlapUnitsByRequest,
+              ),
+              // With the working-day calendar, so a working day with no attendance at all is an
+              // absence. Without it only days explicitly marked ABSENT were, and someone who never
+              // checked in was paid in full.
+              attendance: withLateHalfDays(
+                lateHalfDays(lateByEmployee.get(employee.id) ?? 0, settings.lateMarksPerHalfDay),
+                summarizeAttendance(
+                  (attendanceByEmployee.get(employee.id) ?? empty).filter(
+                    (record) => absenceEnd !== null && record.workDate <= absenceEnd,
+                  ),
+                  // The company can turn this off; then only days marked ABSENT cost pay.
+                  !unmarkedDaysAreAbsent(settings.metadata) || absenceEnd === null
+                    ? undefined
+                    : {
+                        periodStart: run.periodStart,
+                        periodEnd: absenceEnd,
+                        workWeekDays: settings.workWeekDays,
+                        holidays,
+                        branchId: employee.primaryBranchId,
+                        leaves: leavesByEmployee.get(employee.id) ?? empty,
+                        employeeSelectedDates: holidayDatesByEmployee.get(employee.id),
+                        skipNonworkingDays: context.accessMode === 'NATIVE',
+                        dateOfJoining: employee.dateOfJoining,
+                        dateOfLeaving: employee.dateOfLeaving,
+                      },
+                ),
+              ),
+              // Days in the period before joining or after leaving. Priced exactly like unpaid leave.
+              unemployedDays:
+                context.accessMode === 'NATIVE'
+                  ? unemployedDays(
+                      run.periodStart,
+                      run.periodEnd,
+                      employee.dateOfJoining,
+                      employee.dateOfLeaving,
+                      settings.workWeekDays,
+                      holidays,
+                      employee.primaryBranchId,
+                      holidayDatesByEmployee.get(employee.id),
+                    )
+                  : unemployedDays(
+                      run.periodStart,
+                      run.periodEnd,
+                      employee.dateOfJoining,
+                      employee.dateOfLeaving,
+                    ),
+              periodWorkingDays:
+                context.accessMode === 'NATIVE'
+                  ? countWorkingDays(
+                      run.periodStart,
+                      run.periodEnd,
+                      settings.workWeekDays,
+                      holidays,
+                      employee.primaryBranchId,
+                      holidayDatesByEmployee.get(employee.id),
+                    )
+                  : Math.max(
+                      1,
+                      countWorkingDays(
+                        run.periodStart,
+                        run.periodEnd,
+                        settings.workWeekDays,
+                        holidays,
+                        employee.primaryBranchId,
+                        holidayDatesByEmployee.get(employee.id),
+                      ),
+                    ),
+              ...(context.accessMode === 'NATIVE'
+                ? {
+                    periodSalaryUnits:
+                      employee.compensations[0]?.payFrequency === 'MONTHLY'
+                        ? monthlyWorkdayUnits(
+                            run.periodStart,
+                            run.periodEnd,
+                            settings.workWeekDays,
+                            holidays,
+                            employee.primaryBranchId,
+                            holidayDatesByEmployee.get(employee.id),
+                          )
+                        : 1,
+                  }
+                : {}),
+              ...(context.accessMode === 'NATIVE' ? { useWorkCalendarBasis: true } : {}),
+              adjustments: adjustmentsByEmployee.get(employee.id) ?? empty,
+              advances: advancesByEmployee.get(employee.id) ?? empty,
+              ...(context.accessMode === 'NATIVE'
+                ? { deferAdvanceRecovery: deferAdvanceEmployeeIds.includes(employee.id) }
+                : {}),
+            };
+          })
+          .filter((item): item is NonNullable<typeof item> => item !== null);
+        // Validate the output before clearing existing rows on a recalculation. The surrounding
+        // transaction would roll back on error, but keeping the guard ahead of writes makes the
+        // empty-run invariant explicit and avoids needless database churn.
+        const rows = snapshot.map((item) =>
+          buildPayrollLineRows(context.organizationId, run.id, item, settings.standardDayMinutes),
+        );
+        if (rows.length === 0)
+          throw new ConflictError(
+            'No eligible employees were found for this payroll period. Check that employees are active, payroll is enabled, and salary or pay components are effective during the period.',
+          );
+        const invalidAmountRows = rows.filter(
+          ({ line }) =>
+            Number(line.grossAmount) < 0 ||
+            Number(line.deductionAmount) < 0 ||
+            Number(line.netAmount) < 0,
+        );
+        if (invalidAmountRows.length > 0) {
+          const employeeNumbers = new Map(
+            employees.map((employee) => [employee.id, employee.employeeNumber]),
+          );
+          const examples = invalidAmountRows.slice(0, 3).map(({ line }) => {
+            const employee = employeeNumbers.get(line.employeeId) ?? 'an employee';
+            const gross = Number(line.grossAmount);
+            const deduction = Number(line.deductionAmount);
+            if (gross < 0) return `${employee} has negative gross pay`;
+            if (deduction < 0) return `${employee} has a negative deduction total`;
+            return `${employee} has deductions of ₹${deduction.toFixed(2)} exceeding gross pay of ₹${gross.toFixed(2)}`;
+          });
+          const additional =
+            invalidAmountRows.length > examples.length
+              ? ` and ${invalidAmountRows.length - examples.length} more employee(s)`
+              : '';
+          throw new ConflictError(
+            `Payroll was not calculated because the line amounts would be invalid: ${examples.join('; ')}${additional}. Review the employee's salary, statutory rule, pay components, and payroll adjustments so gross pay and deductions produce non-negative take-home pay.`,
+          );
+        }
+        const inputSnapshotHash = hash(snapshot);
+        await tx.payrollPayment.deleteMany({ where: { payrollRunId: run.id } });
+        // Component rows hold the line item under `onDelete: Restrict`, so they go first. This only
+        // bites on a recalculation of an employee who has assigned pay components — the path that
+        // opened when a stale run became recalculable.
+        await tx.payrollLineItemComponent.deleteMany({
+          where: {
+            organizationId: context.organizationId,
+            payrollLineItem: { payrollRunId: run.id },
+          },
+        });
+        await tx.payrollLineItem.deleteMany({ where: { payrollRunId: run.id } });
+        // Compute every line first — pure arithmetic, no database — then write the run in a fixed
+        // number of set-based statements. The loop this replaces issued two to four round trips per
+        // employee while holding the write transaction open, which is what put a ceiling on how large
+        // a tenant could be paid at all.
+        const lines = rows.map((row) => row.result);
+
+        for (const batch of chunked(
+          rows.map((row) => row.line),
+          BULK_INSERT_BATCH,
+        ))
+          await tx.payrollLineItem.createMany({ data: batch });
+        for (const batch of chunked(
+          rows.flatMap((row) => row.components),
+          BULK_INSERT_BATCH,
+        ))
+          await tx.payrollLineItemComponent.createMany({ data: batch });
+        for (const batch of chunked(
+          rows.map((row) => row.payment),
+          BULK_INSERT_BATCH,
+        ))
+          await tx.payrollPayment.createMany({ data: batch });
+        const recoveryRows = rows.flatMap((row) => row.recoveries);
+        for (const batch of chunked(recoveryRows, BULK_INSERT_BATCH))
+          await tx.salaryAdvanceRecovery.createMany({ data: batch });
+        // An advance belongs to one employee, so each appears in at most one line's updates. The
+        // count is bounded by the advances outstanding in the period, not by headcount.
+        for (const update of rows.flatMap((row) => row.advanceUpdates))
+          await tx.salaryAdvance.update({
+            where: { id: update.id },
+            data: { recoveredAmount: update.recoveredAmount, status: update.status },
+          });
+        const calculationHash = hash(
+          lines.map((line) => ({
+            employeeId: line.employeeId,
+            gross: line.grossAmount.toString(),
+            deduction: line.deductionAmount.toString(),
+            net: line.netAmount.toString(),
+            components: line.components,
+          })),
+        );
+        const updated = await tx.payrollRun.update({
+          where: { id: run.id },
+          data: {
+            status: PayrollRunStatus.CALCULATED,
+            inputSnapshotHash,
+            calculationHash,
+            calculatedAt: new Date(),
+            calculationStaleAt: null,
+            version: { increment: 1 },
+          },
+        });
+        await this.audit.record(
+          context,
+          {
+            entityType: 'PAYROLL_RUN',
+            entityId: run.id,
+            action: 'PAYROLL_RUN_CALCULATED',
+            afterState: jsonSnapshot({ run: updated, lines }),
+          },
+          tx,
+        );
+        await this.outbox.append(
+          context,
+          {
+            aggregateType: 'PayrollRun',
+            aggregateId: run.id,
+            aggregateVersion: updated.version,
+            eventType: 'payroll.run.calculated',
+            payload: jsonSnapshot({ run: updated, lines }),
+          },
+          tx,
+        );
+        this.metrics.payrollLines.observe(lines.length);
+        return updated;
+      },
+      {
+        timeout: this.config.get<number>('PAYROLL_TRANSACTION_TIMEOUT_MS', 120_000),
+        maxWait: this.config.get<number>('PAYROLL_TRANSACTION_MAX_WAIT_MS', 10_000),
+      },
+    );
+  }
+}
+
+/** Late marks priced as half-days, alongside the ones attendance already recorded. */
+function withLateHalfDays(extra: number, summary: { absentDays: number; halfDays: number }) {
+  return extra ? { ...summary, halfDays: summary.halfDays + extra } : summary;
+}

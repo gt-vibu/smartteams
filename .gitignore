@@ -14,6 +14,10 @@ coverage/
 !.env.production.example
 !.env.*.example
 .envrc
+
+# Written by scripts/seed-ui-tenant.mjs: throwaway tenant credentials, never committed.
+.seed-credentials.local
+.seed-credentials*.local
 secrets/
 *.pem
 *.key
@@ -27,3 +31,6 @@ apps/*/public/uploads/
 .idea/
 .vscode/settings.json
 !.vscode/extensions.json
+
+# Local database backup artifacts. Production backups never live in the repository.
+backups/

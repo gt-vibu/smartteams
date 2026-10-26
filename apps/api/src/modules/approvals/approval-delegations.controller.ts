@@ -1,0 +1,88 @@
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Req, UseGuards } from '@nestjs/common';
+import type { Request } from 'express';
+import { IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import { IsCalendarDate, daysFromToday, yearsFromToday } from '../../common/validation/field-rules';
+import { DomainContextFactory } from '../../common/context/domain-context.factory';
+import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
+import { ApprovalDelegationsService } from './approval-delegations.service';
+
+export class ApprovalDelegationDto {
+  @IsUUID() delegateEmployeeId!: string;
+  /** Administrators only: the person away, when setting cover up for someone else. */
+  @IsOptional() @IsUUID() delegatorEmployeeId?: string;
+  @IsCalendarDate('Start date', { earliest: daysFromToday(-1), latest: yearsFromToday(1) })
+  startsOn!: string;
+  @IsCalendarDate('End date', { earliest: daysFromToday(-1), latest: yearsFromToday(1) })
+  endsOn!: string;
+  @IsOptional() @IsString() @MaxLength(200) reason?: string;
+}
+
+type Authed = Request & { user: NativeRequestUser };
+
+/**
+ * Handovers of approvals: the caller's own, and anyone's for an administrator. Asking a colleague
+ * needs no permission beyond belonging to the organization; the colleague accepts or declines.
+ */
+@Controller('v1/organizations/:organizationId/approval-delegations')
+@UseGuards(NativeJwtGuard)
+export class ApprovalDelegationsController {
+  constructor(
+    private readonly delegations: ApprovalDelegationsService,
+    private readonly contexts: DomainContextFactory,
+  ) {}
+
+  @Get() list(@Param('organizationId') organizationId: string, @Req() request: Authed) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.delegations.list(context));
+  }
+
+  @Get('candidates') candidates(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Authed,
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.delegations.candidates(context));
+  }
+
+  @Post() create(
+    @Param('organizationId') organizationId: string,
+    @Body() body: ApprovalDelegationDto,
+    @Req() request: Authed,
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.delegations.create(context, body));
+  }
+
+  @Post(':delegationId/accept') accept(
+    @Param('organizationId') organizationId: string,
+    @Param('delegationId', ParseUUIDPipe) delegationId: string,
+    @Req() request: Authed,
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.delegations.respond(context, delegationId, true));
+  }
+
+  @Post(':delegationId/decline') decline(
+    @Param('organizationId') organizationId: string,
+    @Param('delegationId', ParseUUIDPipe) delegationId: string,
+    @Req() request: Authed,
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.delegations.respond(context, delegationId, false));
+  }
+
+  @Post(':delegationId/revoke') revoke(
+    @Param('organizationId') organizationId: string,
+    @Param('delegationId', ParseUUIDPipe) delegationId: string,
+    @Req() request: Authed,
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.delegations.revoke(context, delegationId));
+  }
+}

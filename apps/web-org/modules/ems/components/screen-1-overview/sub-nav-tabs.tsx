@@ -1,0 +1,67 @@
+'use client';
+
+import { Button } from '@smarteam/ui';
+
+import React from 'react';
+import { useAuth } from '../../hooks/use-auth';
+
+interface SubNavTabsProps {
+  activeTab: string;
+  onSelectTab: (tab: string) => void;
+}
+
+/**
+ * Whether the Approvals tab belongs on Home: the same rule as the navigation's Approvals, so the
+ * two can never disagree. That is someone who approves as themselves (a manager, a named approver,
+ * someone covering); an HR or admin role holds approve permissions but decides from its own
+ * workspace, and a permission check here showed them Approvals in their employee workspace.
+ */
+export function useIsManagerApprover(): boolean {
+  const { canAccessModule } = useAuth();
+  return canAccessModule('approvals');
+}
+
+export function SubNavTabs({ activeTab, onSelectTab }: SubNavTabsProps) {
+  const isManagerApprover = useIsManagerApprover();
+  // The previews are the person's own records; each shows only if they may read that module.
+  const { canAccessModule } = useAuth();
+
+  // "Time Logs" and "Timesheets" were both here and rendered the same component, so the strip
+  // offered two tabs that were one page. A link naming "Time Logs" still opens it (see
+  // `screen-1-overview`), and marks this tab as the current one.
+  const tabs = [
+    'Activities',
+    // 'Feeds', // Commented out until real backend persistence is connected
+    'Profile',
+    ...(isManagerApprover ? ['Approvals'] : []),
+    ...(canAccessModule('time-off') ? ['Leave'] : []),
+    ...(canAccessModule('attendance') ? ['Attendance'] : []),
+    ...(canAccessModule('timesheet') ? ['Timesheets'] : []),
+  ];
+  const current = activeTab === 'Time Logs' ? 'Timesheets' : activeTab;
+
+  return (
+    <div className="bg-white dark:bg-card rounded-[6px] border border-slate-200 dark:border-border px-3 sm:px-4 h-11 flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.05)] w-full max-w-full">
+      <div className="flex items-center space-x-4 sm:space-x-6 h-full overflow-x-auto no-scrollbar py-1">
+        {tabs.map((tab) => {
+          const isActive = current === tab;
+          return (
+            <Button
+              key={tab}
+              variant="ghost"
+              size="sm"
+              onClick={() => onSelectTab(tab)}
+              className={`h-full text-xs font-semibold px-1 flex items-center whitespace-nowrap transition-colors relative cursor-pointer shrink-0 rounded-none ${
+                isActive
+                  ? 'text-slate-900 dark:text-white border-b-2 border-slate-900 dark:border-white font-bold'
+                  : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              {tab}
+            </Button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

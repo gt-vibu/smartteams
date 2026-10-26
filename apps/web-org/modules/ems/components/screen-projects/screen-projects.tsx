@@ -1,0 +1,306 @@
+'use client';
+
+import React, { useState } from 'react';
+import { useScreenTab } from '../../hooks/use-screen-tab';
+import { LoadingIndicator, Button, Input } from '@smarteam/ui';
+import { AlertCircle, ChevronRight, FolderKanban, Plus, UsersRound } from 'lucide-react';
+import { useProjectDirectory } from '../../hooks/use-project-directory';
+import type { ProjectView } from '../../services/team-directory';
+import { CreateProjectModal } from './create-project-modal';
+import { ProjectCard, ProjectTable } from './project-views';
+import { ProjectDetailDrawer } from './project-detail-drawer';
+import { PageShell } from '../layout/page-shell';
+import { ScreenHeader } from '../common/screen-header';
+import { useDebouncedValue } from '../../hooks/use-debounced-value';
+
+/**
+ * Projects and allocations, read from and written to the API.
+ *
+ * `GET /projects` returns every project including archived ones, so the status filter here is
+ * driven by the status the API reports rather than by a client-side guess.
+ */
+export function ScreenProjects() {
+  const directory = useProjectDirectory();
+  // Scope is a view, not a filter: Back should step between "all" and "mine" the way it
+  // steps between tabs. The search box and the grid/table toggle stay local — walking Back
+  // through keystrokes or a display preference would read as a broken button.
+  const [scope, setScope] = useScreenTab<'all' | 'mine'>('projectScope', ['all', 'mine'], 'all');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+  const [search, setSearch] = useState('');
+  const [metricFilter, setMetricFilter] = useState<'all' | 'allocated' | 'no-lead'>('all');
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+  // Without the organization-wide permission the API sends only their own, and the "all"
+  // view would be the same list under a misleading name.
+  const source =
+    scope === 'mine' || !directory.canReadAll ? directory.myProjects : directory.projects;
+  const query = useDebouncedValue(search.trim()).toLowerCase();
+  const filtered = source.filter((view) => {
+    if (metricFilter === 'allocated' && view.activeMembers.length === 0) return false;
+    if (metricFilter === 'no-lead' && view.lead) return false;
+    if (!query) return true;
+    return (
+      view.project.name.toLowerCase().includes(query) ||
+      (view.project.code ?? '').toLowerCase().includes(query) ||
+      (view.branchName ?? '').toLowerCase().includes(query) ||
+      (view.project.description ?? '').toLowerCase().includes(query)
+    );
+  });
+  const activeMemberships = source.reduce((total, view) => total + view.activeMembers.length, 0);
+  const projectsWithoutLead = source.filter((view) => !view.lead).length;
+
+  // Read from the live list so the drawer follows a refetch rather than holding a stale copy.
+  const selected: ProjectView | null =
+    source.find((view) => view.project.id === selectedProjectId) ??
+    directory.projects.find((view) => view.project.id === selectedProjectId) ??
+    directory.myProjects.find((view) => view.project.id === selectedProjectId) ??
+    null;
+
+  return (
+    <div className="relative flex w-full flex-col">
+      <div className="sticky top-[var(--ems-context-bar-height)] z-20 border-b border-border bg-card/95 px-4 py-3 backdrop-blur sm:px-6">
+        <ScreenHeader
+          actions={
+            directory.canWrite && (
+              <Button onClick={() => setIsCreateOpen(true)}>
+                <Plus className="mr-1.5 size-4" />
+                New project
+              </Button>
+            )
+          }
+          icon={FolderKanban}
+          description="Plan work, assign people and track project ownership."
+          title="Projects"
+          tone="primary"
+        />
+        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center sm:gap-3">
+          <div className="flex items-center gap-4">
+            {(directory.canReadAll ? (['all', 'mine'] as const) : ([] as const)).map((value) => (
+              <Button
+                className={`rounded-none pb-1 text-xs font-semibold ${
+                  scope === value
+                    ? 'border-b-2 border-foreground font-bold text-foreground'
+                    : 'text-muted-foreground'
+                }`}
+                key={value}
+                onClick={() => setScope(value)}
+                size="sm"
+                type="button"
+                variant="ghost"
+              >
+                {value === 'all' ? 'All projects' : 'My projects'}
+              </Button>
+            ))}
+            {!directory.canReadAll && (
+              <span className="pb-1 text-xs font-bold text-foreground">My projects</span>
+            )}
+          </div>
+
+          <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
+            <Input
+              className="w-40 sm:w-52"
+              onChange={(event) => setSearch(event.target.value)}
+              aria-label="Search projects"
+              placeholder="Search projects"
+              type="text"
+              value={search}
+            />
+            <div className="flex items-center overflow-hidden rounded border border-border">
+              <Button
+                className="h-8 rounded-none px-2.5 text-[11px]"
+                onClick={() => setViewMode('grid')}
+                size="sm"
+                type="button"
+                variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+              >
+                Grid
+              </Button>
+              <Button
+                className="h-8 rounded-none border-l border-border px-2.5 text-[11px]"
+                onClick={() => setViewMode('table')}
+                size="sm"
+                type="button"
+                variant={viewMode === 'table' ? 'secondary' : 'ghost'}
+              >
+                Table
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <PageShell gap="none">
+        {!directory.loading && !directory.error && !directory.forbidden && (
+          <section
+            aria-label="Project summary"
+            className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3"
+          >
+            <button
+              aria-pressed={metricFilter === 'all'}
+              className={`rounded-lg border bg-card px-3 py-2 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${metricFilter === 'all' ? 'border-primary/50 ring-1 ring-primary/15' : 'border-border'}`}
+              onClick={() => setMetricFilter('all')}
+              type="button"
+            >
+              <span className="flex items-center gap-2">
+                <span className="grid size-7 place-items-center rounded-md bg-emerald-500/10 text-emerald-700">
+                  <FolderKanban className="size-4" />
+                </span>
+                <span className="text-xs font-medium text-foreground">Projects</span>
+                <ChevronRight className="ml-auto size-3.5 text-muted-foreground" />
+              </span>
+              <span className="mt-1.5 flex items-baseline justify-between gap-2">
+                <span className="text-xl font-semibold leading-none tabular-nums">
+                  {source.length}
+                </span>
+                <span className="truncate text-[10px] text-muted-foreground">
+                  {scope === 'mine' || !directory.canReadAll
+                    ? 'Projects you can access'
+                    : 'Organization projects'}
+                </span>
+              </span>
+            </button>
+            <button
+              aria-pressed={metricFilter === 'allocated'}
+              className={`rounded-lg border bg-card px-3 py-2 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${metricFilter === 'allocated' ? 'border-primary/50 ring-1 ring-primary/15' : 'border-border'}`}
+              onClick={() => setMetricFilter(metricFilter === 'allocated' ? 'all' : 'allocated')}
+              type="button"
+            >
+              <span className="flex items-center gap-2">
+                <span className="grid size-7 place-items-center rounded-md bg-sky-500/10 text-sky-700">
+                  <UsersRound className="size-4" />
+                </span>
+                <span className="text-xs font-medium text-foreground">Active allocations</span>
+                <ChevronRight className="ml-auto size-3.5 text-muted-foreground" />
+              </span>
+              <span className="mt-1.5 flex items-baseline justify-between gap-2">
+                <span className="text-xl font-semibold leading-none tabular-nums">
+                  {activeMemberships}
+                </span>
+                <span className="truncate text-[10px] text-muted-foreground">
+                  Memberships across listed projects
+                </span>
+              </span>
+            </button>
+            <button
+              aria-pressed={metricFilter === 'no-lead'}
+              className={`rounded-lg border bg-card px-3 py-2 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${metricFilter === 'no-lead' ? 'border-primary/50 ring-1 ring-primary/15' : 'border-border'}`}
+              onClick={() => setMetricFilter(metricFilter === 'no-lead' ? 'all' : 'no-lead')}
+              type="button"
+            >
+              <span className="flex items-center gap-2">
+                <span className="grid size-7 place-items-center rounded-md bg-amber-500/10 text-amber-700">
+                  <AlertCircle className="size-4" />
+                </span>
+                <span className="truncate text-xs font-medium text-foreground">
+                  Projects without a lead
+                </span>
+                <ChevronRight className="ml-auto size-3.5 shrink-0 text-muted-foreground" />
+              </span>
+              <span className="mt-1.5 flex items-baseline justify-between gap-2">
+                <span className="text-xl font-semibold leading-none tabular-nums">
+                  {projectsWithoutLead}
+                </span>
+                <span className="truncate text-[10px] text-muted-foreground">
+                  Click to review ownership
+                </span>
+              </span>
+            </button>
+          </section>
+        )}
+        {directory.loading && (
+          <LoadingIndicator
+            variant="panel"
+            label="Loading projects"
+            className="py-10 text-center text-xs text-muted-foreground"
+          />
+        )}
+
+        {!directory.loading && directory.forbidden && (
+          <div
+            className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+            role="status"
+          >
+            <p className="text-sm font-bold text-foreground">Not available</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              You do not have permission to view projects.
+            </p>
+          </div>
+        )}
+
+        {!directory.loading && directory.error && !directory.forbidden && (
+          <div
+            className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+            role="alert"
+          >
+            <p className="text-sm font-bold text-foreground">Could not load projects</p>
+            <p className="mt-1 text-xs text-muted-foreground">{directory.error}</p>
+            <Button
+              className="mt-3"
+              onClick={() => void directory.refetch()}
+              size="sm"
+              type="button"
+              variant="outline"
+            >
+              Try again
+            </Button>
+          </div>
+        )}
+
+        {!directory.loading && !directory.error && filtered.length === 0 && (
+          <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
+            <p className="text-sm font-bold text-foreground">
+              {scope === 'mine' ? 'You have no allocations' : 'No projects yet'}
+            </p>
+            <p className="mx-auto mt-1 max-w-sm text-xs text-muted-foreground">
+              {search
+                ? 'No project matches this search.'
+                : scope === 'mine'
+                  ? 'You are not allocated to any project.'
+                  : 'No projects have been created for this organization.'}
+            </p>
+          </div>
+        )}
+
+        {!directory.loading &&
+          !directory.error &&
+          filtered.length > 0 &&
+          (viewMode === 'grid' ? (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((view) => (
+                <ProjectCard
+                  key={view.project.id}
+                  onClick={() => setSelectedProjectId(view.project.id)}
+                  view={view}
+                />
+              ))}
+            </div>
+          ) : (
+            <ProjectTable
+              onSelect={(view) => setSelectedProjectId(view.project.id)}
+              views={filtered}
+            />
+          ))}
+      </PageShell>
+
+      {selected && (
+        <ProjectDetailDrawer
+          directory={directory}
+          onClose={() => setSelectedProjectId(null)}
+          view={selected}
+        />
+      )}
+
+      <CreateProjectModal
+        branches={directory.branches}
+        employees={directory.employees}
+        existingNames={directory.projects.map((view) => view.project.name)}
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        onCreate={(input) => directory.createProject(input, [])}
+        saveError={directory.saveError}
+        saving={directory.saving}
+      />
+    </div>
+  );
+}

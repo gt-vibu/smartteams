@@ -1,3 +1,24 @@
+-- Snapshot and temporarily remove FORCE RLS from existing tables while this
+-- migration validates indexes, checks, and foreign keys against their rows.
+CREATE TEMP TABLE "_schema_review_forced_rls_tables" ("table_name" TEXT PRIMARY KEY) ON COMMIT DROP;
+INSERT INTO "_schema_review_forced_rls_tables" ("table_name")
+SELECT c.relname
+FROM pg_class c
+JOIN pg_namespace n ON n.oid = c.relnamespace
+WHERE n.nspname = 'public'
+  AND c.relkind = 'r'
+  AND c.relrowsecurity
+  AND c.relforcerowsecurity;
+
+DO $$
+DECLARE
+  forced_table TEXT;
+BEGIN
+  FOR forced_table IN SELECT t."table_name" FROM "_schema_review_forced_rls_tables" t LOOP
+    EXECUTE format('ALTER TABLE public.%I NO FORCE ROW LEVEL SECURITY', forced_table);
+  END LOOP;
+END $$;
+
 -- DropIndex
 DROP INDEX "federation_capabilities_code_key";
 
@@ -56,7 +77,14 @@ CREATE UNIQUE INDEX "federation_capabilities_code_version_key" ON "federation_ca
 CREATE UNIQUE INDEX "federation_grant_role_mappings_grant_id_priority_key" ON "federation_grant_role_mappings"("grant_id", "priority");
 
 -- AddForeignKey
+-- The initial schema deliberately forces RLS on this table. PostgreSQL performs
+-- the existing-row scan for a new foreign key under RLS, so temporarily allow
+-- the migration owner to bypass RLS while adding the constraint.
+ALTER TABLE "organization_federation_capabilities" NO FORCE ROW LEVEL SECURITY;
+
 ALTER TABLE "organization_federation_capabilities" ADD CONSTRAINT "organization_federation_capabilities_updated_by_user_id_fkey" FOREIGN KEY ("updated_by_user_id") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE "organization_federation_capabilities" FORCE ROW LEVEL SECURITY;
 
 -- Review-only PostgreSQL invariants that are not represented by Prisma.
 ALTER TABLE "organization_settings"
@@ -285,3 +313,12 @@ CREATE POLICY tenant_isolation_file_object_versions ON "file_object_versions"
         AND file_row.organization_id = nullif(current_setting('app.organization_id', true), '')::uuid
     )
   );
+
+DO $$
+DECLARE
+  forced_table TEXT;
+BEGIN
+  FOR forced_table IN SELECT t."table_name" FROM "_schema_review_forced_rls_tables" t LOOP
+    EXECUTE format('ALTER TABLE public.%I FORCE ROW LEVEL SECURITY', forced_table);
+  END LOOP;
+END $$;

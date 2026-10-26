@@ -1,0 +1,301 @@
+'use client';
+
+import React, { useState } from 'react';
+import { ArrowRight, Building2 } from 'lucide-react';
+import { LoadingIndicator, Button } from '@smarteam/ui';
+import {
+  employeeDisplayName,
+  employmentTypeLabel,
+  formatDate,
+} from '@smarteam/contracts';
+import { PersonAvatar } from '../common/person-avatar';
+import type {
+  DepartmentGroup,
+  useEmployeeDirectory,
+} from '../../hooks/use-employee-directory';
+import { statusLabel } from '../../lib/status-label';
+import { ReportingDirectoryBrowser } from './reporting-directory-browser';
+
+/**
+ * People, departments and the reporting line.
+ *
+ * All three were plain text — a table of identical rows, a bullet list, and a tree whose only
+ * structure was a thin left border. Correct and unreadable: every row looked the same, so finding
+ * a person meant reading all of them.
+ *
+ * They are cards now, each person carrying the initials chip they carry everywhere else. The
+ * people summary is page-bounded; reporting lines use a separate paged direct-report browser.
+ */
+
+type Directory = ReturnType<typeof useEmployeeDirectory>;
+
+/** How many rows a summary shows before handing off to the module that owns the full list. */
+const PREVIEW_LIMIT = 6;
+
+export function OrgPeoplePanel({
+  directory,
+  onNavigateModule,
+  view,
+}: {
+  directory: Directory;
+  onNavigateModule?: (module: string) => void;
+  view: 'directory' | 'departments' | 'reporting';
+}) {
+  if (directory.forbidden)
+    return (
+      <Notice
+        detail="You do not have permission to view the people in this organization."
+        title="Not available"
+      />
+    );
+
+  if (directory.loading)
+    return (
+      <LoadingIndicator variant="panel" label="Loading people" className="py-10 text-center text-xs text-muted-foreground" />
+    );
+
+  if (directory.error)
+    return <Notice detail={directory.error} role="alert" title="Could not load people" />;
+
+  if (view !== 'reporting' && directory.entries.length === 0)
+    return <Notice detail="No employees have been added yet." title="Nobody here yet" />;
+
+  return (
+    <div className="space-y-3">
+      {directory.truncated && (
+        <p className="rounded-md border border-border bg-muted/40 px-3 py-2 text-[11px] text-muted-foreground">
+          This view shows only the current page. Use the page controls below to see more people;
+          reporting lines can have managers on another page.
+        </p>
+      )}
+      {view === 'directory' && (
+        <DirectoryTable directory={directory} onNavigateModule={onNavigateModule} />
+      )}
+      {view === 'departments' && <Departments groups={directory.departments} />}
+      {view === 'reporting' && <ReportingDirectoryBrowser />}
+    </div>
+  );
+}
+
+function DirectoryTable({
+  directory,
+  onNavigateModule,
+}: {
+  directory: Directory;
+  onNavigateModule?: (module: string) => void;
+}) {
+  const [show, setShow] = useState<'ACTIVE' | 'FORMER' | 'ALL'>('ACTIVE');
+  const active = directory.entries.filter((entry) => entry.status === 'ACTIVE');
+  const former = directory.entries.filter((entry) => entry.status !== 'ACTIVE');
+  const shown = show === 'ACTIVE' ? active : show === 'FORMER' ? former : directory.entries;
+  // A summary, not the directory. The Employees screen owns the full roster and its actions.
+  const rows = shown.slice(0, PREVIEW_LIMIT);
+  const remaining = shown.length - rows.length;
+  const filters = [
+    { id: 'ACTIVE' as const, label: 'Active', count: active.length },
+    { id: 'FORMER' as const, label: 'Former', count: former.length },
+    { id: 'ALL' as const, label: 'All', count: directory.entries.length },
+  ];
+
+  return (
+    <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div
+        aria-label="Show"
+        className="flex gap-1.5 border-b border-border px-4 py-2.5"
+        role="tablist"
+      >
+        {filters.map((filter) => (
+          <button
+            aria-selected={show === filter.id}
+            className={`rounded-full border px-3 py-1 text-[11px] font-semibold transition-colors ${
+              show === filter.id
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border text-muted-foreground hover:text-foreground'
+            }`}
+            key={filter.id}
+            onClick={() => setShow(filter.id)}
+            role="tab"
+            type="button"
+          >
+            {filter.label} ({filter.count})
+          </button>
+        ))}
+      </div>
+      <div className="overflow-x-auto">
+        <table className="stack-table w-full min-w-[760px] text-left text-xs">
+          <thead>
+            <tr className="border-b border-border bg-table-header text-[10px] uppercase tracking-wider text-muted-foreground">
+              <th className="px-4 py-2.5 font-bold">Name</th>
+              <th className="px-4 py-2.5 font-bold">Employee ID</th>
+              <th className="px-4 py-2.5 font-bold">Department</th>
+              <th className="px-4 py-2.5 font-bold">Type</th>
+              <th className="px-4 py-2.5 font-bold">Joined</th>
+              <th className="px-4 py-2.5 font-bold">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((entry) => (
+              <tr
+                className="border-b border-border transition-colors last:border-0 hover:bg-muted/40"
+                key={entry.id}
+              >
+                {/* Name and job title in one cell: they are one fact about a person, and splitting
+                  them across columns left the title column half empty for anyone without one. */}
+                <td data-cell="primary" className="px-4 py-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <PersonAvatar name={employeeDisplayName(entry)} size="sm" />
+                    <div className="min-w-0">
+                      <div className="truncate font-semibold text-foreground">
+                        {employeeDisplayName(entry)}
+                      </div>
+                      {entry.jobTitle && (
+                        <div className="truncate text-[11px] text-muted-foreground">
+                          {entry.jobTitle}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </td>
+                <td
+                  data-bare=""
+                  data-label="Employee ID"
+                  className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
+                >
+                  {entry.employeeNumber}
+                </td>
+                <td
+                  data-bare=""
+                  data-label="Department"
+                  className="px-4 py-2.5 text-muted-foreground"
+                >
+                  {entry.department ?? '—'}
+                </td>
+                <td data-bare="" data-label="Type" className="px-4 py-2.5 text-muted-foreground">
+                  {employmentTypeLabel(entry.employmentType)}
+                </td>
+                <td data-label="Joined" className="px-4 py-2.5 tabular-nums text-muted-foreground">
+                  {entry.dateOfJoining ? formatDate(entry.dateOfJoining) : '—'}
+                </td>
+                <td data-cell="status" data-label="Status" className="px-4 py-2.5">
+                  <StatusPill status={entry.status} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-2.5">
+        <span className="text-[11px] text-muted-foreground">
+          {remaining > 0
+            ? `Showing ${rows.length} of ${shown.length}`
+            : `${shown.length} ${shown.length === 1 ? 'person' : 'people'}`}
+        </span>
+        <Button
+          className="h-auto gap-1 px-2 py-1 text-[11px]"
+          onClick={() => onNavigateModule?.('employees')}
+          size="sm"
+          type="button"
+          variant="ghost"
+        >
+          Manage people
+          <ArrowRight aria-hidden="true" className="h-3 w-3" strokeWidth={2} />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function Departments({ groups }: { groups: DepartmentGroup[] }) {
+  return (
+    <div className="space-y-3">
+      <p className="text-[11px] text-muted-foreground">
+        Grouped from the department recorded on each employment record. There is no department
+        entity, so one exists exactly as long as someone is in it.
+      </p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {groups.slice(0, PREVIEW_LIMIT).map((group) => (
+          <section
+            className="flex flex-col rounded-xl border border-border bg-card p-4"
+            key={group.name}
+          >
+            <div className="flex items-center gap-2.5">
+              <span
+                aria-hidden="true"
+                className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary"
+              >
+                <Building2 className="h-[18px] w-[18px]" strokeWidth={1.75} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h3 className="truncate text-xs font-bold text-foreground">{group.name}</h3>
+                <p className="text-[11px] text-muted-foreground">
+                  {group.members.length} {group.members.length === 1 ? 'person' : 'people'}
+                </p>
+              </div>
+            </div>
+
+            <ul className="mt-3 space-y-2 border-t border-border pt-3">
+              {group.members.slice(0, 6).map((member) => (
+                <li className="flex items-center gap-2" key={member.id}>
+                  <PersonAvatar name={employeeDisplayName(member)} size="sm" />
+                  <div className="min-w-0">
+                    <div className="truncate text-[11px] font-semibold text-foreground">
+                      {employeeDisplayName(member)}
+                    </div>
+                    <div className="truncate text-[10px] text-muted-foreground">
+                      {member.jobTitle ?? 'No job title'}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            {group.members.length > 6 && (
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                and {group.members.length - 6} more
+              </p>
+            )}
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Status as a shape as well as a word, so "terminated" is visible in a long list without being
+ * read. Semantic colour, kept away from the accent used for category marks.
+ */
+function StatusPill({ status }: { status: string }) {
+  const tone =
+    status === 'ACTIVE'
+      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+      : status === 'TERMINATED'
+        ? 'bg-destructive/10 text-destructive'
+        : 'bg-muted text-muted-foreground';
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize ${tone}`}
+    >
+      {statusLabel(status)}
+    </span>
+  );
+}
+
+function Notice({
+  detail,
+  role = 'status',
+  title,
+}: {
+  detail: string;
+  role?: 'status' | 'alert';
+  title: string;
+}) {
+  return (
+    <div
+      className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center"
+      role={role}
+    >
+      <p className="text-sm font-bold text-foreground">{title}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{detail}</p>
+    </div>
+  );
+}

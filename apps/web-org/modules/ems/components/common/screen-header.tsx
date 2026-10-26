@@ -1,0 +1,64 @@
+'use client';
+
+import React from 'react';
+import type { LucideIcon } from 'lucide-react';
+import type { TileTone } from './module-tile';
+
+/**
+ * The heading every screen opens with.
+ *
+ * Each screen previously wrote its own `<h1>` and subtitle, which drifted: some had an action
+ * button beside them and some below, spacing varied, and none carried anything to recognise a
+ * page by. The icon chip is the same device the module tiles use, so arriving at a screen from a
+ * tile lands on the same mark you just clicked.
+ *
+ * `actions` sits opposite the title and wraps beneath it on a narrow viewport rather than
+ * squeezing the heading.
+ */
+
+const TONES: Record<TileTone, string> = {
+  primary: 'bg-primary/10 text-primary',
+  accent: 'bg-primary/10 text-primary',
+  success: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+  warning: 'bg-amber-500/10 text-amber-600 dark:text-amber-500',
+  neutral: 'bg-muted text-muted-foreground',
+};
+
+export function ScreenHeader({
+  actions,
+  description,
+  icon: HeaderIcon,
+  title,
+  tone = 'neutral',
+}: {
+  actions?: React.ReactNode;
+  /** Only for something the title does not already say, such as a count. */
+  description?: string;
+  icon: LucideIcon;
+  title: string;
+  tone?: TileTone;
+}) {
+  return (
+    <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className={`flex min-w-0 gap-3 ${description ? 'items-start' : 'items-center'}`}>
+        <span
+          aria-hidden="true"
+          className={`grid size-10 shrink-0 place-items-center rounded-lg ${TONES[tone]}`}
+        >
+          <HeaderIcon className="h-[18px] w-[18px]" strokeWidth={1.75} />
+        </span>
+        <div className="min-w-0">
+          <h1 className="text-xl font-semibold leading-tight tracking-[-0.025em] text-foreground sm:text-2xl">
+            {title}
+          </h1>
+          {description && (
+            <p className="mt-1 max-w-[60ch] text-sm leading-5 text-muted-foreground">
+              {description}
+            </p>
+          )}
+        </div>
+      </div>
+      {actions}
+    </div>
+  );
+}

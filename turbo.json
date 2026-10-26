@@ -8,7 +8,7 @@
     "clean": { "cache": false },
     "dev": { "cache": false, "persistent": true },
     "lint": { "dependsOn": ["^build"], "outputs": [] },
-    "test": { "dependsOn": ["^build"], "outputs": ["coverage/**"] },
+    "test": { "dependsOn": ["^build"], "outputs": [] },
     "typecheck": { "dependsOn": ["^build"], "outputs": [] }
   }
 }

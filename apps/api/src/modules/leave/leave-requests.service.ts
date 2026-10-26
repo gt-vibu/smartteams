@@ -1,0 +1,543 @@
+import { formatDateRange } from '@smarteam/contracts';
+import { Injectable } from '@nestjs/common';
+import { Prisma } from '../../generated/prisma/client';
+import type { AccessMode } from '../../generated/prisma/enums';
+import { LeaveBalanceTransactionType } from '../../generated/prisma/enums';
+import { LeaveRequestStatus } from '../../generated/prisma/enums';
+import { requirePermission, type DomainContext } from '../../common/context/domain-context';
+import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
+import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import { resolveActingEmployeeId } from '../employees/employee-scope';
+import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { OutboxService } from '../federation/outbox.service';
+import { assertResolvableApprovers, canApprove } from '../approvals/approval-authorization';
+import { describeDays, notify, requesterRouting, stepApprovers } from '../notifications/notify';
+import {
+  canReadAllEmployees,
+  decodeLeaveCursor,
+  dateOnly,
+  employeeScope,
+  encodeLeaveCursor,
+  leavePeriod,
+  selfEmployee,
+  toRequestDto,
+} from './leave-shared';
+import { ledger, leaveCalendarDays, provisionBalance } from './leave-balance-ops';
+
+/**
+ * Raising leave requests, and the two lists that show them.
+ *
+ * Creating a request is the heavy path: it validates the dates against the calendar, reserves
+ * against the balance, resolves the approval chain and publishes to the outbox. Deciding on one
+ * afterwards is a different concern and lives in `LeaveDecisionsService`.
+ */
+/** What a caller supplies to raise a leave request. Exported so the controller can name it. */
+export type LeaveRequestInput = {
+  employeeId: string;
+  leaveTypeId: string;
+  startDate: string;
+  endDate: string;
+  reason?: string;
+  branchId?: string;
+  externalId?: string;
+  attachmentIds?: string[];
+  session?: 'FULL_DAY' | 'FIRST_HALF' | 'SECOND_HALF';
+  source: AccessMode;
+};
+
+/**
+ * What the approver wrote on each decided request, latest decision first, for the app only: the
+ * requester is told why, and a partner integration's response keeps the shape it had.
+ */
+async function decisionComments(
+  tx: Prisma.TransactionClient,
+  context: DomainContext,
+  requests: ReadonlyArray<{ id: string }>,
+) {
+  if (context.accessMode !== 'NATIVE' || requests.length === 0) return null;
+  const decided = await tx.leaveApproval.findMany({
+    where: {
+      organizationId: context.organizationId,
+      leaveRequestId: { in: requests.map((request) => request.id) },
+      comment: { not: null },
+      decidedAt: { not: null },
+    },
+    orderBy: { decidedAt: 'desc' },
+    select: { leaveRequestId: true, comment: true },
+  });
+  const latest = new Map<string, string>();
+  for (const row of decided)
+    if (row.comment && !latest.has(row.leaveRequestId)) latest.set(row.leaveRequestId, row.comment);
+  return latest;
+}
+
+@Injectable()
+export class LeaveRequestsService {
+  constructor(
+    private readonly database: TenantDatabaseService,
+    private readonly audit: AuditService,
+    private readonly outbox: OutboxService,
+  ) {}
+
+  async adminSummary(context: DomainContext) {
+    requirePermission(context, 'leave.requests.read.all');
+    const now = new Date();
+    const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+    const nextMonthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+    const branchScope = context.branchId ? { branchId: context.branchId } : {};
+
+    return this.database.run(context, async (tx) => {
+      const [pending, approvedThisMonth, onLeaveToday, touchingMonth] = await Promise.all([
+        tx.leaveRequest.count({
+          where: {
+            organizationId: context.organizationId,
+            status: LeaveRequestStatus.PENDING,
+            ...branchScope,
+          },
+        }),
+        tx.leaveRequest.count({
+          where: {
+            organizationId: context.organizationId,
+            status: LeaveRequestStatus.APPROVED,
+            decidedAt: { gte: monthStart, lt: nextMonthStart },
+            ...branchScope,
+          },
+        }),
+        tx.leaveRequest.findMany({
+          where: {
+            organizationId: context.organizationId,
+            status: LeaveRequestStatus.APPROVED,
+            startDate: { lte: today },
+            endDate: { gte: today },
+            ...branchScope,
+          },
+          select: { employeeId: true },
+          distinct: ['employeeId'],
+        }),
+        tx.leaveRequest.aggregate({
+          where: {
+            organizationId: context.organizationId,
+            status: LeaveRequestStatus.APPROVED,
+            startDate: { lt: nextMonthStart },
+            endDate: { gte: monthStart },
+            ...branchScope,
+          },
+          _sum: { requestedDays: true },
+        }),
+      ]);
+
+      return {
+        pending,
+        approvedThisMonth,
+        employeesOnLeaveToday: onLeaveToday.length,
+        approvedDaysTouchingMonth: Number(touchingMonth._sum.requestedDays ?? 0),
+        month: `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`,
+        asOf: today.toISOString().slice(0, 10),
+      };
+    });
+  }
+
+  async listRequests(
+    context: DomainContext,
+    requestedEmployeeId?: string,
+    pagination: {
+      cursor?: string;
+      limit?: number;
+      status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
+      search?: string;
+      departmentId?: string;
+      from?: string;
+      to?: string;
+    } = {},
+  ) {
+    requirePermission(context, 'leave.requests.read');
+    return this.database.run(context, async (tx) => {
+      let employeeId = requestedEmployeeId;
+      if (!canReadAllEmployees(context, 'leave.requests.read.all')) {
+        const self = await selfEmployee(tx, context);
+        if (!self) return { requests: [], nextCursor: undefined };
+        if (employeeId && employeeId !== self.id)
+          throw new ConflictError('Employees may only read their own leave requests');
+        employeeId = self.id;
+      }
+      const cursorId = pagination.cursor ? decodeLeaveCursor(pagination.cursor) : undefined;
+      const limit = Math.min(pagination.limit ?? 100, 500);
+      // The native workspace exposes these filters. Keep partner reads on the original
+      // employee/cursor contract unless the native controller explicitly supplies them.
+      const nativeFilters = context.accessMode === 'NATIVE' ? pagination : {};
+      const searchTerms = nativeFilters.search?.trim().split(/\s+/).filter(Boolean) ?? [];
+      const requests = await tx.leaveRequest.findMany({
+        where: {
+          organizationId: context.organizationId,
+          employeeId,
+          ...(nativeFilters.status ? { status: nativeFilters.status } : {}),
+          ...(nativeFilters.from || nativeFilters.to
+            ? {
+                ...(nativeFilters.to ? { startDate: { lte: dateOnly(nativeFilters.to) } } : {}),
+                ...(nativeFilters.from ? { endDate: { gte: dateOnly(nativeFilters.from) } } : {}),
+              }
+            : {}),
+          ...(nativeFilters.departmentId
+            ? { employee: { departmentId: nativeFilters.departmentId } }
+            : {}),
+          ...(searchTerms.length
+            ? {
+                employee: {
+                  ...(nativeFilters.departmentId
+                    ? { departmentId: nativeFilters.departmentId }
+                    : {}),
+                  AND: searchTerms.map((term) => ({
+                    OR: ['firstName', 'lastName', 'employeeNumber', 'workEmail'].map((field) => ({
+                      [field]: { contains: term, mode: 'insensitive' as const },
+                    })),
+                  })),
+                },
+              }
+            : {}),
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
+        ...(cursorId ? { cursor: { id: cursorId }, skip: 1 } : {}),
+        orderBy: [{ startDate: 'desc' }, { id: 'desc' }],
+        take: limit + 1,
+        include: { employee: { select: { externalId: true } } },
+      });
+      const hasNextPage = requests.length > limit;
+      const page = requests.slice(0, limit);
+      const comments = await decisionComments(tx, context, page);
+      return {
+        requests: page.map(({ employee, ...request }) => ({
+          ...request,
+          externalEmployeeId: employee.externalId,
+          ...(comments ? { decisionComment: comments.get(request.id) ?? null } : {}),
+        })),
+        nextCursor: hasNextPage ? encodeLeaveCursor(page.at(-1)?.id) : undefined,
+      };
+    });
+  }
+
+  async listPendingApprovals(context: DomainContext, approverUserId: string) {
+    requirePermission(context, 'leave.requests.read');
+    return this.database.run(context, async (tx) => {
+      const requests = await tx.leaveRequest.findMany({
+        where: {
+          organizationId: context.organizationId,
+          status: LeaveRequestStatus.PENDING,
+          ...(context.branchId ? { branchId: context.branchId } : {}),
+        },
+        include: {
+          leaveType: { select: { id: true, code: true, name: true, paid: true } },
+          employee: {
+            select: {
+              id: true,
+              externalId: true,
+              employeeNumber: true,
+              firstName: true,
+              lastName: true,
+              userId: true,
+              manager: { select: { userId: true } },
+            },
+          },
+          branch: { select: { id: true, code: true, name: true } },
+          approvals: true,
+          approvalPolicy: { include: { steps: { orderBy: { stepNumber: 'asc' } } } },
+        },
+        orderBy: [{ submittedAt: 'asc' }, { id: 'asc' }],
+        take: 500,
+      });
+      const items = [];
+      for (const request of requests) {
+        const pendingStep = request.approvalPolicy?.steps.find(
+          (step) => !request.approvals.some((approval) => approval.stepNumber === step.stepNumber),
+        );
+        if (
+          !pendingStep ||
+          !(await canApprove(
+            tx,
+            context.organizationId,
+            approverUserId,
+            request.employee.manager?.userId,
+            pendingStep.approverType,
+            pendingStep.roleId,
+            pendingStep.approverUserId,
+            request.branchId ?? context.branchId,
+            request.employee.userId,
+          ))
+        )
+          continue;
+        items.push({
+          ...toRequestDto(request),
+          externalEmployeeId: request.employee.externalId,
+          employee: {
+            id: request.employee.id,
+            externalId: request.employee.externalId,
+            employeeNumber: request.employee.employeeNumber,
+            firstName: request.employee.firstName,
+            lastName: request.employee.lastName,
+          },
+          branch: request.branch,
+          leaveType: request.leaveType,
+          reason: request.reason,
+          submittedAt: request.submittedAt,
+          currentStep: {
+            stepNumber: pendingStep.stepNumber,
+            approverType: pendingStep.approverType,
+            roleId: pendingStep.roleId,
+            approverUserId: pendingStep.approverUserId,
+          },
+        });
+      }
+      return { requests: items };
+    });
+  }
+
+  async createRequest(context: DomainContext, input: LeaveRequestInput) {
+    requirePermission(context, 'leave.requests.write');
+    return this.database.run(context, async (tx) => {
+      const start = dateOnly(input.startDate);
+      const end = dateOnly(input.endDate);
+      if (end < start) throw new ConflictError('Leave end date must not precede start date');
+      // `leave.requests.write` is a self-service permission, so the employee a request is booked
+      // against comes from the session unless the caller can see everyone's leave.
+      const employeeId = await resolveActingEmployeeId(
+        tx,
+        context,
+        input.employeeId,
+        'leave.requests.read.all',
+      );
+      const [employee, type, settings] = await Promise.all([
+        tx.employee.findFirst({
+          where: {
+            id: employeeId,
+            organizationId: context.organizationId,
+            status: 'ACTIVE',
+            ...(context.branchId ? employeeScope(context) : {}),
+          },
+          include: { manager: { select: { userId: true } } },
+        }),
+        tx.leaveType.findFirst({
+          where: { id: input.leaveTypeId, organizationId: context.organizationId, isActive: true },
+        }),
+        tx.organizationSettings.findUniqueOrThrow({
+          where: { organizationId: context.organizationId },
+        }),
+      ]);
+      if (!employee) throw new NotFoundError('Active employee');
+      if (!type) throw new NotFoundError('Leave type');
+      // One day cannot be taken off twice: a request touching a day already asked for or
+      // granted is refused, whichever type it was. Native requests only; what federation
+      // partners may send is a frozen contract.
+      // Held until the transaction ends, so two requests sent at once are checked one after the
+      // other rather than both passing the lookup below.
+      if (input.source === 'NATIVE')
+        await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${`leave:${employee.id}`}, 0))`;
+      const session = input.session ?? 'FULL_DAY';
+      const clashes =
+        input.source === 'NATIVE' &&
+        (await tx.leaveRequest.findMany({
+          where: {
+            organizationId: context.organizationId,
+            employeeId: employee.id,
+            status: { in: ['PENDING', 'APPROVED'] },
+            startDate: { lte: end },
+            endDate: { gte: start },
+          },
+          select: { startDate: true, endDate: true, status: true, session: true },
+        }));
+      const clash =
+        clashes &&
+        clashes.find((existing) => {
+          const sameSingleDate =
+            start.getTime() === end.getTime() &&
+            existing.startDate.getTime() === existing.endDate.getTime() &&
+            existing.startDate.getTime() === start.getTime();
+          const oppositeHalfDays =
+            sameSingleDate &&
+            session !== 'FULL_DAY' &&
+            existing.session !== 'FULL_DAY' &&
+            existing.session !== session;
+          return !oppositeHalfDays;
+        });
+      if (clash)
+        throw new ConflictError(
+          `Your leave for ${formatDateRange(clash.startDate, clash.endDate)} is already ` +
+            `${clash.status.toLowerCase()} and covers some of these days.`,
+        );
+      const branchId = context.branchId ?? input.branchId ?? employee.primaryBranchId;
+      if (!branchId) throw new ConflictError('An employee branch is required for leave requests');
+      if (
+        input.branchId &&
+        !(await tx.branch.findFirst({
+          where: { id: input.branchId, organizationId: context.organizationId },
+        }))
+      )
+        throw new NotFoundError('Branch');
+      if (session !== 'FULL_DAY' && start.getTime() !== end.getTime())
+        throw new ConflictError('A half-day request must use one working date');
+      const calendarDays = await leaveCalendarDays(
+        tx,
+        context.organizationId,
+        branchId,
+        start,
+        end,
+        settings.workWeekDays,
+        employee.id,
+        type.sandwichOffDays,
+      );
+      if (
+        input.source === 'NATIVE' &&
+        session === 'FULL_DAY' &&
+        (!calendarDays[0]?.counted || !calendarDays.at(-1)?.counted)
+      )
+        throw new ConflictError('Leave request must start and end on working days');
+      const countedDays = calendarDays.filter((day) => day.counted).length;
+      const days = session === 'FULL_DAY' ? countedDays : countedDays > 0 ? 0.5 : 0;
+      if (days <= 0) throw new ConflictError('Leave request must contain at least one working day');
+      if (type.requiresAttachment && !input.attachmentIds?.length)
+        throw new ConflictError('This leave type requires supporting attachment');
+      if (input.attachmentIds?.length) {
+        const count = await tx.fileObject.count({
+          where: {
+            id: { in: input.attachmentIds },
+            organizationId: context.organizationId,
+            employeeId: employee.id,
+            purpose: 'LEAVE_ATTACHMENT',
+            status: 'AVAILABLE',
+            deletedAt: null,
+          },
+        });
+        if (count !== input.attachmentIds.length)
+          throw new ConflictError('Every leave attachment must be an available tenant file');
+      }
+      const assignment = await tx.leavePolicyAssignment.findFirst({
+        where: { organizationId: context.organizationId, branchId, leaveTypeId: type.id },
+      });
+      if (!assignment)
+        throw new ConflictError('This leave policy is not assigned to the employee branch');
+      await provisionBalance(tx, context, employee.id, type, settings.leaveYearStartMonth, start);
+      const balance = await tx.leaveBalance.findUnique({
+        where: {
+          employeeId_leaveTypeId_periodStart_periodEnd: {
+            employeeId: employee.id,
+            leaveTypeId: type.id,
+            ...leavePeriod(start, settings.leaveYearStartMonth),
+          },
+        },
+      });
+      if (!balance) throw new NotFoundError('Leave balance');
+      const available = Number(balance.availableAmount);
+      if (available < days)
+        // A partner integration matches on the original wording, so only the app says more.
+        throw new ConflictError(
+          input.source === 'NATIVE'
+            ? `This needs ${days} ${days === 1 ? 'day' : 'days'} of ${type.name}; ` +
+                `${available} ${available === 1 ? 'is' : 'are'} available.`
+            : 'Leave balance is insufficient',
+        );
+      const activePolicies = await tx.approvalPolicy.findMany({
+        where: {
+          organizationId: context.organizationId,
+          domain: 'LEAVE',
+          isActive: true,
+        },
+        include: { steps: { orderBy: { stepNumber: 'asc' } } },
+        orderBy: [{ isDefault: 'desc' }, { createdAt: 'asc' }],
+      });
+      const policy =
+        activePolicies.find((candidate) => candidate.isDefault) ??
+        (activePolicies.length === 1 ? activePolicies[0] : undefined);
+      if (!policy)
+        throw new ConflictError(
+          'Configure a default leave approval policy before submitting leave requests',
+        );
+      await assertResolvableApprovers(
+        tx,
+        context.organizationId,
+        branchId,
+        employee.manager?.userId,
+        employee.userId,
+        policy.steps,
+      );
+      const request = await tx.leaveRequest.create({
+        data: {
+          organizationId: context.organizationId,
+          employeeId: employee.id,
+          branchId,
+          leaveTypeId: type.id,
+          approvalPolicyId: policy.id,
+          startDate: start,
+          endDate: end,
+          requestedDays: new Prisma.Decimal(days),
+          session,
+          reason: input.reason,
+          status: LeaveRequestStatus.PENDING,
+          sourceAccessMode: input.source,
+          externalId: input.externalId,
+          submittedAt: new Date(),
+        },
+      });
+      if (input.attachmentIds?.length)
+        await tx.fileObject.updateMany({
+          where: { id: { in: input.attachmentIds }, organizationId: context.organizationId },
+          data: { leaveRequestId: request.id },
+        });
+      const reserved = await tx.leaveBalance.updateMany({
+        where: { id: balance.id, availableAmount: { gte: days } },
+        data: {
+          reservedAmount: { increment: days },
+          availableAmount: { decrement: days },
+          version: { increment: 1 },
+        },
+      });
+      if (reserved.count !== 1) throw new ConflictError('Leave balance is insufficient');
+      await ledger(tx, context, balance.id, {
+        transactionType: LeaveBalanceTransactionType.RESERVATION,
+        amount: new Prisma.Decimal(days),
+        reason: `Reserved for leave request ${request.id}`,
+        leaveRequestId: request.id,
+      });
+      await this.audit.record(
+        context,
+        {
+          entityType: 'LEAVE_REQUEST',
+          entityId: request.id,
+          action: 'LEAVE_REQUEST_SUBMITTED',
+          afterState: jsonSnapshot(request),
+        },
+        tx,
+      );
+      await this.outbox.append(
+        context,
+        {
+          aggregateType: 'LeaveRequest',
+          aggregateId: request.id,
+          aggregateVersion: request.version,
+          eventType: 'leave.request.submitted',
+          payload: jsonSnapshot(toRequestDto(request, days)),
+        },
+        tx,
+      );
+      // Whoever can decide the first step hears about it now.
+      const firstStep = policy.steps[0];
+      if (firstStep) {
+        const requester = await requesterRouting(tx, context.organizationId, employee.id);
+        await notify(tx, context, {
+          recipients: await stepApprovers(
+            tx,
+            context.organizationId,
+            firstStep,
+            requester,
+            branchId,
+          ),
+          kind: 'LEAVE_PENDING',
+          title: 'Leave request awaiting your decision',
+          body: `${requester.name} asked for ${type.name} on ${describeDays(start, end)} (${days} day${days === 1 ? '' : 's'}).`,
+          module: 'approvals',
+          entityType: 'LEAVE_REQUEST',
+          entityId: request.id,
+        });
+      }
+      return toRequestDto(request, days);
+    });
+  }
+}

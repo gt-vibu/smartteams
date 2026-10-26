@@ -1,0 +1,365 @@
+'use client';
+import { EmployeeCombobox } from '../common/employee-combobox';
+
+import React, { useEffect, useState } from 'react';
+import {
+  Button,
+  DatePicker,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Input,
+  Label,
+  TimePicker,
+} from '@smarteam/ui';
+import type { Shift } from '@smarteam/contracts';
+import type { ShiftsState } from '../../hooks/use-shifts';
+import { LIMITS, textProblem } from '@smarteam/contracts';
+
+const WEEKDAYS = [
+  { value: 1, label: 'Mon' },
+  { value: 2, label: 'Tue' },
+  { value: 3, label: 'Wed' },
+  { value: 4, label: 'Thu' },
+  { value: 5, label: 'Fri' },
+  { value: 6, label: 'Sat' },
+  { value: 7, label: 'Sun' },
+];
+
+/** Creates or edits a shift. Times are `HH:MM`, which is what the API stores. */
+export function ShiftDialog({
+  shifts,
+  shift,
+  template,
+  open,
+  onOpenChange,
+}: {
+  shifts: ShiftsState;
+  shift: Shift | null;
+  template?: Shift | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const [name, setName] = useState('');
+  const [daysOfWeek, setDaysOfWeek] = useState<number[]>([1, 2, 3, 4, 5]);
+  const [startsAt, setStartsAt] = useState('09:00');
+  const [endsAt, setEndsAt] = useState('18:00');
+  const [breakMinutes, setBreakMinutes] = useState('60');
+  const [problem, setProblem] = useState('');
+
+  useEffect(() => {
+    if (!open) return;
+    const source = shift ?? template;
+    setName(shift?.name ?? (template ? `${template.name} (new schedule)` : ''));
+    setDaysOfWeek(source?.daysOfWeek ?? [1, 2, 3, 4, 5]);
+    setStartsAt(source ? source.startsAt.slice(0, 5) : '09:00');
+    setEndsAt(source ? source.endsAt.slice(0, 5) : '18:00');
+    setBreakMinutes(String(source?.breakMinutes ?? 60));
+    setProblem('');
+  }, [open, shift, template]);
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!name.trim() || daysOfWeek.length === 0) {
+      setProblem(!name.trim() ? 'Enter a shift name.' : 'Choose at least one working day.');
+      return;
+    }
+    setProblem('');
+    // A shift ending before it starts runs past midnight; the backend needs that stated.
+    const crossesMidnight = endsAt <= startsAt;
+    const input = {
+      name: name.trim(),
+      ...((shift ?? template)?.branchId ? { branchId: (shift ?? template)!.branchId! } : {}),
+      ...(template && !shift && template.breakRules
+        ? {
+            breakRules: template.breakRules.map(({ name, durationMinutes, isPaid, sequence }) => ({
+              name,
+              durationMinutes,
+              isPaid,
+              sequence,
+            })),
+          }
+        : {}),
+      daysOfWeek: [...daysOfWeek].sort((a, b) => a - b),
+      startsAt,
+      endsAt,
+      crossesMidnight,
+      breakMinutes: Number(breakMinutes) || 0,
+    };
+    const ok = shift ? await shifts.updateShift(shift.id, input) : await shifts.createShift(input);
+    if (ok) onOpenChange(false);
+  };
+
+  return (
+    <Dialog onOpenChange={onOpenChange} open={open}>
+      <DialogContent className="sm:max-w-md">
+        <DialogTitle>{shift ? 'Edit shift' : 'New shift'}</DialogTitle>
+        <form className="mt-4 space-y-3" onSubmit={submit}>
+          <div className="grid gap-3">
+            <div>
+              <Label className="mb-1 block" htmlFor="shift-name">
+                Name
+              </Label>
+              <Input
+                maxLength={LIMITS.title}
+                problem={textProblem(name, 'Shift name', LIMITS.title, 2)}
+                disabled={shifts.saving}
+                id="shift-name"
+                onChange={(event) => setName(event.target.value)}
+                value={name}
+              />
+            </div>
+          </div>
+
+          <fieldset>
+            <legend className="mb-1 text-xs font-semibold text-foreground">Working days</legend>
+            <div className="flex flex-wrap gap-1.5">
+              {WEEKDAYS.map((day) => {
+                const on = daysOfWeek.includes(day.value);
+                return (
+                  <Button
+                    className={`px-3 ${on ? '' : 'text-muted-foreground'}`}
+                    key={day.value}
+                    onClick={() =>
+                      setDaysOfWeek(
+                        on
+                          ? daysOfWeek.filter((entry) => entry !== day.value)
+                          : [...daysOfWeek, day.value],
+                      )
+                    }
+                    size="sm"
+                    type="button"
+                    variant={on ? 'default' : 'outline'}
+                  >
+                    {day.label}
+                  </Button>
+                );
+              })}
+            </div>
+          </fieldset>
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div>
+              <Label className="mb-1 block" htmlFor="shift-start">
+                Starts
+              </Label>
+              <TimePicker
+                disabled={shifts.saving}
+                id="shift-start"
+                onChange={setStartsAt}
+                value={startsAt}
+                placeholder="Select start"
+              />
+            </div>
+            <div>
+              <Label className="mb-1 block" htmlFor="shift-end">
+                Ends
+              </Label>
+              <TimePicker
+                disabled={shifts.saving}
+                id="shift-end"
+                onChange={setEndsAt}
+                value={endsAt}
+                placeholder="Select end"
+              />
+            </div>
+            <div>
+              <Label className="mb-1 block" htmlFor="shift-break">
+                Break (min)
+              </Label>
+              <Input
+                min={0}
+                max={720}
+                step={1}
+                disabled={shifts.saving}
+                id="shift-break"
+                inputMode="numeric"
+                onChange={(event) => setBreakMinutes(event.target.value)}
+                type="number"
+                value={breakMinutes}
+              />
+            </div>
+          </div>
+
+          {endsAt <= startsAt && (
+            <p className="text-[11px] text-muted-foreground">
+              This shift ends on the following day and will be saved as crossing midnight.
+            </p>
+          )}
+
+          {(problem || shifts.saveError) && (
+            <p className="text-xs text-destructive" role="alert">
+              {problem || shifts.saveError}
+            </p>
+          )}
+
+          <div className="flex justify-end gap-2">
+            <Button
+              disabled={shifts.saving}
+              onClick={() => onOpenChange(false)}
+              type="button"
+              variant="outline"
+            >
+              Cancel
+            </Button>
+            <Button disabled={shifts.saving} type="submit">
+              {shifts.saving ? 'Saving…' : 'Save'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Assigns a shift to an employee for a period. */
+export function AssignShiftDialog({
+  shifts,
+  shift,
+  open,
+  onOpenChange,
+}: {
+  shifts: ShiftsState;
+  shift: Shift | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const [employeeId, setEmployeeId] = useState('');
+  const [startsOn, setStartsOn] = useState('');
+  const [endsOn, setEndsOn] = useState('');
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!shift || !employeeId || !startsOn) return;
+    const ok = await shifts.assignShift(employeeId, {
+      shiftId: shift.id,
+      startsOn,
+      ...(endsOn ? { endsOn } : {}),
+    });
+    if (ok) {
+      setEmployeeId('');
+      setStartsOn('');
+      setEndsOn('');
+      onOpenChange(false);
+    }
+  };
+
+  return (
+    <Dialog onOpenChange={onOpenChange} open={open}>
+      <DialogContent className="sm:max-w-md">
+        <DialogTitle>Assign {shift?.name ?? 'shift'}</DialogTitle>
+        <p className="mt-1 text-xs text-muted-foreground">
+          An employee cannot hold two shifts over the same dates; the server refuses an overlap.
+        </p>
+        <form className="mt-4 space-y-3" onSubmit={submit}>
+          <div>
+            <Label className="mb-1 block">Employee</Label>
+            <EmployeeCombobox
+              employees={[]}
+              value={employeeId}
+              onChange={setEmployeeId}
+              disabled={shifts.saving}
+            />
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <Label className="mb-1 block" htmlFor="assignment-starts">
+                Starts on
+              </Label>
+              <DatePicker
+                disabled={shifts.saving}
+                id="assignment-starts"
+                max={endsOn || undefined}
+                onChange={setStartsOn}
+                value={startsOn}
+              />
+            </div>
+            <div>
+              <Label className="mb-1 block" htmlFor="assignment-ends">
+                Ends on
+              </Label>
+              <DatePicker
+                disabled={shifts.saving}
+                id="assignment-ends"
+                min={startsOn || undefined}
+                onChange={setEndsOn}
+                placeholder="Open ended"
+                value={endsOn}
+              />
+            </div>
+          </div>
+          {shifts.saveError && (
+            <p className="text-xs text-destructive" role="alert">
+              {shifts.saveError}
+              {/must not overlap/i.test(shifts.saveError) &&
+                '. End their current assignment first: open People on the shift they are on and choose End, on their last day before this one starts.'}
+            </p>
+          )}
+          <div className="flex justify-end gap-2">
+            <Button
+              disabled={shifts.saving}
+              onClick={() => onOpenChange(false)}
+              type="button"
+              variant="outline"
+            >
+              Cancel
+            </Button>
+            <Button disabled={shifts.saving || !employeeId || !startsOn} type="submit">
+              {shifts.saving ? 'Assigning...' : 'Assign'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Retires a shift. The action and before/after state are recorded in the audit trail. */
+export function RetireShiftDialog({
+  shifts,
+  shift,
+  open,
+  onOpenChange,
+}: {
+  shifts: ShiftsState;
+  shift: Shift | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!shift) return;
+    const ok = await shifts.retireShift(shift.id, 'Shift deactivated');
+    if (ok) {
+      onOpenChange(false);
+    }
+  };
+
+  return (
+    <Dialog onOpenChange={onOpenChange} open={open}>
+      <DialogContent className="sm:max-w-md">
+        <DialogTitle>Deactivate {shift?.name ?? 'shift'}</DialogTitle>
+        <form className="mt-4 space-y-3" onSubmit={submit}>
+          {shifts.saveError && (
+            <p className="text-xs text-destructive" role="alert">
+              {shifts.saveError}
+            </p>
+          )}
+          <div className="flex justify-end gap-2">
+            <Button
+              disabled={shifts.saving}
+              onClick={() => onOpenChange(false)}
+              type="button"
+              variant="outline"
+            >
+              Cancel
+            </Button>
+            <Button disabled={shifts.saving} type="submit">
+              {shifts.saving ? 'Deactivating…' : 'Deactivate'}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -1,0 +1,262 @@
+/** Minimum length for a correction reason; blank and whitespace-only values are rejected by the API. */
+export const ATTENDANCE_CORRECTION_REASON_MIN_LENGTH = 1;
+export const ATTENDANCE_CORRECTION_REASON_MAX_LENGTH = 500;
+/** Holiday attendance reviews require a more descriptive explanation than ordinary corrections. */
+export const ATTENDANCE_HOLIDAY_REVIEW_REASON_MIN_LENGTH = 10;
+
+import { z } from 'zod';
+
+/**
+ * Attendance shapes, matching what `AttendanceService` returns.
+ *
+ * Parsed rather than trusted: a shape mismatch raises an error instead of letting `undefined`
+ * render as a blank cell that reads like "the employee did not work".
+ */
+
+export const attendancePunchSchema = z.object({
+  id: z.string().uuid(),
+  punchType: z.string(),
+  occurredAt: z.string(),
+  source: z.string().optional(),
+  captureMode: z.string().optional(),
+  capturedBy: z.object({ displayName: z.string() }).nullable().optional(),
+  isWithinGeofence: z.boolean().nullable().optional(),
+  // Prisma serialises Decimal as a string; coerce so callers always get a number.
+  distanceFromLocationMeters: z.coerce.number().nullable().optional(),
+  biometricVerified: z.boolean().optional(),
+  webauthnCredentialId: z.string().nullable().optional(),
+});
+
+export const attendanceEmployeeSchema = z.object({
+  id: z.string().uuid(),
+  employeeNumber: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  externalId: z.string().nullable().optional(),
+});
+
+export const attendanceRecordSchema = z.object({
+  id: z.string().uuid(),
+  organizationId: z.string().uuid(),
+  employeeId: z.string().uuid(),
+  branchId: z.string().uuid().nullable().optional(),
+  workDate: z.string(),
+  status: z.string(),
+  dayStatus: z.string(),
+  workedMinutes: z.number(),
+  overtimeMinutes: z.number(),
+  leaveUnits: z.number().min(0).max(1).optional(),
+  version: z.number(),
+  employee: attendanceEmployeeSchema.optional(),
+  punches: z.array(attendancePunchSchema).optional(),
+});
+
+export const attendancePageSchema = z.object({
+  records: z.array(attendanceRecordSchema),
+  nextCursor: z.string().optional(),
+});
+
+/**
+ * A correction, as both `listCorrectionRequests` and `listPendingCorrectionApprovals` return it:
+ * the work date, employee and effective attendance are flattened onto the correction rather than
+ * nested under a record.
+ */
+export const attendanceCorrectionSchema = z.object({
+  id: z.string().uuid(),
+  attendanceId: z.string().uuid(),
+  status: z.string(),
+  reason: z.string().nullable().optional(),
+  createdAt: z.string().optional(),
+  workDate: z.string().optional(),
+  /** What the correction asks for; a missing check-out carries `missingCheckOut.occurredAt`. */
+  afterSnapshot: z.unknown().optional(),
+  beforeSnapshot: z.unknown().optional(),
+  warningReason: z.string().nullable().optional(),
+  currentStep: z
+    .object({
+      stepNumber: z.number(),
+      approverType: z.string(),
+      roleId: z.string().nullable().optional(),
+      approverUserId: z.string().nullable().optional(),
+    })
+    .optional(),
+  branchId: z.string().uuid().nullable().optional(),
+  employee: attendanceEmployeeSchema.optional(),
+  approvals: z
+    .array(
+      z.object({
+        status: z.string(),
+        stepNumber: z.number(),
+        comment: z.string().nullable().optional(),
+        createdAt: z.string().optional(),
+      }),
+    )
+    .optional(),
+  effectiveAttendance: z
+    .object({
+      status: z.string(),
+      dayStatus: z.string(),
+      workedMinutes: z.number(),
+      overtimeMinutes: z.number(),
+      punches: z.array(attendancePunchSchema).optional(),
+    })
+    .optional(),
+});
+
+export const attendanceCorrectionPageSchema = z.object({
+  nextCursor: z.string().optional(),
+  corrections: z.array(attendanceCorrectionSchema),
+});
+
+export const missedCheckOutPolicySchema = z
+  .object({
+    version: z.number().int().min(1).default(1),
+    effectiveFrom: z.string().date().default('1970-01-01'),
+    resolutionMethod: z.enum(['LEAVE_OPEN', 'EMPLOYEE_CORRECTION', 'PROVISIONAL_AUTO_CLOSE']),
+    correctionDeadline: z.enum(['SAME_DAY', 'NEXT_CALENDAR_DAY', 'BEFORE_PAYROLL_CUTOFF']),
+    deadlineFallback: z.enum(['KEEP_OPEN', 'ROUTE_TO_APPROVAL_POLICY']),
+    closeTimeSource: z.enum(['SHIFT_END', 'CONFIGURED_TIME']),
+    configuredTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+    employeeCorrectionsAllowed: z.boolean(),
+    payrollTreatment: z.literal('HOLD_UNRESOLVED').default('HOLD_UNRESOLVED'),
+  })
+  .refine(
+    (policy) =>
+      policy.resolutionMethod !== 'EMPLOYEE_CORRECTION' || policy.employeeCorrectionsAllowed,
+    { message: 'Employee correction mode requires employee correction requests to be enabled' },
+  );
+
+export type MissedCheckOutPolicy = z.infer<typeof missedCheckOutPolicySchema>;
+
+export const DEFAULT_MISSED_CHECK_OUT_POLICY: MissedCheckOutPolicy = {
+  version: 1,
+  effectiveFrom: '1970-01-01',
+  resolutionMethod: 'LEAVE_OPEN',
+  correctionDeadline: 'NEXT_CALENDAR_DAY',
+  deadlineFallback: 'ROUTE_TO_APPROVAL_POLICY',
+  closeTimeSource: 'CONFIGURED_TIME',
+  configuredTime: '23:59',
+  employeeCorrectionsAllowed: true,
+  payrollTreatment: 'HOLD_UNRESOLVED',
+};
+
+export const attendancePreferencesSchema = z.object({
+  requireGps: z.boolean().optional().default(false),
+  id: z.string().optional(),
+  organizationId: z.string().optional(),
+  geofenceMode: z.string().nullable(),
+  biometricVerificationMode: z.string().nullable(),
+  attendanceSessionMode: z.enum(['SINGLE', 'MULTIPLE']).optional().default('SINGLE'),
+  geofenceOwnerSource: z.string(),
+  biometricOwnerSource: z.string(),
+  /** Whether a day with no check-out is closed for review, and the local time it closes at. */
+  autoCheckOutMode: z.enum(['DISABLED', 'REVIEW_REQUIRED']).nullable().optional(),
+  autoCheckOutAt: z.string().nullable().optional(),
+  missedCheckOutPolicy: missedCheckOutPolicySchema.optional(),
+  workLocations: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        branchId: z.string().nullable().optional(),
+        name: z.string(),
+        latitude: z.number(),
+        longitude: z.number(),
+        radiusMeters: z.number(),
+      }),
+    )
+    .optional()
+    .default([]),
+});
+
+export type AttendancePunch = z.infer<typeof attendancePunchSchema>;
+export type AttendanceRecord = z.infer<typeof attendanceRecordSchema>;
+export type AttendancePage = z.infer<typeof attendancePageSchema>;
+export type AttendanceCorrection = z.infer<typeof attendanceCorrectionSchema>;
+export type AttendancePreferences = z.infer<typeof attendancePreferencesSchema>;
+
+function parse<T>(schema: z.ZodType<T>, payload: unknown): T | null {
+  const result = schema.safeParse(payload);
+  return result.success ? result.data : null;
+}
+
+export const parseAttendancePage = (payload: unknown) => parse(attendancePageSchema, payload);
+export const parseAttendanceCorrectionPage = (payload: unknown) =>
+  parse(attendanceCorrectionPageSchema, payload);
+export const parseAttendancePreferences = (payload: unknown) =>
+  parse(attendancePreferencesSchema, payload);
+
+/** `YYYY-MM-DD` for a record's work date, whatever precision the API sent. */
+export function workDateKey(record: Pick<AttendanceRecord, 'workDate'>): string {
+  return record.workDate.slice(0, 10);
+}
+
+export function firstPunch(
+  record: Pick<AttendanceRecord, 'punches'>,
+  type: 'IN' | 'OUT',
+): AttendancePunch | null {
+  const matching = (record.punches ?? []).filter((punch) => punch.punchType === type);
+  if (matching.length === 0) return null;
+  // Punches arrive oldest-first; the last OUT is the one that closes the day.
+  return (type === 'IN' ? matching[0] : matching[matching.length - 1]) ?? null;
+}
+
+/** The viewer's own calendar date, which is the date a punch is filed under. */
+function todayKeyAt(now: number): string {
+  const date = new Date(now);
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${`${date.getDate()}`.padStart(2, '0')}`;
+}
+
+/**
+ * Minutes worked so far today, counting a session that is still open.
+ *
+ * The server totals a session when it closes, so a record read while someone is checked in says
+ * 0 until they check out. This adds the open session (last IN with no OUT after it) up to `now`.
+ *
+ * Only for a day that is still running. A forgotten check-out leaves an open IN on a past day
+ * for ever, and counting it to `now` billed a single September day as 36 hours worked. Such a day
+ * is missing a check-out, not in progress: it counts only its closed pairs until a correction
+ * supplies the check-out.
+ */
+export function liveWorkedMinutes(
+  record: Pick<AttendanceRecord, 'punches' | 'workedMinutes'> & { workDate?: string },
+  now: number = Date.now(),
+): number {
+  const day = record.workDate?.slice(0, 10);
+  if (day && day !== todayKeyAt(now)) return record.workedMinutes;
+  const punches = [...(record.punches ?? [])].sort((a, b) =>
+    a.occurredAt.localeCompare(b.occurredAt),
+  );
+  const last = punches[punches.length - 1];
+  if (!last || last.punchType !== 'IN') return record.workedMinutes;
+  const started = new Date(last.occurredAt).getTime();
+  if (Number.isNaN(started) || started > now) return record.workedMinutes;
+  return record.workedMinutes + Math.floor((now - started) / 60_000);
+}
+
+/**
+ * Whether the employee is currently checked in.
+ *
+ * Derived from the punch sequence rather than a stored flag: a flag can drift from the punches
+ * it is supposed to summarise, and the punches are what payroll reads.
+ */
+export function isCheckedIn(record: Pick<AttendanceRecord, 'punches'> | null): boolean {
+  const punches = record?.punches ?? [];
+  const last = punches[punches.length - 1];
+  return last?.punchType === 'IN';
+}
+
+/** The open check-in's timestamp, for the live timer. Null when not checked in. */
+export function openCheckInAt(record: Pick<AttendanceRecord, 'punches'> | null): string | null {
+  const punches = record?.punches ?? [];
+  const last = punches[punches.length - 1];
+  return last?.punchType === 'IN' ? last.occurredAt : null;
+}
+
+/** `7h 45m`, or `--` when nothing has been worked and nothing is running. */
+export function formatMinutes(minutes: number | null | undefined): string {
+  if (minutes === null || minutes === undefined) return '--';
+  const hours = Math.floor(minutes / 60);
+  const rest = Math.round(minutes % 60);
+  return hours > 0 ? `${hours}h ${rest}m` : `${rest}m`;
+}
