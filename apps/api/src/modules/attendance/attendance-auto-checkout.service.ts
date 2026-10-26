@@ -260,7 +260,7 @@ export class AttendanceAutoCheckOutService {
       },
     });
     const weekday = record.workDate.getUTCDay() || 7;
-    const shift = assignment?.shift?.daysOfWeek.includes(weekday) ? assignment.shift : undefined;
+    const shift = assignment?.shift.daysOfWeek.includes(weekday) ? assignment.shift : undefined;
     if (policy.closeTimeSource === 'SHIFT_END' && !shift) return { ...EMPTY, skippedNoShift: 1 };
     const shiftEndAt = shift
       ? instantAtLocalTime(

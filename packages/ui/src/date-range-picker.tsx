@@ -17,9 +17,16 @@ export interface DateRangePickerProps {
 function labelFor(from: string, to: string) {
   const format = (value: string) => {
     if (!value) return '';
-    const [year, month, day] = value.split('-').map(Number);
-    return new Date(year!, month! - 1, day!).toLocaleDateString(undefined, {
-      day: 'numeric', month: 'short', year: 'numeric',
+    const parts = value.split('-');
+    if (parts.length !== 3 || parts.some((part) => !part)) return '';
+    const year = Number(parts[0]);
+    const month = Number(parts[1]);
+    const day = Number(parts[2]);
+    if (![year, month, day].every(Number.isFinite)) return '';
+    return new Date(year, month - 1, day).toLocaleDateString(undefined, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
     });
   };
   if (!from) return 'Choose date or range';
@@ -60,7 +67,17 @@ export function DateRangePicker({
             className,
           )}
         >
-          <svg aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M7.5 3v4M16.5 3v4M3.5 9h17"/></svg>
+          <svg
+            aria-hidden="true"
+            className="size-4 shrink-0 text-muted-foreground"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          >
+            <rect x="3.5" y="5" width="17" height="16" rx="2" />
+            <path d="M7.5 3v4M16.5 3v4M3.5 9h17" />
+          </svg>
           <span className="truncate">{labelFor(from, to)}</span>
         </button>
       </PopoverTrigger>

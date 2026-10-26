@@ -333,7 +333,7 @@ export class PayrollPreviewService {
         ...(context.accessMode === 'NATIVE'
           ? {
               periodSalaryUnits:
-                compensation?.payFrequency === 'MONTHLY'
+                compensation.payFrequency === 'MONTHLY'
                   ? monthlyWorkdayUnits(
                       periodStart,
                       periodEnd,

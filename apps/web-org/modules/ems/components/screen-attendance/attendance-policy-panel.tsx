@@ -79,15 +79,13 @@ export function AttendancePolicyPanel() {
   useEffect(() => {
     if (locationsDirty || !branchPolicy.preferences) return;
     setLocations(
-      (branchPolicy.preferences.workLocations ?? []).slice(0, 1).map((location) => ({
+      branchPolicy.preferences.workLocations.slice(0, 1).map((location) => ({
         name: location.name,
         latitude: String(location.latitude),
         longitude: String(location.longitude),
       })),
     );
-    setLocationMethods(
-      (branchPolicy.preferences.workLocations ?? []).slice(0, 1).map(() => 'UNSET'),
-    );
+    setLocationMethods(branchPolicy.preferences.workLocations.slice(0, 1).map(() => 'UNSET'));
   }, [locationsDirty, branchPolicy.preferences]);
 
   useEffect(() => {
@@ -95,9 +93,10 @@ export function AttendancePolicyPanel() {
     if (
       !selectedBranch ||
       locationsDirty ||
+      !branchPolicy.preferences ||
       !mode ||
       mode === 'DISABLED' ||
-      branchPolicy.preferences?.workLocations?.length
+      branchPolicy.preferences.workLocations.length
     )
       return;
     setLocations([{ name: `${selectedBranch.name} main location`, latitude: '', longitude: '' }]);
@@ -119,7 +118,7 @@ export function AttendancePolicyPanel() {
       ),
     );
 
-  const useCurrentLocation = async (index: number) => {
+  const captureCurrentLocation = async (index: number) => {
     setCapturingLocation(index);
     setLocationMessage(null);
     try {
@@ -290,7 +289,7 @@ export function AttendancePolicyPanel() {
                   }
                   onValueChange={(value) => {
                     setLocationMessage(null);
-                    if (value !== 'DISABLED' && !branchPolicy.preferences?.workLocations?.length) {
+                    if (value !== 'DISABLED' && !branchPolicy.preferences?.workLocations.length) {
                       setPendingGeofenceMode(value);
                       if (!locations.length)
                         markLocationsDirty([
@@ -366,7 +365,7 @@ export function AttendancePolicyPanel() {
                               branchPolicy.saving ||
                               capturingLocation !== null
                             }
-                            onClick={() => void useCurrentLocation(index)}
+                            onClick={() => void captureCurrentLocation(index)}
                             size="sm"
                             type="button"
                             variant={locationMethods[index] === 'CURRENT' ? 'default' : 'outline'}

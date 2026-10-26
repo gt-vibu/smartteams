@@ -154,7 +154,7 @@ export function BranchSettingsDrawer({
   const setLocation = (index: number, key: keyof Location, value: string) =>
     setLocations((all) => all.map((l, i) => (i === index ? { ...l, [key]: value } : l)));
 
-  const useCurrentLocation = async (index: number) => {
+  const captureCurrentLocation = async (index: number) => {
     setCapturingLocation(index);
     setMessage(null);
     try {
@@ -343,7 +343,7 @@ export function BranchSettingsDrawer({
                       <Button
                         className="col-span-2 justify-self-start"
                         disabled={!canEditAttendance || busy || capturingLocation !== null}
-                        onClick={() => void useCurrentLocation(index)}
+                        onClick={() => void captureCurrentLocation(index)}
                         size="sm"
                         type="button"
                         variant="outline"

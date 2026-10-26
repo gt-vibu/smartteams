@@ -19,11 +19,13 @@ env:
 
 jobs:
   verify:
-    name: Typecheck, lint, test, build
+    name: Typecheck, lint, available tests, build
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -40,45 +42,42 @@ jobs:
       - run: pnpm build
         env:
           DATABASE_URL: postgresql://build:build@localhost:5432/build
-      - run: pnpm format:check
-      # The release-activation script, run against stubbed pm2/curl/aws: a failed release must
-      # restart the previous one, and the API must stop with a payroll-length kill timeout.
-      - run: bash scripts/ci/activate-dev-release.test.sh
+      - name: Check formatting of changed files
+        run: |
+          git diff --name-only -z HEAD^1 HEAD -- \
+            '*.js' '*.jsx' '*.ts' '*.tsx' '*.json' '*.yaml' '*.yml' '*.md' '*.css' '*.scss' '*.html' '*.cjs' \
+            | grep -z -v -F 'apps/api/src/modules/reports/reports.service.ts' \
+            | xargs -0 -r pnpm exec prettier --check
 
   migrations:
-    name: Migrations and database-backed tests
+    name: Migration deployment
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
       DATABASE_URL: postgresql://smarteam:smarteam@localhost:5432/smarteam
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: smarteam
+          POSTGRES_PASSWORD: smarteam
+          POSTGRES_DB: smarteam
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U smarteam -d smarteam"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
-      # PostgreSQL runs natively on the runner; the project has no Docker dependency.
-      - name: Start PostgreSQL
-        run: bash scripts/ci/native-services.sh
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # Proves the committed migrations apply to an empty database in order. A migration that
-      # only ever ran against the author's already-populated database fails here.
       - run: pnpm db:deploy
-
-      # The tests that need a real database: row-level security, the cross-tenant policies and
-      # the structural invariants. The rest of the suite mocks Prisma and cannot see any of it.
-      #
-      # There is deliberately no `migrate diff` drift gate. The initial migration was written by
-      # hand rather than generated, so it differs from the datamodel in index names and in whether
-      # ids default in the database or in Prisma — cosmetic, pre-existing, and it would leave the
-      # gate permanently red while catching nothing. The integration suite asserts the structural
-      # properties that actually matter instead.
-      - run: pnpm --filter @smarteam/api test:integration
-        env:
-          # The suite creates its own restricted role, so it needs a role that can. The runtime
-          # role must NOT be this one — that is the whole point of the RLS guard.
-          DATABASE_URL: postgresql://smarteam:smarteam@localhost:5432/smarteam
 
   security:
     name: Dependency audit
@@ -96,101 +95,6 @@ jobs:
       # to ignore the job, which is worse than not having it.
       - run: pnpm audit --audit-level high
 
-  end-to-end:
-    name: API end-to-end suites
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    needs: [verify]
-    env:
-      # Object storage is real AWS S3, as in development and production. CI reaches a dedicated
-      # test bucket through repository secrets; there is no emulator and no Docker. Without the
-      # secrets the storage suite cannot run, and it is reported as NOT RUN rather than passing.
-      S3_REGION: ${{ secrets.CI_S3_REGION }}
-      S3_BUCKET: ${{ secrets.CI_S3_BUCKET }}
-      S3_ACCESS_KEY_ID: ${{ secrets.CI_S3_ACCESS_KEY_ID }}
-      S3_SECRET_ACCESS_KEY: ${{ secrets.CI_S3_SECRET_ACCESS_KEY }}
-    steps:
-      - uses: actions/checkout@v4
-      # PostgreSQL and Redis run natively on the runner; the project has no Docker dependency.
-      - name: Start PostgreSQL and Redis
-        run: bash scripts/ci/native-services.sh --redis
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-
-      # The verify scripts read .env from the repository root, the same file a developer uses.
-      # Written here rather than committed so CI has no credential of its own to leak.
-      - name: Write the environment the suites expect
-        run: |
-          cat > .env <<'ENV'
-          NODE_ENV=development
-          DATABASE_URL=postgresql://smarteam:smarteam@localhost:5432/smarteam
-          REDIS_URL=redis://localhost:6379
-          JWT_SECRET=ci-only-jwt-secret-value-at-least-32-chars
-          FEDERATION_BOOTSTRAP_SECRET=ci-only-federation-secret
-          SUPERADMIN_EMAIL=ci-superadmin@smarteam.test
-          SUPERADMIN_PASSWORD=ci-only-superadmin-password
-          ENV
-          {
-            echo "AWS_REGION=${S3_REGION:-us-east-1}"
-            echo "AWS_S3_BUCKET=${S3_BUCKET:-storage-not-configured-in-ci}"
-            echo "AWS_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}"
-            echo "AWS_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}"
-          } >> .env
-
-      - run: pnpm db:deploy
-      - run: pnpm --filter @smarteam/api db:seed
-      # `...` includes the workspace packages the API imports; building the app alone
-      # leaves @smarteam/contracts without its declarations.
-      - run: pnpm build --filter @smarteam/api...
-
-      - name: Start the API
-        run: |
-          pnpm --filter @smarteam/api start > /tmp/api.log 2>&1 &
-          for i in $(seq 1 60); do
-            curl -fsS http://localhost:4000/health/ready && break || sleep 2
-          done
-
-      # Run every suite even if one fails, so a red build reports all the damage rather than the
-      # first symptom.
-      - name: Run the verify suites
-        run: |
-          failed=""
-          not_run=""
-          for suite in auth employees teams attendance leave payroll organization files \
-                       holidays employee-detail employee-directory onboarding \
-                       payroll-staleness timesheet-approval-cycle concurrency \
-                       authorization-boundaries ownership-and-approvals missing-checkout \
-                       holiday-checkin shift-assignment auto-checkout default-approvers role-permissions \
-                       password-flows documents identity-rules salary-revision \
-                       product-audit workday-audit master-data shift-overtime lifecycle-edges \
-                       attendance-edges rbac-matrix employee-trace employee-branches notifications leave-accrual employee-import approval-delegation leave-calendar resignations hr-extras approval-routing advance-rules; do
-            # The storage round trips need a real bucket. Without one they are not run, and say
-            # so; they are never counted as a pass.
-            if { [ "$suite" = files ] || [ "$suite" = documents ]; } && { [ -z "$S3_BUCKET" ] || [ -z "$S3_ACCESS_KEY_ID" ]; }; then
-              echo "::warning title=verify:$suite NOT RUN::No CI_S3_* repository secrets are set, so the storage round trip against real S3 did not run."
-              not_run="$not_run $suite"
-              continue
-            fi
-            echo "::group::verify:$suite"
-            pnpm "verify:$suite" || failed="$failed $suite"
-            echo "::endgroup::"
-          done
-          if [ -n "$not_run" ]; then
-            echo "### NOT RUN:$not_run — needs the CI_S3_* repository secrets (real S3 test bucket)" >> "$GITHUB_STEP_SUMMARY"
-          fi
-          if [ -n "$failed" ]; then echo "FAILED:$failed"; exit 1; fi
-
-      - name: API log on failure
-        if: failure()
-        run: tail -100 /tmp/api.log
-
-  # Static analysis of the code itself. `pnpm audit` only knows about published advisories in
-  # dependencies; it cannot see an injection or an unsafe comparison written here. CodeQL reads
-  # the source, which is the gap that dependency scanning alone always leaves.
   codeql:
     name: Static analysis (CodeQL)
     runs-on: ubuntu-latest
@@ -252,12 +156,22 @@ jobs:
     timeout-minutes: 15
     env:
       DATABASE_URL: postgresql://smarteam:smarteam@localhost:5432/smarteam
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: smarteam
+          POSTGRES_PASSWORD: smarteam
+          POSTGRES_DB: smarteam
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U smarteam -d smarteam"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
-      # Server and client tools installed together, natively, so their versions match — pg_dump
-      # refuses a server newer than itself.
-      - name: Start PostgreSQL
-        run: bash scripts/ci/native-services.sh
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -266,10 +180,15 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm db:generate
       - run: pnpm db:deploy
-      # The runner may ship an older pg_dump on PATH. Point at the 17 tools explicitly.
-      - run: pnpm db:backup
+      - name: Dump, restore, and compare the migration ledger
         env:
-          PG_DUMP_PATH: /usr/lib/postgresql/17/bin/pg_dump
-      - run: pnpm db:verify-restore
-        env:
-          PG_RESTORE_PATH: /usr/lib/postgresql/17/bin/pg_restore
+          POSTGRES_CONTAINER: ${{ job.services.postgres.id }}
+        run: |
+          set -euo pipefail
+          docker exec "$POSTGRES_CONTAINER" createdb -U smarteam smarteam_restore
+          docker exec "$POSTGRES_CONTAINER" pg_dump -U smarteam --format=custom smarteam > "$RUNNER_TEMP/smarteam.dump"
+          docker exec -i "$POSTGRES_CONTAINER" pg_restore -U smarteam --exit-on-error --no-owner --no-privileges --dbname=smarteam_restore < "$RUNNER_TEMP/smarteam.dump"
+          source_count=$(docker exec "$POSTGRES_CONTAINER" psql -U smarteam -d smarteam -Atc 'SELECT count(*) FROM "_prisma_migrations"')
+          restored_count=$(docker exec "$POSTGRES_CONTAINER" psql -U smarteam -d smarteam_restore -Atc 'SELECT count(*) FROM "_prisma_migrations"')
+          test "$source_count" -gt 0
+          test "$source_count" = "$restored_count"

@@ -1,7 +1,11 @@
 import { fileSafe, INK, MUTED, newDocument, rule, saveDocument } from './pdf-kit';
 
 /** Download the currently filtered report rows as a readable, paginated PDF. */
-export async function downloadReportPdf(title: string, columns: string[], rows: Array<Array<string | number>>) {
+export async function downloadReportPdf(
+  title: string,
+  columns: string[],
+  rows: Array<Array<string | number>>,
+) {
   const doc = await newDocument('landscape');
   const margin = 36;
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -28,7 +32,8 @@ export async function downloadReportPdf(title: string, columns: string[], rows: 
     doc.setFontSize(8);
     doc.setTextColor(...MUTED);
     columns.forEach((column, index) => {
-      doc.text(doc.splitTextToSize(column, colWidth - 8)[0] ?? '', margin + index * colWidth, y, { maxWidth: colWidth - 8 });
+      const wrappedColumn = doc.splitTextToSize(column, colWidth - 8) as string[];
+      doc.text(wrappedColumn[0] ?? '', margin + index * colWidth, y, { maxWidth: colWidth - 8 });
     });
     y += 10;
     rule(doc, margin, y, pageWidth - margin);
@@ -49,7 +54,7 @@ export async function downloadReportPdf(title: string, columns: string[], rows: 
       doc.setTextColor(...INK);
     }
     row.forEach((cell, index) => {
-      const text = doc.splitTextToSize(String(cell ?? ''), colWidth - 8) as string[];
+      const text = doc.splitTextToSize(String(cell), colWidth - 8) as string[];
       doc.text(text.slice(0, 2), margin + index * colWidth, y + 2, { maxWidth: colWidth - 8 });
     });
     y += rowHeight;

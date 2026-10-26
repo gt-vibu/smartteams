@@ -336,7 +336,8 @@ export class PayrollRuleUpdatesService {
         // A source URL change is a new baseline, not evidence that the law changed. Do not send
         // validators or compare a new official page against the prior page's content hash.
         const sameSource = prior?.source_url === source.url;
-        if (!force && sameSource && prior?.checked_at && sameUtcMonth(prior.checked_at, new Date())) continue;
+        if (!force && sameSource && prior.checked_at && sameUtcMonth(prior.checked_at, new Date()))
+          continue;
         const response = await fetchAllowlistedSource(source, sameSource ? prior : null);
         checked += 1;
         if (response.notModified) {
@@ -352,8 +353,8 @@ export class PayrollRuleUpdatesService {
           continue;
         }
         const hash = createHash('sha256').update(response.body).digest('hex');
-        const hasPrior = sameSource && Boolean(prior?.content_hash);
-        const didChange = hasPrior && prior!.content_hash !== hash;
+        const priorContentHash = sameSource ? prior.content_hash : null;
+        const didChange = priorContentHash !== null && priorContentHash !== hash;
         if (!didChange) {
           await this.storeCheck(
             context,

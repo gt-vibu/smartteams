@@ -145,7 +145,7 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
                               >
                                 Edit
                               </Button>
-                              {((choosing && !isPrimary) || !isPrimary) && (
+                              {!isPrimary && (
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
                                     <Button
@@ -159,7 +159,7 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end">
-                                    {choosing && !isPrimary && (
+                                    {choosing && (
                                       <DropdownMenuItem
                                         disabled={state.saving}
                                         onSelect={() => void state.setPrimaryBranch(branch.id)}
@@ -167,14 +167,12 @@ export function OrgBranchesPanel({ organization: state }: { organization: Organi
                                         Set as primary location
                                       </DropdownMenuItem>
                                     )}
-                                    {!isPrimary && (
-                                      <DropdownMenuItem
-                                        className="text-destructive focus:text-destructive"
-                                        onSelect={() => setRetiring(branch)}
-                                      >
-                                        Deactivate branch
-                                      </DropdownMenuItem>
-                                    )}
+                                    <DropdownMenuItem
+                                      className="text-destructive focus:text-destructive"
+                                      onSelect={() => setRetiring(branch)}
+                                    >
+                                      Deactivate branch
+                                    </DropdownMenuItem>
                                   </DropdownMenuContent>
                                 </DropdownMenu>
                               )}

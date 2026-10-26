@@ -502,6 +502,6 @@ function csvCell(value: unknown): string {
         ? String(value)
         : value instanceof Date
           ? value.toISOString()
-          : (JSON.stringify(value) ?? '');
+          : JSON.stringify(value);
   return `"${text.replaceAll('"', '""')}"`;
 }
