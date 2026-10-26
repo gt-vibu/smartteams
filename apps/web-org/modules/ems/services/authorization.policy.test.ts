@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { canAccessModule, canAdministerOrganization } from './authorization.policy';
+import {
+  canAccessModule,
+  canAdministerOrganization,
+  canSubmitSelfResignation,
+  workspaceTitle,
+} from './authorization.policy';
 
 /**
  * Module visibility, gated on permissions the backend actually grants.
@@ -49,7 +54,7 @@ describe('canAccessModule', () => {
    * Caught by opening that exact URL as a member holding payroll permissions only.
    */
   it('an admin-space viewer with only payroll access cannot open the other admin modules', () => {
-    const permissions = ['organizations.read', 'payroll.payslips.read', 'payroll.preview.read'];
+    const permissions = ['organizations.read', 'payroll.runs.read', 'payroll.preview.read'];
     expect(canAccessModule('payroll', 'ADMIN', permissions, false)).toBe(true);
     expect(canAccessModule('home', 'ADMIN', permissions, false)).toBe(true);
     expect(canAccessModule('attendance', 'ADMIN', permissions, false)).toBe(false);
@@ -57,6 +62,23 @@ describe('canAccessModule', () => {
     expect(canAccessModule('timesheet', 'ADMIN', permissions, false)).toBe(false);
     expect(canAccessModule('onboarding', 'ADMIN', permissions, false)).toBe(false);
     expect(canAccessModule('files', 'ADMIN', permissions, false)).toBe(false);
+  });
+
+  /**
+   * Every employee may read their own payslip and salary. Those keys opened the organization's
+   * Payroll screen, where each tab then answered "Access Restricted".
+   */
+  it('self-service payroll keys do not open organization payroll', () => {
+    const permissions = [
+      'organizations.read',
+      'rbac.read',
+      'payroll.payslips.read',
+      'payroll.employee-profile.read',
+      'payroll.preview.read',
+    ];
+    expect(canAccessModule('payroll', 'ADMIN', permissions, false)).toBe(false);
+    // …while the same person still has their own payroll in the employee workspace.
+    expect(canAccessModule('payroll', 'EMPLOYEE', permissions, false)).toBe(true);
   });
 
   it('an HR-shaped permission set opens the people modules it genuinely covers', () => {
@@ -73,6 +95,32 @@ describe('canAccessModule', () => {
     expect(canAccessModule('onboarding', 'ADMIN', permissions, false)).toBe(true);
     // No payroll grant in that set, so payroll stays shut.
     expect(canAccessModule('payroll', 'ADMIN', permissions, false)).toBe(false);
+  });
+
+  it('hides admin management pages unless the user can read and maintain their records', () => {
+    const cases = [
+      ['employees', 'employees.read.all', 'employees.write'],
+      ['teams', 'teams.read', 'teams.write'],
+      ['projects', 'projects.read', 'projects.write'],
+      ['shifts', 'shifts.read', 'shifts.write'],
+      ['holidays', 'organizations.read', 'organizations.update'],
+    ] as const;
+    for (const [module, readPermission, writePermission] of cases) {
+      expect(canAccessModule(module, 'ADMIN', [readPermission], false)).toBe(false);
+      expect(canAccessModule(module, 'ADMIN', [writePermission], false)).toBe(false);
+      expect(canAccessModule(module, 'ADMIN', [readPermission, writePermission], false)).toBe(true);
+    }
+    // Employee holiday self-service is read/selection access, not tenant calendar management.
+    expect(canAccessModule('holidays', 'EMPLOYEE', ['organizations.read'], false)).toBe(true);
+  });
+
+  it('hides setup and approval destinations when the user has read access but no action permission', () => {
+    expect(canAccessModule('org-setup', 'ADMIN', ['organizations.read'], false)).toBe(false);
+    expect(canAccessModule('org-setup', 'ADMIN', ['branches.write'], false)).toBe(true);
+    expect(canAccessModule('approvals', 'ADMIN', ['approval-policies.read'], false)).toBe(false);
+    expect(canAccessModule('approvals', 'ADMIN', ['attendance.corrections.decide'], false)).toBe(
+      true,
+    );
   });
 
   it('a module nobody has declared a permission for stays shut rather than opening by default', () => {
@@ -102,8 +150,8 @@ describe('canAdministerOrganization', () => {
     expect(canAdministerOrganization(['organizations.read'])).toBe(false);
   });
 
-  it('treats a manager as an administrator', () => {
-    expect(canAdministerOrganization([...employee, 'rbac.read'])).toBe(true);
+  it('does not treat a manager, who can only read roles, as an administrator', () => {
+    expect(canAdministerOrganization([...employee, 'rbac.read'])).toBe(false);
   });
 
   it('treats an HR administrator as an administrator', () => {
@@ -118,5 +166,35 @@ describe('canAdministerOrganization', () => {
 
   it('is false for a person with no permissions at all', () => {
     expect(canAdministerOrganization([])).toBe(false);
+  });
+});
+
+describe('workspace identity and employee resignation access', () => {
+  it('shows the HR role even when the HR account also has broad permissions', () => {
+    expect(
+      workspaceTitle({
+        permissions: ['*'],
+        roles: [{ code: 'HR_ADMIN', name: 'HR Admin' }],
+      }),
+    ).toEqual({ workspace: 'HR workspace', badge: 'HR Admin' });
+  });
+
+  it('does not offer employee resignation to people who manage employee records', () => {
+    expect(canSubmitSelfResignation(['employees.write'])).toBe(false);
+    expect(canSubmitSelfResignation(['*'])).toBe(false);
+    expect(canSubmitSelfResignation(['leave.requests.write'])).toBe(true);
+  });
+});
+
+describe('Approvals in the employee workspace', () => {
+  const hr = ['leave.requests.decide', 'timesheets.decide', 'approval-policies.read'];
+  it('is hidden for someone who approves only through an HR role', () => {
+    expect(canAccessModule('approvals', 'EMPLOYEE', hr, false, false)).toBe(false);
+  });
+  it('shows for someone who approves as themselves: a manager, a named approver, or cover', () => {
+    expect(canAccessModule('approvals', 'EMPLOYEE', [], false, true)).toBe(true);
+  });
+  it('stays in the admin workspace for HR', () => {
+    expect(canAccessModule('approvals', 'ADMIN', hr, false, false)).toBe(true);
   });
 });

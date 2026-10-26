@@ -31,17 +31,24 @@ export class AuthRateLimitInterceptor implements NestInterceptor {
   ): Promise<Observable<unknown>> {
     const request = executionContext.switchToHttp().getRequest<Request>();
     const window = Math.floor(Date.now() / 60_000);
-    const limit = this.config.get<number>('AUTH_RATE_LIMIT_PER_MINUTE', 30);
-    const keys = [`auth:rate:ip:${request.ip ?? 'unknown'}:${request.path}:${window}`];
+    const route = request.originalUrl.split('?')[0] ?? request.path;
+    const isCredentialLogin =
+      request.method === 'POST' && (route.endsWith('/login') || route.endsWith('/platform-login'));
+    const limit = isCredentialLogin
+      ? this.config.get<number>('AUTH_LOGIN_RATE_LIMIT_PER_MINUTE', 3)
+      : this.config.get<number>('AUTH_RATE_LIMIT_PER_MINUTE', 30);
+    const namespace = isCredentialLogin ? 'auth:login-rate' : 'auth:rate';
+    const rateRoute = isCredentialLogin ? 'credential-login' : route;
+    const keys = [`${namespace}:ip:${request.ip ?? 'unknown'}:${rateRoute}:${window}`];
 
     const account = accountOf(request);
-    if (account) keys.push(`auth:rate:account:${account}:${window}`);
+    if (account) keys.push(`${namespace}:account:${account}:${rateRoute}:${window}`);
 
     // Access codes are guessable in a way an email is not — they are the secret itself — so they
     // get their own counter. Without it, the per-address limit would let a botnet spread guesses
     // against a single code across many hosts and stay under every cap.
     const code = accessCodeOf(request);
-    if (code) keys.push(`auth:rate:code:${code}:${window}`);
+    if (code) keys.push(`${namespace}:code:${code}:${rateRoute}:${window}`);
 
     try {
       for (const key of keys) {

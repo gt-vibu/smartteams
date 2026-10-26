@@ -2,17 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bullmq';
 import { ConfigService } from '@nestjs/config';
 import { AccessMode, FilePurpose, FileStatus } from '../../generated/prisma/enums';
-import {
-  requirePermission,
-  requireReason,
-  type DomainContext,
-} from '../../common/context/domain-context';
+import { requireReason, type DomainContext } from '../../common/context/domain-context';
 import { NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { StorageService } from '../../infrastructure/storage/storage.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import type { Queue } from 'bullmq';
-import { toFileDto } from './files-shared';
+import { documentTypeFromMetadata, requireFilePermission, toFileDto } from './files-shared';
+import { fileDisplayName } from './file-naming';
 
 @Injectable()
 export class FilesAccessService {
@@ -39,7 +36,8 @@ export class FilesAccessService {
     context: DomainContext,
     filters: { purpose?: FilePurpose; employeeId?: string; limit?: number } = {},
   ) {
-    requirePermission(context, 'files.read');
+    requireFilePermission(context, 'read');
+    if (filters.purpose === FilePurpose.ORGANIZATION_BRANDING) return [];
     const canReadAll =
       context.accessMode === AccessMode.FEDERATION ||
       context.permissions.has('*') ||
@@ -63,6 +61,18 @@ export class FilesAccessService {
           deletedAt: null,
           ...(employeeId ? { employeeId } : {}),
           ...(filters.purpose ? { purpose: filters.purpose } : {}),
+          // Branding has its own organization-settings flow and must not appear in file lists.
+          AND: [{ purpose: { not: FilePurpose.ORGANIZATION_BRANDING } }],
+          // Someone's "only me" file is private even from administrators, name included. The
+          // documents routes already apply this; this older list did not.
+          ...(context.accessMode === AccessMode.NATIVE
+            ? {
+                NOT: {
+                  accessScope: 'PERSONAL' as const,
+                  uploadedByUserId: { not: context.actor.userId ?? '' },
+                },
+              }
+            : {}),
         },
         select: {
           id: true,
@@ -93,8 +103,13 @@ export class FilesAccessService {
    * A file with no employee — a payroll export, an import, an organization document — is not
    * anyone's own file, so it needs the broader permission too.
    */
-  async download(context: DomainContext, fileId: string) {
-    requirePermission(context, 'files.read');
+  async download(
+    context: DomainContext,
+    fileId: string,
+    employeeId?: string,
+    purpose?: FilePurpose | FilePurpose[],
+  ) {
+    requireFilePermission(context, 'read');
     const canReadAll =
       context.accessMode === AccessMode.FEDERATION ||
       context.permissions.has('*') ||
@@ -106,6 +121,8 @@ export class FilesAccessService {
           organizationId: context.organizationId,
           status: FileStatus.AVAILABLE,
           deletedAt: null,
+          ...(employeeId ? { employeeId } : {}),
+          ...(purpose ? { purpose: Array.isArray(purpose) ? { in: purpose } : purpose } : {}),
         },
       });
       if (!found || canReadAll) return found;
@@ -119,11 +136,82 @@ export class FilesAccessService {
       return found;
     });
     if (!file) throw new NotFoundError('File');
+    const documentType = documentTypeFromMetadata(file.metadata);
+    const displayName = fileDisplayName(
+      file.purpose,
+      file.originalName,
+      documentType ?? undefined,
+      file.contentType,
+    );
     return {
       fileId: file.id,
-      downloadUrl: await this.storage.createDownloadUrl(file.objectKey),
+      downloadUrl: await this.storage.createDownloadUrl(file.objectKey, {
+        fileName: displayName,
+        contentType: file.contentType,
+      }),
+      viewUrl: await this.storage.createDownloadUrl(file.objectKey, {
+        fileName: displayName,
+        contentType: file.contentType,
+        inline: true,
+      }),
+      displayName,
       expiresIn: 600,
     };
+  }
+
+  async listEmployeeDocuments(context: DomainContext, employeeId: string) {
+    requireFilePermission(context, 'read');
+    const files = await this.database.run(context, (tx) =>
+      tx.fileObject.findMany({
+        where: {
+          organizationId: context.organizationId,
+          employeeId,
+          purpose: { in: [FilePurpose.EMPLOYEE_DOCUMENT, FilePurpose.PROFILE_IMAGE] },
+          status: FileStatus.AVAILABLE,
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+          objectKey: true,
+          purpose: true,
+          originalName: true,
+          contentType: true,
+          byteSize: true,
+          metadata: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+    );
+    return Promise.all(
+      files.map(async (file) => {
+        const documentType = documentTypeFromMetadata(file.metadata);
+        const displayName = fileDisplayName(
+          file.purpose,
+          file.originalName,
+          documentType ?? undefined,
+          file.contentType,
+        );
+        return {
+          id: file.id,
+          purpose: file.purpose,
+          documentType,
+          originalName: displayName,
+          displayName,
+          contentType: file.contentType,
+          byteSize: Number(file.byteSize),
+          uploadedAt: file.createdAt.toISOString(),
+          updatedAt: file.updatedAt.toISOString(),
+          previewUrl: await this.storage.createDownloadUrl(file.objectKey, {
+            fileName: displayName,
+            contentType: file.contentType,
+            inline: true,
+          }),
+          previewExpiresIn: 600,
+        };
+      }),
+    );
   }
 
   /**
@@ -146,9 +234,9 @@ export class FilesAccessService {
     fileId: string,
     reason: string,
     employeeId?: string,
-    purpose?: FilePurpose,
+    purpose?: FilePurpose | FilePurpose[],
   ) {
-    requirePermission(context, 'files.write');
+    requireFilePermission(context, 'write');
     requireReason({ ...context, reason }, 'File deletion requires a reason');
     return this.database.run(context, async (tx) => {
       const file = await tx.fileObject.findFirst({
@@ -157,7 +245,7 @@ export class FilesAccessService {
           organizationId: context.organizationId,
           status: { not: FileStatus.DELETED },
           ...(employeeId ? { employeeId } : {}),
-          ...(purpose ? { purpose } : {}),
+          ...(purpose ? { purpose: Array.isArray(purpose) ? { in: purpose } : purpose } : {}),
         },
       });
       if (!file) throw new NotFoundError('File');

@@ -9,26 +9,36 @@ export interface DatePickerProps {
   id?: string;
   'aria-label'?: string;
   value?: string; // Format: YYYY-MM-DD
+  /** Month to show when opening an empty picker, useful for the second date in a range. */
+  initialMonth?: string;
   onChange?: (date: string) => void;
   placeholder?: string;
   className?: string;
   disabled?: boolean;
   min?: string;
   max?: string;
+  /** Return a reason to disable a date, or undefined when selectable. */
+  disabledDate?: (date: string) => string | undefined;
 }
 
 export function DatePicker({
   id,
   'aria-label': ariaLabel,
   value,
+  initialMonth,
   onChange,
   placeholder = 'Select date',
   className,
   disabled = false,
   min,
   max,
+  disabledDate,
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
+  const unavailable = (date: string) =>
+    Boolean((min && date < min) || (max && date > max) || disabledDate?.(date));
+  const now = new Date();
+  const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
   // Parse current selected date
   const selectedDate = React.useMemo(() => {
@@ -49,8 +59,13 @@ export function DatePicker({
   React.useEffect(() => {
     if (open && selectedDate) {
       setViewDate(selectedDate);
+    } else if (open) {
+      const initial =
+        initialMonth || (min && todayKey < min ? min : max && todayKey > max ? max : todayKey);
+      const [year, month, day] = initial.split('-').map(Number);
+      setViewDate(new Date(year!, month! - 1, day));
     }
-  }, [open, selectedDate]);
+  }, [open, selectedDate, initialMonth, min, max, todayKey]);
 
   const monthNames = [
     'January',
@@ -84,7 +99,7 @@ export function DatePicker({
     const mm = String(month + 1).padStart(2, '0');
     const dd = String(day).padStart(2, '0');
     const formatted = `${year}-${mm}-${dd}`;
-    if ((min && formatted < min) || (max && formatted > max)) return;
+    if (unavailable(formatted)) return;
     onChange?.(formatted);
     setOpen(false);
   };
@@ -94,7 +109,7 @@ export function DatePicker({
   const firstDayIndex = new Date(year, month, 1).getDay();
 
   const displayFormatted = selectedDate
-    ? selectedDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+    ? `${selectedDate.getDate()} ${SHORT_MONTHS[selectedDate.getMonth()]} ${selectedDate.getFullYear()}`
     : placeholder;
 
   return (
@@ -185,7 +200,7 @@ export function DatePicker({
               selectedDate.getDate() === day;
 
             const formatted = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            const isOutsideRange = Boolean((min && formatted < min) || (max && formatted > max));
+            const isOutsideRange = unavailable(formatted);
             const isToday =
               new Date().getFullYear() === year &&
               new Date().getMonth() === month &&
@@ -196,6 +211,7 @@ export function DatePicker({
                 key={`day-${day}`}
                 type="button"
                 disabled={isOutsideRange}
+                title={disabledDate?.(formatted) ?? formatted}
                 onClick={() => handleSelectDay(day)}
                 className={cn(
                   'h-7 w-7 rounded-md text-xs font-medium flex items-center justify-center transition-all cursor-pointer select-none',
@@ -217,15 +233,17 @@ export function DatePicker({
         <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-border text-[11px]">
           <button
             type="button"
+            disabled={unavailable(todayKey)}
             onClick={() => {
               const today = new Date();
               const mm = String(today.getMonth() + 1).padStart(2, '0');
               const dd = String(today.getDate()).padStart(2, '0');
               const formatted = `${today.getFullYear()}-${mm}-${dd}`;
+              if (unavailable(formatted)) return;
               onChange?.(formatted);
               setOpen(false);
             }}
-            className="text-primary hover:underline cursor-pointer font-semibold"
+            className="text-primary hover:underline cursor-pointer font-semibold disabled:opacity-25 disabled:cursor-not-allowed"
           >
             Today
           </button>
@@ -244,3 +262,19 @@ export function DatePicker({
     </Popover>
   );
 }
+
+/** Month names as the rest of the app writes them ("Sep", never "Sept"). */
+const SHORT_MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];

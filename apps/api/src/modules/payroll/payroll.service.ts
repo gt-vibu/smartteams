@@ -121,7 +121,7 @@ export class PayrollService {
 
   // --- calculation -----------------------------------------------------------------------
 
-  calculate(context: DomainContext, runId: string) {
-    return this.calculation.calculate(context, runId);
+  calculate(context: DomainContext, runId: string, deferAdvanceEmployeeIds?: string[]) {
+    return this.calculation.calculate(context, runId, deferAdvanceEmployeeIds);
   }
 }

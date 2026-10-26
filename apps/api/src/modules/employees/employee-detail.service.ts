@@ -1,3 +1,5 @@
+import { employeeDirectorySummary } from './employee-directory-summary';
+import { employeeListWhere, type EmployeeListFilters } from './employee-list-filters';
 import { Injectable } from '@nestjs/common';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { NotFoundError } from '../../common/errors/domain-error';
@@ -24,6 +26,11 @@ import { assertMayReadEmployee, canReadAllEmployees, findSelfEmployeeId } from '
 export class EmployeeDetailService {
   constructor(private readonly database: TenantDatabaseService) {}
 
+  summary(context: DomainContext) {
+    requirePermission(context, 'employees.read');
+    return this.database.run(context, (tx) => employeeDirectorySummary(tx, context));
+  }
+
   async detail(context: DomainContext, employeeId: string) {
     requirePermission(context, 'employees.read');
     return this.database.run(context, async (tx) => {
@@ -42,7 +49,10 @@ export class EmployeeDetailService {
           employmentType: true,
           dateOfJoining: true,
           dateOfLeaving: true,
+          probationEndsOn: true,
+          confirmedOn: true,
           primaryBranchId: true,
+          departmentId: true,
           managerEmployeeId: true,
           userId: true,
           version: true,
@@ -92,9 +102,23 @@ export class EmployeeDetailService {
         employmentType: employee.employmentType,
         dateOfJoining: employee.dateOfJoining,
         dateOfLeaving: employee.dateOfLeaving,
+        probationEndsOn: employee.probationEndsOn,
+        confirmedOn: employee.confirmedOn,
         primaryBranchId: employee.primaryBranchId,
         jobTitle: employment?.jobTitle ?? null,
-        department: employment?.department ?? null,
+        // The department record when the employee has one; the older free text otherwise.
+        department:
+          (employee.departmentId
+            ? (
+                await tx.department.findFirst({
+                  where: { id: employee.departmentId, organizationId: context.organizationId },
+                  select: { name: true },
+                })
+              )?.name
+            : null) ??
+          employment?.department ??
+          null,
+        departmentId: employee.departmentId,
         /** Whether a login is attached to this employee. The user id itself is not exposed. */
         hasUserAccount: employee.userId !== null,
         managerEmployeeId: employee.managerEmployeeId,
@@ -118,7 +142,7 @@ export class EmployeeDetailService {
    *
    * Self-scoped like every other employee read — an ordinary employee sees only themselves here.
    */
-  async directory(context: DomainContext, filters: { limit?: number; cursor?: string } = {}) {
+  async directory(context: DomainContext, filters: EmployeeListFilters = {}) {
     requirePermission(context, 'employees.read');
     const limit = Math.min(Math.max(filters.limit ?? 200, 1), 200);
     return this.database.run(context, async (tx) => {
@@ -128,8 +152,10 @@ export class EmployeeDetailService {
 
       const employees = await tx.employee.findMany({
         where: {
-          organizationId: context.organizationId,
-          ...(selfEmployeeId ? { id: selfEmployeeId } : {}),
+          AND: [
+            employeeListWhere(context, filters),
+            ...(selfEmployeeId ? [{ id: selfEmployeeId }] : []),
+          ],
         },
         select: {
           id: true,
@@ -143,10 +169,15 @@ export class EmployeeDetailService {
           employmentType: true,
           dateOfJoining: true,
           primaryBranchId: true,
+          departmentId: true,
           managerEmployeeId: true,
           userId: true,
+          _count: { select: { reports: true } },
         },
-        orderBy: [{ lastName: 'asc' }, { firstName: 'asc' }, { id: 'asc' }],
+        orderBy:
+          filters.order === 'recent'
+            ? [{ dateOfJoining: 'desc' }, { id: 'asc' }]
+            : [{ firstName: 'asc' }, { lastName: 'asc' }, { id: 'asc' }],
         ...(filters.cursor ? { cursor: { id: filters.cursor }, skip: 1 } : {}),
         take: limit + 1,
       });
@@ -165,6 +196,14 @@ export class EmployeeDetailService {
         select: { employeeId: true, jobTitle: true, department: true },
       });
       const current = new Map(records.map((record) => [record.employeeId, record]));
+      const departments = new Map(
+        (
+          await tx.department.findMany({
+            where: { organizationId: context.organizationId },
+            select: { id: true, name: true },
+          })
+        ).map((department) => [department.id, department.name]),
+      );
 
       return {
         items: page.map((employee) => ({
@@ -183,9 +222,14 @@ export class EmployeeDetailService {
           primaryBranchId: employee.primaryBranchId,
           managerEmployeeId: employee.managerEmployeeId,
           jobTitle: current.get(employee.id)?.jobTitle ?? null,
-          department: current.get(employee.id)?.department ?? null,
+          department:
+            (employee.departmentId ? departments.get(employee.departmentId) : undefined) ??
+            current.get(employee.id)?.department ??
+            null,
+          departmentId: employee.departmentId,
           /** Whether a login is attached. The user id itself is never exposed. */
           hasUserAccount: employee.userId !== null,
+          directReportsCount: employee._count.reports,
         })),
         nextCursor: hasNextPage ? page.at(-1)?.id : undefined,
       };

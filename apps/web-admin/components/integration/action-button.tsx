@@ -8,7 +8,7 @@ export function ActionButton({
   disabled,
   onClick,
 }: {
-  icon: 'edit' | 'refresh' | 'power' | 'trash';
+  icon: 'edit' | 'refresh' | 'power' | 'shield' | 'trash';
   label: string;
   danger?: boolean;
   disabled: boolean;

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { formatDate, formatDateRange, LIMITS } from '@smarteam/contracts';
 import { Button, Dialog, DialogContent, DialogTitle, Input, Label, Textarea } from '@smarteam/ui';
 import type { Holiday, EmployeeHolidayPolicy, EmployeeHolidaySelection } from '@smarteam/contracts';
 import type { HolidaysState } from '../../hooks/use-holidays';
@@ -58,10 +59,10 @@ export function RetireHolidayDialog({
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-md">
-        <DialogTitle>Retire {targetGroup?.name ?? 'holiday'}</DialogTitle>
+        <DialogTitle>Deactivate {targetGroup?.name ?? 'holiday'}</DialogTitle>
         <p className="mt-1 text-xs text-muted-foreground">
           {targetGroup && targetGroup.totalDays > 1
-            ? `Retiring all ${targetGroup.totalDays} days (${targetGroup.startDate} → ${targetGroup.endDate}).`
+            ? `Deactivating all ${targetGroup.totalDays} days (${formatDateRange(targetGroup.startDate, targetGroup.endDate)}).`
             : ''}{' '}
           The holiday stops applying to future leave calculations. Leave already approved keeps the
           days it was charged.
@@ -71,6 +72,7 @@ export function RetireHolidayDialog({
             Reason
           </Label>
           <Textarea
+            maxLength={LIMITS.reason}
             disabled={holidays.saving}
             id="holiday-retire-reason"
             onChange={(event) => setReason(event.target.value)}
@@ -91,7 +93,7 @@ export function RetireHolidayDialog({
               Cancel
             </Button>
             <Button disabled={holidays.saving || reason.trim().length < 2} type="submit">
-              {holidays.saving ? 'Retiring...' : 'Retire'}
+              {holidays.saving ? 'Deactivating…' : 'Deactivate'}
             </Button>
           </div>
         </form>
@@ -171,16 +173,16 @@ export function HolidaySelectionsDialog({
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-xl">
         <DialogTitle className="flex items-center gap-2">
-          <span>Employee Selections: {holidayGroup.name}</span>
+          <span>Employee choices: {holidayGroup.name}</span>
           <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary">
             {employeeGroups.length} {employeeGroups.length === 1 ? 'employee' : 'employees'}
           </span>
         </DialogTitle>
 
-        <div className="text-xs text-muted-foreground font-mono mt-1">
+        <div className="text-xs text-muted-foreground tabular-nums mt-1">
           {isMultiDay
-            ? `${holidayGroup.startDate} → ${holidayGroup.endDate} (${holidayGroup.totalDays} days)`
-            : holidayGroup.startDate}
+            ? `${formatDateRange(holidayGroup.startDate, holidayGroup.endDate)} (${holidayGroup.totalDays} days)`
+            : formatDate(holidayGroup.startDate)}
         </div>
 
         <div className="mt-4">
@@ -292,7 +294,7 @@ export function AllowanceDialog({
     <>
       <Dialog onOpenChange={onOpenChange} open={open}>
         <DialogContent className="sm:max-w-lg">
-          <DialogTitle>Configure Optional Holiday Allowance</DialogTitle>
+          <DialogTitle>Restricted holidays allowed</DialogTitle>
           <p className="mt-1 text-xs text-muted-foreground">
             Set the maximum optional holidays each employee can select per calendar year. You can
             also set per-employee overrides below.
@@ -305,6 +307,7 @@ export function AllowanceDialog({
               </Label>
               <div className="flex items-center gap-3">
                 <Input
+                  step={1}
                   className="w-28"
                   disabled={holidays.saving}
                   id="optional-holiday-allowance"

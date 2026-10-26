@@ -79,7 +79,10 @@ export const shiftAssignmentSchema = z.object({
     lastName: z.string().nullable().optional(),
     employeeNumber: z.string().nullable().optional(),
   }),
-  shift: z.object({ id: z.string().uuid(), name: z.string(), code: z.string() }),
+  shift: z.object({
+    id: z.string().uuid(), name: z.string(), code: z.string(),
+    daysOfWeek: z.array(z.number().int().min(1).max(7)).optional(),
+  }),
   startsOn: z.string(),
   endsOn: z.string().nullable(),
   state: z.enum(['CURRENT', 'UPCOMING', 'ENDED']),

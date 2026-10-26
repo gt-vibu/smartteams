@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import type { EmployeeOnboardingDetails } from '@smarteam/contracts';
 import type { Prisma } from '../../generated/prisma/client';
 import { EmployeeStatus, EmploymentType } from '../../generated/prisma/enums';
 import {
@@ -156,6 +157,7 @@ export class FederatedEmployeeService {
             },
             orderBy: { effectiveFrom: 'desc' },
             take: 1,
+            include: { payrollPolicy: { select: { id: true, name: true } } },
           },
         },
         orderBy: [
@@ -209,6 +211,7 @@ export class FederatedEmployeeService {
             },
             orderBy: { effectiveFrom: 'desc' },
             take: 1,
+            include: { payrollPolicy: { select: { id: true, name: true } } },
           },
           manager: {
             select: {
@@ -231,7 +234,9 @@ export class FederatedEmployeeService {
     externalId: string,
     clientId: string,
     input: {
-      employeeNumber: string;
+      personalDetails?: EmployeeOnboardingDetails;
+      employeeNumber?: string;
+      employeeNumberPrefix?: string;
       firstName: string;
       middleName?: string | null;
       lastName: string;
@@ -315,6 +320,70 @@ export class FederatedEmployeeService {
       context,
       await this.internalId(context, externalId),
       input,
+    );
+  }
+
+  async personalProfile(context: DomainContext, externalId: string) {
+    return this.records.getPersonalProfile(context, await this.internalId(context, externalId));
+  }
+
+  async updatePersonalProfile(
+    context: DomainContext,
+    externalId: string,
+    input: Parameters<EmployeeRecordsService['upsertPersonalProfile']>[2],
+  ) {
+    return this.records.upsertPersonalProfile(
+      context,
+      await this.internalId(context, externalId),
+      input,
+    );
+  }
+
+  async bankAccounts(context: DomainContext, externalId: string) {
+    return this.records.listBankAccounts(context, await this.internalId(context, externalId));
+  }
+
+  async addBankAccount(
+    context: DomainContext,
+    externalId: string,
+    input: Parameters<EmployeeRecordsService['addBankAccount']>[2],
+  ) {
+    return this.records.addBankAccount(context, await this.internalId(context, externalId), input);
+  }
+
+  async replacePrimaryBankAccount(
+    context: DomainContext,
+    externalId: string,
+    input: Parameters<EmployeeRecordsService['replacePrimaryBankAccount']>[2],
+  ) {
+    return this.records.replacePrimaryBankAccount(
+      context,
+      await this.internalId(context, externalId),
+      input,
+    );
+  }
+
+  async references(context: DomainContext, externalId: string) {
+    return this.records.listReferences(context, await this.internalId(context, externalId));
+  }
+
+  async addReference(
+    context: DomainContext,
+    externalId: string,
+    input: Parameters<EmployeeRecordsService['addReference']>[2],
+  ) {
+    return this.records.addReference(context, await this.internalId(context, externalId), input);
+  }
+
+  async replaceReferences(
+    context: DomainContext,
+    externalId: string,
+    references: Parameters<EmployeeRecordsService['replaceReferences']>[2],
+  ) {
+    return this.records.replaceReferences(
+      context,
+      await this.internalId(context, externalId),
+      references,
     );
   }
 
@@ -521,6 +590,9 @@ export class FederatedEmployeeService {
             esiEnabled: employee.payrollPolicies[0].esiEnabled,
             ptEnabled: employee.payrollPolicies[0].ptEnabled,
             statutoryJurisdiction: employee.payrollPolicies[0].statutoryJurisdiction,
+            payrollPolicyId: employee.payrollPolicies[0].payrollPolicyId,
+            payrollPolicyName:
+              (employee.payrollPolicies[0].payrollPolicy as { name?: string } | null)?.name ?? null,
             effectiveFrom: employee.payrollPolicies[0].effectiveFrom,
             effectiveTo: employee.payrollPolicies[0].effectiveTo,
           }

@@ -19,7 +19,9 @@ import type { ManualEntryInput } from '../../repositories/timesheet.repository';
 import type { JobType, Project } from '@smarteam/contracts';
 import { QuickAddJobDialog } from './quick-add-job-dialog';
 import { QuickAddProjectDialog } from './quick-add-project-dialog';
-import { LogTimeHoursField, type HoursMode } from './logtime-hours-field';
+import { LogTimeHoursField, normalizeTimeInput, type HoursMode } from './logtime-hours-field';
+import { localDateKey } from '../../lib/local-date';
+import { LIMITS } from '@smarteam/contracts';
 
 interface LogTimeModalProps {
   isOpen: boolean;
@@ -50,7 +52,7 @@ export function LogTimeModal({
   onCreateJobType,
   onCreateProject,
 }: LogTimeModalProps) {
-  const initialDate = React.useMemo(() => new Date().toISOString().slice(0, 10), []);
+  const initialDate = React.useMemo(() => localDateKey(), []);
 
   const [projectId, setProjectId] = useState<string>('');
   const [jobName, setJobName] = useState<string>('');
@@ -58,10 +60,8 @@ export function LogTimeModal({
   const [workDate, setWorkDate] = useState(initialDate);
   const [description, setDescription] = useState('');
   const [hoursMode, setHoursMode] = useState<HoursMode>('TOTAL');
-  // Hours start empty. They were pre-filled as 08:00 (and 09:00–17:00), so saving without looking
-  // recorded a full day whatever was worked — and logged time feeds timesheets, approvals and pay.
-  // A form that records effort should ask for it, not assume it.
-  const [totalHours, setTotalHours] = useState('');
+  // Hours default to 00:00. The user types numbers to adjust, and 00:00 is validated on save.
+  const [totalHours, setTotalHours] = useState('00:00');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [billable, setBillable] = useState<boolean>(true);
@@ -73,7 +73,7 @@ export function LogTimeModal({
   React.useEffect(() => {
     if (isOpen) {
       setError('');
-      setWorkDate(new Date().toISOString().slice(0, 10));
+      setWorkDate(localDateKey());
       if (projects.length > 0 && !projectId) {
         setProjectId(projects[0]?.id ?? '');
       }
@@ -88,10 +88,10 @@ export function LogTimeModal({
     // No invented job: with none defined the field stays empty, and it is required.
     setJobName(jobTypes[0]?.name ?? '');
     setWorkItem('');
-    setWorkDate(new Date().toISOString().slice(0, 10));
+    setWorkDate(localDateKey());
     setDescription('');
     setHoursMode('TOTAL');
-    setTotalHours('');
+    setTotalHours('00:00');
     setStartTime('');
     setEndTime('');
     setBillable(true);
@@ -117,19 +117,20 @@ export function LogTimeModal({
       return;
     }
     if (!jobName.trim()) {
-      setError('Select a Job Name.');
+      setError('Select a job.');
       return;
     }
 
     let minutes = 0;
     if (hoursMode === 'TOTAL') {
-      if (!totalHours.trim()) {
-        setError('Enter the hours you worked (e.g. 2:30, 3h or 45m).');
+      const normalized = normalizeTimeInput(totalHours);
+      if (!totalHours.trim() || normalized === '00:00') {
+        setError('Enter the hours you worked (e.g. 08:00 or 2:30).');
         return;
       }
-      const parsed = parseDuration(totalHours);
+      const parsed = parseDuration(normalized);
       if (parsed === null || parsed < 1) {
-        setError('Enter a valid duration (e.g. 2:30, 3h or 45m).');
+        setError('Enter a valid duration (e.g. 08:00 or 2:30).');
         return;
       }
       minutes = parsed;
@@ -179,20 +180,20 @@ export function LogTimeModal({
           }
         }}
       >
-        <DialogContent className="flex flex-col max-h-[82vh] sm:max-h-[88vh] w-[95vw] sm:max-w-2xl gap-0 p-0 overflow-hidden bg-card border-border shadow-2xl">
+        <DialogContent className="flex flex-col sm:max-h-[88vh] w-[95vw] sm:max-w-2xl gap-0 p-0 overflow-hidden bg-card border-border shadow-2xl">
           {/* Header */}
           <DialogHeader className="shrink-0 flex flex-row items-center justify-between border-b border-border/80 px-6 py-3 bg-muted/20">
             <DialogTitle className="text-base font-semibold text-foreground tracking-tight">
-              Log Time
+              Log time
             </DialogTitle>
           </DialogHeader>
 
           {/* Form Content - 2 Column Zoho People Layout */}
-          <div className="flex-1 overflow-y-auto px-5 sm:px-8 py-4 sm:py-5 space-y-3.5 text-xs">
+          <div className="min-h-0 flex-1 overflow-y-auto px-5 sm:px-8 py-4 sm:py-5 space-y-3.5 text-xs">
             {/* Project Name */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
               <Label className="text-foreground/80 font-medium sm:col-span-1 text-xs">
-                Project Name
+                Project
               </Label>
               <div className="flex items-center gap-2 sm:col-span-3">
                 <Select
@@ -237,7 +238,7 @@ export function LogTimeModal({
             {/* Job Name */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
               <Label className="text-foreground/80 font-medium sm:col-span-1 text-xs">
-                Job Name <span className="text-destructive font-bold">*</span>
+                Job <span className="text-destructive font-bold">*</span>
               </Label>
               <div className="flex items-center gap-2 sm:col-span-3">
                 <Select
@@ -276,10 +277,11 @@ export function LogTimeModal({
                 htmlFor="log-work-item"
                 className="text-foreground/80 font-medium sm:col-span-1 text-xs"
               >
-                Work Item
+                Work item
               </Label>
               <div className="sm:col-span-3">
                 <Input
+                  maxLength={LIMITS.title}
                   id="log-work-item"
                   placeholder=""
                   value={workItem}
@@ -320,6 +322,7 @@ export function LogTimeModal({
               </Label>
               <div className="sm:col-span-3">
                 <Textarea
+                  maxLength={LIMITS.note}
                   id="log-description"
                   placeholder=""
                   value={description}
@@ -346,14 +349,14 @@ export function LogTimeModal({
             {/* Billable Status */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
               <Label className="text-foreground/80 font-medium sm:col-span-1 text-xs">
-                Billable Status <span className="text-destructive font-bold">*</span>
+                Billable <span className="text-destructive font-bold">*</span>
               </Label>
               <div className="sm:col-span-3">
                 <Select
                   value={billable ? 'BILLABLE' : 'NON_BILLABLE'}
                   onValueChange={(val) => setBillable(val === 'BILLABLE')}
                   disabled={saving}
-                  className="w-44 text-xs"
+                  className="w-full min-w-0 text-xs sm:w-44"
                 >
                   <option value="BILLABLE">Billable</option>
                   <option value="NON_BILLABLE">Non-Billable</option>
@@ -369,16 +372,8 @@ export function LogTimeModal({
             )}
           </div>
 
-          {/* Bottom Actions - Aligned bottom-left matching Zoho People reference */}
-          <div className="shrink-0 flex items-center justify-start gap-2.5 border-t border-border/80 bg-muted/30 px-5 sm:px-8 py-3">
-            <Button
-              disabled={saving}
-              onClick={() => void handleSubmit()}
-              type="button"
-              className="px-5 font-semibold text-xs h-8 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs cursor-pointer"
-            >
-              {saving ? 'Saving...' : 'Save'}
-            </Button>
+          {/* Bottom Actions - Aligned bottom-left with safe-area padding so it never submerges on mobile */}
+          <div className="shrink-0 flex items-center justify-end gap-2.5 border-t border-border/80 bg-muted/30 px-5 sm:px-8 py-3 pb-[max(1.25rem,calc(0.75rem+env(safe-area-inset-bottom)))]">
             <Button
               disabled={saving}
               onClick={onClose}
@@ -387,6 +382,14 @@ export function LogTimeModal({
               className="px-5 text-xs h-8 border-border bg-card hover:bg-muted text-foreground cursor-pointer"
             >
               Cancel
+            </Button>
+            <Button
+              disabled={saving}
+              onClick={() => void handleSubmit()}
+              type="button"
+              className="px-5 font-semibold text-xs h-8 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xs cursor-pointer"
+            >
+              {saving ? 'Saving…' : 'Save'}
             </Button>
           </div>
         </DialogContent>

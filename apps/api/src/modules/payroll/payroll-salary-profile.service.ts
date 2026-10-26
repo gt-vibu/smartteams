@@ -6,7 +6,12 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { markPayrollStale } from './payroll-staleness';
-import { calculateSalaryStructure, calculateStatutoryDeduction } from './payroll-salary-structure';
+import {
+  assertStatutoryRulesConfigured,
+  calculateSalaryStructure,
+  calculateStatutoryDeduction,
+  missingStatutoryRules,
+} from './payroll-salary-structure';
 import { calculateComponent } from './payroll-calculation';
 import { dateOnly, type SalaryProfileInput } from './payroll-policy.types';
 import {
@@ -18,6 +23,7 @@ import {
 import { DEFAULT_PAYROLL_POLICY } from './payroll-policy-defaults';
 
 import { saveEmployeePolicyInTransaction, statutoryName } from './payroll-policy-shared';
+import { effectivePolicyComponents, policyComponentDefaults } from './payroll-policy-components';
 
 /**
  * An employee's salary profile: what they are paid, and what the breakdown looks like.
@@ -41,12 +47,43 @@ export class PayrollSalaryProfileService {
       throw new ConflictError('Overtime multiplier must be finite and non-negative');
     return this.database.run(context, async (tx) => {
       await requireEmployee(tx, context, input.employeeId, true);
+      // Someone who has left is kept as history; no new job, pay or reporting changes (native
+      // only: the federation contract is frozen).
+      if (context.accessMode === 'NATIVE') {
+        const current = await tx.employee.findFirst({
+          where: { id: input.employeeId, organizationId: context.organizationId },
+          select: { status: true, firstName: true, lastName: true },
+        });
+        if (current && current.status !== 'ACTIVE')
+          throw new ConflictError(
+            `${current.firstName} ${current.lastName} has left the company, so this cannot be changed.`,
+          );
+      }
       const organization = await tx.organization.findUniqueOrThrow({
         where: { id: context.organizationId },
         select: { currencyCode: true },
       });
       const effectiveFrom = dateOnly(input.effectiveFrom);
-      const effectiveTo = input.effectiveTo ? dateOnly(input.effectiveTo) : null;
+      let effectiveTo = input.effectiveTo ? dateOnly(input.effectiveTo) : null;
+      const dayBefore = (date: Date) => new Date(date.getTime() - 86_400_000);
+      const scope = { organizationId: context.organizationId, employeeId: input.employeeId };
+      // A salary revision: the salary running when the new one starts ends the day before it,
+      // and a new open-ended salary stops the day before a revision already booked after it.
+      await tx.employeeCompensation.updateMany({
+        where: {
+          ...scope,
+          effectiveFrom: { lt: effectiveFrom },
+          OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveFrom } }],
+        },
+        data: { effectiveTo: dayBefore(effectiveFrom) },
+      });
+      if (!effectiveTo) {
+        const next = await tx.employeeCompensation.findFirst({
+          where: { ...scope, effectiveFrom: { gt: effectiveFrom } },
+          orderBy: { effectiveFrom: 'asc' },
+        });
+        if (next) effectiveTo = dayBefore(next.effectiveFrom);
+      }
       const existingCompensation = await tx.employeeCompensation.findFirst({
         where: {
           organizationId: context.organizationId,
@@ -99,6 +136,7 @@ export class PayrollSalaryProfileService {
         pfEnabled: input.pfEnabled,
         esiEnabled: input.esiEnabled,
         ptEnabled: input.ptEnabled,
+        payrollPolicyId: input.payrollPolicyId,
         statutoryJurisdiction: input.statutoryJurisdiction,
       });
       await this.audit.record(
@@ -118,7 +156,16 @@ export class PayrollSalaryProfileService {
     });
   }
 
-  async getSalaryProfile(context: DomainContext, requestedEmployeeId?: string) {
+  /**
+   * The employee's salary profile. With `whatIf`, the figures are worked out for that salary and
+   * those statutory switches instead of the saved ones, and nothing is written: it is the live
+   * preview the screen shows while a salary is being typed, from the same calculation payroll uses.
+   */
+  async getSalaryProfile(
+    context: DomainContext,
+    requestedEmployeeId?: string,
+    whatIf?: SalaryProfileWhatIf,
+  ) {
     requirePermission(context, 'payroll.employee-profile.read');
     return this.database.run(context, async (tx) => {
       const employeeId = await resolveEmployeeId(
@@ -128,7 +175,13 @@ export class PayrollSalaryProfileService {
         false,
         'payroll.employee-profile.read.all',
       );
-      const effectiveDate = dateOnly(new Date().toISOString());
+      // "Today" where the organization is. In UTC, a salary saved from India early in the morning
+      // to start that day was still in the future, so the screen went on showing no salary.
+      const organization = await tx.organization.findUniqueOrThrow({
+        where: { id: context.organizationId },
+        select: { timezone: true },
+      });
+      const effectiveDate = dateOnly(localDateIn(organization.timezone));
       const employee = await tx.employee.findFirst({
         where: {
           id: employeeId,
@@ -163,19 +216,49 @@ export class PayrollSalaryProfileService {
         },
       });
       if (!employee) throw new NotFoundError('Employee');
-      const policy =
-        (await findPolicy(tx, context.organizationId, new Date())) ?? DEFAULT_PAYROLL_POLICY;
-      const compensation = employee.compensations[0] ?? null;
+      const compensation =
+        employee.compensations[0] ??
+        // Nothing in force yet: show the salary saved to start later, rather than none at all.
+        // Payroll runs price each period from its own dates, so this changes only the screen.
+        (await tx.employeeCompensation.findFirst({
+          where: { employeeId: employee.id, effectiveFrom: { gt: effectiveDate } },
+          orderBy: { effectiveFrom: 'asc' },
+        }));
       const employeePolicy = employee.payrollPolicies[0] ?? null;
-      const gross = compensation?.grossSalary ?? compensation?.baseAmount ?? new Prisma.Decimal(0);
+      const organizationPolicy =
+        (await findPolicy(tx, context.organizationId, effectiveDate)) ?? DEFAULT_PAYROLL_POLICY;
+      const policy = employeePolicy?.payrollPolicyId
+        ? ((await findPolicy(
+            tx,
+            context.organizationId,
+            effectiveDate,
+            employeePolicy.payrollPolicyId,
+          )) ?? DEFAULT_PAYROLL_POLICY)
+        : context.accessMode === 'NATIVE'
+          ? organizationPolicy
+          : DEFAULT_PAYROLL_POLICY;
+      const components = effectivePolicyComponents(
+        policyComponentDefaults(policy),
+        employee.payComponents,
+      );
+      const gross =
+        whatIf?.grossSalary !== undefined
+          ? new Prisma.Decimal(whatIf.grossSalary)
+          : (compensation?.grossSalary ?? compensation?.baseAmount ?? new Prisma.Decimal(0));
+
       const structure = calculateSalaryStructure(gross, policy);
-      const statutoryJurisdiction =
-        employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction;
-      const rules = statutoryJurisdiction
+      const normalizedJurisdiction = [
+        employeePolicy?.statutoryJurisdiction,
+        organizationPolicy.statutoryJurisdiction,
+      ]
+        .find((value) => Boolean(value?.trim()))
+        ?.trim()
+        .toUpperCase();
+      const rules = normalizedJurisdiction
         ? await tx.payrollStatutoryRule.findMany({
             where: {
               organizationId: context.organizationId,
-              jurisdiction: statutoryJurisdiction,
+              jurisdiction: normalizedJurisdiction,
               effectiveFrom: { lte: effectiveDate },
               OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveDate } }],
             },
@@ -183,21 +266,37 @@ export class PayrollSalaryProfileService {
           })
         : [];
       const enabled = {
-        pf: employeePolicy?.pfEnabled ?? policy.pfDefault,
-        esi: employeePolicy?.esiEnabled ?? policy.esiDefault,
-        pt: employeePolicy?.ptEnabled ?? policy.ptDefault,
+        pf: whatIf?.pfEnabled ?? employeePolicy?.pfEnabled ?? policy.pfDefault,
+        esi: whatIf?.esiEnabled ?? employeePolicy?.esiEnabled ?? policy.esiDefault,
+        pt: whatIf?.ptEnabled ?? employeePolicy?.ptEnabled ?? policy.ptDefault,
       };
+      // Profile reads and live previews must remain usable while an administrator is still
+      // setting up payroll. The run calculator remains strict and will refuse to calculate until
+      // every enabled statutory scheme has a rule for the employee's jurisdiction.
+      const missingRules = missingStatutoryRules(enabled, rules);
+      // Keep the existing Federation contract and behavior unchanged. The setup warning is for
+      // the native compensation UI only; Federation reads retain their strict validation.
+      if (context.accessMode !== 'NATIVE') {
+        assertStatutoryRulesConfigured(enabled, rules, normalizedJurisdiction);
+      }
       const statutory = rules
         .filter(
           (rule) =>
             (enabled.pf && ['PF', 'EPF'].includes(rule.schemeCode.toUpperCase())) ||
-            (enabled.esi && rule.schemeCode.toUpperCase() === 'ESIC') ||
+            (enabled.esi && ['ESI', 'ESIC'].includes(rule.schemeCode.toUpperCase())) ||
             (enabled.pt && ['PT', 'PROFESSIONAL_TAX'].includes(rule.schemeCode.toUpperCase())),
         )
         .map((rule) =>
-          calculateStatutoryDeduction(structure, rule, policy.roundingMode, structure),
+          calculateStatutoryDeduction(
+            structure,
+            rule,
+            policy.roundingMode,
+            structure,
+            undefined,
+            effectiveDate.getUTCMonth() + 1,
+          ),
         );
-      const assignedComponents = employee.payComponents.map((assignment) => ({
+      const assignedComponents = components.map((assignment) => ({
         code: assignment.payComponent.code,
         name: assignment.payComponent.name,
         componentType: assignment.payComponent.componentType,
@@ -294,7 +393,16 @@ export class PayrollSalaryProfileService {
         employeeId,
         compensation,
         employeePolicy,
-        organizationPolicy: policy,
+        organizationPolicy,
+        assignedPolicy: policy,
+        ...(context.accessMode === 'NATIVE'
+          ? {
+              configurationWarnings: missingRules.map(
+                (scheme) =>
+                  `${scheme} is enabled but has no statutory rule for this jurisdiction. Configure it before calculating payroll.`,
+              ),
+            }
+          : {}),
         structure,
         statutory,
         salaryBreakdown: {
@@ -306,8 +414,38 @@ export class PayrollSalaryProfileService {
           totalEmployerBenefits,
           netPay: structure.gross.minus(totalDeductions),
         },
-        components: employee.payComponents,
+        components: components.map((component) => ({
+          ...component,
+          effectiveFrom:
+            'effectiveFrom' in component
+              ? component.effectiveFrom
+              : 'effectiveFrom' in policy
+                ? policy.effectiveFrom
+                : effectiveDate,
+          effectiveTo:
+            'effectiveTo' in component
+              ? component.effectiveTo
+              : 'effectiveTo' in policy
+                ? policy.effectiveTo
+                : null,
+        })),
       };
     });
+  }
+}
+
+export type SalaryProfileWhatIf = {
+  grossSalary?: number;
+  pfEnabled?: boolean;
+  esiEnabled?: boolean;
+  ptEnabled?: boolean;
+};
+
+/** The calendar date now in `timeZone` (YYYY-MM-DD), falling back to UTC for an unknown zone. */
+function localDateIn(timeZone: string | null | undefined): string {
+  try {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: timeZone || 'UTC' }).format(new Date());
+  } catch {
+    return new Date().toISOString().slice(0, 10);
   }
 }

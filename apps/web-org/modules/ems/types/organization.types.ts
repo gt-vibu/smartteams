@@ -81,7 +81,7 @@ export interface OrgEmployeeSummary {
   avatarInitials: string;
   managerEmployeeId?: string | null;
   managerName?: string | null;
-  employmentType: 'FULL_TIME' | 'PART_TIME' | 'CONTRACT' | 'INTERN';
+  employmentType: 'FULL_TIME' | 'PART_TIME' | 'CONTRACTOR' | 'TEMPORARY' | 'INTERN' | 'OTHER';
   status: 'ACTIVE' | 'INACTIVE';
   dateOfJoining: string;
   isOnline?: boolean;

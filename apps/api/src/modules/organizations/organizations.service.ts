@@ -9,6 +9,7 @@ import {
 } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { PasswordInvitationService } from '../auth/auth.password-invitation.service';
 import { PasswordService } from '../auth/auth.passwords';
 import { OutboxService } from '../federation/outbox.service';
 import { FEDERATION_CAPABILITY_CATALOG } from '../federation/federation-capability.catalog';
@@ -17,6 +18,7 @@ import { branchDto, toDto } from './organization-shared';
 import { OrganizationBranchesService } from './organization-branches.service';
 import { OrganizationLifecycleService } from './organization-lifecycle.service';
 import { OrganizationOnboardingService } from './organization-onboarding.service';
+import { StorageService } from '../../infrastructure/storage/storage.service';
 
 export {
   EMPLOYEE_SELF_SERVICE_PERMISSIONS,
@@ -37,8 +39,8 @@ export {
  * federated bodies still call `this.toDto(...)` exactly as they always did, and those wrappers
  * forward to the shared functions the new services use.
  *
- * The constructor still takes the same four dependencies, so Nest and any direct construction
- * keep working.
+ * The constructor takes the dependencies its parts need, so Nest and direct construction in tests
+ * build the same service.
  */
 @Injectable()
 export class OrganizationsService {
@@ -51,10 +53,12 @@ export class OrganizationsService {
     private readonly audit: AuditService,
     private readonly outbox: OutboxService,
     passwords: PasswordService,
+    invitations: PasswordInvitationService,
+    storage: StorageService,
   ) {
     this.branches = new OrganizationBranchesService(database, audit, outbox);
-    this.lifecycle = new OrganizationLifecycleService(database, audit, outbox);
-    this.onboarding = new OrganizationOnboardingService(database, audit, passwords);
+    this.lifecycle = new OrganizationLifecycleService(database, audit, outbox, storage);
+    this.onboarding = new OrganizationOnboardingService(database, audit, passwords, invitations);
   }
 
   // --- platform onboarding -----------------------------------------------------------------
@@ -85,8 +89,20 @@ export class OrganizationsService {
     return this.branches.createBranch(...args);
   }
 
+  branchOverview(...args: Parameters<OrganizationBranchesService['branchOverview']>) {
+    return this.branches.branchOverview(...args);
+  }
+
   updateBranch(...args: Parameters<OrganizationBranchesService['updateBranch']>) {
     return this.branches.updateBranch(...args);
+  }
+
+  primaryBranch(context: DomainContext) {
+    return this.branches.primaryBranch(context);
+  }
+
+  setPrimaryBranch(context: DomainContext, branchId: string) {
+    return this.branches.setPrimaryBranch(context, branchId);
   }
 
   deactivateBranch(context: DomainContext, branchId: string, reason: string) {

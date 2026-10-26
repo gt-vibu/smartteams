@@ -41,6 +41,7 @@ function employee(id: string, overrides: Record<string, unknown> = {}) {
     primaryBranchId: null,
     managerEmployeeId: null,
     userId: null,
+    _count: { reports: 0 },
     ...overrides,
   };
 }
@@ -60,11 +61,20 @@ function setup(
         .mockResolvedValue(
           options.self === undefined ? { id: A } : options.self ? { id: options.self } : null,
         ),
-      findMany: jest.fn((args: { where?: Record<string, unknown>; take?: number }) => {
-        void args;
-        return Promise.resolve(rows);
-      }),
+      findMany: jest.fn(
+        (args: {
+          where?: Record<string, unknown>;
+          take?: number;
+          select?: Record<string, unknown>;
+          orderBy?: unknown;
+        }) => {
+          void args;
+          return Promise.resolve(rows);
+        },
+      ),
     },
+    // No department records: the older free-text department is what these cases read.
+    department: { findMany: () => Promise.resolve([]), findFirst: () => Promise.resolve(null) },
     employeeEmploymentRecord: {
       findMany: jest.fn(() => Promise.resolve(options.records ?? [])),
     },
@@ -127,8 +137,8 @@ describe('employee directory projection', () => {
     await service.directory(context(['employees.read']));
 
     const where = tx.employee.findMany.mock.calls[0]?.[0]?.where;
-    expect(where?.id).toBe(A);
-    expect(where?.organizationId).toBe(ORG);
+    expect(where?.AND).toContainEqual({ id: A });
+    expect(where?.AND).toContainEqual(expect.objectContaining({ organizationId: ORG }));
   });
 
   it('returns nothing when a self-scoped caller has no employee record', async () => {
@@ -144,6 +154,37 @@ describe('employee directory projection', () => {
     await service.directory(context(['*']), { limit: 100_000 });
 
     expect(tx.employee.findMany.mock.calls[0]?.[0]?.take).toBe(201);
+  });
+
+  it('sorts the directory A–Z by the displayed first name with a stable cursor order', async () => {
+    const { tx, service } = setup();
+    await service.directory(context(['*']));
+
+    expect(tx.employee.findMany.mock.calls[0]?.[0]?.orderBy).toEqual([
+      { firstName: 'asc' },
+      { lastName: 'asc' },
+      { id: 'asc' },
+    ]);
+  });
+
+  it('queries top-level employees without loading the organization tree', async () => {
+    const { tx, service } = setup();
+    await service.directory(context(['*']), { reportingManager: 'ROOT' });
+
+    const where = tx.employee.findMany.mock.calls[0]?.[0]?.where;
+    expect(where?.AND).toContainEqual(expect.objectContaining({ managerEmployeeId: null }));
+  });
+
+  it('queries one manager’s direct reports as a separately paged directory', async () => {
+    const { tx, service } = setup();
+    await service.directory(context(['*']), { reportingManager: A, limit: 50 });
+
+    const where = tx.employee.findMany.mock.calls[0]?.[0]?.where;
+    expect(where?.AND).toContainEqual(expect.objectContaining({ managerEmployeeId: A }));
+    expect(tx.employee.findMany.mock.calls[0]?.[0]?.take).toBe(51);
+    expect(tx.employee.findMany.mock.calls[0]?.[0]?.select?._count).toEqual({
+      select: { reports: true },
+    });
   });
 
   it('refuses without the permission', async () => {

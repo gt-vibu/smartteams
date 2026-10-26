@@ -1,9 +1,11 @@
 import {
   firstPunch,
   formatMinutes,
+  liveWorkedMinutes,
   workDateKey,
   type AttendanceCorrection,
   type AttendanceRecord,
+  formatDate,
 } from '@smarteam/contracts';
 import type { HolidayConflictView } from './holiday-conflict-view';
 
@@ -15,7 +17,8 @@ import type { HolidayConflictView } from './holiday-conflict-view';
  *
  *  - `isRestrictedHoliday` — the holiday calendar is not reconciled yet. `holidayName` is set only
  *    for a check-in on the employee's approved optional holiday, from the API's conflict list.
- *  - `shiftCode` / `shiftName` — the shifts module is not reconciled yet.
+ *  - `shiftCode` / `shiftName` — a record stores no shift; `useAttendance` fills the name from
+ *    the employee's assignment history.
  *
  * They are null rather than invented, so a working day is never labelled as a holiday.
  */
@@ -34,6 +37,8 @@ export type AttendanceDayView = {
   workedLabel: string;
   overtimeLabel: string;
   dayStatus: string;
+  /** An approved leave row and at least one real check-in exist for the same day. */
+  leaveOverlap: boolean;
   /** Null until the shifts module is wired. */
   shiftName: string | null;
   /** The optional holiday this day's check-in landed on; null for any other day. */
@@ -81,6 +86,10 @@ export function toAttendanceDayView(
     todayKey: string;
     correction?: AttendanceCorrection | undefined;
     holidayConflict?: HolidayConflictView | undefined;
+    /** Counts an open session up to this moment, so the hours move while someone is working. */
+    now?: number;
+    /** ISO weekdays that are working days (1 Monday … 7 Sunday); the rest are weekly offs. */
+    workWeekDays?: readonly number[];
   } = {
     todayKey: '',
   },
@@ -90,21 +99,29 @@ export function toAttendanceDayView(
   const weekday = date.getDay();
   const checkIn = firstPunch(record, 'IN');
   const checkOut = firstPunch(record, 'OUT');
+  const worked = liveWorkedMinutes(record, options.now);
+  const leaveOverlap =
+    record.dayStatus === 'ON_LEAVE' && record.status !== 'REJECTED' && Boolean(checkIn);
 
   return {
     id: record.id,
     workDate: key,
-    dayLabel: date.toLocaleDateString(undefined, { day: 'numeric', month: 'short' }),
+    // "28 Sep": the day and month, as every other date in the app writes them.
+    dayLabel: formatDate(date).split(' ').slice(0, 2).join(' '),
     dayOfWeek: DAY_NAMES[weekday] ?? '',
     dayNumber: date.getDate(),
     isToday: key === options.todayKey,
-    isWeekend: weekday === 0 || weekday === 6,
+    // The company's weekly offs, not a fixed Saturday and Sunday.
+    isWeekend: !(options.workWeekDays ?? [1, 2, 3, 4, 5]).includes(weekday === 0 ? 7 : weekday),
     firstInTime: clockTime(checkIn?.occurredAt),
     lastOutTime: clockTime(checkOut?.occurredAt),
-    workedMinutes: record.workedMinutes,
-    workedLabel: formatMinutes(record.workedMinutes),
+    workedMinutes: worked,
+    workedLabel: formatMinutes(worked),
     overtimeLabel: formatMinutes(record.overtimeMinutes),
+    // A punch during leave remains under review; only the authorized overlap decision may mark
+    // the day present. Keep the stored leave status until that decision is recorded.
     dayStatus: record.dayStatus,
+    leaveOverlap,
     shiftName: null,
     holidayName: options.holidayConflict?.holidayName ?? null,
     spanStartPercent: dayPercent(checkIn?.occurredAt),
@@ -124,6 +141,8 @@ export function toAttendanceDayViews(
   todayKey: string,
   corrections: readonly AttendanceCorrection[] = [],
   holidayConflicts: ReadonlyMap<string, HolidayConflictView> = new Map(),
+  now: number = Date.now(),
+  workWeekDays: readonly number[] = [1, 2, 3, 4, 5],
 ): AttendanceDayView[] {
   // Most recent correction per attendance record, so a row can show that one is pending.
   const byRecord = new Map<string, AttendanceCorrection>();
@@ -137,6 +156,8 @@ export function toAttendanceDayViews(
         todayKey,
         correction: byRecord.get(record.id),
         holidayConflict: holidayConflicts.get(record.id),
+        now,
+        workWeekDays,
       }),
     )
     .sort((a, b) => b.workDate.localeCompare(a.workDate));
@@ -172,13 +193,27 @@ export function attendanceTotals(views: readonly AttendanceDayView[]) {
  */
 export function attendanceSummaryStats(views: readonly AttendanceDayView[]) {
   const present = (view: AttendanceDayView) =>
-    view.dayStatus === 'PRESENT' &&
+    ['PRESENT', 'LATE', 'HALF_DAY', 'ON_DUTY'].includes(view.dayStatus) &&
     (!view.holidayConflict || view.holidayConflict.state === 'CONVERTED_TO_WORKING_DAY');
+  // No "payable days" or "on duty" figure: payable days depend on whether each leave was paid,
+  // which payroll decides, and there is no on-duty record. A figure that could disagree with the
+  // payslip, or is always zero, is worse than none.
   return {
-    payableDays: views.filter((view) => present(view) || view.dayStatus === 'WEEKEND').length,
-    presentDays: views.filter(present).length,
-    onDutyDays: 0,
-    paidLeaveDays: views.filter((view) => view.dayStatus === 'LEAVE').length,
+    // A half day counts as half.
+    presentDays: views
+      .filter(present)
+      .reduce(
+        (sum, view) =>
+          sum +
+          Math.min(view.dayStatus === 'HALF_DAY' ? 0.5 : 1, 1 - (view.record.leaveUnits ?? 0)),
+        0,
+      ),
+    leaveDays: views.reduce(
+      (sum, view) =>
+        sum + (view.record.leaveUnits ?? (['LEAVE', 'ON_LEAVE'].includes(view.dayStatus) ? 1 : 0)),
+      0,
+    ),
+    workedMinutes: views.reduce((sum, view) => sum + (view.workedMinutes || 0), 0),
     holidayDays: views.filter(
       (view) => view.dayStatus === 'HOLIDAY' || view.holidayConflict?.state === 'HOLIDAY_KEPT',
     ).length,

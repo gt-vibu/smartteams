@@ -50,6 +50,10 @@ export const payslipSchema = z.object({
   employeeId: z.string().uuid(),
   externalEmployeeId: z.string().nullable().optional(),
   employeeNumber: z.string().nullable().optional(),
+  /** The person's name, for the app's run breakdown. */
+  employeeName: z.string().optional(),
+  /** The employer, printed at the head of the payslip. */
+  organizationName: z.string().nullable().optional(),
   status: z.string(),
   issuedAt: z.string().nullable().optional(),
   file: z.object({ id: z.string(), status: z.string() }).nullable().optional(),
@@ -65,6 +69,18 @@ export const payslipSchema = z.object({
     deductionAmount: money,
     netAmount: money,
   }),
+  /** Native payslips may show the calendar basis and time adjustment used for their pay. */
+  payrollSummary: z
+    .object({
+      workingDays: z.number(),
+      payableDays: z.number(),
+      monthlyGross: money,
+      paidLeaveDays: z.number(),
+      unpaidDays: z.number(),
+      unpaidTimeReduction: money,
+    })
+    .nullable()
+    .optional(),
   /**
    * Empty when the employee's salary-slip mode hides the breakdown. An empty list means "not
    * disclosed", never "zero" — the screen has to say so rather than render nothing.
@@ -115,12 +131,15 @@ export type EmployeePayComponent = z.infer<typeof employeePayComponentSchema>;
 
 export const payrollPolicySchema = z.object({
   id: z.string().uuid().optional(),
+  name: z.string().optional(),
+  isDefault: z.boolean().optional(),
   effectiveFrom: z.string().optional(),
   effectiveTo: z.string().nullable().optional(),
   payrollDayBasis: z.number(),
   basePercentage: money,
   baseMinimum: money,
   hraPercentage: money,
+  defaultGrossSalary: money.nullable().optional(),
   roundingMode: z.string(),
   pfDefault: z.boolean(),
   esiDefault: z.boolean(),
@@ -132,6 +151,7 @@ export const payrollPolicySchema = z.object({
 
 export const salaryProfileSchema = z.object({
   employeeId: z.string().uuid(),
+  configurationWarnings: z.array(z.string()).optional(),
   compensation: z
     .object({
       grossSalary: money.nullable().optional(),
@@ -144,6 +164,7 @@ export const salaryProfileSchema = z.object({
     .nullable(),
   employeePolicy: z
     .object({
+      payrollPolicyId: z.string().uuid().nullable().optional(),
       payrollEnabled: z.boolean(),
       salarySlipMode: z.string(),
       pfEnabled: z.boolean(),
@@ -153,6 +174,7 @@ export const salaryProfileSchema = z.object({
     })
     .nullable(),
   organizationPolicy: payrollPolicySchema.optional(),
+  assignedPolicy: payrollPolicySchema.optional(),
   structure: z.object({
     gross: money,
     base: money,
@@ -181,6 +203,14 @@ export const salaryAdvanceSchema = z.object({
   reason: z.string().nullable().optional(),
   requestedAt: z.string(),
   approvedAt: z.string().nullable().optional(),
+  employee: z
+    .object({
+      firstName: z.string(),
+      lastName: z.string().nullable().optional(),
+      employeeNumber: z.string().nullable().optional(),
+    })
+    .nullable()
+    .optional(),
 });
 
 export const payrollPaymentSchema = z.object({
@@ -211,6 +241,7 @@ export const statutoryRuleSchema = z.object({
   wageCeiling: money.nullable().optional(),
   employeeThreshold: money.nullable().optional(),
   flatAmount: money.nullable().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type PayrollPolicy = z.infer<typeof payrollPolicySchema>;
@@ -254,6 +285,23 @@ export function parsePayComponent(payload: unknown): PayComponentDefinition | nu
 }
 
 export const parseStatutoryRuleList = (payload: unknown) => parseList(statutoryRuleSchema, payload);
+
+/**
+ * What overtime pays, as multiples of the ordinary hourly rate. `standard` is the default for a
+ * new salary; `weeklyOff` and `holiday` are null until the company decides those days pay more.
+ */
+export const overtimeRatesSchema = z.object({
+  standard: z.number(),
+  weeklyOff: z.number().nullable(),
+  holiday: z.number().nullable(),
+});
+
+export type OvertimeRates = z.infer<typeof overtimeRatesSchema>;
+
+export function parseOvertimeRates(payload: unknown): OvertimeRates | null {
+  const result = overtimeRatesSchema.safeParse(payload);
+  return result.success ? result.data : null;
+}
 
 export function parsePayrollPolicy(payload: unknown): PayrollPolicy | null {
   const result = payrollPolicySchema.safeParse(payload);

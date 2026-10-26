@@ -16,13 +16,40 @@ export const employeeStatusSchema = z.enum([
   'INACTIVE',
 ]);
 
+/** The employment types the API stores. `CONTRACT` and `CONSULTANT` were listed here but refused. */
 export const employmentTypeSchema = z.enum([
   'FULL_TIME',
   'PART_TIME',
-  'CONTRACT',
+  'CONTRACTOR',
+  'TEMPORARY',
   'INTERN',
-  'CONSULTANT',
+  'OTHER',
 ]);
+
+export type EmploymentTypeValue = z.infer<typeof employmentTypeSchema>;
+
+/** One wording for every screen that shows or picks an employment type. */
+export const EMPLOYMENT_TYPE_LABEL: Record<EmploymentTypeValue, string> = {
+  FULL_TIME: 'Full-time',
+  PART_TIME: 'Part-time',
+  CONTRACTOR: 'Contract',
+  TEMPORARY: 'Temporary',
+  INTERN: 'Intern',
+  OTHER: 'Other',
+};
+
+export const EMPLOYMENT_TYPE_OPTIONS = employmentTypeSchema.options.map((value) => ({
+  value,
+  label: EMPLOYMENT_TYPE_LABEL[value],
+}));
+
+/** A readable employment type, falling back to the raw value for one this list does not know. */
+export function employmentTypeLabel(value: string | null | undefined): string {
+  if (!value) return 'Not recorded';
+  return value in EMPLOYMENT_TYPE_LABEL
+    ? EMPLOYMENT_TYPE_LABEL[value as EmploymentTypeValue]
+    : value.replace(/_/g, ' ').toLowerCase();
+}
 
 export const employeeSchema = z.object({
   id: z.string().uuid(),
@@ -41,6 +68,8 @@ export const employeeSchema = z.object({
   employmentType: z.string(),
   primaryBranchId: z.string().uuid().nullable(),
   version: z.number().int(),
+  /** On the directory list; absent where the API does not send it. */
+  dateOfJoining: z.string().nullable().optional(),
 });
 
 /**
@@ -50,10 +79,21 @@ export const employeeSchema = z.object({
  * Note that the API exposes only member *creation* — there is no removal or end-dating route,
  * even though `leftAt` / `endsOn` exist on the models.
  */
+/** Who a membership row belongs to: enough to name them, nothing more. */
+export const membershipEmployeeSchema = z.object({
+  id: z.string().uuid(),
+  firstName: z.string(),
+  lastName: z.string(),
+  employeeNumber: z.string(),
+  jobTitle: z.string().nullable().optional(),
+});
+
 export const teamMemberSchema = z.object({
   id: z.string().uuid(),
   teamId: z.string().uuid(),
   employeeId: z.string().uuid(),
+  teamRole: z.string().nullable().optional(),
+  employee: membershipEmployeeSchema.nullable().optional(),
   joinedAt: z.string(),
   leftAt: z.string().nullable().optional(),
 });
@@ -63,8 +103,8 @@ export const projectMemberSchema = z.object({
   projectId: z.string().uuid(),
   employeeId: z.string().uuid(),
   projectRole: z.string().nullable().optional(),
+  employee: membershipEmployeeSchema.nullable().optional(),
   // Prisma serialises Decimal as a string; coerce so callers always get a number.
-  allocationPercentage: z.coerce.number().nullable().optional(),
   startsOn: z.string(),
   endsOn: z.string().nullable().optional(),
 });
@@ -84,6 +124,7 @@ export const teamSchema = z.object({
   status: z.string().optional(),
   branchId: z.string().uuid().nullable().optional(),
   teamLeadEmployeeId: z.string().uuid().nullable().optional(),
+  teamLead: membershipEmployeeSchema.nullable().optional(),
   createdAt: z.string().optional(),
   members: z.array(teamMemberSchema).optional(),
 });
@@ -99,6 +140,9 @@ export const projectSchema = z.object({
   branchId: z.string().uuid().nullable().optional(),
   startDate: z.string().nullable().optional(),
   endDate: z.string().nullable().optional(),
+  /** Who leads the project, if anyone yet. */
+  projectLeadEmployeeId: z.string().uuid().nullable().optional(),
+  projectLead: membershipEmployeeSchema.nullable().optional(),
   createdAt: z.string().optional(),
   members: z.array(projectMemberSchema).optional(),
 });
@@ -126,6 +170,8 @@ export const branchSchema = z.object({
   name: z.string(),
   code: z.string(),
   status: z.string().optional(),
+  timezone: z.string().nullable().optional(),
+  address: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 
 export type Employee = z.infer<typeof employeeSchema>;
@@ -271,9 +317,12 @@ export const employeeDetailSchema = z.object({
   employmentType: z.string(),
   dateOfJoining: z.string().nullable(),
   dateOfLeaving: z.string().nullable(),
+  probationEndsOn: z.string().nullable().optional(),
+  confirmedOn: z.string().nullable().optional(),
   primaryBranchId: z.string().uuid().nullable(),
   jobTitle: z.string().nullable(),
   department: z.string().nullable(),
+  departmentId: z.string().uuid().nullable().optional(),
   /** Whether a login is attached. The user id itself is never returned. */
   hasUserAccount: z.boolean(),
   managerEmployeeId: z.string().uuid().nullable(),
@@ -300,8 +349,10 @@ export const employeeDirectoryEntrySchema = z.object({
   dateOfJoining: z.string().nullable(),
   primaryBranchId: z.string().uuid().nullable(),
   managerEmployeeId: z.string().uuid().nullable(),
+  directReportsCount: z.number().int().nonnegative().optional(),
   jobTitle: z.string().nullable(),
   department: z.string().nullable(),
+  departmentId: z.string().uuid().nullable().optional(),
   hasUserAccount: z.boolean(),
 });
 

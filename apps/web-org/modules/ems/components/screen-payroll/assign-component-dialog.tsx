@@ -16,6 +16,15 @@ import {
   SelectValue,
 } from '@smarteam/ui';
 import type { CompensationState } from '../../hooks/use-compensation';
+import {
+  componentCode,
+  EMPTY_COMPONENT,
+  NewComponentFields,
+  type NewComponentDraft,
+} from './new-component-fields';
+
+const NEW = '__new__';
+const today = () => new Date().toLocaleDateString('en-CA');
 
 /**
  * Assigns a catalogue component to the selected employee for a period.
@@ -24,6 +33,9 @@ import type { CompensationState } from '../../hooks/use-compensation';
  * asks for an amount and a percentage component for a percentage — the backend rejects the wrong
  * pairing, and rejects an assignment that overlaps an existing one. Neither rule is duplicated
  * here; the server's message is shown when it refuses.
+ *
+ * A new organization has an empty catalogue, which left this dialog with nothing to choose and no
+ * way forward. "New component" creates one here and assigns it in the same step.
  */
 export function AssignComponentDialog({
   compensation,
@@ -36,34 +48,57 @@ export function AssignComponentDialog({
 }) {
   const [payComponentId, setPayComponentId] = useState('');
   const [value, setValue] = useState('');
-  const [effectiveFrom, setEffectiveFrom] = useState('');
+  const [effectiveFrom, setEffectiveFrom] = useState(today);
+  const [draft, setDraft] = useState<NewComponentDraft>(EMPTY_COMPONENT);
+  const canCreate = compensation.can.createComponent;
+  const creating = payComponentId === NEW || (canCreate && compensation.components.length === 0);
   const [effectiveTo, setEffectiveTo] = useState('');
 
   const selected = compensation.components.find((entry) => entry.id === payComponentId) ?? null;
-  const isPercentage = selected?.calculationType === 'PERCENTAGE_OF_BASE';
+  const isPercentage = creating
+    ? draft.calculationType === 'PERCENTAGE_OF_BASE'
+    : selected?.calculationType === 'PERCENTAGE_OF_BASE';
+  const ready = creating ? componentCode(draft.name).length > 0 : Boolean(selected);
+
+  const reset = () => {
+    setPayComponentId('');
+    setValue('');
+    setEffectiveFrom(today());
+    setEffectiveTo('');
+    setDraft(EMPTY_COMPONENT);
+  };
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     const numeric = Number(value);
-    if (!payComponentId || !effectiveFrom || !Number.isFinite(numeric) || numeric < 0) return;
-    const ok = await compensation.assignComponent({
-      payComponentId,
+    if (!ready || !effectiveFrom || value === '' || !Number.isFinite(numeric) || numeric < 0)
+      return;
+    const assignment = {
       ...(isPercentage ? { percentage: numeric } : { amount: numeric }),
       effectiveFrom,
       ...(effectiveTo ? { effectiveTo } : {}),
-    });
+    };
+    const ok = creating
+      ? await compensation.createAndAssignComponent(
+          { ...draft, name: draft.name.trim(), code: componentCode(draft.name) },
+          assignment,
+        )
+      : await compensation.assignComponent({ payComponentId, ...assignment });
     if (ok) {
-      setPayComponentId('');
-      setValue('');
-      setEffectiveFrom('');
-      setEffectiveTo('');
+      reset();
       onOpenChange(false);
     }
   };
 
   return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog
+      onOpenChange={(next) => {
+        if (!next) reset();
+        onOpenChange(next);
+      }}
+      open={open}
+    >
+      <DialogContent className="sm:max-h-[90dvh] overflow-y-auto sm:max-w-md">
         <DialogTitle>Assign a pay component</DialogTitle>
         <form className="mt-4 space-y-3" onSubmit={submit}>
           <div>
@@ -75,26 +110,36 @@ export function AssignComponentDialog({
               <SelectContent>
                 {compensation.components.map((component) => (
                   <SelectItem key={component.id} value={component.id}>
-                    {component.code} — {component.name}
+                    {component.name}
                   </SelectItem>
                 ))}
+                {canCreate && <SelectItem value={NEW}>+ New component</SelectItem>}
               </SelectContent>
             </SelectMenu>
+            {!canCreate && compensation.components.length === 0 && (
+              <p className="mt-1 text-[10px] text-muted-foreground">
+                No components exist yet. Ask someone who manages the pay catalogue to add one.
+              </p>
+            )}
           </div>
+
+          {creating && (
+            <NewComponentFields disabled={compensation.saving} draft={draft} onChange={setDraft} />
+          )}
 
           <div>
             <Label className="mb-1 block" htmlFor="assignment-value">
-              {isPercentage ? 'Percentage of base' : 'Amount'}
+              {isPercentage ? 'Percentage of Basic (%)' : 'Monthly amount (₹)'}
             </Label>
             <Input
-              disabled={compensation.saving || !selected}
+              disabled={compensation.saving || !ready}
               id="assignment-value"
               inputMode="decimal"
               onChange={(event) => setValue(event.target.value)}
               type="number"
               value={value}
             />
-            {selected && (
+            {ready && (
               <p className="mt-1 text-[10px] text-muted-foreground">
                 {isPercentage
                   ? 'Payroll applies this percentage to the base it derives for the period.'
@@ -147,7 +192,7 @@ export function AssignComponentDialog({
               Cancel
             </Button>
             <Button
-              disabled={compensation.saving || !payComponentId || !effectiveFrom}
+              disabled={compensation.saving || !ready || !effectiveFrom || value === ''}
               type="submit"
             >
               {compensation.saving ? 'Assigning...' : 'Assign'}

@@ -1,22 +1,17 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
-import { employeeDisplayName } from '@smarteam/contracts';
-import {
-  Badge,
-  Button,
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SelectContent,
-  SelectItem,
-  SelectMenu,
-  SelectTrigger,
-  SelectValue,
-} from '@smarteam/ui';
+import React, { useState } from 'react';
+import { employeeDisplayName, hasPermission } from '@smarteam/contracts';
+import { Button, Sheet, SheetContent, SheetTitle } from '@smarteam/ui';
+import { useSession } from '../../hooks/auth-context';
+import { AddMembersDialog } from '../common/add-members-dialog';
+import { MembersSection } from '../common/members-section';
 import type { TeamDirectoryState } from '../../hooks/use-team-directory';
 import type { TeamView } from '../../services/team-directory';
 import { ArchiveDialog } from '../common/archive-dialog';
+import { GroupFilesSection } from '../common/group-files-section';
+import { LeadSection } from '../common/lead-section';
+import { EditTeamDialog } from './edit-team-dialog';
 
 /**
  * One team's roster, with membership changes written straight to the API.
@@ -34,21 +29,11 @@ export function TeamDetailDrawer({
   onClose: () => void;
   directory: TeamDirectoryState;
 }) {
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState('');
+  const [isAddOpen, setIsAddOpen] = useState(false);
   const [isArchiveOpen, setIsArchiveOpen] = useState(false);
-
-  const availableToAdd = useMemo(() => {
-    const active = new Set(team.activeMembers.map((member) => member.employeeId));
-    return directory.employees
-      .filter((employee) => !active.has(employee.id))
-      .sort((a, b) => employeeDisplayName(a).localeCompare(employeeDisplayName(b)));
-  }, [directory.employees, team.activeMembers]);
-
-  const handleAdd = async () => {
-    if (!selectedEmployeeId) return;
-    const added = await directory.addMember(team.team.id, selectedEmployeeId);
-    if (added) setSelectedEmployeeId('');
-  };
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const { persona, session } = useSession();
+  const canViewEmployee = hasPermission(persona?.permissions ?? [], 'employees.read.all');
 
   return (
     <>
@@ -58,7 +43,7 @@ export function TeamDetailDrawer({
 
           <div className="border-b border-border bg-muted/40 p-5 pr-14">
             <p className="text-sm font-bold text-foreground">{team.team.name}</p>
-            <p className="text-xs text-muted-foreground">{team.branchName ?? 'No branch'}</p>
+            {team.branchName && <p className="text-xs text-muted-foreground">{team.branchName}</p>}
             {team.team.description && (
               <p className="mt-2 text-xs text-muted-foreground">{team.team.description}</p>
             )}
@@ -82,7 +67,15 @@ export function TeamDetailDrawer({
             )}
 
             {directory.canWrite && (
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-2">
+                <Button
+                  disabled={directory.saving}
+                  onClick={() => setIsEditOpen(true)}
+                  size="sm"
+                  type="button"
+                >
+                  Edit details
+                </Button>
                 <Button
                   disabled={directory.saving}
                   onClick={() => setIsArchiveOpen(true)}
@@ -95,121 +88,83 @@ export function TeamDetailDrawer({
               </div>
             )}
 
-            {directory.canWrite && (
-              <div className="space-y-2 rounded-md border border-border p-3">
-                <span className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Add a member
-                </span>
-                {availableToAdd.length === 0 ? (
-                  <p className="text-xs text-muted-foreground">
-                    Every employee in the directory is already on this team.
-                  </p>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <SelectMenu
-                      disabled={directory.saving}
-                      onValueChange={setSelectedEmployeeId}
-                      value={selectedEmployeeId}
-                    >
-                      <SelectTrigger aria-label="Employee to add">
-                        <SelectValue placeholder="Select an employee" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableToAdd.map((employee) => (
-                          <SelectItem key={employee.id} value={employee.id}>
-                            {employeeDisplayName(employee)} · {employee.employeeNumber}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </SelectMenu>
-                    <Button
-                      disabled={!selectedEmployeeId || directory.saving}
-                      onClick={() => void handleAdd()}
-                      size="sm"
-                      type="button"
-                    >
-                      Add
-                    </Button>
-                  </div>
-                )}
-              </div>
+            <LeadSection
+              busy={directory.saving}
+              canWrite={directory.canWrite && team.team.status !== 'ARCHIVED'}
+              employees={directory.employees}
+              kind="team"
+              lead={team.lead}
+              onSave={(employeeId) =>
+                directory.updateTeam(team.team.id, { teamLeadEmployeeId: employeeId })
+              }
+            />
+            {directory.canWrite && team.team.status !== 'ARCHIVED' && (
+              <p className="-mt-2 text-[11px] text-muted-foreground">
+                A member made lead moves off the member list; their time on the team is kept.
+              </p>
             )}
 
-            <div>
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Members
-                </span>
-                <span className="text-[10px] font-semibold text-muted-foreground">
-                  {team.activeMembers.length} active
-                </span>
-              </div>
-              {team.activeMembers.length === 0 ? (
-                <p className="text-xs text-muted-foreground">This team has no active members.</p>
-              ) : (
-                <div className="space-y-1.5">
-                  {team.activeMembers.map((member) => (
-                    <div
-                      className="flex items-center gap-3 rounded-md border border-border bg-card px-3 py-2"
-                      key={member.memberId}
-                    >
-                      <span className="grid size-7 shrink-0 place-items-center rounded-full bg-primary/10 text-[10px] font-bold text-primary">
-                        {member.initials}
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-xs font-semibold text-foreground">
-                          {member.displayName}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground">
-                          {member.employeeNumber} · since {member.since.slice(0, 10)}
-                        </span>
-                      </span>
-                      {team.lead?.employeeId === member.employeeId ? (
-                        <Badge variant="outline">Lead</Badge>
-                      ) : (
-                        directory.canWrite && (
-                          <Button
-                            disabled={directory.saving}
-                            onClick={() => void directory.endMember(team.team.id, member.memberId)}
-                            size="sm"
-                            type="button"
-                            variant="outline"
-                          >
-                            End
-                          </Button>
-                        )
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <MembersSection
+              busy={directory.saving}
+              canViewEmployee={canViewEmployee}
+              canWrite={directory.canWrite && team.team.status !== 'ARCHIVED'}
+              members={team.activeMembers}
+              onAdd={() => setIsAddOpen(true)}
+              onChangeRole={(memberId, role) => directory.changeRole(team.team.id, memberId, role)}
+              onEnd={(memberId) => directory.endMember(team.team.id, memberId)}
+              pastMembers={team.pastMembers}
+              roleKind="team-roles"
+            />
 
-            {team.pastMembers.length > 0 && (
-              <div className="border-t border-border pt-3">
-                <span className="mb-2 block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Former members
-                </span>
-                <div className="space-y-1.5">
-                  {team.pastMembers.map((member) => (
-                    <div
-                      className="flex items-center justify-between rounded-md border border-dashed border-border px-3 py-2 opacity-70"
-                      key={member.memberId}
-                    >
-                      <span className="truncate text-xs text-muted-foreground">
-                        {member.displayName}
-                      </span>
-                      <span className="text-[10px] text-muted-foreground">
-                        Left {member.until?.slice(0, 10)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <GroupFilesSection
+              canUpload={
+                team.team.status !== 'ARCHIVED' &&
+                (hasPermission(persona?.permissions ?? [], 'files.organization.manage') ||
+                  team.team.teamLeadEmployeeId === session?.employeeId ||
+                  team.activeMembers.some((member) => member.employeeId === session?.employeeId))
+              }
+              groupId={team.team.id}
+              kind="team"
+            />
           </div>
         </SheetContent>
       </Sheet>
+
+      <AddMembersDialog
+        employees={directory.employees}
+        // The lead leads the team; offering them as a member too is a choice that means nothing.
+        excludeIds={[
+          // Someone leaving or gone can be added again; only a current member is left out.
+          ...team.activeMembers
+            .filter((member) => !member.until)
+            .map((member) => member.employeeId),
+          ...(team.team.teamLeadEmployeeId ? [team.team.teamLeadEmployeeId] : []),
+        ]}
+        nameOf={(id) => {
+          const employee = directory.employees.find((entry) => entry.id === id);
+          return employee ? employeeDisplayName(employee) : 'Someone';
+        }}
+        onAdd={(employeeId, teamRole) => directory.addMember(team.team.id, employeeId, teamRole)}
+        onClose={() => setIsAddOpen(false)}
+        open={isAddOpen}
+        roleKind="team-roles"
+        roleLabel="Team role"
+        title={`Add members to ${team.team.name}`}
+      />
+
+      <EditTeamDialog
+        branches={directory.branches}
+        employees={directory.employees}
+        onClose={() => setIsEditOpen(false)}
+        onSave={(input) => directory.updateTeam(team.team.id, input)}
+        open={isEditOpen}
+        otherNames={directory.teams
+          .filter((entry) => entry.team.id !== team.team.id)
+          .map((entry) => entry.team.name)}
+        saveError={directory.saveError}
+        saving={directory.saving}
+        team={team.team}
+      />
 
       <ArchiveDialog
         isOpen={isArchiveOpen}

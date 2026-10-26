@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Input } from '@smarteam/ui';
 import { formatSecondsToTime } from '../../utils/format.utils';
+import { LIMITS } from '@smarteam/contracts';
 
 interface AttendancePunchBarProps {
   initialSeconds?: number;
@@ -31,6 +32,7 @@ export function AttendancePunchBar({ initialSeconds = 14242 }: AttendancePunchBa
       {/* Note Input */}
       <div className="flex-1 w-full max-w-md">
         <Input
+          maxLength={LIMITS.reason}
           type="text"
           value={note}
           onChange={(e) => setNote(e.target.value)}

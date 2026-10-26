@@ -67,6 +67,7 @@ export class PersonaRepository {
       assignedTeamIds: [],
       assignedProjectIds: [],
       directReportEmployeeIds: [],
+      approvesInOwnRight: session.approvesInOwnRight ?? false,
       managerEmployeeId: null,
       managerName: null,
       canSwitchWorkspace: canAdminister && hasEmployeeIdentity,
@@ -79,6 +80,7 @@ export class PersonaRepository {
         avatarInitials: initialsOf(session.user.displayName),
         identityType: session.user.identityType,
         isActive: session.user.isActive,
+        passwordChangeRequired: session.user.passwordChangeRequired,
       },
     };
   }

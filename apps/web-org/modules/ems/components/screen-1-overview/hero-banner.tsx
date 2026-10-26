@@ -41,8 +41,8 @@ export function HeroBanner({ activeTab, onSelectTab }: HeroBannerProps) {
         </Tabs>
       </div>
 
-      {/* Hero banner with botanical foliage */}
-      <BotanicalCover heightClass="h-32 sm:h-36" />
+      {/* The foliage belongs behind the profile; the calendar needs the room. */}
+      {activeTab !== 'Calendar' && <BotanicalCover heightClass="h-32 sm:h-36" />}
     </div>
   );
 }

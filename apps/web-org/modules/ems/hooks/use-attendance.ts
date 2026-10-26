@@ -18,12 +18,13 @@ import { toAttendanceDayViews, type AttendanceDayView } from '../services/attend
 import { holidayConflictsRepository } from '../repositories/holiday-conflicts.repository';
 import { holidayConflictsByRecord } from '../services/holiday-conflict-view';
 import { announceHolidayCheckIn, emitDataChanged, useDataChanged } from '../lib/data-events';
+import { useMinuteClock } from './use-minute-clock';
+import { useWorkingSchedule } from './use-working-schedule';
+import { localDateKey } from '../lib/local-date';
+import { captureAttendanceLocation } from '../services/attendance-location';
 
-/** Local calendar date as `YYYY-MM-DD`; attendance is recorded in the employee's own day. */
-export function localDateKey(date: Date = new Date()): string {
-  const offset = date.getTimezoneOffset() * 60_000;
-  return new Date(date.getTime() - offset).toISOString().slice(0, 10);
-}
+// Attendance is recorded in the employee's own day; kept exported here for existing importers.
+export { localDateKey };
 
 function daysAgo(days: number): string {
   const date = new Date();
@@ -56,6 +57,7 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
   const canRead = hasPermission(permissions, 'attendance.read');
   const canWrite = hasPermission(permissions, 'attendance.write');
   const canRequestCorrection = hasPermission(permissions, 'attendance.corrections.write');
+  const isOrganizationAdmin = permissions.includes('*');
 
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -74,7 +76,11 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
       return page.records;
     },
     [organizationId, employeeId, from, to],
-    { enabled: Boolean(organizationId && employeeId) && canRead },
+    {
+      enabled: Boolean(organizationId && employeeId) && canRead,
+      preservePreviousDataKey:
+        organizationId && employeeId ? `${organizationId}:${employeeId}` : null,
+    },
   );
 
   const records = useMemo(() => resource.data ?? [], [resource.data]);
@@ -84,7 +90,11 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
   const conflictsResource = useAsyncResource<HolidayConflict[]>(
     () => holidayConflictsRepository.list(organizationId!, { from, to }),
     [organizationId, employeeId, from, to],
-    { enabled: Boolean(organizationId && employeeId) && canRead },
+    {
+      enabled: Boolean(organizationId && employeeId) && canRead,
+      preservePreviousDataKey:
+        organizationId && employeeId ? `${organizationId}:${employeeId}` : null,
+    },
   );
   const holidayConflicts = useMemo(
     () => holidayConflictsByRecord(conflictsResource.data ?? []),
@@ -105,6 +115,8 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
   const sessionMode = preferencesResource.data?.attendanceSessionMode ?? 'SINGLE';
 
   const todayKey = localDateKey();
+  const now = useMinuteClock();
+  const { workWeekDays, isWeeklyOffOn, shiftOnDate } = useWorkingSchedule(employeeId);
   const todayRecord = useMemo(
     () => records.find((record) => workDateKey(record) === todayKey) ?? null,
     [records, todayKey],
@@ -112,14 +124,25 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
 
   const checkedIn = derivedCheckedIn(todayRecord);
   const checkInTimestamp = openCheckInAt(todayRecord);
-  const isDayCompleted = Boolean(todayRecord && todayRecord.status === 'COMPLETED' && !checkedIn);
+  // Keep the UI in sync with the API's single-session guard. The API refuses another check-in
+  // once two punches have been recorded, even when a stale/miscomputed record status is not
+  // COMPLETED. Derive completion from the punches as well so we never offer an action the server
+  // is guaranteed to reject.
+  const isDayCompleted = Boolean(
+    todayRecord &&
+    !checkedIn &&
+    (todayRecord.status === 'COMPLETED' || (todayRecord.punches?.length ?? 0) >= 2),
+  );
 
-  // Live timer or completed day duration
+  // The day's worked time: earlier sessions today, plus the one running now. Checking in again
+  // carries on from the total rather than starting at zero; the gap between sessions is not
+  // counted.
+  const earlierSeconds = (checkInTimestamp ? (todayRecord?.workedMinutes ?? 0) : 0) * 60;
   useEffect(() => {
     if (checkInTimestamp) {
       const tick = () => {
         const started = new Date(checkInTimestamp).getTime();
-        const seconds = Math.max(0, Math.floor((Date.now() - started) / 1000));
+        const seconds = earlierSeconds + Math.max(0, Math.floor((Date.now() - started) / 1000));
         setTimerDisplay({
           hrs: String(Math.floor(seconds / 3600)).padStart(2, '0'),
           mins: String(Math.floor((seconds % 3600) / 60)).padStart(2, '0'),
@@ -144,7 +167,7 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
     }
 
     setTimerDisplay(ZERO_TIMER);
-  }, [checkInTimestamp, todayRecord]);
+  }, [checkInTimestamp, todayRecord, earlierSeconds]);
 
   const run = useCallback(
     async (operation: () => Promise<unknown>) => {
@@ -157,6 +180,8 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
       try {
         await operation();
         await refetchAll();
+        // Other attendance views (the timeline beside the check-in bar) hold their own copy.
+        emitDataChanged('attendance');
         return true;
       } catch (caught) {
         setSaveError(caught instanceof Error ? caught.message : 'The punch could not be recorded.');
@@ -172,11 +197,23 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
   const punch = useCallback(
     (direction: 'IN' | 'OUT') =>
       run(async () => {
+        // Read effective branch/employee rules on the action too, rather than relying
+        // on settings loaded before an administrator changed the attendance policy.
+        const preferences = await attendanceRepository.getPreferences(organizationId!);
+        const required =
+          !isOrganizationAdmin &&
+          (preferences.requireGps || preferences.geofenceMode === 'REQUIRED');
+        const location = required
+          ? await captureAttendanceLocation()
+          : !isOrganizationAdmin && preferences.geofenceMode === 'FLAG_ONLY'
+            ? await captureAttendanceLocation().catch(() => undefined)
+            : undefined;
         const now = new Date();
         const input = {
           employeeId: employeeId!,
           occurredAt: now.toISOString(),
           workDate: localDateKey(now),
+          ...location,
         };
         const reply =
           direction === 'IN'
@@ -188,7 +225,7 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
         if (direction === 'IN' && conflict?.state === 'AWAITING_REASON')
           announceHolidayCheckIn(conflict);
       }),
-    [employeeId, organizationId, run],
+    [employeeId, isOrganizationAdmin, organizationId, run],
   );
 
   const checkIn = useCallback(() => punch('IN'), [punch]);
@@ -203,11 +240,17 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
    * submitted" instead of what the API said — for example that the reason was too short.
    */
   const requestCorrection = useCallback(
-    async (attendanceId: string, reason: string) => {
+    async (
+      attendanceId: string,
+      reason: string,
+      times?: { correctedCheckIn?: string; correctedCheckOut?: string },
+    ) => {
       if (!organizationId || !employeeId)
         throw new Error('This account has no employee record, so attendance cannot be recorded.');
       try {
-        await attendanceRepository.requestCorrection(organizationId, attendanceId, reason);
+        await (times
+          ? attendanceRepository.requestCorrection(organizationId, attendanceId, reason, times)
+          : attendanceRepository.requestCorrection(organizationId, attendanceId, reason));
       } finally {
         // As `run` does, on failure too: show the records as the server holds them.
         await resource.refetch();
@@ -235,6 +278,32 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
     [employeeId, organizationId, resource],
   );
 
+  /** Requests attendance for a missing day; the record remains pending until approval. */
+  const requestCorrectionForDate = useCallback(
+    async (
+      workDate: string,
+      reason: string,
+      correctedCheckIn: string,
+      correctedCheckOut?: string,
+    ) => {
+      if (!organizationId || !employeeId)
+        throw new Error('This account has no employee record, so attendance cannot be recorded.');
+      try {
+        await attendanceRepository.requestCorrectionForDate(organizationId, {
+          employeeId,
+          workDate,
+          reason,
+          correctedCheckIn,
+          ...(correctedCheckOut ? { correctedCheckOut } : {}),
+        });
+        emitDataChanged('approvals');
+      } finally {
+        await resource.refetch();
+      }
+    },
+    [employeeId, organizationId, resource],
+  );
+
   /** Explains a check-in on an approved optional holiday; rejects with the API's reason. */
   const explainHolidayCheckIn = useCallback(
     async (attendanceId: string, reason: string, comment?: string) => {
@@ -254,8 +323,15 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
 
   // Presentation shape the screens render, derived from the same records.
   const days: AttendanceDayView[] = useMemo(
-    () => toAttendanceDayViews(records, todayKey, [], holidayConflicts),
-    [records, todayKey, holidayConflicts],
+    () =>
+      toAttendanceDayViews(records, todayKey, [], holidayConflicts, now, workWeekDays).map(
+        (day) => ({
+          ...day,
+          shiftName: shiftOnDate(day.workDate)?.name ?? null,
+          isWeekend: isWeeklyOffOn(day.workDate),
+        }),
+      ),
+    [records, todayKey, holidayConflicts, now, workWeekDays, shiftOnDate, isWeeklyOffOn],
   );
 
   return {
@@ -278,6 +354,7 @@ export function useAttendance(rangeDays = 30, window?: { from: string; to: strin
     checkIn,
     checkOut,
     requestCorrection,
+    requestCorrectionForDate,
     requestMissingCheckOut,
     explainHolidayCheckIn,
     canRead,

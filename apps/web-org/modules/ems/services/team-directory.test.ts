@@ -143,7 +143,7 @@ describe('project view', () => {
     };
   }
 
-  it('carries role and allocation for active allocations', () => {
+  it('does not treat an assignment role as the employee current role', () => {
     const view = toProjectView(
       project([
         {
@@ -151,7 +151,6 @@ describe('project view', () => {
           projectId: 'p',
           employeeId: ASHA,
           projectRole: 'Lead',
-          allocationPercentage: 60,
           startsOn: '2026-01-01',
           endsOn: null,
         },
@@ -160,27 +159,6 @@ describe('project view', () => {
       BRANCHES,
     );
 
-    expect(view.activeMembers[0]?.projectRole).toBe('Lead');
-    expect(view.activeMembers[0]?.allocationPercentage).toBe(60);
-  });
-
-  it('keeps a missing allocation null rather than defaulting it to zero', () => {
-    const view = toProjectView(
-      project([
-        {
-          id: 'p1',
-          projectId: 'p',
-          employeeId: ASHA,
-          projectRole: null,
-          allocationPercentage: null,
-          startsOn: '2026-01-01',
-          endsOn: null,
-        },
-      ]),
-      indexEmployees(EMPLOYEES),
-      BRANCHES,
-    );
-
-    expect(view.activeMembers[0]?.allocationPercentage).toBeNull();
+    expect(view.activeMembers[0]?.role).toBeNull();
   });
 });

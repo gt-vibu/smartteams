@@ -17,10 +17,13 @@ import { adminNavItems } from './navigation-admin-items';
 
 const canAccessModule = vi.fn<(moduleId: string) => boolean>();
 vi.mock('../../hooks/use-auth', () => ({ useAuth: () => ({ canAccessModule }) }));
+let unreadByModule: Record<string, number> = {};
+vi.mock('../../hooks/use-notifications', () => ({ useUnreadByModule: () => unreadByModule }));
 
 beforeEach(() => {
   canAccessModule.mockReset();
   canAccessModule.mockReturnValue(true);
+  unreadByModule = {};
 });
 
 const renderNav = (activeModule = 'home', onSelectModule = vi.fn()) => {
@@ -54,7 +57,7 @@ describe('EmsMobileBottomNav', () => {
 
   it('marks the current section with a tint the whole target carries, not an edge rule', () => {
     renderNav('time-off');
-    const active = tab('Time Off');
+    const active = tab('Leave');
     expect(active).toHaveAttribute('aria-current', 'page');
     expect(active.className).toContain('bg-primary/12');
     expect(tab('Home')).not.toHaveAttribute('aria-current');
@@ -111,5 +114,19 @@ describe('navigation icons', () => {
       const duplicated = shapes.filter((shape, index) => shapes.indexOf(shape) !== index);
       expect(duplicated).toEqual([]);
     }
+  });
+
+  it('marks a section with something new, and not the one already open', () => {
+    unreadByModule = { 'time-off': 2, home: 1 };
+    renderNav('home');
+    expect(tab('Leave').querySelector('[data-unread-dot]')).not.toBeNull();
+    expect(tab('Home').querySelector('[data-unread-dot]')).toBeNull();
+    expect(tab('Leave')).toHaveAccessibleName(/new/);
+  });
+
+  it('puts the dot on More when what is new is behind it', () => {
+    unreadByModule = { approvals: 1 };
+    renderNav('home');
+    expect(tab('More').querySelector('[data-unread-dot]')).not.toBeNull();
   });
 });

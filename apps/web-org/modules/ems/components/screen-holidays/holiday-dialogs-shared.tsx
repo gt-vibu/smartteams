@@ -1,5 +1,6 @@
 'use client';
 
+import { formatDate } from '@smarteam/contracts';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Button,
@@ -59,7 +60,7 @@ export function ShadcnDatePicker({
       const m = parseInt(parts[1] || '1', 10) - 1;
       const d = parseInt(parts[2] || '1', 10);
       const dt = new Date(y, m, d);
-      return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      return formatDate(dt);
     }
     return value;
   }, [value]);
@@ -225,6 +226,7 @@ export function EmployeePolicyDialog({
             {useCustomAllowance && (
               <div className="mt-2 flex items-center gap-3">
                 <Input
+                  step={1}
                   className="w-24"
                   disabled={holidays.saving}
                   max={365}
@@ -278,7 +280,9 @@ export function EmployeePolicyDialog({
                         disabled={holidays.saving}
                         onCheckedChange={() => toggleHolidayId(h.id)}
                       />
-                      <span className="font-mono text-muted-foreground">{h.holidayDate}</span>
+                      <span className="font-mono text-muted-foreground">
+                        {formatDate(h.holidayDate)}
+                      </span>
                       <span className="text-foreground">{h.name}</span>
                     </label>
                   ))

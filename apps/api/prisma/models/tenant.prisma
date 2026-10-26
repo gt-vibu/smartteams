@@ -8,14 +8,20 @@ model Organization {
   timezone      String             @default("UTC")
   currencyCode  String             @map("currency_code") @db.Char(3)
   locale        String             @default("en-IN")
+  logoFileId    String?            @map("logo_file_id") @db.Uuid
+  coverFileId   String?            @map("cover_file_id") @db.Uuid
   deactivatedAt DateTime?          @map("deactivated_at") @db.Timestamptz(6)
   createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt     DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
   version       Int                @default(1)
+  employeeNumberSequence Int       @default(0) @map("employee_number_sequence")
 
   settings                  OrganizationSettings?
   payrollPolicies           PayrollPolicy[]
+  payrollPolicyComponents   PayrollPolicyComponent[]
   statutoryRules            PayrollStatutoryRule[]
+  payrollComplianceChecks   PayrollComplianceSourceCheck[]
+  payrollRuleUpdateProposals PayrollRuleUpdateProposal[]
   employeePayrollPolicies   EmployeePayrollPolicy[]
   salaryAdvances            SalaryAdvance[]
   advanceRecoveries         SalaryAdvanceRecovery[]
@@ -32,6 +38,9 @@ model Organization {
   roles                     Role[]
   userRoles                 UserRole[]
   employees                 Employee[]
+  employeePersonalProfiles  EmployeePersonalProfile[]
+  employeeBankAccounts      EmployeeBankAccount[]
+  employeeReferences        EmployeeReference[]
   employeeStatutoryProfiles EmployeeStatutoryProfile[]
   employeeStatutoryRecords  EmployeeStatutoryRecord[]
   emergencyContacts         EmployeeEmergencyContact[]
@@ -54,6 +63,7 @@ model Organization {
   holidays                  Holiday[]
   holidaySelections         EmployeeHolidaySelection[]
   attendanceHolidayReviews  AttendanceHolidayReview[]
+  attendanceLeaveOverlapReviews AttendanceLeaveOverlapReview[]
   employeeHolidayPolicies   EmployeeHolidayPolicy[]
   leaveTypes                LeaveType[]
   leavePolicyAssignments    LeavePolicyAssignment[]
@@ -82,9 +92,17 @@ model Organization {
   webhookDeliveries         WebhookDelivery[]
   outboxEvents              OutboxEvent[]
   auditLogs                 AuditLog[]
+  notifications             Notification[]
+  approvalDelegations       ApprovalDelegation[]
+  resignations              EmployeeResignation[]
+  compOffCredits            CompOffCredit[]
+  leaveEncashments          LeaveEncashment[]
+  customFieldDefinitions    CustomFieldDefinition[]
   homeFederationClients     FederationClient[]                 @relation("FederationClientHomeOrganization")
   webauthnCredentials       WebauthnCredential[]
   webauthnChallenges        WebauthnChallenge[]
+  logoFile                  FileObject? @relation("OrganizationLogo", fields: [logoFileId], references: [id], onDelete: SetNull)
+  coverFile                 FileObject? @relation("OrganizationCover", fields: [coverFileId], references: [id], onDelete: SetNull)
 
   @@unique([source, externalId])
   @@index([status])
@@ -98,8 +116,11 @@ model OrganizationSettings {
   payrollFrequency          PayFrequency              @default(MONTHLY) @map("payroll_frequency")
   payrollDayOfMonth         Int?                      @map("payroll_day_of_month") @db.SmallInt
   leaveYearStartMonth       Int                       @default(1) @map("leave_year_start_month") @db.SmallInt
+  /// The organization's main branch; null until an administrator chooses one (the oldest stands in).
+  primaryBranchId           String?                   @map("primary_branch_id") @db.Uuid
   optionalHolidayAllowance  Int                       @default(0) @map("optional_holiday_allowance") @db.SmallInt
   geofenceMode              GeofenceMode              @default(DISABLED) @map("geofence_mode")
+  requireGps                Boolean                   @default(false) @map("require_gps")
   geofenceOwnerSource       OwnerSource               @default(NATIVE) @map("geofence_owner_source")
   geofenceOwnerClientId     String?                   @map("geofence_owner_client_id") @db.Uuid
   biometricVerificationMode BiometricVerificationMode @default(DISABLED) @map("biometric_verification_mode")
@@ -107,6 +128,18 @@ model OrganizationSettings {
   biometricOwnerClientId    String?                   @map("biometric_owner_client_id") @db.Uuid
   autoCheckOutMode          AutoCheckOutMode          @default(DISABLED) @map("auto_check_out_mode")
   autoCheckOutAt            DateTime                  @default(dbgenerated("'23:59:00'::time without time zone")) @map("auto_check_out_at") @db.Time(6)
+  /// Days a request may wait before its approvers are reminded, every day after. 0 turns it off.
+  approvalReminderDays      Int                       @default(2) @map("approval_reminder_days") @db.SmallInt
+  /// Days a request may wait before administrators are told it is stuck. 0 turns it off.
+  approvalEscalationDays    Int                       @default(5) @map("approval_escalation_days") @db.SmallInt
+  /// Minutes after the shift starts that a check-in still counts as on time.
+  lateGraceMinutes          Int                       @default(15) @map("late_grace_minutes") @db.SmallInt
+  /// Every this many late check-ins in a month cost half a day's pay. 0 turns it off.
+  lateMarksPerHalfDay       Int                       @default(0) @map("late_marks_per_half_day") @db.SmallInt
+  /// Most an employee may ask for or owe in salary advances, as a percentage of monthly gross. 0 turns advances off.
+  advanceLimitPercent       Int                       @default(50) @map("advance_limit_percent") @db.SmallInt
+  /// Equal monthly instalments an approved advance is recovered in; 1 takes it all from the next pay.
+  advanceRecoveryMonths     Int                       @default(1) @map("advance_recovery_months") @db.SmallInt
   metadata                  Json                      @default("{}")
   createdAt                 DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt                 DateTime                  @updatedAt @map("updated_at") @db.Timestamptz(6)
@@ -199,6 +232,7 @@ model Branch {
   status                    OrganizationStatus         @default(ACTIVE)
   timezone                  String?
   geofenceMode              GeofenceMode?              @map("geofence_mode")
+  requireGps                Boolean?                   @map("require_gps")
   geofenceOwnerSource       OwnerSource                @default(NATIVE) @map("geofence_owner_source")
   geofenceOwnerClientId     String?                    @map("geofence_owner_client_id") @db.Uuid
   biometricVerificationMode BiometricVerificationMode? @map("biometric_verification_mode")

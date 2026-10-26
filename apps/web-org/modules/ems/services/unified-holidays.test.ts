@@ -53,13 +53,13 @@ describe('Unified Enterprise Holiday Calendar Logic', () => {
     const unified = [
       ...mandatoryHolidays.map((h) => ({
         ...h,
-        typeLabel: 'Public Holiday',
+        typeLabel: 'Public holiday',
         statusLabel: 'Required',
         isSelected: false,
       })),
       ...optionalHolidays.map((h) => ({
         ...h,
-        typeLabel: 'Optional Holiday',
+        typeLabel: 'Restricted holiday',
         statusLabel: selectedIds.has(h.id) ? 'Selected' : 'Available',
         isSelected: selectedIds.has(h.id),
       })),
@@ -68,21 +68,21 @@ describe('Unified Enterprise Holiday Calendar Logic', () => {
     expect(unified.length).toBe(4);
     // Chronological order check: 2026-09-14, 2026-09-24, 2026-10-02, 2026-11-01
     expect(unified[0]?.name).toBe('Ganesh Chaturthi');
-    expect(unified[0]?.typeLabel).toBe('Optional Holiday');
+    expect(unified[0]?.typeLabel).toBe('Restricted holiday');
     expect(unified[0]?.statusLabel).toBe('Selected');
     expect(unified[0]?.isSelected).toBe(true);
 
     expect(unified[1]?.name).toBe('Onam');
-    expect(unified[1]?.typeLabel).toBe('Optional Holiday');
+    expect(unified[1]?.typeLabel).toBe('Restricted holiday');
     expect(unified[1]?.statusLabel).toBe('Available');
     expect(unified[1]?.isSelected).toBe(false);
 
     expect(unified[2]?.name).toBe('Mahatma Gandhi Jayanti');
-    expect(unified[2]?.typeLabel).toBe('Public Holiday');
+    expect(unified[2]?.typeLabel).toBe('Public holiday');
     expect(unified[2]?.statusLabel).toBe('Required');
 
     expect(unified[3]?.name).toBe('Kannada Rajyotsava');
-    expect(unified[3]?.typeLabel).toBe('Public Holiday');
+    expect(unified[3]?.typeLabel).toBe('Public holiday');
     expect(unified[3]?.statusLabel).toBe('Required');
   });
 

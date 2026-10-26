@@ -1,5 +1,6 @@
 import { Prisma } from '../../generated/prisma/client';
 import { PayrollRoundingMode } from '../../generated/prisma/enums';
+import { ConflictError } from '../../common/errors/domain-error';
 
 export type SalaryStructurePolicy = {
   basePercentage: Prisma.Decimal | number | string;
@@ -33,6 +34,48 @@ export type StatutoryResult = {
   eligible: boolean;
   reason: string;
 };
+
+export function assertStatutoryRulesConfigured(
+  enabled: { pf: boolean; esi: boolean; pt: boolean },
+  rules: readonly Pick<StatutoryRuleInput, 'schemeCode'>[],
+  jurisdiction?: string | null,
+) {
+  const activeCodes = rules.map((rule) => {
+    const code = rule.schemeCode.trim().toUpperCase();
+    if (code === 'PF') return 'EPF';
+    if (code === 'ESI') return 'ESIC';
+    if (code === 'PROFESSIONAL_TAX') return 'PT';
+    return code;
+  });
+  const duplicateCodes = [
+    ...new Set(activeCodes.filter((code, index) => activeCodes.indexOf(code) !== index)),
+  ];
+  if (duplicateCodes.length) {
+    const location = jurisdiction?.trim() ? ` for ${jurisdiction.trim()}` : '';
+    throw new ConflictError(
+      `More than one ${duplicateCodes.join(', ')} rule is active${location} for this pay period. Edit the rule periods so only one version applies.`,
+    );
+  }
+  const missing = missingStatutoryRules(enabled, rules);
+  if (missing.length) {
+    const location = jurisdiction?.trim() ? ` for ${jurisdiction.trim()}` : '';
+    throw new ConflictError(
+      `Set up ${missing.join(', ')} statutory rule${missing.length === 1 ? '' : 's'}${location} before calculating payroll.`,
+    );
+  }
+}
+
+export function missingStatutoryRules(
+  enabled: { pf: boolean; esi: boolean; pt: boolean },
+  rules: readonly Pick<StatutoryRuleInput, 'schemeCode'>[],
+) {
+  const configured = new Set(rules.map((rule) => rule.schemeCode.toUpperCase()));
+  return [
+    ...(enabled.pf && !configured.has('PF') && !configured.has('EPF') ? ['EPF'] : []),
+    ...(enabled.esi && !configured.has('ESI') && !configured.has('ESIC') ? ['ESI'] : []),
+    ...(enabled.pt && !configured.has('PT') && !configured.has('PROFESSIONAL_TAX') ? ['PT'] : []),
+  ];
+}
 
 export function calculateSalaryStructure(
   grossInput: Prisma.Decimal | number | string,
@@ -80,6 +123,7 @@ export function calculateStatutoryDeduction(
   eligibilityStructure = structure,
   customWageBasis?: Prisma.Decimal,
   periodMonth?: number,
+  payableWages = structure.gross,
 ): StatutoryResult {
   const scheme = rule.schemeCode.toUpperCase();
   const rate = decimal(rule.employeeRate ?? 0);
@@ -88,6 +132,16 @@ export function calculateStatutoryDeduction(
   const ceiling = rule.wageCeiling === null ? null : decimal(rule.wageCeiling);
 
   if (scheme === 'PT' || scheme === 'PROFESSIONAL_TAX') {
+    if (!payableWages.greaterThan(0)) {
+      return {
+        schemeCode: scheme,
+        employeeAmount: zero(),
+        employerAmount: zero(),
+        basis: payableWages,
+        eligible: false,
+        reason: 'No wages are payable in this payroll period',
+      };
+    }
     if (threshold && eligibilityStructure.gross.lessThan(threshold)) {
       return {
         schemeCode: scheme,

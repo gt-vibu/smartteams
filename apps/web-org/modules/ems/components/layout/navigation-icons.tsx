@@ -1,4 +1,5 @@
 import React from 'react';
+import { Settings } from 'lucide-react';
 
 /**
  * The icon set both navigations draw from.
@@ -40,10 +41,12 @@ export const navIcons = {
   building: outline(
     'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
   ),
-  /** A sun: time away from work. It replaced a cloud, which said nothing about leave. */
+  /** A gear: organization configuration, separate from its summary. */
+  settings: (className: string) => <Settings aria-hidden="true" className={className} strokeWidth={1.75} />,
+  /** A calendar with a check: approved or requested time away, distinct from holiday dates. */
   timeOff: outline([
-    'M12 3v1.5m0 15V21m9-9h-1.5M4.5 12H3m15.364-6.364l-1.06 1.06M6.696 17.304l-1.06 1.06m12.728 0l-1.06-1.06M6.696 6.696l-1.06-1.06',
-    'M16 12a4 4 0 11-8 0 4 4 0 018 0z',
+    'M8 3v3m8-3v3M4 9h16M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z',
+    'M9 15l2 2 4-4',
   ]),
   /** A calendar of dated days: the published holiday list. */
   holidays: outline(
@@ -62,6 +65,8 @@ export const navIcons = {
     'M6.3 18.1A11.2 11.2 0 008.25 10.5a3.75 3.75 0 117.5 0c0 .5 0 1-.1 1.6',
     'M12 10.5a14.9 14.9 0 01-3.6 9.8m6.7-4.6a18.7 18.7 0 01-2.5 5.3',
   ]),
+  /** Bars: figures across the organization. */
+  reports: outline('M4 20h16M7 16v-5m5 5V7m5 9v-8'),
   /** A clock: when someone is rostered to work. */
   shifts: outline('M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'),
   /** A folder: work grouped into projects. */
@@ -80,6 +85,10 @@ export const navIcons = {
   /** A group of people. */
   teams: outline(
     'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
+  ),
+  /** An ID card: the employee directory. */
+  employees: outline(
+    'M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2',
   ),
   /** A person being added. */
   onboarding: outline(

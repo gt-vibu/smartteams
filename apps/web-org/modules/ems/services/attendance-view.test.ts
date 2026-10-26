@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { isCheckedIn, openCheckInAt, type AttendanceRecord } from '@smarteam/contracts';
 import {
   attendanceTotals,
+  attendanceSummaryStats,
   toAttendanceDayView,
   toAttendanceDayViews,
   toCalendarStatus,
@@ -165,5 +166,12 @@ describe('status mapping', () => {
     expect(toDailyStatus('ON_DUTY')).toBe('PRESENT');
     expect(toCalendarStatus('ON_DUTY')).toBe('PRESENT');
     expect(toTimelineStatus('ON_DUTY')).toBe('PRESENT');
+  });
+});
+
+describe('half-day leave in attendance summaries', () => {
+  it('splits a worked date into half present and half leave', () => {
+    const view = toAttendanceDayView({ ...record(), dayStatus: 'PRESENT', leaveUnits: 0.5 });
+    expect(attendanceSummaryStats([view])).toMatchObject({ presentDays: 0.5, leaveDays: 0.5 });
   });
 });

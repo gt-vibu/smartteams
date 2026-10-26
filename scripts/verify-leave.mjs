@@ -12,9 +12,10 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { testAadhaar } from './lib/aadhaar.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const BASE = 'http://localhost:4000';
+const BASE = process.env.AUTHZ_API_URL ?? 'http://localhost:4000';
 const env = Object.fromEntries(
   readFileSync(resolve(ROOT, '.env'), 'utf8')
     .split(/\r?\n/)
@@ -129,6 +130,15 @@ async function main() {
     password: r.payload.temporaryPassword,
   });
   const AH = { 'x-csrf-token': r.payload.csrfToken };
+  // The payable-days check below is about leave. Unmarked working days would count as absences
+  // too, so that rule is switched off for this organization; payroll verifies it on its own.
+  await call(
+    A,
+    'PUT',
+    `/v1/organizations/${orgId}/attendance/work-week`,
+    { workWeekDays: [1, 2, 3, 4, 5], unmarkedDaysAreAbsent: false },
+    AH,
+  );
 
   r = await call(A, 'GET', `/v1/organizations/${orgId}/branches`);
   const branchId = Array.isArray(r.payload) ? r.payload[0]?.id : undefined;
@@ -141,6 +151,7 @@ async function main() {
       firstName: 'Asha',
       lastName: 'Rao',
       workEmail: `asha@${slug}.test`,
+      aadhaarNumber: testAadhaar(),
       employmentType: 'FULL_TIME',
       dateOfJoining: '2024-03-15',
       primaryBranchId: branchId,
@@ -181,7 +192,8 @@ async function main() {
     `/v1/organizations/${orgId}/leave/types`,
     {
       code: 'CL',
-      name: 'Casual Leave',
+      // Not a default's name: two types with one name are refused.
+      name: 'Paid Time Off',
       paid: true,
       accrualType: 'FIXED_ANNUAL',
       annualAllowance: 12,
@@ -191,6 +203,22 @@ async function main() {
   );
   check('create a paid leave type', r.status, 201);
   const paidTypeId = r.payload?.id;
+
+  r = await call(
+    A,
+    'POST',
+    `/v1/organizations/${orgId}/leave/types`,
+    {
+      code: 'CL2',
+      name: 'casual leave',
+      paid: true,
+      accrualType: 'FIXED_ANNUAL',
+      annualAllowance: 12,
+      requiresAttachment: false,
+    },
+    AH,
+  );
+  check('a second type with a default name is refused', r.status, 409);
 
   r = await call(
     A,

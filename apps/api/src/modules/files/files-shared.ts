@@ -1,4 +1,6 @@
 import type { FilePurpose } from '../../generated/prisma/enums';
+import { requirePermission, type DomainContext } from '../../common/context/domain-context';
+import { EMPLOYEE_DOCUMENT_TYPES, type EmployeeDocumentType } from './file.constants';
 
 /**
  * Constants and pure rules the services in this module share.
@@ -8,6 +10,7 @@ import type { FilePurpose } from '../../generated/prisma/enums';
  */
 
 export const limits: Record<FilePurpose, { maxBytes: number; types: string[] }> = {
+  ORGANIZATION_BRANDING: { maxBytes: 8_000_000, types: ['image/jpeg', 'image/png', 'image/webp'] },
   PROFILE_IMAGE: { maxBytes: 5_000_000, types: ['image/jpeg', 'image/png', 'image/webp'] },
   RESUME: {
     maxBytes: 15_000_000,
@@ -32,7 +35,22 @@ export const limits: Record<FilePurpose, { maxBytes: number; types: string[] }> 
     ],
   },
   IMPORT: { maxBytes: 50_000_000, types: ['text/csv', 'application/json', 'application/zip'] },
-  OTHER: { maxBytes: 25_000_000, types: ['application/octet-stream'] },
+  // Company and team documents: handbooks, policies, SOPs and their forms.
+  OTHER: {
+    maxBytes: 25_000_000,
+    types: [
+      'application/octet-stream',
+      'application/pdf',
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'text/plain',
+      'text/csv',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ],
+  },
 };
 
 /**
@@ -47,5 +65,43 @@ export const limits: Record<FilePurpose, { maxBytes: number; types: string[] }> 
  * contract already accepts a string here.
  */
 export function toFileDto<T extends { byteSize: bigint }>(file: T) {
-  return { ...file, byteSize: file.byteSize.toString() };
+  // The access columns are answered by the documents routes. Left off here so the responses the
+  // existing routes (and federation partners) receive keep exactly the shape they always had.
+  const rest: Record<string, unknown> = { ...file };
+  delete rest.accessScope;
+  delete rest.teamId;
+  delete rest.projectId;
+  delete rest.allowDownload;
+  return {
+    ...(rest as Omit<T, 'accessScope' | 'teamId' | 'projectId' | 'allowDownload'>),
+    byteSize: file.byteSize.toString(),
+  };
+}
+
+export function requireFilePermission(context: DomainContext, operation: 'read' | 'write') {
+  const permission = operation === 'read' ? 'files.read' : 'files.write';
+  const employeeDocumentPermission =
+    operation === 'read' ? 'employees.documents.read' : 'employees.documents.write';
+  if (
+    !context.permissions.has(permission) &&
+    !context.permissions.has(employeeDocumentPermission) &&
+    !context.permissions.has('*')
+  ) {
+    requirePermission(context, permission);
+  }
+}
+
+export function documentTypeFromMetadata(metadata: unknown): EmployeeDocumentType | null {
+  if (
+    typeof metadata === 'object' &&
+    metadata !== null &&
+    'documentType' in metadata &&
+    typeof metadata.documentType === 'string'
+  ) {
+    const documentType = metadata.documentType;
+    return EMPLOYEE_DOCUMENT_TYPES.includes(documentType as EmployeeDocumentType)
+      ? (documentType as EmployeeDocumentType)
+      : null;
+  }
+  return null;
 }

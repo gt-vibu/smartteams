@@ -1,23 +1,35 @@
 model FileObject {
-  id               String      @id @default(uuid()) @db.Uuid
-  organizationId   String      @map("organization_id") @db.Uuid
-  uploadedByUserId String?     @map("uploaded_by_user_id") @db.Uuid
-  employeeId       String?     @map("employee_id") @db.Uuid
-  leaveRequestId   String?     @map("leave_request_id") @db.Uuid
+  id               String          @id @default(uuid()) @db.Uuid
+  organizationId   String          @map("organization_id") @db.Uuid
+  uploadedByUserId String?         @map("uploaded_by_user_id") @db.Uuid
+  employeeId       String?         @map("employee_id") @db.Uuid
+  leaveRequestId   String?         @map("leave_request_id") @db.Uuid
   purpose          FilePurpose
-  status           FileStatus  @default(PENDING_UPLOAD)
+  status           FileStatus      @default(PENDING_UPLOAD)
   bucket           String
-  objectKey        String      @map("object_key")
-  originalName     String      @map("original_name")
-  contentType      String      @map("content_type")
-  byteSize         BigInt      @map("byte_size")
-  checksumSha256   String?     @map("checksum_sha256") @db.Char(64)
-  kmsKeyId         String?     @map("kms_key_id")
-  currentVersionId String?     @map("current_version_id")
-  metadata         Json        @default("{}")
-  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt        DateTime?   @map("deleted_at") @db.Timestamptz(6)
+  objectKey        String          @map("object_key")
+  originalName     String          @map("original_name")
+  contentType      String          @map("content_type")
+  byteSize         BigInt          @map("byte_size")
+  checksumSha256   String?         @map("checksum_sha256") @db.Char(64)
+  kmsKeyId         String?         @map("kms_key_id")
+  currentVersionId String?         @map("current_version_id")
+  metadata         Json            @default("{}")
+  /// Who the file is for. See `FileAccessScope`; never inferred from who uploaded it.
+  accessScope      FileAccessScope @default(EMPLOYEE) @map("access_scope")
+  /// The team a TEAM-scoped file belongs to.
+  teamId           String?         @map("team_id") @db.Uuid
+  /// The project a PROJECT-scoped file belongs to.
+  projectId        String?         @map("project_id") @db.Uuid
+  /// Whether readers other than its managers may download it, or only view it.
+  allowDownload    Boolean         @default(true) @map("allow_download")
+  /// The day a document such as a passport or contract stops being valid.
+  expiresOn        DateTime?       @map("expires_on") @db.Date
+  /// When its owner and HR were last told it is expiring.
+  expiryNotifiedAt DateTime?       @map("expiry_notified_at") @db.Timestamptz(6)
+  createdAt        DateTime        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt        DateTime?       @map("deleted_at") @db.Timestamptz(6)
 
   organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   uploadedBy   User?               @relation("FileUploadedBy", fields: [uploadedByUserId], references: [id], onDelete: SetNull)
@@ -25,12 +37,45 @@ model FileObject {
   leaveRequest LeaveRequest?       @relation(fields: [leaveRequestId], references: [id], onDelete: Restrict)
   versions     FileObjectVersion[]
   payslip      Payslip?
+  team         Team?               @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  project      Project?            @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  shares       FileShare[]
+  organizationLogo Organization[] @relation("OrganizationLogo")
+  organizationCover Organization[] @relation("OrganizationCover")
 
   @@unique([bucket, objectKey])
   @@index([organizationId, purpose, createdAt])
   @@index([organizationId, employeeId])
   @@index([organizationId, leaveRequestId])
+  @@index([organizationId, accessScope])
+  @@index([organizationId, teamId])
+  @@index([organizationId, projectId])
   @@map("file_objects")
+}
+
+/// An explicit grant of one file to a user, a role or a team. Revoked, never deleted, so the
+/// audit trail keeps who could see what and when.
+model FileShare {
+  id              String           @id @default(uuid()) @db.Uuid
+  organizationId  String           @map("organization_id") @db.Uuid
+  fileObjectId    String           @map("file_object_id") @db.Uuid
+  granteeType     FileShareGrantee @map("grantee_type")
+  granteeUserId   String?          @map("grantee_user_id") @db.Uuid
+  granteeRoleId   String?          @map("grantee_role_id") @db.Uuid
+  granteeTeamId   String?          @map("grantee_team_id") @db.Uuid
+  canDownload     Boolean          @default(false) @map("can_download")
+  expiresAt       DateTime?        @map("expires_at") @db.Timestamptz(6)
+  createdByUserId String?          @map("created_by_user_id") @db.Uuid
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  revokedAt       DateTime?        @map("revoked_at") @db.Timestamptz(6)
+
+  fileObject FileObject @relation(fields: [fileObjectId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, fileObjectId])
+  @@index([organizationId, granteeUserId])
+  @@index([organizationId, granteeRoleId])
+  @@index([organizationId, granteeTeamId])
+  @@map("file_shares")
 }
 
 model FileObjectVersion {

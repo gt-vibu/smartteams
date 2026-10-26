@@ -73,10 +73,26 @@ export const serverEnvSchema = z
     FEDERATION_WEBHOOK_SIGNING_PUBLIC_KEY_PEM: z.string().optional().or(z.literal('')),
     FEDERATION_WEBHOOK_RETRY_WINDOW_SECONDS: positiveInt.default(259_200),
     FEDERATION_IDEMPOTENCY_ENCRYPTION_KEY: z.string().min(32).optional().or(z.literal('')),
+    /** Encrypts employee Aadhaar and PAN numbers. Set a random 32+ character value. */
+    INTEGRATION_CREDENTIALS_ENCRYPTION_KEY: z.string().min(32).optional().or(z.literal('')),
     FEDERATION_RATE_LIMIT_PER_MINUTE: positiveInt.default(600),
     FEDERATION_TOKEN_RATE_LIMIT_PER_MINUTE: positiveInt.default(60),
     FEDERATION_WEBHOOK_ALLOWED_HOSTS: z.string().default('invalid-blizbooks.invalid'),
     AUTH_RATE_LIMIT_PER_MINUTE: positiveInt.default(30),
+    /*
+     * Outgoing mail: invitations with a temporary password, password-reset codes and change
+     * notices. Optional so an environment without a mail server still boots; with no SMTP_HOST,
+     * development writes each message to the API log instead, and anywhere else the delivery job
+     * fails loudly rather than pretending a message was sent.
+     */
+    SMTP_HOST: z.string().optional().or(z.literal('')),
+    SMTP_PORT: positiveInt.default(587),
+    SMTP_SECURE: booleanFromEnv.default(false),
+    SMTP_USER: z.string().optional().or(z.literal('')),
+    SMTP_PASSWORD: z.string().optional().or(z.literal('')),
+    MAIL_FROM: z.string().min(3).default('Smarteam <no-reply@smarteam.local>'),
+    // Where links in those messages point: the organization web app's public address.
+    APP_PUBLIC_URL: z.string().url().default('http://localhost:3000'),
     // Baseline ceilings for the native application API, per identity per minute. See
     // `RequestRateLimitInterceptor` for why the tiers differ rather than one figure applying.
     RATE_LIMIT_READ_PER_MINUTE: positiveInt.default(600),

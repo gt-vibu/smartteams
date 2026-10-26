@@ -1,35 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import type { AttendancePunchType } from '../../generated/prisma/enums';
 import type { DomainContext } from '../../common/context/domain-context';
+import type { AttendancePunchType } from '../../generated/prisma/enums';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import type { InboxPagination } from '../approvals/approval-inbox-page';
 import { AuditService } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
-import { AttendanceLocationService } from './attendance-location.service';
+import { AttendanceAutoCheckOutService } from './attendance-auto-checkout.service';
 import { AttendanceCorrectionListsService } from './attendance-correction-lists.service';
 import { AttendanceCorrectionsService } from './attendance-corrections.service';
 import { AttendanceHolidayReviewService } from './attendance-holiday-review.service';
+import { AttendanceLeaveOverlapService } from './attendance-leave-overlap.service';
+import { AttendanceLocationService } from './attendance-location.service';
 import { AttendancePreferencesService } from './attendance-preferences.service';
 import { AttendancePunchService, type PunchInput } from './attendance-punch.service';
-import { AttendanceAutoCheckOutService } from './attendance-auto-checkout.service';
 
 export type { PunchInput };
 
-/**
- * Re-exported because the module's unit tests and other modules import these pure helpers from
- * here, and moving them to `attendance-shared` should not force every caller to change.
- */
 export { attendanceTotals, correctionPunchUpdates, hasOpenPunch } from './attendance-shared';
 
-/**
- * The attendance module's entry point.
- *
- * Was 1006 lines covering punching, corrections and per-branch capture settings. Those are now
- * four services sharing free functions rather than each other, so `punch` — the one endpoint an
- * entire workforce hits twice a day — can be read without the correction workflow in the way.
- *
- * The constructor still takes `(database, audit, outbox)`, so Nest, the federation controller and
- * the self-scoping suite that constructs this directly all keep working unchanged.
- */
+/** Native and federation callers share this facade while implementation is split by domain. */
 @Injectable()
 export class AttendanceService {
   private readonly corrections: AttendanceCorrectionsService;
@@ -37,7 +26,7 @@ export class AttendanceService {
   private readonly preferences: AttendancePreferencesService;
   private readonly punches: AttendancePunchService;
   private readonly holidayReviews: AttendanceHolidayReviewService;
-
+  private readonly leaveOverlaps: AttendanceLeaveOverlapService;
   private readonly autoCheckOut: AttendanceAutoCheckOutService;
 
   constructor(
@@ -52,37 +41,56 @@ export class AttendanceService {
     this.preferences = new AttendancePreferencesService(database, audit, locations);
     this.punches = new AttendancePunchService(database, audit, outbox, locations);
     this.holidayReviews = new AttendanceHolidayReviewService(database, audit, outbox);
+    this.leaveOverlaps = new AttendanceLeaveOverlapService(database, audit);
   }
 
-  /** Closes today's forgotten check-outs now; the scheduled sweep does the same unprompted. */
   runAutoCheckOut(context: DomainContext) {
     return this.autoCheckOut.runNow(context);
   }
-
-  // --- punching and reading records ----------------------------------------------------------
 
   punch(context: DomainContext, type: AttendancePunchType, input: PunchInput) {
     return this.punches.punch(context, type, input);
   }
 
-  /**
-   * The native app's punch: the same punch, plus the optional-holiday conflict it created, if any,
-   * so the app can ask for the reason straight away. Federation calls `punch` and is unchanged.
-   */
   async punchNative(context: DomainContext, type: AttendancePunchType, input: PunchInput) {
     const result = await this.punches.punch(context, type, input);
+    await this.leaveOverlaps.afterNativePunch(context, result.record.id, type);
     const holidayConflict = await this.holidayReviews.conflictForRecord(context, result.record.id);
     return { ...result, holidayConflict };
+  }
+
+  listLeaveOverlapInbox(context: DomainContext) {
+    return this.leaveOverlaps.inbox(context);
+  }
+
+  decideLeaveOverlap(
+    context: DomainContext,
+    id: string,
+    input: { status: 'APPROVED' | 'REJECTED'; comment?: string },
+  ) {
+    return this.leaveOverlaps.decide(context, id, input);
+  }
+
+  getLeaveOverlapAutoApproval(context: DomainContext) {
+    return this.leaveOverlaps.autoApprovalSetting(context);
+  }
+
+  setLeaveOverlapAutoApproval(context: DomainContext, enabled: boolean) {
+    return this.leaveOverlaps.setAutoApproval(context, enabled);
   }
 
   list(...args: Parameters<AttendancePunchService['list']>) {
     return this.punches.list(...args);
   }
 
-  // --- corrections -----------------------------------------------------------------------------
-
   requestCorrection(...args: Parameters<AttendanceCorrectionsService['requestCorrection']>) {
     return this.corrections.requestCorrection(...args);
+  }
+
+  requestCorrectionForDate(
+    ...args: Parameters<AttendanceCorrectionsService['requestCorrectionForDate']>
+  ) {
+    return this.corrections.requestCorrectionForDate(...args);
   }
 
   requestMissingCheckOut(
@@ -95,8 +103,12 @@ export class AttendanceService {
     return this.corrections.decideCorrection(...args);
   }
 
-  listPendingCorrectionApprovals(context: DomainContext, approverUserId: string) {
-    return this.correctionLists.listPendingCorrectionApprovals(context, approverUserId);
+  listPendingCorrectionApprovals(
+    context: DomainContext,
+    approverUserId: string,
+    pagination?: InboxPagination,
+  ) {
+    return this.correctionLists.listPendingCorrectionApprovals(context, approverUserId, pagination);
   }
 
   listCorrectionRequests(
@@ -104,8 +116,6 @@ export class AttendanceService {
   ) {
     return this.correctionLists.listCorrectionRequests(...args);
   }
-
-  // --- a check-in on a granted optional holiday -------------------------------------------------
 
   listHolidayConflicts(...args: Parameters<AttendanceHolidayReviewService['listConflicts']>) {
     return this.holidayReviews.listConflicts(...args);
@@ -122,8 +132,6 @@ export class AttendanceService {
   decideHolidayReview(...args: Parameters<AttendanceHolidayReviewService['decide']>) {
     return this.holidayReviews.decide(...args);
   }
-
-  // --- per-branch capture settings ---------------------------------------------------------------
 
   updatePreferences(...args: Parameters<AttendancePreferencesService['updatePreferences']>) {
     return this.preferences.updatePreferences(...args);

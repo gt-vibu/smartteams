@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import type { LeaveBalance, LeavePreview, LeaveType } from '@smarteam/contracts';
+import { LIMITS } from '@smarteam/contracts';
 import {
+  LoadingIndicator,
   Button,
   DatePicker,
   Dialog,
@@ -15,7 +17,11 @@ import {
   SelectValue,
   Textarea,
 } from '@smarteam/ui';
-import type { LeaveBalance, LeaveType } from '@smarteam/contracts';
+import { useEffect, useMemo, useState } from 'react';
+import { useSession } from '../../hooks/auth-context';
+import { useLeaveDateAvailability } from '../../hooks/use-leave-date-availability';
+import { leaveRepository } from '../../repositories/leave.repository';
+import { LeaveAttachmentInput, type LeaveAttachment } from './leave-attachment-input';
 
 interface ApplyLeaveModalProps {
   isOpen: boolean;
@@ -29,15 +35,15 @@ interface ApplyLeaveModalProps {
     startDate: string;
     endDate: string;
     reason?: string;
+    attachmentIds?: string[];
+    session?: 'FULL_DAY' | 'FIRST_HALF' | 'SECOND_HALF';
   }) => Promise<boolean>;
 }
 
 /**
  * Applies for leave.
  *
- * The day count is deliberately not previewed. The server derives it from the branch working
- * week and the holiday calendar; a client-side estimate would disagree with the figure the
- * request is actually created with, and the user would be told two different numbers.
+ * The server previews the same calendar and balance rules used when submitting the request.
  */
 export function ApplyLeaveModal({
   isOpen,
@@ -51,8 +57,91 @@ export function ApplyLeaveModal({
   const [leaveTypeId, setLeaveTypeId] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [leaveSession, setLeaveSession] = useState<'FULL_DAY' | 'FIRST_HALF' | 'SECOND_HALF'>(
+    'FULL_DAY',
+  );
   const [reason, setReason] = useState('');
   const [error, setError] = useState('');
+  const { session } = useSession();
+  const calendar = useLeaveDateAvailability(
+    isOpen,
+    session?.organizationId,
+    session?.employeeId,
+    startDate,
+  );
+  const [attachments, setAttachments] = useState<LeaveAttachment[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<LeavePreview | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState('');
+  const [previewKey, setPreviewKey] = useState('');
+  const selectionKey = `${leaveTypeId}:${startDate}:${endDate}:${leaveSession}`;
+  const currentPreview = previewKey === selectionKey ? preview : null;
+  const validDates =
+    calendar.ready &&
+    Boolean(startDate && endDate) &&
+    !calendar.disabledDate(startDate) &&
+    !calendar.disabledDate(endDate) &&
+    startDate >= calendar.min &&
+    endDate >= startDate &&
+    endDate <= calendar.endMax;
+  useEffect(() => {
+    setPreview(null);
+    setPreviewError('');
+    setPreviewLoading(false);
+    if (
+      !isOpen ||
+      !session?.organizationId ||
+      !session.employeeId ||
+      !leaveTypeId ||
+      !startDate ||
+      !endDate ||
+      !validDates
+    )
+      return;
+    let active = true;
+    setPreviewLoading(true);
+    const timer = setTimeout(() => {
+      void leaveRepository
+        .preview(session.organizationId, {
+          employeeId: session.employeeId!,
+          leaveTypeId,
+          session: leaveSession,
+          startDate,
+          endDate,
+        })
+        .then((value) => {
+          if (active) {
+            setPreview(value);
+            setPreviewKey(selectionKey);
+          }
+        })
+        .catch((caught) => {
+          if (active)
+            setPreviewError(
+              caught instanceof Error ? caught.message : 'Could not calculate leave.',
+            );
+        })
+        .finally(() => {
+          if (active) setPreviewLoading(false);
+        });
+    }, 250);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [
+    isOpen,
+    session?.organizationId,
+    session?.employeeId,
+    leaveTypeId,
+    startDate,
+    endDate,
+    leaveSession,
+    validDates,
+    selectionKey,
+    calendar.revision,
+  ]);
 
   const balanceFor = useMemo(
     () => new Map(balances.map((balance) => [balance.leaveTypeId, balance])),
@@ -65,7 +154,9 @@ export function ApplyLeaveModal({
     setStartDate('');
     setEndDate('');
     setReason('');
+    setLeaveSession('FULL_DAY');
     setError('');
+    setAttachments([]);
   };
 
   const handleSubmit = async () => {
@@ -78,11 +169,26 @@ export function ApplyLeaveModal({
       return;
     }
     setError('');
+    if (types.find((type) => type.id === leaveTypeId)?.requiresAttachment && !attachments.length) {
+      setError('Upload a supporting document for this leave type.');
+      return;
+    }
+    if (
+      !validDates ||
+      !currentPreview ||
+      previewError ||
+      currentPreview.issues.length ||
+      previewLoading ||
+      uploading
+    )
+      return;
     const applied = await onApply({
+      session: leaveSession,
       leaveTypeId,
       startDate,
       endDate,
       ...(reason.trim() ? { reason: reason.trim() } : {}),
+      ...(attachments.length ? { attachmentIds: attachments.map((file) => file.id) } : {}),
     });
     if (applied) {
       reset();
@@ -94,6 +200,7 @@ export function ApplyLeaveModal({
     <Dialog
       onOpenChange={(open) => {
         if (!open) {
+          if (saving || uploading) return;
           reset();
           onClose();
         }
@@ -124,6 +231,10 @@ export function ApplyLeaveModal({
                     {types.map((type) => (
                       <SelectItem key={type.id} value={type.id}>
                         {type.name}
+                        {/* Two types may share a name; the code is what tells them apart. */}
+                        {types.some((other) => other.id !== type.id && other.name === type.name)
+                          ? ` · ${type.code}`
+                          : ''}
                         {type.paid ? '' : ' (unpaid)'}
                       </SelectItem>
                     ))}
@@ -137,16 +248,43 @@ export function ApplyLeaveModal({
                 )}
               </div>
 
+              <div>
+                <Label htmlFor="leave-session">Duration</Label>
+                <select
+                  id="leave-session"
+                  className="mt-1 w-full rounded-md border border-border bg-background p-2 text-xs"
+                  value={leaveSession}
+                  disabled={saving}
+                  onChange={(event) => {
+                    const value = event.target.value as typeof leaveSession;
+                    setLeaveSession(value);
+                    if (value !== 'FULL_DAY') setEndDate(startDate);
+                  }}
+                >
+                  <option value="FULL_DAY">Full day(s)</option>
+                  <option value="FIRST_HALF">Half day · first half of shift</option>
+                  <option value="SECOND_HALF">Half day · second half of shift</option>
+                </select>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Half-day requests use one working date and reserve 0.5 days.
+                </p>
+              </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <Label className="mb-1 block" htmlFor="leave-start">
                     From
                   </Label>
                   <DatePicker
-                    disabled={saving}
+                    disabled={saving || !calendar.ready}
                     id="leave-start"
-                    max={endDate || undefined}
-                    onChange={setStartDate}
+                    min={calendar.min}
+                    max={calendar.max}
+                    disabledDate={calendar.disabledDate}
+                    onChange={(value) => {
+                      setStartDate(value);
+                      if (leaveSession !== 'FULL_DAY' || !value) setEndDate(value);
+                      else setEndDate('');
+                    }}
                     value={startDate}
                   />
                 </div>
@@ -155,20 +293,40 @@ export function ApplyLeaveModal({
                     To
                   </Label>
                   <DatePicker
-                    disabled={saving}
+                    disabled={
+                      saving || !calendar.ready || !startDate || leaveSession !== 'FULL_DAY'
+                    }
                     id="leave-end"
+                    initialMonth={startDate}
                     min={startDate || undefined}
+                    max={calendar.endMax}
+                    disabledDate={calendar.disabledDate}
                     onChange={setEndDate}
                     value={endDate}
                   />
                 </div>
               </div>
 
+              <p className="text-muted-foreground">
+                Days off, holidays and dates already requested for leave are unavailable. A single
+                working day can use the same From and To date.
+              </p>
+              {!calendar.ready && !calendar.error && <LoadingIndicator variant="inline" label="Loading available dates" />}
+              {calendar.error && (
+                <div role="alert">
+                  <p className="text-destructive">{calendar.error}</p>
+                  <Button variant="outline" size="sm" onClick={calendar.retry}>
+                    Retry calendar
+                  </Button>
+                </div>
+              )}
+
               <div>
                 <Label className="mb-1 block" htmlFor="leave-reason">
                   Reason
                 </Label>
                 <Textarea
+                  maxLength={LIMITS.reason}
                   disabled={saving}
                   id="leave-reason"
                   onChange={(event) => setReason(event.target.value)}
@@ -177,10 +335,48 @@ export function ApplyLeaveModal({
                 />
               </div>
 
-              <p className="text-[11px] text-muted-foreground">
-                Working days are counted by the server using your branch calendar, so weekends and
-                holidays in the range are not deducted.
-              </p>
+              <LeaveAttachmentInput
+                value={attachments}
+                onChange={setAttachments}
+                disabled={saving}
+                required={Boolean(
+                  types.find((type) => type.id === leaveTypeId)?.requiresAttachment,
+                )}
+                onBusy={setUploading}
+              />
+              {previewLoading && <p role="status">Calculating leave days…</p>}
+              {previewError && (
+                <p role="alert" className="text-destructive">
+                  {previewError}
+                </p>
+              )}
+              {currentPreview && (
+                <div className="space-y-2 rounded-md border border-border p-3" aria-live="polite">
+                  <p className="font-semibold">
+                    {currentPreview.requestedDays} days charged · {currentPreview.remainingDays}{' '}
+                    days remaining
+                  </p>
+                  <p className="text-muted-foreground">
+                    {currentPreview.policyName} ·{' '}
+                    {currentPreview.automaticallyApproved
+                      ? 'Eligible for automatic approval'
+                      : `${currentPreview.approvalSteps} approval stages`}
+                  </p>
+                  <details>
+                    <summary className="cursor-pointer">How days are counted</summary>
+                    {currentPreview.dates.map((day) => (
+                      <p key={day.date}>
+                        {day.date}: {day.counted ? 'Counted' : 'Excluded'} — {day.reason}
+                      </p>
+                    ))}
+                  </details>
+                  {currentPreview.issues.map((issue) => (
+                    <p key={issue} className="text-destructive">
+                      {issue}
+                    </p>
+                  ))}
+                </div>
+              )}
             </>
           )}
         </div>
@@ -190,11 +386,28 @@ export function ApplyLeaveModal({
             {error || saveError}
           </p>
           <div className="flex items-center gap-2">
-            <Button disabled={saving} onClick={onClose} type="button" variant="outline">
+            <Button
+              disabled={saving || uploading}
+              onClick={() => {
+                reset();
+                onClose();
+              }}
+              type="button"
+              variant="outline"
+            >
               Cancel
             </Button>
             <Button
-              disabled={saving || types.length === 0}
+              disabled={
+                saving ||
+                uploading ||
+                previewLoading ||
+                !validDates ||
+                !currentPreview ||
+                Boolean(previewError) ||
+                Boolean(currentPreview.issues.length) ||
+                types.length === 0
+              }
               onClick={() => void handleSubmit()}
               type="button"
             >

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { leaveSessionSchema, leaveCancellationSchema } from './leave-workflows';
 
 /**
  * Leave shapes, matching what `LeaveService` returns.
@@ -17,11 +18,19 @@ export const leaveTypeSchema = z.object({
   annualAllowance: z.coerce.number().nullable().optional(),
   monthlyAccrual: z.coerce.number().nullable().optional(),
   carryoverLimit: z.coerce.number().nullable().optional(),
+  prorateForJoiners: z.boolean().optional(),
+  sandwichOffDays: z.boolean().optional(),
+  encashable: z.boolean().optional(),
+  maxEncashDays: z.coerce.number().nullable().optional(),
+  isCompOff: z.boolean().optional(),
+  compOffExpiryDays: z.number().nullable().optional(),
   requiresAttachment: z.boolean().optional(),
   isActive: z.boolean().optional(),
 });
 
 export const leaveBalanceSchema = z.object({
+  employeeName: z.string().optional(),
+  employeeNumber: z.string().optional(),
   id: z.string().uuid(),
   organizationId: z.string().uuid(),
   employeeId: z.string().uuid(),
@@ -46,17 +55,36 @@ export const leaveRequestSchema = z.object({
   leaveTypeId: z.string().uuid(),
   startDate: z.string(),
   endDate: z.string(),
+  session: leaveSessionSchema.optional(),
+  cancellation: leaveCancellationSchema.nullable().optional(),
   requestedDays: z.coerce.number(),
   status: z.string(),
   reason: z.string().nullable().optional(),
+  /** What the approver wrote when deciding it; sent to the requester's own app only. */
+  decisionComment: z.string().nullable().optional(),
   version: z.number().optional(),
   externalEmployeeId: z.string().nullable().optional(),
+  employeeName: z.string().optional(),
+  employeeNumber: z.string().optional(),
 });
 
 export const leaveRequestPageSchema = z.object({
   requests: z.array(leaveRequestSchema),
   nextCursor: z.string().optional(),
 });
+
+export const leavePreviewSchema = z.object({
+  requestedDays: z.number(),
+  availableDays: z.number(),
+  remainingDays: z.number(),
+  dates: z.array(z.object({ date: z.string(), counted: z.boolean(), reason: z.string() })),
+  requiresAttachment: z.boolean(),
+  policyName: z.string().nullable(),
+  approvalSteps: z.number(),
+  automaticallyApproved: z.boolean().default(false),
+  issues: z.array(z.string()),
+});
+export type LeavePreview = z.infer<typeof leavePreviewSchema>;
 
 export const leaveAssignmentSchema = z.object({
   id: z.string().uuid().optional(),
@@ -97,6 +125,16 @@ export const parseLeaveRequest = (payload: unknown) => parse(leaveRequestSchema,
  * rather than failing the whole list.
  */
 export const leaveInboxEntrySchema = z.object({
+  attachments: z
+    .array(
+      z.object({
+        id: z.string().uuid(),
+        name: z.string(),
+        contentType: z.string(),
+        byteSize: z.string(),
+      }),
+    )
+    .default([]),
   id: z.string().uuid(),
   employeeId: z.string().uuid().optional(),
   leaveTypeId: z.string().uuid().optional(),
@@ -105,6 +143,27 @@ export const leaveInboxEntrySchema = z.object({
   requestedDays: z.coerce.number().optional(),
   status: z.string().optional(),
   reason: z.string().nullable().optional(),
+  submittedAt: z.string().nullable().optional(),
+  currentStep: z
+    .object({
+      stepNumber: z.number(),
+      approverType: z.string(),
+      roleId: z.string().nullable().optional(),
+      approverUserId: z.string().nullable().optional(),
+    })
+    .optional(),
+  warningReason: z.string().nullable().optional(),
+  branch: z.object({ id: z.string(), name: z.string(), code: z.string() }).nullable().optional(),
+  // Who is asking and for which leave: an approver cannot decide on dates alone.
+  employee: z
+    .object({
+      firstName: z.string(),
+      lastName: z.string().nullable().optional(),
+      employeeNumber: z.string().nullable().optional(),
+    })
+    .nullable()
+    .optional(),
+  leaveType: z.object({ name: z.string(), paid: z.boolean() }).nullable().optional(),
 });
 
 export type LeaveInboxEntry = z.infer<typeof leaveInboxEntrySchema>;

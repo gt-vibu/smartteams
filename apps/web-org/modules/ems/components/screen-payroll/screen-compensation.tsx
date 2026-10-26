@@ -1,15 +1,19 @@
 'use client';
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { useScreenTab } from '../../hooks/use-screen-tab';
 import { useMediaQuery, WIDE_LAYOUT_QUERY } from '../../hooks/use-media-query';
 import { Button, Input } from '@smarteam/ui';
-import { ChevronLeft, Search, Users } from 'lucide-react';
+import { ChevronLeft, Search, Settings2, Users } from 'lucide-react';
 import { useCompensation } from '../../hooks/use-compensation';
+import { useSession } from '../../hooks/auth-context';
 import { useEmployees } from '../../hooks/use-workforce';
 import { ComponentCatalogPanel } from './component-catalog-panel';
 import { EmployeeCompensationPanel } from './employee-compensation-panel';
 import { RoleSalaryAllotmentDialog } from './role-salary-allotment-dialog';
+import { ConfigureSalaryPolicyDialog } from './configure-salary-policy-dialog';
+import { permittedTabs } from '../../lib/permitted-tabs';
+import { ensureStateStatutoryRules } from './ensure-state-statutory-rules';
 
 type Tab = 'employees' | 'catalog';
 
@@ -24,10 +28,37 @@ type Tab = 'employees' | 'catalog';
  */
 export function ScreenCompensation() {
   const compensation = useCompensation();
-  const employees = useEmployees();
-  const [tab, setTab] = useScreenTab<Tab>('compensationTab', ['employees', 'catalog'], 'employees');
+  const { session } = useSession();
+  const employees = useEmployees({ limit: 200 });
+  const [requestedTab, setTab] = useScreenTab<Tab>(
+    'compensationTab',
+    ['employees', 'catalog'],
+    'employees',
+  );
+  // Someone who cannot read other people's salaries is not offered the employee list at all.
+  const { tabs: offered, active } = permittedTabs<
+    Tab,
+    { id: Tab; label: string; allowed: boolean }
+  >(
+    [
+      {
+        id: 'employees',
+        label: 'Employee compensation',
+        allowed: compensation.can.readProfiles,
+      },
+      {
+        id: 'catalog',
+        label: 'Component catalogue',
+        allowed: compensation.can.readComponents,
+      },
+    ],
+    requestedTab,
+  );
+  const tab = active;
   const [search, setSearch] = useState('');
+  const [employeeGroup, setEmployeeGroup] = useState<'current' | 'former'>('current');
   const [allottingRole, setAllottingRole] = useState(false);
+  const [configuringPolicy, setConfiguringPolicy] = useState(false);
   const isWide = useMediaQuery(WIDE_LAYOUT_QUERY);
   const [view, setView] = useScreenTab<'list' | 'detail'>(
     'compensationView',
@@ -36,18 +67,101 @@ export function ScreenCompensation() {
   );
   const showList = isWide || view === 'list';
   const showDetail = isWide || view === 'detail';
+  const stateRulesKey = useRef<string | null>(null);
+
+  // Repair missing rules for existing saved state defaults as well as after a policy save.
+  // This keeps the compensation preview usable without asking admins to visit another screen.
+  useEffect(() => {
+    const policy = compensation.organizationPolicy;
+    const jurisdiction = policy?.statutoryJurisdiction?.trim().toUpperCase();
+    const organizationId = session?.organizationId;
+    if (
+      !organizationId ||
+      !policy ||
+      compensation.organizationPolicyLoading ||
+      !compensation.can.savePolicy ||
+      !jurisdiction
+    ) {
+      return;
+    }
+
+    const enabled = { epf: policy.pfDefault, esic: policy.esiDefault, pt: policy.ptDefault };
+    if (!enabled.epf && !enabled.esic && !enabled.pt) return;
+    const key = `${organizationId}:${jurisdiction}:${Number(enabled.epf)}:${Number(enabled.esic)}:${Number(enabled.pt)}`;
+    if (stateRulesKey.current === key) return;
+    stateRulesKey.current = key;
+
+    void ensureStateStatutoryRules(organizationId, jurisdiction, enabled)
+      .then(async ({ created, unsupported, notify, error }) => {
+        if (error) {
+          stateRulesKey.current = null;
+          if (notify) {
+            window.dispatchEvent(
+              new CustomEvent('ems:feedback', {
+                detail: {
+                  tone: 'error',
+                  message:
+                    error instanceof Error
+                      ? `Could not create missing state payroll rules: ${error.message}`
+                      : 'Could not create missing state payroll rules.',
+                },
+              }),
+            );
+          }
+          return;
+        }
+        await compensation.refetch();
+        if (typeof window === 'undefined' || !notify) return;
+        if (created.length || unsupported.length) {
+          window.dispatchEvent(
+            new CustomEvent('ems:feedback', {
+              detail: {
+                tone: unsupported.length ? 'error' : 'success',
+                message: [
+                  created.length
+                    ? `Added ${created.join(', ')} payroll rules for ${jurisdiction}.`
+                    : '',
+                  unsupported.length
+                    ? `No reviewed ${unsupported.join(', ')} schedule is available for ${jurisdiction}; no rate was guessed.`
+                    : '',
+                ]
+                  .filter(Boolean)
+                  .join(' '),
+              },
+            }),
+          );
+        }
+      })
+      .catch(() => undefined);
+  }, [
+    compensation.can.savePolicy,
+    compensation.organizationPolicy,
+    compensation.organizationPolicyLoading,
+    compensation.refetch,
+    session?.organizationId,
+  ]);
 
   const query = search.trim().toLowerCase();
+  const allEmployees = employees.data ?? [];
+  const currentEmployees = useMemo(
+    () => allEmployees.filter((employee) => employee.status === 'ACTIVE'),
+    [allEmployees],
+  );
+  const formerEmployees = useMemo(
+    () => allEmployees.filter((employee) => employee.status !== 'ACTIVE'),
+    [allEmployees],
+  );
+  const groupEmployees = employeeGroup === 'current' ? currentEmployees : formerEmployees;
   const rows = useMemo(
     () =>
-      (employees.data ?? []).filter(
+      groupEmployees.filter(
         (employee) =>
           !query ||
           `${employee.firstName} ${employee.lastName}`.toLowerCase().includes(query) ||
           employee.employeeNumber.toLowerCase().includes(query) ||
           (employee.workEmail && employee.workEmail.toLowerCase().includes(query)),
       ),
-    [employees.data, query],
+    [groupEmployees, query],
   );
 
   // On a laptop the detail pane is always on screen, so it opens on the first employee rather
@@ -63,9 +177,16 @@ export function ScreenCompensation() {
     if (!isWide) setView('detail');
   };
 
+  const changeEmployeeGroup = (next: 'current' | 'former') => {
+    if (next === employeeGroup) return;
+    setEmployeeGroup(next);
+    compensation.selectEmployee(null);
+    if (!isWide) setView('list');
+  };
+
   const selectedEmployee = useMemo(
-    () => (employees.data ?? []).find((e) => e.id === compensation.employeeId) ?? null,
-    [employees.data, compensation.employeeId],
+    () => allEmployees.find((e) => e.id === compensation.employeeId) ?? null,
+    [allEmployees, compensation.employeeId],
   );
 
   return (
@@ -73,12 +194,7 @@ export function ScreenCompensation() {
       {/* Top Navigation & Actions Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/80 pb-2">
         <div className="flex items-center gap-2 sm:gap-4">
-          {(
-            [
-              { id: 'employees', label: 'Employee compensation' },
-              { id: 'catalog', label: 'Component catalogue' },
-            ] as Array<{ id: Tab; label: string }>
-          ).map((entry) => (
+          {offered.map((entry) => (
             <Button
               className={`rounded-none pb-1.5 text-xs font-semibold transition-all ${
                 tab === entry.id
@@ -96,17 +212,30 @@ export function ScreenCompensation() {
           ))}
         </div>
 
-        {tab === 'employees' && compensation.can.saveSalary && (
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-7 gap-1.5 text-xs font-medium"
-            onClick={() => setAllottingRole(true)}
-          >
-            <Users className="h-3.5 w-3.5 text-primary" />
-            Role-wise allotment
-          </Button>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          {compensation.can.savePolicy && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 gap-1.5 text-xs font-medium"
+              onClick={() => setConfiguringPolicy(true)}
+            >
+              <Settings2 className="h-3.5 w-3.5 text-primary" />
+              Organization payroll defaults
+            </Button>
+          )}
+          {tab === 'employees' && compensation.can.saveSalary && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 gap-1.5 text-xs font-medium"
+              onClick={() => setAllottingRole(true)}
+            >
+              <Users className="h-3.5 w-3.5 text-primary" />
+              Role-wise allotment
+            </Button>
+          )}
+        </div>
       </div>
 
       {tab === 'catalog' && <ComponentCatalogPanel compensation={compensation} />}
@@ -128,8 +257,36 @@ export function ScreenCompensation() {
                 </div>
               </div>
 
+              <div
+                aria-label="Employee group"
+                className="flex gap-1 border-b border-border"
+                role="tablist"
+              >
+                {([
+                  { id: 'current', label: 'Current employees', count: currentEmployees.length },
+                  { id: 'former', label: 'Former employees', count: formerEmployees.length },
+                ] as const).map((group) => (
+                  <button
+                    aria-selected={employeeGroup === group.id}
+                    className={`min-h-9 border-b-2 px-2 text-[11px] font-semibold transition-colors ${
+                      employeeGroup === group.id
+                        ? 'border-primary text-foreground'
+                        : 'border-transparent text-muted-foreground hover:text-foreground'
+                    }`}
+                    key={group.id}
+                    onClick={() => changeEmployeeGroup(group.id)}
+                    role="tab"
+                    type="button"
+                  >
+                    {group.label} ({group.count})
+                  </button>
+                ))}
+              </div>
+
               <div className="flex items-center justify-between px-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                <span>Employees ({rows.length})</span>
+                <span>
+                  {employeeGroup === 'current' ? 'Current' : 'Former'} employees ({rows.length})
+                </span>
               </div>
 
               {employees.loading && (
@@ -143,7 +300,13 @@ export function ScreenCompensation() {
                 </p>
               )}
               {!employees.loading && employees.canRead && rows.length === 0 && (
-                <p className="px-1 py-3 text-xs text-muted-foreground">No employees found.</p>
+                <p className="px-1 py-3 text-xs text-muted-foreground">
+                  {query
+                    ? 'No matching employees found.'
+                    : employeeGroup === 'current'
+                      ? 'No current employees.'
+                      : 'No former employees.'}
+                </p>
               )}
 
               {/* Its own scroller only beside the detail pane; on a phone the page scrolls, once. */}
@@ -221,7 +384,13 @@ export function ScreenCompensation() {
                   All employees
                 </button>
               )}
-              <EmployeeCompensationPanel compensation={compensation} employee={selectedEmployee} />
+              {/* Keyed by employee: everything typed for one person is discarded when another is chosen,
+                  so an amount entered for one employee can never be shown or saved for the next. */}
+              <EmployeeCompensationPanel
+                compensation={compensation}
+                employee={selectedEmployee}
+                key={compensation.employeeId ?? 'none'}
+              />
             </section>
           )}
         </div>
@@ -231,6 +400,11 @@ export function ScreenCompensation() {
         compensation={compensation}
         onOpenChange={setAllottingRole}
         open={allottingRole}
+      />
+      <ConfigureSalaryPolicyDialog
+        compensation={compensation}
+        onOpenChange={setConfiguringPolicy}
+        open={configuringPolicy}
       />
     </div>
   );

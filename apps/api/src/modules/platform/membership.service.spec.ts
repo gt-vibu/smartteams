@@ -28,7 +28,11 @@ function setup(
 ) {
   const tx = {
     team: { findFirst: jest.fn().mockResolvedValue({ id: TEAM, organizationId: ORG }) },
-    employee: { findFirst: jest.fn().mockResolvedValue({ id: EMPLOYEE, organizationId: ORG }) },
+    employee: {
+      findFirst: jest
+        .fn()
+        .mockResolvedValue({ id: EMPLOYEE, organizationId: ORG, status: 'ACTIVE' }),
+    },
     teamMember: {
       findFirst: jest.fn().mockResolvedValue(options.teamMember ?? null),
       create: jest.fn(() =>

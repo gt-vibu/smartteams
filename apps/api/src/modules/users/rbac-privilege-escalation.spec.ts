@@ -1,3 +1,4 @@
+import { EMPLOYEE_BASELINE_PERMISSION_KEYS } from '@smarteam/contracts';
 import { RbacAdminService } from './rbac-admin.service';
 import { MembersService } from './members.service';
 import { RbacService } from '../rbac/rbac.service';
@@ -37,9 +38,28 @@ function rolePermissions(keys: string[]) {
 }
 
 function setupRbacAdmin(role: { permissions: ReturnType<typeof rolePermissions> } | null) {
+  type CreateRoleInput = {
+    data: {
+      permissions: {
+        create: Array<{
+          permission: {
+            connectOrCreate: {
+              where: { key: string };
+              create: { key: string; description: string };
+            };
+          };
+        }>;
+      };
+    };
+  };
+  const captured: { createInput?: CreateRoleInput } = {};
+  const createRole = jest.fn((input: CreateRoleInput) => {
+    captured.createInput = input;
+    return Promise.resolve({ id: ROLE, permissions: [] });
+  });
   const tx = {
     role: {
-      create: jest.fn().mockResolvedValue({ id: ROLE, permissions: [] }),
+      create: createRole,
       findFirst: jest
         .fn()
         .mockResolvedValue(
@@ -56,13 +76,14 @@ function setupRbacAdmin(role: { permissions: ReturnType<typeof rolePermissions> 
   };
   const audit = { record: jest.fn() };
   const rbac = new RbacService(database as never);
-  return { tx, service: new RbacAdminService(database as never, audit, rbac) };
+  return { tx, captured, service: new RbacAdminService(database as never, audit, rbac) };
 }
 
 function setupMembers(
   roles: Array<{ id: string; permissions: ReturnType<typeof rolePermissions> }>,
 ) {
   const tx = {
+    organization: { findUniqueOrThrow: jest.fn().mockResolvedValue({ name: 'Acme' }) },
     role: {
       findMany: jest.fn().mockResolvedValue(roles.map((r) => ({ ...r, organizationId: ORG }))),
     },
@@ -84,7 +105,9 @@ function setupMembers(
   const rbac = new RbacService(database as never);
   return {
     tx,
-    service: new MembersService(database as never, audit, passwords as never, rbac),
+    service: new MembersService(database as never, audit, passwords as never, rbac, {
+      prepare: jest.fn().mockResolvedValue({ deliver: jest.fn().mockResolvedValue(undefined) }),
+    } as never),
   };
 }
 
@@ -116,8 +139,12 @@ describe('privilege escalation: creating a role', () => {
   });
 
   it('can create a role scoped to permissions it genuinely holds', async () => {
-    const { service, tx } = setupRbacAdmin(null);
-    const caller = context(['rbac.write', 'payroll.payslips.read']);
+    const { service, tx, captured } = setupRbacAdmin(null);
+    const caller = context([
+      'rbac.write',
+      'payroll.payslips.read',
+      ...EMPLOYEE_BASELINE_PERMISSION_KEYS,
+    ]);
     await expect(
       service.createRole(caller, {
         code: 'PAYROLL_VIEWER',
@@ -127,6 +154,8 @@ describe('privilege escalation: creating a role', () => {
       }),
     ).resolves.toMatchObject({ id: ROLE });
     expect(tx.role.create).toHaveBeenCalledTimes(1);
+    const createPermissions = captured.createInput?.data.permissions.create;
+    expect(createPermissions).toHaveLength(EMPLOYEE_BASELINE_PERMISSION_KEYS.length);
   });
 
   it('the tenant wildcard holder may create any role, including one carrying the wildcard', async () => {

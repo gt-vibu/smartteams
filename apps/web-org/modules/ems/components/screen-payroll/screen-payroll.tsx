@@ -8,6 +8,9 @@ import { PayrollStructurePanel } from './payroll-structure-panel';
 import { PayrollPayslipsPanel } from './payroll-payslips-panel';
 import { PayrollAdvancesPanel } from './payroll-advances-panel';
 import { PageShell } from '../layout/page-shell';
+import { hasPermission } from '@smarteam/contracts';
+import { useSession } from '../../hooks/auth-context';
+import { permittedTabs } from '../../lib/permitted-tabs';
 
 type Tab = 'structure' | 'payslips' | 'advances';
 
@@ -21,23 +24,41 @@ type Tab = 'structure' | 'payslips' | 'advances';
  */
 export function ScreenPayroll() {
   const payroll = usePayroll();
-  const [tab, setTab] = useScreenTab<Tab>(
+  const [requestedTab, setTab] = useScreenTab<Tab>(
     'payrollTab',
     ['structure', 'payslips', 'advances'],
     'structure',
   );
-
-  const tabs: Array<{ id: Tab; label: string }> = [
-    { id: 'structure', label: 'Salary structure' },
-    {
-      id: 'payslips',
-      label: `Payslips${payroll.payslips.length ? ` (${payroll.payslips.length})` : ''}`,
-    },
-    {
-      id: 'advances',
-      label: `Advances${payroll.advances.length ? ` (${payroll.advances.length})` : ''}`,
-    },
-  ];
+  const { persona } = useSession();
+  const permissions = persona?.permissions ?? [];
+  const may = (permission: string) => hasPermission(permissions, permission);
+  // Each tab is offered only to someone its API would answer for their own record.
+  const { tabs, active } = permittedTabs<Tab, { id: Tab; label: string; allowed: boolean }>(
+    [
+      {
+        id: 'structure',
+        label: 'Salary structure',
+        allowed: may('payroll.employee-profile.read'),
+      },
+      {
+        id: 'payslips',
+        label: `Payslips${payroll.payslips.length ? ` (${payroll.payslips.length})` : ''}`,
+        // Keep this feature out of the employee UI until the organization policy is known.
+        // The API independently enforces the same setting for self-service reads.
+        allowed:
+          may('payroll.payslips.read') &&
+          !payroll.profileLoading &&
+          payroll.profile?.organizationPolicy?.salarySlipDefault === true,
+      },
+      {
+        id: 'advances',
+        label: `Advances${payroll.advances.length ? ` (${payroll.advances.length})` : ''}`,
+        allowed: may('payroll.advances.read'),
+      },
+    ],
+    requestedTab,
+  );
+  const tab = active;
 
   return (
     <PageShell>
@@ -128,6 +149,7 @@ export function ScreenPayroll() {
             ) : (
               <PayrollAdvancesPanel
                 advances={payroll.advances}
+                allowance={payroll.advanceAllowance}
                 canRequest={payroll.canRequestAdvance && !payroll.hasNoEmployeeRecord}
                 onRequest={payroll.requestAdvance}
                 saveError={payroll.saveError}

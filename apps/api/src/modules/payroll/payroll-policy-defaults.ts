@@ -1,10 +1,12 @@
 import { PayrollRoundingMode } from '../../generated/prisma/enums';
+import type { Prisma } from '../../generated/prisma/client';
 import type { SalaryStructurePolicy } from './payroll-salary-structure';
 
 export type PayrollPolicyDefaults = SalaryStructurePolicy & {
   salarySlipDefault: boolean;
   payrollEnabledDefault: boolean;
   payrollDayBasis: number;
+  defaultGrossSalary: Prisma.Decimal | null;
   pfDefault: boolean;
   esiDefault: boolean;
   ptDefault: boolean;
@@ -18,6 +20,7 @@ export const DEFAULT_PAYROLL_POLICY: PayrollPolicyDefaults = {
   basePercentage: 50,
   baseMinimum: 15_000,
   hraPercentage: 40,
+  defaultGrossSalary: null,
   pfDefault: false,
   esiDefault: false,
   ptDefault: false,

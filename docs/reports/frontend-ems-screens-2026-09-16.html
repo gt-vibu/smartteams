@@ -1,0 +1,477 @@
+<title>Pushed to GitLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --ground: #f6f8f6;
+    --surface: #ffffff;
+    --raised: #eef2ee;
+    --ink: #15191b;
+    --ink-soft: #55615b;
+    --ink-faint: #7d8a83;
+    --line: #dde3de;
+    --line-strong: #c6cfc8;
+    --accent: #1f6b45;
+    --accent-soft: #e4efe8;
+    --open: #8a5a12;
+    --open-soft: #f6eeda;
+    --sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #11140f;
+      --surface: #171b16;
+      --raised: #1f251e;
+      --ink: #e8ece6;
+      --ink-soft: #a9b5ac;
+      --ink-faint: #7e8b81;
+      --line: #2b332a;
+      --line-strong: #3c463a;
+      --accent: #6fc194;
+      --accent-soft: #1d2c23;
+      --open: #d8a85a;
+      --open-soft: #2c2415;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #11140f;
+    --surface: #171b16;
+    --raised: #1f251e;
+    --ink: #e8ece6;
+    --ink-soft: #a9b5ac;
+    --ink-faint: #7e8b81;
+    --line: #2b332a;
+    --line-strong: #3c463a;
+    --accent: #6fc194;
+    --accent-soft: #1d2c23;
+    --open: #d8a85a;
+    --open-soft: #2c2415;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding-block: 2.5rem 4rem;
+    padding-left: 20px;
+    padding-right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 2.75rem;
+  }
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+  p { margin: 0; max-width: 68ch; }
+  ul { margin: 0; padding-left: 1.1rem; max-width: 72ch; }
+  li { margin-block: 0.3rem; }
+  li::marker { color: var(--ink-faint); }
+  code, .mono { font-family: var(--mono); font-size: 0.86em; }
+  code { background: var(--raised); padding: 0.1em 0.35em; border-radius: 3px; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .masthead { display: flex; flex-direction: column; gap: 0.85rem; }
+  h1 { font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.5rem); line-height: 1.15; font-weight: 600; letter-spacing: -0.02em; }
+  .lede { color: var(--ink-soft); font-size: 1.02rem; }
+  .range {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.55rem 0.75rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .stat { background: var(--surface); padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.15rem; }
+  .stat b { font-size: 1.4rem; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .stat span { font-size: 0.75rem; color: var(--ink-faint); }
+  .stat.plus b { color: var(--accent); }
+
+  section { display: flex; flex-direction: column; gap: 1.1rem; }
+  .sec-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.4rem 0.9rem; border-bottom: 1px solid var(--line-strong); padding-bottom: 0.5rem; }
+  h2 { font-size: 1.28rem; font-weight: 600; letter-spacing: -0.01em; }
+  .sec-head .count { font-family: var(--mono); font-size: 0.75rem; color: var(--ink-faint); margin-left: auto; }
+
+  .entry { display: flex; flex-direction: column; gap: 0.5rem; }
+  .entry + .entry { border-top: 1px dashed var(--line); padding-top: 1rem; }
+  h3 { font-size: 1rem; font-weight: 600; }
+  .shas { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .sha {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+    background: var(--raised);
+    border-radius: 3px;
+    padding: 0.1rem 0.4rem;
+  }
+  .was { color: var(--ink-soft); }
+  .was b { color: var(--ink); font-weight: 600; }
+
+  table { border-collapse: collapse; width: 100%; font-size: 0.86rem; }
+  .scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: 5px; background: var(--surface); }
+  th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+  th { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); font-weight: 600; background: var(--raised); }
+  td.path { font-family: var(--mono); font-size: 0.78rem; white-space: nowrap; }
+
+  .note {
+    background: var(--accent-soft);
+    border-left: 3px solid var(--accent);
+    padding: 0.85rem 1rem;
+    border-radius: 0 4px 4px 0;
+    font-size: 0.92rem;
+    max-width: none;
+  }
+  .open-box {
+    background: var(--open-soft);
+    border-left: 3px solid var(--open);
+    padding: 1rem 1.15rem;
+    border-radius: 0 4px 4px 0;
+  }
+  .open-box h2 { font-size: 1.08rem; }
+  footer { color: var(--ink-faint); font-size: 0.8rem; border-top: 1px solid var(--line); padding-top: 1rem; max-width: none; }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">Smarteam &middot; feat/frontend-ems-screens</p>
+    <h1>What landed on GitLab in this push</h1>
+    <p class="lede">
+      Every addition and alteration in the 30 commits pushed to
+      <code>feat/frontend-ems-screens</code> on GitLab, grouped by the feature it belongs to rather
+      than by commit, with the commits that carry each one. Nothing was merged:
+      <code>main</code> and <code>dev</code> are untouched, and the same commit sits on GitHub with
+      CI green on all seven jobs.
+    </p>
+    <p class="range">feat/frontend-ems-screens: 4c5b980 &rarr; dfebb80 &nbsp;&middot;&nbsp; fast-forward, 30 commits</p>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><b>30</b><span>commits pushed</span></div>
+    <div class="stat"><b>274</b><span>files touched</span></div>
+    <div class="stat plus"><b>+21,498</b><span>lines added</span></div>
+    <div class="stat"><b>&minus;3,764</b><span>lines removed</span></div>
+    <div class="stat"><b>0</b><span>lines in federation</span></div>
+  </div>
+
+  <p class="note">
+    <strong>Federation is untouched.</strong> <code>git diff origin/feat/frontend-ems-screens..HEAD -- apps/api/src/modules/federation</code>
+    is empty across all 30 commits. Every new route below is native-only, so partner clients need no change.
+  </p>
+
+  <section>
+    <div class="sec-head"><h2>Attendance</h2><span class="count">5 commits</span></div>
+
+    <div class="entry">
+      <h3>A missed check-out can be repaired</h3>
+      <div class="shas"><span class="sha">d0895e1</span><span class="sha">f34e451</span></div>
+      <p class="was"><b>Before:</b> a day that ended on a check-in counted zero worked time forever. The correction workflow only moved punches that already existed, so asking for a check-out was refused, and an approved reason-only correction changed nothing.</p>
+      <ul>
+        <li>The employee asks for the check-out they forgot, with the real time and a reason. It goes through the same approval policy as any other correction.</li>
+        <li>Only the final approval writes the OUT punch, after locking the record and re-running every check, so nothing can add a second check-out. Worked minutes come from the existing totals, and payroll over that date is marked stale through the existing helper.</li>
+        <li>Refused for: a colleague's day, another tenant's record, a check-out before the check-in, a future time, more than 24 hours after the check-in, a time after the employee's next punch, or while one is already awaiting a decision.</li>
+        <li>Nothing closes a day automatically, and no check-out time is ever invented.</li>
+        <li>The week arrows on the attendance screens work, and a day with no check-out reads "No check-out" instead of 00:00.</li>
+      </ul>
+    </div>
+
+    <div class="entry">
+      <h3>Checking in on an approved optional holiday</h3>
+      <div class="shas"><span class="sha">22b02d4</span></div>
+      <p class="was"><b>Before:</b> the day was silently both a granted holiday and a worked day, and nothing recorded which it was.</p>
+      <ul>
+        <li>The check-in is always allowed &mdash; never rejected, never silently cancelled. The day is marked as needing resolution, and the employee gives a reason plus an optional comment.</li>
+        <li>A manager or admin decides: <strong>keep the holiday</strong>, so the check-in stays as history but counts no worked time; or <strong>convert to a working day</strong>, which cancels the holiday selection through the existing cancellation, with its existing audit entry and event, and lets attendance stand.</li>
+        <li>Either way, payroll over that date is marked stale. No automatic payroll decision is made.</li>
+        <li>Self-resolution without permission, forged and cross-tenant ids, duplicate resolutions and two managers deciding at once are all refused. The state is explicit, not a boolean flag.</li>
+        <li>New table <code>attendance_holiday_reviews</code>, with row-level security, one pending review per day, and a constraint keeping a decided review consistent.</li>
+      </ul>
+    </div>
+  </section>
+
+    <div class="entry">
+      <h3>A day nobody checked out of is closed for review</h3>
+      <div class="shas"><span class="sha">dfebb80</span></div>
+      <p class="was"><b>Before:</b> a forgotten check-out left the day at nothing, and nothing ever
+        prompted anybody about it &mdash; somebody had to notice.</p>
+      <ul>
+        <li>An organization switches it on and picks the closing time in its own timezone, 23:59 by
+          default. A sweep then raises, for each open day whose own cutoff has passed, the ordinary
+          missing-check-out correction at that time.</li>
+        <li><strong>Closed means proposed, not decided.</strong> No punch is written and no record
+          changes: the day still counts no worked minutes and no overtime until a person settles it.
+          Nothing reaches a timesheet or a payslip because a clock struck midnight.</li>
+        <li>Who reviews it is the organization's existing attendance approval policy &mdash; their
+          manager, a role, or named people, multi-step if wanted &mdash; so changing who receives
+          these is done on the Approvals screen, not in code.</li>
+        <li>The approver accepts the proposed time, <strong>enters the real one</strong>, or rejects
+          the day. A replacement time is re-checked against the day's punches and recorded on the
+          correction; only then is the check-out written and payroll marked stale.</li>
+        <li>A shift that crosses midnight is never closed this way: at 23:59 it is still being
+          worked.</li>
+        <li>It looks back three days so an outage catches up, never raises a second request for a
+          day, and one organization's missing policy cannot stop the others. An administrator can
+          also run the close on demand.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Shifts</h2><span class="count">2 commits</span></div>
+    <div class="entry">
+      <h3>An assignment can be read, listed and ended</h3>
+      <div class="shas"><span class="sha">5b6c571</span><span class="sha">2416af6</span></div>
+      <p class="was"><b>Before:</b> shifts could be created and assigned, but no assignment could be read back. Home always said "Not recorded", no screen listed who was on a shift, and moving someone between shifts was impossible, because the old open-ended assignment could not be closed and the new one was refused as an overlap.</p>
+      <ul>
+        <li>Home's Work Schedule shows the assigned shift and its hours, or states plainly that none is assigned &mdash; in neutral colours rather than the old red error styling. The Dashboard tile lost its invented "On Schedule" badge.</li>
+        <li>Each shift now has a <strong>People</strong> dialog: who is on it, labelled Current, Upcoming or Ended against the tenant's own date, with a "Show ended" toggle and paging.</li>
+        <li><strong>End assignment</strong> asks for the employee's last day on the shift and a reason. The row is locked, a day before the start is refused, and the end only ever moves earlier &mdash; never later, which could overlap a later assignment.</li>
+        <li>An overlap refusal in the Assign dialog now says how to fix it.</li>
+        <li>Every end is audited as <code>SHIFT_ASSIGNMENT_ENDED</code> with its reason. Like retiring a shift, which already ends its open assignments, it publishes no federation event.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Time off and holidays</h2><span class="count">3 commits</span></div>
+    <div class="entry">
+      <h3>The status tabs visibly filter</h3>
+      <div class="shas"><span class="sha">5b6c571</span><span class="sha">3b23af4</span><span class="sha">66fd8a8</span></div>
+      <p class="was"><b>Before:</b> the tabs did filter the request list, but it sat below four balance cards &mdash; so on a phone, tapping "Pending" changed nothing in view.</p>
+      <ul>
+        <li>The filtered list sits directly under the tabs now, headed by the chosen status, with balances beneath it.</li>
+        <li>"View all" on Home's Upcoming Holidays opens the holiday calendar; it previously had no handler at all.</li>
+        <li>Cancelling a colleague's leave request is refused &mdash; an approved one reverses the balance ledger.</li>
+        <li>Holiday selection and cancellation no longer reply from a second transaction opened before the first had committed, which could omit the change just made.</li>
+        <li><code>employee_holiday_policies</code> gained the row-level security it was created without.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Timesheets and Log Time</h2><span class="count">4 commits</span></div>
+    <div class="entry">
+      <h3>Hours are asked for, not assumed</h3>
+      <div class="shas"><span class="sha">0ab4bae</span><span class="sha">19c1ab3</span><span class="sha">66fd8a8</span><span class="sha">3b23af4</span></div>
+      <p class="was"><b>Before:</b> Log Time opened with 08:00 already entered, so saving without looking recorded a full day whatever had been worked &mdash; and logged time feeds approval and pay.</p>
+      <ul>
+        <li>Hours start empty in both modes, and saving asks for them. A job type that did not exist is no longer filled in for you.</li>
+        <li>Quick-adding a project from Log Time is visible and works. It now requires <code>projects.write</code>, closing a second, weaker path to creating organization-wide projects.</li>
+        <li>A single day's logged time cannot exceed 24 hours; one 100,000-minute entry had been accepted.</li>
+        <li>An approver can no longer approve their own timesheet. Opening or re-deriving a period needs <code>timesheets.read.all</code>, since it resets every sheet in the period and withdraws approvals.</li>
+        <li>Submission requires a configured approval policy with resolvable approvers, so a decision can never skip approver checks.</li>
+        <li>Managers hold <code>timesheets.decide</code> everywhere now: the seed granted a permission the catalogue does not define, so managers saw the approval screen and were refused by the API.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Payroll</h2><span class="count">2 commits</span></div>
+    <div class="entry">
+      <h3>Lists page, and nobody decides their own money</h3>
+      <div class="shas"><span class="sha">66fd8a8</span><span class="sha">1b8ee72</span></div>
+      <ul>
+        <li>Salary advance and payment lists page on the native routes (<code>{ items, nextCursor }</code>, 500 at most), and the web reads them page by page. Federation calls pass no page and still receive the bare array.</li>
+        <li>No self-decision on salary advances, and raising one for a colleague is a 403 rather than a confusing 409.</li>
+        <li>The permission catalogue gained the seven payroll keys the API already enforced, guarded by a test that scans the enforcement points.</li>
+        <li><code>perf:payroll</code> also reports API CPU, peak memory, rows written, and the size of the audit and outbox documents.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Home and the workspace on a phone</h2><span class="count">5 commits</span></div>
+    <div class="entry">
+      <h3>Real data instead of placeholders</h3>
+      <div class="shas"><span class="sha">1b8ee72</span><span class="sha">e2220f7</span></div>
+      <ul>
+        <li>Home's Approvals tab listed three invented people and "approved" them in local state. It now shares the real approval queue, and a decision shows as done only once the API accepts it.</li>
+        <li>The approval gates checked permissions no role holds, so managers never saw Approvals in the Employee workspace at all.</li>
+        <li>The profile panel showed the same hard-coded PAN, UAN, tax regime and TDS rate for every employee, "Executive / Head of Department" for anyone with no manager on record, and a green "In" beside every colleague. All three are gone; statutory identity comes from the compliance API.</li>
+        <li>Log Time's attachment control was decorative &mdash; nothing was uploaded, yet a storage URL was saved as if it were. Removed.</li>
+      </ul>
+    </div>
+    <div class="entry">
+      <h3>It behaves like an app on a phone</h3>
+      <div class="shas"><span class="sha">2bd40b6</span><span class="sha">9e51139</span><span class="sha">8495286</span><span class="sha">e2220f7</span></div>
+      <ul>
+        <li>All 27 tables become card lists when their own box is too narrow &mdash; a container query, not a viewport breakpoint &mdash; so nothing pans sideways.</li>
+        <li>The bottom bar's labels were cropped out of it and its icons drew at 14px; Time Off and Leave shared a cloud, Timesheet and Shifts the same clock. One icon module holds them now, and a test fails if two modules in a space ever share a shape again.</li>
+        <li>Team space had no bottom bar, so a manager could not leave it from a phone. The sign-in and activation screens could not scroll, so the keyboard hid the Sign In button.</li>
+        <li>One subject per screen on a phone: Home opens on Profile, with Activities, Approvals and Dashboard beside it; Compensation and Organization follow the same list-then-detail pattern.</li>
+        <li>Dialogs are bottom sheets on a phone, form text is 16px so iOS stops zooming in and never back out, and the keyboard resizes the page instead of covering the field.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Giving an employee a login</h2><span class="count">1 commit</span></div>
+    <div class="entry">
+      <h3>An access code, not a password the administrator knows</h3>
+      <div class="shas"><span class="sha">968458f</span></div>
+      <p class="was"><b>Before:</b> the panel that issues access codes was written, but nothing
+        rendered it &mdash; so the only way to give someone a login was onboarding's temporary
+        password, which the administrator reads.</p>
+      <ul>
+        <li>The employee record carries it now: whether they can sign in yet, and the one action
+          that moves them forward. The code is shown once, expires in 48 hours and is stored only
+          as a digest; issuing a new one withdraws the old.</li>
+        <li>The employee enters it and chooses their own email and password, so no permanent
+          credential is ever known to two people.</li>
+        <li>Generate and Revoke need <code>employees.write</code>. Without it the state is visible
+          and the actions are not, rather than offering buttons the API refuses.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Security and data isolation</h2><span class="count">3 commits</span></div>
+    <div class="entry">
+      <h3>Ownership on every self-service write</h3>
+      <div class="shas"><span class="sha">3b23af4</span><span class="sha">66fd8a8</span><span class="sha">d371061</span></div>
+      <p class="was"><b>Before:</b> self-service writes trusted the employee, timesheet and attendance ids in the request. Every seeded employee holds the write permissions, and the services only checked that the target was in the same organization &mdash; so a colleague's UUID was enough to act as them.</p>
+      <ul>
+        <li>A shared write boundary resolves the employee from the session, and allows an explicit id only for callers holding that module's existing <code>.read.all</code> breadth. No new permission, no backfill.</li>
+        <li>Native punches are recorded at server time, with the work date derived in the organization's timezone, instead of taking both from the request.</li>
+        <li>File deletion, uploads and upload completion use the same self-or-breadth model as list and download; payslips and payroll exports need breadth.</li>
+        <li>Row-level security is enforced in local development: a least-privilege runtime role is provisioned, and tools that genuinely need elevated access ask for it by their own variable instead of borrowing <code>DATABASE_URL</code>.</li>
+        <li>Hard-coded database credential fallbacks were removed from three scripts.</li>
+        <li>A path id that is not a UUID answered 500 &mdash; Postgres refused it and nothing mapped the error. It answers 404 now.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Build, CI and operations</h2><span class="count">7 commits</span></div>
+    <div class="entry">
+      <h3>No Docker, no MinIO</h3>
+      <div class="shas"><span class="sha">f8bd591</span><span class="sha">11dd240</span><span class="sha">fedda3b</span><span class="sha">08b4353</span></div>
+      <ul>
+        <li>PostgreSQL 17 and Redis are installed and started natively on the CI runner. The Dockerfile, <code>docker-compose.yml</code>, <code>.dockerignore</code> and the container-image job are deleted, along with the S3 endpoint override that existed only for the MinIO double.</li>
+        <li>gitleaks runs as its pinned release binary, verified against the release's own checksums.</li>
+        <li><code>pnpm db:backup</code> accepts the documented database URL. <code>pg_dump</code> refuses Prisma's <code>?schema=public</code>, so with the environment configured as the example shows, every backup had been failing. A failed or empty dump now deletes its file instead of leaving it as the newest artifact.</li>
+        <li>The release script restores the previous release when activation fails, and stops the API with a kill timeout long enough for a payroll run to finish. It has its own test in CI.</li>
+        <li>The deployment document describes the deployment that exists: per-commit release directories, secrets from AWS Secrets Manager, migrations first, PM2 behind a health gate.</li>
+      </ul>
+    </div>
+    <div class="entry">
+      <h3>The local API stays up, and typecheck stops killing it</h3>
+      <div class="shas"><span class="sha">4e697af</span><span class="sha">4f4250a</span><span class="sha">402fcd6</span></div>
+      <ul>
+        <li>Typecheck and build no longer regenerate the Prisma client unconditionally. That rewrote 97 committed files, and the dev watcher killed the API mid-request &mdash; six times in one day.</li>
+        <li>The dev server owns its process: it restarts after a clean build and after an unasked exit, printing how it died, and gives up after five exits in a minute.</li>
+        <li>Fatal errors are written synchronously, so they reach the log on Windows instead of disappearing with the process.</li>
+        <li>The workspace is reachable through a dev tunnel: the exact tunnel host is allowed rather than a wildcard subdomain, and <code>/v1/*</code> is proxied so the browser makes same-origin requests with first-party cookies.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>New API routes</h2><span class="count">9, native only</span></div>
+    <div class="scroller">
+      <table>
+        <thead><tr><th>Route</th><th>What it does</th><th>Who may call it</th></tr></thead>
+        <tbody>
+          <tr><td class="path">POST /attendance/:id/corrections/missing-check-out</td><td>Ask for a forgotten check-out</td><td>Own record</td></tr>
+          <tr><td class="path">GET /attendance/holiday-conflicts</td><td>Days that are both a granted holiday and worked</td><td>Own unless breadth</td></tr>
+          <tr><td class="path">POST /attendance/:id/holiday-conflict</td><td>Explain the check-in, with a reason</td><td>Own record</td></tr>
+          <tr><td class="path">GET /attendance/holiday-conflicts/inbox</td><td>Reviews awaiting a decision</td><td>Deciders</td></tr>
+          <tr><td class="path">POST /attendance/holiday-conflicts/:id/decision</td><td>Keep the holiday, or convert the day</td><td>Deciders</td></tr>
+          <tr><td class="path">GET /shifts/assignments/current</td><td>The shift assigned on a given day</td><td>Own unless breadth</td></tr>
+          <tr><td class="path">GET /shifts/assignments</td><td>Who is on which shift, a page at a time</td><td>Own unless breadth</td></tr>
+          <tr><td class="path">POST /shifts/assignments/:id/end</td><td>Set an employee's last day on a shift</td><td>shifts.write</td></tr>
+          <tr><td class="path">POST /attendance/auto-check-out/run</td><td>Close the days with no check-out that are due now</td><td>attendance.preferences.write</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Two existing routes also gained optional fields, both native-only and both untouched by
+      federation: the attendance decision takes a <code>checkOutAt</code>, so an approver can settle
+      a day at the real time rather than the proposed one; and attendance preferences take
+      <code>autoCheckOutMode</code> and <code>autoCheckOutAt</code>.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Database migrations</h2><span class="count">4 new</span></div>
+    <div class="scroller">
+      <table>
+        <thead><tr><th>Migration</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td class="path">20260909090000_employee_holiday_policies_rls</td><td>The table had been created without row-level security</td></tr>
+          <tr><td class="path">20260909100000_timesheets_decide_canonical</td><td>Corrects roles seeded with a permission the catalogue does not define</td></tr>
+          <tr><td class="path">20260915120000_attendance_holiday_reviews</td><td>Reviews of a check-in on a granted optional holiday</td></tr>
+          <tr><td class="path">20260916100000_attendance_auto_checkout</td><td>Whether days with no check-out are closed for review, and at what local time</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Tests and CI</h2><span class="count">all 7 jobs green</span></div>
+    <div class="scroller">
+      <table>
+        <thead><tr><th>Measure</th><th>At GitLab's commit</th><th>Now</th></tr></thead>
+        <tbody>
+          <tr><td>Test files in the repository</td><td>77</td><td>107</td></tr>
+          <tr><td>API unit tests</td><td>&mdash;</td><td>493 passing</td></tr>
+          <tr><td>Web tests, web-org and web-admin</td><td>&mdash;</td><td>434 and 7 passing</td></tr>
+          <tr><td>End-to-end suites against a running API</td><td>15</td><td>21</td></tr>
+          <tr><td>CI jobs</td><td>8, one of them the container image</td><td>7, no Docker</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>The six new end-to-end suites are <code>authorization-boundaries</code>,
+      <code>ownership-and-approvals</code>, <code>missing-checkout</code>, <code>holiday-checkin</code>,
+      <code>shift-assignment</code> and <code>auto-checkout</code>. Each drives real
+      sessions through the real API, including cross-tenant and self-scope refusals. They share one harness whose
+      "today" is the tenant's rather than UTC's: between 00:00 and 05:30 IST, every date-dependent check had been
+      looking at the wrong day.</p>
+  </section>
+
+  <section class="open-box">
+    <h2>Not included, and still open</h2>
+    <ul>
+      <li><strong>The storage round trip is unverified in CI.</strong> The <code>CI_S3_*</code> secrets are not set, so <code>verify:files</code> reports NOT RUN. It is never counted as a pass.</li>
+      <li><strong>Point-in-time recovery</strong> is documented but has not been exercised on a real server. What does run in CI is a dump-and-restore drill.</li>
+      <li><strong>Nobody has clicked through the app in a browser</strong> as part of this work; that needs a signed-in session.</li>
+      <li><strong>Open product decisions:</strong> whether unresolved holiday conflicts should block payroll; whether pay for a worked holiday exists at all, which it does not today and which is a payroll policy decision; and whether a future shift assignment should be withdrawable rather than only endable.</li>
+      <li><strong>Automatic close is off for every organization</strong> until someone turns it on,
+        and an organization with no default attendance approval policy has nowhere to send a closed
+        day &mdash; the sweep logs that and moves on rather than closing it silently.</li>
+      <li><strong>Nothing is merged.</strong> Both remotes have the branch at <code>dfebb80</code>;
+        GitLab's <code>main</code> and <code>dev</code> are untouched and no merge request was
+        opened.</li>
+    </ul>
+  </section>
+
+  <footer>
+    Compiled from <code>git diff 4c5b980..dfebb80</code> on 16 September 2026. The counts are the
+    diff's own; test results are from that day's run, and the CI run for <code>dfebb80</code> passed
+    all seven jobs.
+  </footer>
+</div>

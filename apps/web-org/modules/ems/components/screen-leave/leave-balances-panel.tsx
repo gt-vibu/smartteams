@@ -2,8 +2,12 @@
 
 import React, { useMemo, useState } from 'react';
 import { Button, Input } from '@smarteam/ui';
-import { dateKey, employeeDisplayName, entitlementOf, type Employee } from '@smarteam/contracts';
-import type { LeaveAdminState } from '../../hooks/use-leave-admin';
+import {
+  dateKey,
+  entitlementOf,
+  LIMITS,
+} from '@smarteam/contracts';
+import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
 
 /**
  * Every employee's balances, with the manual adjustment the API supports.
@@ -12,30 +16,17 @@ import type { LeaveAdminState } from '../../hooks/use-leave-admin';
  * against the balance so the movement stays explainable months later.
  */
 export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
-  const [search, setSearch] = useState('');
   const [activeId, setActiveId] = useState<string | null>(null);
   const [amount, setAmount] = useState('1');
   const [reason, setReason] = useState('');
   const [error, setError] = useState('');
 
-  const employeesById = useMemo(
-    () => new Map<string, Employee>(admin.employees.map((e) => [e.id, e])),
-    [admin.employees],
-  );
   const typesById = useMemo(
     () => new Map(admin.types.map((type) => [type.id, type])),
     [admin.types],
   );
 
-  const query = search.trim().toLowerCase();
-  const rows = admin.balances.filter((balance) => {
-    if (!query) return true;
-    const employee = employeesById.get(balance.employeeId);
-    return (
-      (employee ? employeeDisplayName(employee).toLowerCase() : '').includes(query) ||
-      (employee?.employeeNumber ?? '').toLowerCase().includes(query)
-    );
-  });
+  const rows = admin.balances;
 
   const submit = async (balanceId: string) => {
     const balance = admin.balances.find((entry) => entry.id === balanceId);
@@ -68,13 +59,6 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
 
   return (
     <section className="space-y-3">
-      <Input
-        className="max-w-xs"
-        onChange={(event) => setSearch(event.target.value)}
-        placeholder="Search employee"
-        value={search}
-      />
-
       {rows.length === 0 ? (
         <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
           <p className="text-sm font-semibold text-foreground">No balances</p>
@@ -98,17 +82,16 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
             </thead>
             <tbody>
               {rows.map((balance) => {
-                const employee = employeesById.get(balance.employeeId);
                 const type = typesById.get(balance.leaveTypeId);
                 return (
                   <React.Fragment key={balance.id}>
                     <tr className="border-b border-border transition-colors last:border-0 hover:bg-muted/40">
                       <td data-cell="primary" className="px-4 py-2.5">
                         <span className="block font-semibold text-foreground">
-                          {employee ? employeeDisplayName(employee) : 'Not in the directory'}
+                          {balance.employeeName ?? 'Employee'}
                         </span>
                         <span className="text-[10px] text-muted-foreground">
-                          {employee?.employeeNumber ?? '--'}
+                          {balance.employeeNumber ?? '--'}
                         </span>
                       </td>
                       <td data-label="Type" className="px-4 py-2.5 text-foreground">
@@ -116,25 +99,25 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
                       </td>
                       <td
                         data-label="Entitled"
-                        className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
+                        className="px-4 py-2.5 tabular-nums text-muted-foreground"
                       >
                         {entitlementOf(balance)}
                       </td>
                       <td
                         data-label="Used"
-                        className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
+                        className="px-4 py-2.5 tabular-nums text-muted-foreground"
                       >
                         {balance.usedAmount}
                       </td>
                       <td
                         data-label="Pending"
-                        className="px-4 py-2.5 font-mono tabular-nums text-muted-foreground"
+                        className="px-4 py-2.5 tabular-nums text-muted-foreground"
                       >
                         {balance.reservedAmount}
                       </td>
                       <td
                         data-label="Available"
-                        className="px-4 py-2.5 font-mono font-semibold tabular-nums text-foreground"
+                        className="px-4 py-2.5 font-semibold tabular-nums text-foreground"
                       >
                         {balance.availableAmount}
                       </td>
@@ -160,31 +143,47 @@ export function LeaveBalancesPanel({ admin }: { admin: LeaveAdminState }) {
                         <td className="px-4 py-3" colSpan={7}>
                           <div className="flex flex-wrap items-center gap-2">
                             <Input
+                              min={-366}
+                              max={366}
+                              step={0.5}
                               aria-label="Days to adjust"
                               className="w-24"
-                              disabled={admin.saving}
+                              disabled={admin.isBusy(
+                                leaveAdminBusyKey.adjust(balance.employeeId, balance.leaveTypeId),
+                              )}
                               onChange={(event) => setAmount(event.target.value)}
                               type="number"
                               value={amount}
                             />
                             <Input
+                              maxLength={LIMITS.reason}
                               aria-label="Adjustment reason"
                               className="max-w-sm"
-                              disabled={admin.saving}
+                              disabled={admin.isBusy(
+                                leaveAdminBusyKey.adjust(balance.employeeId, balance.leaveTypeId),
+                              )}
                               onChange={(event) => setReason(event.target.value)}
                               placeholder="Reason (recorded on the ledger)"
                               value={reason}
                             />
                             <Button
-                              disabled={admin.saving}
+                              disabled={admin.isBusy(
+                                leaveAdminBusyKey.adjust(balance.employeeId, balance.leaveTypeId),
+                              )}
                               onClick={() => void submit(balance.id)}
                               size="sm"
                               type="button"
                             >
-                              {admin.saving ? 'Saving...' : 'Apply'}
+                              {admin.isBusy(
+                                leaveAdminBusyKey.adjust(balance.employeeId, balance.leaveTypeId),
+                              )
+                                ? 'Saving...'
+                                : 'Apply'}
                             </Button>
                             <Button
-                              disabled={admin.saving}
+                              disabled={admin.isBusy(
+                                leaveAdminBusyKey.adjust(balance.employeeId, balance.leaveTypeId),
+                              )}
                               onClick={() => setActiveId(null)}
                               size="sm"
                               type="button"

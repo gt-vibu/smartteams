@@ -10,6 +10,8 @@ export interface User {
   avatarInitials: string;
   identityType: 'NATIVE' | 'FEDERATED';
   isActive: boolean;
+  /** Signed in with a password someone else issued; they choose their own before anything else. */
+  passwordChangeRequired?: boolean;
 }
 
 export interface Role {
@@ -51,6 +53,8 @@ export interface Persona {
   assignedTeamIds: string[];
   assignedProjectIds: string[];
   directReportEmployeeIds: string[];
+  /** Decides approvals as themselves: has reports, is named on a step, or covers someone. */
+  approvesInOwnRight?: boolean;
   managerEmployeeId: string | null;
   managerName: string | null;
   scenarioTitle?: string;

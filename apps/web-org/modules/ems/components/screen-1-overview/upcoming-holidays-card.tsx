@@ -1,5 +1,6 @@
+import { formatDate } from '@smarteam/contracts';
 import React from 'react';
-import { Button } from '@smarteam/ui';
+import { LoadingIndicator, Button } from '@smarteam/ui';
 import type { Holiday } from '@smarteam/contracts';
 
 interface UpcomingHolidaysCardProps {
@@ -68,9 +69,7 @@ export function UpcomingHolidaysCard({
       )}
 
       {!unavailable && loading && (
-        <p className="text-[11px] text-muted-foreground" role="status">
-          Loading holidays...
-        </p>
+        <LoadingIndicator variant="inline" label="Loading holidays" className="text-[11px] text-muted-foreground" />
       )}
 
       {!unavailable && !loading && holidays.length === 0 && (
@@ -106,7 +105,7 @@ export function UpcomingHolidaysCard({
 
             {/* 3. Date & Day */}
             <div className="text-[11px] font-semibold text-slate-700 dark:text-slate-200">
-              {hol.holidayDate.slice(0, 10)},{' '}
+              {formatDate(hol.holidayDate)},{' '}
               <span className="text-slate-500 dark:text-slate-400 font-normal">
                 {weekday(hol.holidayDate)}
               </span>

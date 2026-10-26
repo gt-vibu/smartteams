@@ -29,7 +29,7 @@ export const COMMAND_MODULE_BY_ID: Record<string, string> = {
   'nav-approvals': 'approvals',
   'nav-team': 'teams',
   'nav-admin-team': 'teams',
-  'nav-admin-org': 'home',
+  'nav-admin-org': 'org-setup',
   'act-punch': 'attendance',
   'act-leave': 'time-off',
   'act-logtime': 'timesheet',
@@ -56,7 +56,7 @@ export function buildCommandItems({
   isAssignedToAnyTeam: boolean;
   isCheckedIn: boolean;
   onClose: () => void;
-  onNavigateModule: (module: string) => void;
+  onNavigateModule: (module: string, subView?: string) => void;
   onNavigateSpace: (space: string) => void;
   workspaceContext: string;
 }): CommandItem[] {
@@ -74,6 +74,7 @@ export function buildCommandItems({
         icon: <span className="text-sky-500">💳</span>,
         onSelect: () => {
           onNavigateSpace('Organization');
+          onNavigateModule('payroll', 'RUNS');
           onClose();
         },
       },
@@ -85,6 +86,7 @@ export function buildCommandItems({
         icon: <span className="text-purple-500">🌴</span>,
         onSelect: () => {
           onNavigateSpace('Organization');
+          onNavigateModule('time-off', 'types');
           onClose();
         },
       },
@@ -96,6 +98,7 @@ export function buildCommandItems({
         icon: <span className="text-emerald-500">⏱️</span>,
         onSelect: () => {
           onNavigateSpace('Organization');
+          onNavigateModule('attendance', 'records');
           onClose();
         },
       },
@@ -108,6 +111,7 @@ export function buildCommandItems({
         icon: <span className="text-muted-foreground">🏢</span>,
         onSelect: () => {
           onNavigateSpace('Organization');
+          onNavigateModule('org-setup', 'branches');
           onClose();
         },
       },
@@ -177,7 +181,7 @@ export function buildCommandItems({
       },
       {
         id: 'act-leave',
-        title: 'Apply for Leave / Time Off',
+        title: 'Apply for leave',
         subtitle: 'Submit casual or sick leave request',
         category: 'Actions',
         icon: (
@@ -216,7 +220,7 @@ export function buildCommandItems({
       },
       {
         id: 'nav-attendance',
-        title: 'Attendance (Side Nav)',
+        title: 'Attendance',
         subtitle: 'Daily check-in timeline and attendance calendar',
         category: 'Navigation',
         icon: <span className="text-muted-foreground">⏱️</span>,
@@ -228,7 +232,7 @@ export function buildCommandItems({
       },
       {
         id: 'nav-time-off',
-        title: 'Time Off / Leave (Side Nav)',
+        title: 'Leave',
         subtitle: 'Personal leave balances & applications',
         category: 'Navigation',
         icon: <span className="text-muted-foreground">🌴</span>,

@@ -8,17 +8,19 @@ import { useTimesheet } from '../../hooks/use-timesheet';
 import { useHolidays } from '../../hooks/use-holidays';
 import { useEmployeeHolidays } from '../../hooks/use-employee-holidays';
 import { useMyShift } from '../../hooks/use-my-shift';
-import type { DailyAttendanceItem } from '../../types/attendance.types';
-import { toDailyStatus } from '../../services/attendance-view';
+import { useDayContext } from '../../hooks/use-day-context';
+import { attendanceWeek } from '../../hooks/use-attendance-week';
+import { datesBetween, dayParts } from '../../services/day-status';
 import { formatDateLabel } from '../../utils/formatters';
 import { GreetingCard } from './greeting-card';
 import { TimesheetStatusCard } from './timesheet-status-card';
-import { WorkScheduleCard } from './work-schedule-card';
+import { WorkScheduleCard, type ScheduleDay } from './work-schedule-card';
 import { UpcomingHolidaysCard } from './upcoming-holidays-card';
 import { CompanyDocumentsCard } from './company-documents-card';
+import { localDateKey } from '../../lib/local-date';
 
 /**
- * The Activities tab: what is happening around the employee this week.
+ * The employee's week: schedule, approved time, upcoming holidays and shared documents.
  *
  * Its own component so Home can place it in either layout — beside the profile on a laptop, as a
  * tab of its own on a phone — without the screen carrying every card's data derivation.
@@ -37,7 +39,7 @@ export function OverviewActivitiesTab({ onNavigateModule }: OverviewActivitiesTa
   const employeeHolidays = useEmployeeHolidays();
 
   // Effective holidays still ahead this year: mandatory ones plus the employee's confirmed picks.
-  const todayKey = new Date().toISOString().slice(0, 10);
+  const todayKey = localDateKey();
   const upcomingHolidays: Holiday[] = useMemo(() => {
     const effective =
       employeeHolidays.hasEmployeeRecord && employeeHolidays.summary
@@ -61,18 +63,25 @@ export function OverviewActivitiesTab({ onNavigateModule }: OverviewActivitiesTa
     todayKey,
   ]);
 
-  const weekScheduleDays: DailyAttendanceItem[] = records.map((record) => ({
-    id: record.id,
-    workDate: record.workDate,
-    dayOfWeek: record.dayOfWeek,
-    dayNumber: record.dayNumber,
-    dayStatus: toDailyStatus(record.dayStatus),
-    workedMinutes: record.workedMinutes,
-    isToday: record.isToday,
-  }));
-  const scheduleDates = records.map((record) => record.workDate).sort();
-  const first = scheduleDates[0];
-  const last = scheduleDates[scheduleDates.length - 1];
+  // This week, Monday to Sunday and in order, every day accounted for: a day with no attendance
+  // still says whether it was leave, a holiday, a weekly off, absent or still to come.
+  const days = useDayContext();
+  const week = attendanceWeek(todayKey, 0);
+  const weekScheduleDays: ScheduleDay[] = useMemo(() => {
+    const byDate = new Map(records.map((record) => [record.workDate, record]));
+    return datesBetween(week.from, week.to).map((dateKey) => {
+      const record = byDate.get(dateKey);
+      return {
+        dateKey,
+        ...dayParts(dateKey),
+        status: days.resolve(dateKey, record),
+        workedMinutes: record?.workedMinutes ?? 0,
+        isToday: dateKey === todayKey,
+        leaveName: days.leaveByDate.get(dateKey) ?? null,
+        holidayName: days.holidayByDate.get(dateKey)?.name ?? null,
+      };
+    });
+  }, [records, week.from, week.to, todayKey, days]);
 
   return (
     <div className="space-y-4">
@@ -81,8 +90,8 @@ export function OverviewActivitiesTab({ onNavigateModule }: OverviewActivitiesTa
       <WorkScheduleCard
         shift={myShift.shift}
         shiftStatus={myShift.loading ? 'loading' : myShift.error ? 'unavailable' : 'unassigned'}
-        startDate={first ? formatDateLabel(first) : 'Current period'}
-        endDate={last ? formatDateLabel(last) : ''}
+        startDate={formatDateLabel(week.from)}
+        endDate={formatDateLabel(week.to)}
         attendanceDays={weekScheduleDays}
       />
       <UpcomingHolidaysCard

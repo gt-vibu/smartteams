@@ -17,14 +17,18 @@ import {
   CurrentShiftQueryDto,
   EndShiftAssignmentDto,
   ShiftAssignmentListQueryDto,
-  ShiftAssignmentDto,
-  ShiftDeactivationDto,
-  ShiftDto,
-  UpdateShiftDto,
+  NativeShiftDto,
 } from './shifts.dto';
 import { ShiftAssignmentsService } from './shift-assignments.service';
 import { ShiftsService } from './shifts.service';
+import { ShiftRotationService } from './shift-rotation.service';
+import { ShiftRotationDto } from './shifts.dto';
 
+import {
+  NativeShiftAssignmentDto,
+  NativeShiftDeactivationDto,
+  NativeUpdateShiftDto,
+} from './shifts-native.dto';
 @Controller('v1/organizations/:organizationId/shifts')
 @UseGuards(NativeJwtGuard)
 export class ShiftsController {
@@ -32,7 +36,19 @@ export class ShiftsController {
     private readonly shifts: ShiftsService,
     private readonly assignments: ShiftAssignmentsService,
     private readonly contexts: DomainContextFactory,
+    private readonly rotation: ShiftRotationService,
   ) {}
+
+  /** Plans a rotating roster: each person cycles through the shifts, a few weeks on each. */
+  @Post('rotations') rotate(
+    @Param('organizationId') organizationId: string,
+    @Body() body: ShiftRotationDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.rotation.rotate(context, body));
+  }
   /** The shift an employee is assigned to on a day — the caller's own unless they may read others. */
   @Get('assignments/current') current(
     @Param('organizationId') organizationId: string,
@@ -79,7 +95,7 @@ export class ShiftsController {
   }
   @Post() create(
     @Param('organizationId') organizationId: string,
-    @Body() body: ShiftDto,
+    @Body() body: NativeShiftDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -89,7 +105,7 @@ export class ShiftsController {
   @Patch(':shiftId') update(
     @Param('organizationId') organizationId: string,
     @Param('shiftId') shiftId: string,
-    @Body() body: UpdateShiftDto,
+    @Body() body: NativeUpdateShiftDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -99,7 +115,7 @@ export class ShiftsController {
   @Post(':shiftId/deactivate') deactivate(
     @Param('organizationId') organizationId: string,
     @Param('shiftId') shiftId: string,
-    @Body() body: ShiftDeactivationDto,
+    @Body() body: NativeShiftDeactivationDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -109,7 +125,7 @@ export class ShiftsController {
   @Post('employees/:employeeId/assignments') assign(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
-    @Body() body: ShiftAssignmentDto,
+    @Body() body: NativeShiftAssignmentDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts

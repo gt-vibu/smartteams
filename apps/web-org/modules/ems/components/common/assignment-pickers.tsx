@@ -1,12 +1,10 @@
 'use client';
 
-import { Badge, Checkbox, Label } from '@smarteam/ui';
+import { formatDate } from '@smarteam/contracts';
+import { Badge, Checkbox } from '@smarteam/ui';
+import type { ProjectDraftMap, RoleDraft, TeamDraft } from '../../services/assignment-changes';
 import type { ProjectMembership, TeamMembership } from '../../services/membership-state';
-import {
-  DEFAULT_ALLOCATION,
-  type ProjectDraftMap,
-  type TeamDraft,
-} from '../../services/assignment-changes';
+import { PicklistSelect } from './picklist-select';
 
 /**
  * The two selection lists inside the assignment dialog.
@@ -21,12 +19,16 @@ export function TeamPicker({
   onToggle,
   canWrite,
   disabled,
+  roles,
+  onRole,
 }: {
   memberships: TeamMembership[];
   draft: TeamDraft;
   onToggle: (teamId: string, checked: boolean) => void;
   canWrite: boolean;
   disabled: boolean;
+  roles: RoleDraft;
+  onRole: (key: string, role: string) => void;
 }) {
   return (
     <section>
@@ -41,26 +43,47 @@ export function TeamPicker({
       ) : (
         <div className="grid gap-2 sm:grid-cols-2">
           {memberships.map((membership) => (
-            <label
-              className="flex items-start gap-3 rounded-md border border-border bg-card p-3"
-              key={membership.team.id}
-            >
-              <Checkbox
-                checked={draft[membership.team.id] ?? false}
-                disabled={!canWrite || disabled}
-                onCheckedChange={(checked) => onToggle(membership.team.id, checked === true)}
-              />
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-xs font-semibold text-foreground">
-                  {membership.team.name}
-                </span>
-                {membership.state === 'ENDED' && (
-                  <span className="text-[10px] text-muted-foreground">
-                    Previously a member until {membership.endedOn?.slice(0, 10)}
+            <div className="rounded-md border border-border bg-card p-3" key={membership.team.id}>
+              <label className="flex items-start gap-3">
+                <Checkbox
+                  checked={draft[membership.team.id] ?? false}
+                  disabled={!canWrite || disabled}
+                  onCheckedChange={(checked) => onToggle(membership.team.id, checked === true)}
+                />
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-1.5 truncate">
+                    <span className="truncate text-xs font-semibold text-foreground">
+                      {membership.team.name}
+                    </span>
+                    {membership.isLead && (
+                      <Badge
+                        className="border-amber-500/20 bg-amber-500/10 text-[9px] text-amber-600 dark:text-amber-400"
+                        variant="outline"
+                      >
+                        Lead
+                      </Badge>
+                    )}
                   </span>
-                )}
-              </span>
-            </label>
+                  {membership.state === 'ENDED' && (
+                    <span className="text-[10px] text-muted-foreground">
+                      Previously a member until {formatDate(membership.endedOn)}
+                    </span>
+                  )}
+                </span>
+              </label>
+              {draft[membership.team.id] && membership.state !== 'ACTIVE' && (
+                <div className="mt-2 pl-8">
+                  <PicklistSelect
+                    addLabel="+ Add a role"
+                    disabled={disabled}
+                    kind="team-roles"
+                    noneLabel="Team role (optional)"
+                    onChange={(role) => onRole(`team:${membership.team.id}`, role)}
+                    value={roles[`team:${membership.team.id}`] ?? ''}
+                  />
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}
@@ -72,30 +95,23 @@ export function ProjectPicker({
   memberships,
   draft,
   onToggle,
-  onAllocate,
   canWrite,
   disabled,
-  totalAllocation,
 }: {
   memberships: ProjectMembership[];
   draft: ProjectDraftMap;
   onToggle: (projectId: string, checked: boolean) => void;
-  onAllocate: (projectId: string, allocation: number) => void;
   canWrite: boolean;
   disabled: boolean;
-  totalAllocation: number;
 }) {
   return (
     <section>
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-xs font-bold uppercase tracking-wider text-foreground">Projects</h3>
-        <Badge variant={totalAllocation > 100 ? 'destructive' : 'outline'}>
-          {totalAllocation}% allocated
-        </Badge>
       </div>
       {!canWrite && (
         <p className="mb-2 text-[11px] text-muted-foreground">
-          Read-only &mdash; you cannot change project allocation.
+          Read-only &mdash; you cannot change project membership.
         </p>
       )}
       {memberships.length === 0 ? (
@@ -105,7 +121,6 @@ export function ProjectPicker({
           {memberships.map((membership) => {
             const entry = draft[membership.project.id];
             const selected = entry?.selected ?? false;
-            const isActive = membership.state === 'ACTIVE';
             return (
               <div
                 className="rounded-md border border-border bg-card p-3"
@@ -117,51 +132,24 @@ export function ProjectPicker({
                     disabled={!canWrite || disabled}
                     onCheckedChange={(checked) => onToggle(membership.project.id, checked === true)}
                   />
-                  <span className="min-w-0 flex-1 truncate text-xs font-semibold text-foreground">
-                    {membership.project.name}
-                  </span>
-                  {isActive && (
-                    <span className="font-mono text-xs font-bold text-primary">
-                      {membership.allocationPercentage === null
-                        ? '--'
-                        : `${membership.allocationPercentage}%`}
+                  <span className="flex min-w-0 flex-1 items-center gap-1.5 truncate">
+                    <span className="truncate text-xs font-semibold text-foreground">
+                      {membership.project.name}
                     </span>
-                  )}
+                    {membership.isLead && (
+                      <Badge
+                        className="border-amber-500/20 bg-amber-500/10 text-[9px] text-amber-600 dark:text-amber-400"
+                        variant="outline"
+                      >
+                        Lead
+                      </Badge>
+                    )}
+                  </span>
                 </label>
 
                 {membership.state === 'ENDED' && (
                   <p className="mt-1 pl-8 text-[10px] text-muted-foreground">
-                    Previously allocated until {membership.endedOn?.slice(0, 10)}
-                  </p>
-                )}
-
-                {selected && !isActive && (
-                  <div className="mt-3 border-t border-border pt-3">
-                    <Label
-                      className="mb-1 block uppercase tracking-wider"
-                      htmlFor={`allocation-${membership.project.id}`}
-                    >
-                      Allocation ({entry?.allocation ?? DEFAULT_ALLOCATION}%)
-                    </Label>
-                    <input
-                      className="w-full cursor-pointer accent-primary"
-                      disabled={disabled}
-                      id={`allocation-${membership.project.id}`}
-                      max="100"
-                      min="10"
-                      onChange={(event) =>
-                        onAllocate(membership.project.id, Number.parseInt(event.target.value, 10))
-                      }
-                      step="5"
-                      type="range"
-                      value={entry?.allocation ?? DEFAULT_ALLOCATION}
-                    />
-                  </div>
-                )}
-
-                {selected && isActive && (
-                  <p className="mt-1 pl-8 text-[10px] text-muted-foreground">
-                    Allocation cannot be changed after assignment.
+                    Was on this project until {formatDate(membership.endedOn)}
                   </p>
                 )}
               </div>

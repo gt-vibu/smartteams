@@ -52,16 +52,18 @@ describe('membershipRepository', () => {
     expect((init.headers as Record<string, string>)['x-csrf-token']).toBe('csrf-value');
   });
 
-  it('posts a project member including the allocation percentage the API accepts', async () => {
+  it('posts a project member without any percentage', async () => {
     const spy = mockFetch(201, {});
     await membershipRepository.addProjectMember(ORG, PROJECT, {
       employeeId: EMPLOYEE,
-      allocationPercentage: 40,
       startsOn: '2026-09-01',
     });
 
     const [, init] = spy.mock.calls[0] as [string, RequestInit];
-    expect(JSON.parse(init.body as string)).toMatchObject({ allocationPercentage: 40 });
+    expect(JSON.parse(init.body as string)).toEqual({
+      employeeId: EMPLOYEE,
+      startsOn: '2026-09-01',
+    });
   });
 
   it('surfaces a 403 rather than reporting the assignment as saved', async () => {
@@ -101,13 +103,15 @@ describe('membershipRepository', () => {
     ).rejects.toThrow();
   });
 
-  it('exposes exactly the four membership operations the API supports', () => {
+  it('exposes exactly the membership operations the API supports', () => {
     // No hard delete: the API has no such route, and adding one locally would lose history.
     expect(Object.keys(membershipRepository).sort()).toEqual([
       'addProjectMember',
       'addTeamMember',
       'endProjectMember',
       'endTeamMember',
+      'updateProjectMember',
+      'updateTeamMember',
     ]);
   });
 });
@@ -131,26 +135,5 @@ describe('team and project reads carry their members', () => {
     ]);
     const teams = await workforceRepository.listTeams(ORG);
     expect(teams[0]?.members?.[0]?.employeeId).toBe(EMPLOYEE);
-  });
-
-  it('coerces the decimal allocation the API serialises as a string', async () => {
-    mockFetch(200, [
-      {
-        id: PROJECT,
-        organizationId: ORG,
-        name: 'Apollo',
-        members: [
-          {
-            id: '88888888-8888-4888-8888-888888888888',
-            projectId: PROJECT,
-            employeeId: EMPLOYEE,
-            allocationPercentage: '40.00',
-            startsOn: '2026-01-01',
-          },
-        ],
-      },
-    ]);
-    const projects = await workforceRepository.listProjects(ORG);
-    expect(projects[0]?.members?.[0]?.allocationPercentage).toBe(40);
   });
 });

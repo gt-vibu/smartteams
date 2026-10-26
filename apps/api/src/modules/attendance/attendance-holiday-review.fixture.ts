@@ -125,6 +125,7 @@ export function tenant(
   });
 
   const tx = {
+    approvalDelegation: { findMany: jest.fn().mockResolvedValue([]) },
     $queryRaw: jest.fn((strings: TemplateStringsArray) => {
       locks.push(strings.join('?').split(' FROM ')[1]?.split(' ')[0] ?? '');
       return Promise.resolve([]);
@@ -141,9 +142,14 @@ export function tenant(
       ),
     },
     userRole: {
-      findFirst: jest.fn((args: { where: { userId: string } }) =>
-        Promise.resolve((options.hrUsers ?? []).includes(args.where.userId) ? { id: 'ur' } : null),
-      ),
+      // A plain id, or the approver together with anyone who delegated to them.
+      findFirst: jest.fn((args: { where: { userId: string | { in: string[] } } }) => {
+        const asked =
+          typeof args.where.userId === 'string' ? [args.where.userId] : args.where.userId.in;
+        return Promise.resolve(
+          asked.some((id) => (options.hrUsers ?? []).includes(id)) ? { id: 'ur' } : null,
+        );
+      }),
     },
     approvalPolicy: {
       findMany: jest.fn(() => Promise.resolve([{ id: 'policy', isDefault: true, steps }])),

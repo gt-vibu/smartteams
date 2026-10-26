@@ -31,9 +31,9 @@ function renderModal(props: Partial<React.ComponentProps<typeof LogTimeModal>> =
 }
 
 describe('Log Time hours', () => {
-  it('opens with no hours entered', () => {
+  it('opens with 00:00 hours by default', () => {
     renderModal();
-    expect(screen.getByRole('textbox', { name: /hours worked/i })).toHaveValue('');
+    expect(screen.getByRole('textbox', { name: /hours worked/i })).toHaveValue('00:00');
   });
 
   it('will not save until hours are entered', async () => {
@@ -47,6 +47,30 @@ describe('Log Time hours', () => {
   it('saves exactly the hours entered', async () => {
     const onSubmit = renderModal();
     await userEvent.type(screen.getByRole('textbox', { name: /hours worked/i }), '2:30');
+    await userEvent.click(screen.getByRole('button', { name: /^save$/i }));
+
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ minutes: 150 }));
+  });
+
+  it('saves single-digit hours entry like 8 as 8 hours (480 minutes)', async () => {
+    const onSubmit = renderModal();
+    await userEvent.type(screen.getByRole('textbox', { name: /hours worked/i }), '8');
+    await userEvent.click(screen.getByRole('button', { name: /^save$/i }));
+
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ minutes: 480 }));
+  });
+
+  it('formats digits without colon like 0830 into 08:30 (510 minutes)', async () => {
+    const onSubmit = renderModal();
+    await userEvent.type(screen.getByRole('textbox', { name: /hours worked/i }), '0830');
+    await userEvent.click(screen.getByRole('button', { name: /^save$/i }));
+
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ minutes: 510 }));
+  });
+
+  it('saves decimal hours entry like 2.5 as 2h 30m (150 minutes)', async () => {
+    const onSubmit = renderModal();
+    await userEvent.type(screen.getByRole('textbox', { name: /hours worked/i }), '2.5');
     await userEvent.click(screen.getByRole('button', { name: /^save$/i }));
 
     expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ minutes: 150 }));

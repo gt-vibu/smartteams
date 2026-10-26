@@ -3,11 +3,13 @@
 import React, { useState } from 'react';
 import { CalendarClock } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
-import { Button } from '@smarteam/ui';
+import { LoadingIndicator, Button } from '@smarteam/ui';
 import { formatWeekdays, shiftMinutes, type Shift } from '@smarteam/contracts';
 import { useShifts } from '../../hooks/use-shifts';
+import { RotationDialog } from './rotation-dialog';
 import { AssignShiftDialog, RetireShiftDialog, ShiftDialog } from './shift-dialogs';
 import { ShiftAssignmentsDialog } from './shift-assignments-dialog';
+import { BulkWorkforcePanel } from '../common/bulk-workforce-panel';
 import { PageShell } from '../layout/page-shell';
 
 /**
@@ -18,16 +20,22 @@ import { PageShell } from '../layout/page-shell';
  * product ever called it. The only fixture involved, `shifts.json`, seeded a browser storage key
  * that no screen read.
  *
- * What a shift does *not* do is stated on the screen: attendance prices punches against it, but
- * payroll prorates against a flat day basis, so a shift does not change anyone's pay.
+ * Attendance compares punches with the assigned shift; payroll uses a flat-day basis.
  */
 export function ScreenShifts() {
   const shifts = useShifts();
+  const [showOvernight, setShowOvernight] = useState(false);
+  const [rotating, setRotating] = useState(false);
   const [editing, setEditing] = useState<Shift | null>(null);
+  const [template, setTemplate] = useState<Shift | null>(null);
   const [creating, setCreating] = useState(false);
   const [assigning, setAssigning] = useState<Shift | null>(null);
   const [retiring, setRetiring] = useState<Shift | null>(null);
   const [viewingPeople, setViewingPeople] = useState<Shift | null>(null);
+  const overnightCount = shifts.shifts.filter((shift) => shift.crossesMidnight).length;
+  const visibleShifts = showOvernight
+    ? shifts.shifts.filter((shift) => shift.crossesMidnight)
+    : shifts.shifts;
 
   if (shifts.forbidden) {
     return (
@@ -50,13 +58,20 @@ export function ScreenShifts() {
       <ScreenHeader
         actions={
           shifts.canWrite && (
-            <Button onClick={() => setCreating(true)} size="sm" type="button">
-              New shift
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              {shifts.shifts.length >= 2 && (
+                <Button onClick={() => setRotating(true)} size="sm" type="button" variant="outline">
+                  Rotating roster
+                </Button>
+              )}
+              <Button onClick={() => setCreating(true)} size="sm" type="button">
+                New shift
+              </Button>
+            </div>
           )
         }
-        description="Working patterns attendance measures against. Assignments are effective-dated; see and end them under People."
         icon={CalendarClock}
+        description="Manage work schedules and review assigned shift patterns."
         title="Shifts"
         tone="accent"
       />
@@ -70,9 +85,18 @@ export function ScreenShifts() {
       )}
 
       {shifts.loading && (
-        <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-          Loading shifts...
-        </p>
+        <LoadingIndicator variant="panel" label="Loading shifts" className="py-10 text-center text-xs text-muted-foreground" />
+      )}
+
+      {!shifts.loading && !shifts.error && (
+        <section aria-label="Shift summary" className="grid grid-cols-2 gap-2">
+          <button aria-pressed={!showOvernight} className="rounded-lg border border-border bg-card px-3 py-2.5 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setShowOvernight(false)} type="button">
+            <span className="text-[11px] text-muted-foreground">Active shifts</span><span className="mt-0.5 block text-xl font-semibold tabular-nums">{shifts.shifts.length}</span><span className="text-[10px] text-muted-foreground">Active schedules in your access scope</span>
+          </button>
+          <button aria-pressed={showOvernight} className="rounded-lg border border-border bg-card px-3 py-2.5 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setShowOvernight((value) => !value)} type="button">
+            <span className="text-[11px] text-muted-foreground">Overnight shifts</span><span className="mt-0.5 block text-xl font-semibold tabular-nums">{overnightCount}</span><span className="text-[10px] text-muted-foreground">Click to review cross-midnight schedules</span>
+          </button>
+        </section>
       )}
 
       {!shifts.loading && shifts.error && (
@@ -94,16 +118,16 @@ export function ScreenShifts() {
         </div>
       )}
 
-      {!shifts.loading && !shifts.error && shifts.shifts.length === 0 && (
+      {!shifts.loading && !shifts.error && visibleShifts.length === 0 && (
         <div className="flex min-h-[clamp(200px,42vh,380px)] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center">
-          <p className="text-sm font-bold text-foreground">No shifts</p>
+          <p className="text-sm font-bold text-foreground">{showOvernight ? 'No overnight shifts' : 'No shifts'}</p>
           <p className="mt-1 text-xs text-muted-foreground">
             Create one to define the hours attendance is measured against.
           </p>
         </div>
       )}
 
-      {!shifts.loading && !shifts.error && shifts.shifts.length > 0 && (
+      {!shifts.loading && !shifts.error && visibleShifts.length > 0 && (
         <div className="overflow-x-auto rounded-xl border border-border bg-card">
           <table className="stack-table w-full min-w-[820px] text-left text-xs">
             <thead className="border-b border-border bg-table-header">
@@ -117,7 +141,7 @@ export function ScreenShifts() {
               </tr>
             </thead>
             <tbody>
-              {shifts.shifts.map((shift) => {
+              {visibleShifts.map((shift) => {
                 const minutes = shiftMinutes(shift);
                 return (
                   <tr
@@ -126,9 +150,6 @@ export function ScreenShifts() {
                   >
                     <td data-cell="primary" className="px-4 py-2.5">
                       <span className="block font-semibold text-foreground">{shift.name}</span>
-                      <span className="font-mono text-[10px] text-muted-foreground">
-                        {shift.code}
-                      </span>
                     </td>
                     <td data-label="Days" className="px-4 py-2.5 text-muted-foreground">
                       {formatWeekdays(shift.daysOfWeek)}
@@ -137,14 +158,17 @@ export function ScreenShifts() {
                       {shift.startsAt.slice(0, 5)} – {shift.endsAt.slice(0, 5)}
                       {shift.crossesMidnight && <span className="ml-1 text-[10px]">(+1 day)</span>}
                     </td>
-                    <td data-label="Break" className="px-4 py-2.5 font-mono text-muted-foreground">
+                    <td
+                      data-label="Break"
+                      className="px-4 py-2.5 tabular-nums text-muted-foreground"
+                    >
                       {shift.breakMinutes}m
                     </td>
-                    <td data-label="Net" className="px-4 py-2.5 font-mono text-foreground">
+                    <td data-label="Net" className="px-4 py-2.5 tabular-nums text-foreground">
                       {Math.floor(minutes / 60)}h {minutes % 60}m
                     </td>
                     <td data-cell="actions" className="px-4 py-2.5 text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex w-full flex-wrap justify-start gap-2 sm:justify-end">
                         <Button
                           onClick={() => setViewingPeople(shift)}
                           size="sm"
@@ -172,12 +196,24 @@ export function ScreenShifts() {
                               Edit
                             </Button>
                             <Button
+                              size="sm"
+                              variant="outline"
+                              type="button"
+                              onClick={() => {
+                                setEditing(null);
+                                setTemplate(shift);
+                                setCreating(true);
+                              }}
+                            >
+                              Copy schedule
+                            </Button>
+                            <Button
                               onClick={() => setRetiring(shift)}
                               size="sm"
                               type="button"
                               variant="ghost"
                             >
-                              Retire
+                              Deactivate
                             </Button>
                           </>
                         )}
@@ -191,19 +227,17 @@ export function ScreenShifts() {
         </div>
       )}
 
-      <p className="text-[11px] text-muted-foreground">
-        Attendance measures punches against an employee&apos;s assigned shift. Payroll prorates
-        against a flat day basis and does not use shift hours.
-      </p>
-
+      <BulkWorkforcePanel initialOperation="SHIFT" />
       <ShiftDialog
         onOpenChange={(open) => {
           if (!open) {
             setCreating(false);
             setEditing(null);
+            setTemplate(null);
           }
         }}
         open={creating || editing !== null}
+        template={template}
         shift={editing}
         shifts={shifts}
       />
@@ -217,6 +251,12 @@ export function ScreenShifts() {
         canWrite={shifts.canWrite}
         onOpenChange={(open) => !open && setViewingPeople(null)}
         shift={viewingPeople}
+      />
+      <RotationDialog
+        onClose={() => setRotating(false)}
+        onPlanned={() => void shifts.refetch()}
+        open={rotating}
+        shifts={shifts.shifts}
       />
       <RetireShiftDialog
         onOpenChange={(open) => !open && setRetiring(null)}

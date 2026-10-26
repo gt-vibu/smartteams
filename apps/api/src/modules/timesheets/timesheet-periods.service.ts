@@ -10,6 +10,7 @@ import { TenantDatabaseService } from '../../infrastructure/database/tenant-data
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { markPayrollStale } from '../payroll/payroll-staleness';
 import { actingForOthersError, canActForAllEmployees } from '../employees/employee-scope';
+import { employeeNameSearch } from '../employees/employee-name-search';
 
 import { dateOnly, decodeEntry } from './timesheet-shared';
 
@@ -72,6 +73,121 @@ export class TimesheetPeriodsService {
         version: timesheet.version,
         entries: timesheet.entries.map(decodeEntry),
       }));
+    });
+  }
+
+  async listPage(
+    context: DomainContext,
+    filters: {
+      employeeId?: string;
+      search?: string;
+      departmentId?: string;
+      periodId?: string;
+      from?: string;
+      to?: string;
+      status?: TimesheetStatus;
+      cursor?: string;
+      limit?: number;
+    },
+  ) {
+    requirePermission(context, 'timesheets.read');
+    if (filters.from && filters.to && filters.from > filters.to)
+      throw new ConflictError('Choose a start date on or before the end date.');
+    return this.database.run(context, async (tx) => {
+      let employeeId = filters.employeeId;
+      if (!(context.permissions.has('*') || context.permissions.has('timesheets.read.all'))) {
+        const self = await tx.employee.findFirst({
+          where: { organizationId: context.organizationId, userId: context.actor.userId },
+          select: { id: true },
+        });
+        if (!self) return { timesheets: [], nextCursor: undefined };
+        if (employeeId && employeeId !== self.id)
+          throw new ConflictError('Employees may only read their own timesheets');
+        employeeId = self.id;
+      }
+      const limit = Math.min(filters.limit ?? 100, 500);
+      const search = employeeNameSearch(filters.search);
+      const baseWhere = {
+        organizationId: context.organizationId,
+        employeeId,
+        timesheetPeriodId: filters.periodId,
+        ...(context.branchId ? { branchId: context.branchId } : {}),
+        ...(filters.from || filters.to
+          ? {
+              period: {
+                periodStart: {
+                  lte: filters.to
+                    ? new Date(`${filters.to.slice(0, 10)}T23:59:59.999Z`)
+                    : undefined,
+                },
+                periodEnd: {
+                  gte: filters.from
+                    ? new Date(`${filters.from.slice(0, 10)}T00:00:00.000Z`)
+                    : undefined,
+                },
+              },
+            }
+          : {}),
+        ...(filters.departmentId || search
+          ? {
+              employee: {
+                ...(search ?? {}),
+                ...(filters.departmentId ? { departmentId: filters.departmentId } : {}),
+              },
+            }
+          : {}),
+      };
+      const [records, statusGroups] = await Promise.all([
+        tx.timesheet.findMany({
+          where: { ...baseWhere, status: filters.status },
+          ...(filters.cursor ? { cursor: { id: filters.cursor }, skip: 1 } : {}),
+          orderBy: { id: 'asc' },
+          take: limit + 1,
+          include: { entries: { orderBy: { workDate: 'asc' } }, period: true },
+        }),
+        tx.timesheet.groupBy({
+          by: ['status'],
+          where: baseWhere,
+          _count: { _all: true },
+          _sum: { totalMinutes: true },
+        }),
+      ]);
+      const emptyStatusCounts = Object.fromEntries(
+        Object.values(TimesheetStatus).map((status) => [status, { count: 0, totalMinutes: 0 }]),
+      ) as Record<TimesheetStatus, { count: number; totalMinutes: number }>;
+      const hasNext = records.length > limit;
+      const page = records.slice(0, limit);
+      return {
+        timesheets: page.map((timesheet) => ({
+          id: timesheet.id,
+          employeeId: timesheet.employeeId,
+          periodId: timesheet.timesheetPeriodId,
+          period: timesheet.period,
+          status: timesheet.status,
+          totalMinutes: timesheet.totalMinutes,
+          regularMinutes: timesheet.regularMinutes,
+          overtimeMinutes: timesheet.overtimeMinutes,
+          version: timesheet.version,
+          entries: timesheet.entries.map(decodeEntry),
+        })),
+        nextCursor: hasNext ? page.at(-1)?.id : undefined,
+        summary: statusGroups.reduce(
+          (summary, group) => {
+            summary.statusCounts[group.status] = {
+              count: group._count._all,
+              totalMinutes: group._sum.totalMinutes ?? 0,
+            };
+            summary.totalCount += group._count._all;
+            summary.totalMinutes += group._sum.totalMinutes ?? 0;
+            return summary;
+          },
+          {
+            statusCounts: emptyStatusCounts,
+            totalCount: 0,
+            totalMinutes: 0,
+          },
+        ),
+      };
     });
   }
 

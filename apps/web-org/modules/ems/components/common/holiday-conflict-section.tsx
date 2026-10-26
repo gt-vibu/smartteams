@@ -11,8 +11,7 @@ interface HolidayConflictSectionProps {
   conflict: HolidayConflictView;
   attendanceId?: string | undefined;
   /** Sends the employee's explanation; offered only while the day still needs one. */
-  onExplain?:
-    ((attendanceId: string, reason: string, comment: string) => Promise<unknown>) | undefined;
+  onExplain?: ((attendanceId: string, reason: string) => Promise<unknown>) | undefined;
 }
 
 /**
@@ -50,7 +49,7 @@ export function HolidayConflictSection({
         <HolidayCheckInForm
           key={attendanceId}
           holidayName={conflict.holidayName}
-          onSubmit={(reason, comment) => onExplain(attendanceId, reason, comment)}
+          onSubmit={(reason) => onExplain(attendanceId, reason)}
         />
       )}
     </div>

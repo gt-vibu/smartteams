@@ -42,6 +42,10 @@ function setup(assignment: { startsOn: Date; endsOn: Date | null } | null = null
   const row = assignment && { id: ASSIGNMENT, employeeId: SELF, shift, ...assignment };
   const tx = {
     $queryRaw: jest.fn().mockResolvedValue([]),
+    payrollRun: {
+      findFirst: jest.fn().mockResolvedValue(null),
+      updateMany: jest.fn().mockResolvedValue({ count: 0 }),
+    },
     organization: { findUnique: jest.fn().mockResolvedValue({ timezone: 'Asia/Kolkata' }) },
     employee: { findFirst: jest.fn().mockResolvedValue({ id: SELF }) },
     employeeShiftAssignment: {
@@ -153,6 +157,13 @@ describe('ending an assignment', () => {
     );
     // Locked before it is read, so two administrators cannot both end it.
     expect(tx.$queryRaw).toHaveBeenCalled();
+  });
+
+  it('refuses to change released payroll dates and invalidates no assignment', async () => {
+    const { tx, service } = setup({ startsOn: new Date('2026-09-01'), endsOn: null });
+    tx.payrollRun.findFirst.mockResolvedValueOnce({ id: 'issued-run' });
+    await expect(service.end(admin, ASSIGNMENT, end)).rejects.toThrow('released');
+    expect(tx.employeeShiftAssignment.update).not.toHaveBeenCalled();
   });
 
   it('refuses a last day before the assignment starts', async () => {

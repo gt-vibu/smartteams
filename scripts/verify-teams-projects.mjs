@@ -10,9 +10,10 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { testAadhaar } from './lib/aadhaar.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const BASE = 'http://localhost:4000';
+const BASE = process.env.AUTHZ_API_URL ?? 'http://localhost:4000';
 const env = Object.fromEntries(
   readFileSync(resolve(ROOT, '.env'), 'utf8')
     .split(/\r?\n/)
@@ -115,6 +116,7 @@ async function main() {
       firstName: 'Asha',
       lastName: 'Rao',
       workEmail: `asha@${slug}.test`,
+      aadhaarNumber: testAadhaar(),
       employmentType: 'FULL_TIME',
       dateOfJoining: '2024-03-15',
     },
@@ -126,6 +128,12 @@ async function main() {
   r = await call(A, 'GET', `/v1/organizations/${orgId}/branches`);
   check('GET branches', r.status, 200);
   const branchId = Array.isArray(r.payload) ? r.payload[0]?.id : undefined;
+
+  console.log('\na branch is required');
+  r = await call(A, 'POST', `/v1/organizations/${orgId}/teams`, { name: 'Branchless' }, AH);
+  check('a team without a branch is refused', r.status, 409);
+  r = await call(A, 'POST', `/v1/organizations/${orgId}/projects`, { name: 'Branchless' }, AH);
+  check('a project without a branch is refused', r.status, 409);
 
   console.log('\nteam lifecycle');
   r = await call(
@@ -224,6 +232,102 @@ async function main() {
   );
   check('create project', r.status, 201);
   const projectId = r.payload?.id;
+  check('a project may start without a lead', r.payload?.projectLeadEmployeeId ?? null, null);
+
+  console.log('\nteam lead');
+  r = await call(
+    A,
+    'POST',
+    `/v1/organizations/${orgId}/teams`,
+    { name: 'Lead Swap', ...(branchId ? { branchId } : {}) },
+    AH,
+  );
+  const swapTeamId = r.payload?.id;
+  check('a team may start without a lead', r.payload?.teamLeadEmployeeId ?? null, null);
+  r = await call(
+    A,
+    'POST',
+    `/v1/organizations/${orgId}/teams/${swapTeamId}/members`,
+    { employeeId, joinedAt: '2026-01-01' },
+    AH,
+  );
+  check('setup: the employee is a member', r.status, 201);
+  const swapTeam = async () =>
+    ((await call(A, 'GET', `/v1/organizations/${orgId}/teams`)).payload?.items ?? []).find(
+      (entry) => entry.id === swapTeamId,
+    );
+  r = await call(
+    A,
+    'PATCH',
+    `/v1/organizations/${orgId}/teams/${swapTeamId}`,
+    { teamLeadEmployeeId: employeeId },
+    AH,
+  );
+  check('a member is made lead', r.status, 200);
+  let team = await swapTeam();
+  check('the team names the lead', team?.teamLeadEmployeeId, employeeId);
+  check(
+    'and their membership has ended, not been deleted',
+    team?.members?.filter((m) => m.employeeId === employeeId).every((m) => m.leftAt !== null),
+    true,
+  );
+  r = await call(
+    A,
+    'PATCH',
+    `/v1/organizations/${orgId}/teams/${swapTeamId}`,
+    { teamLeadEmployeeId: null },
+    AH,
+  );
+  check('the team lead can be removed', r.status, 200);
+  team = await swapTeam();
+  check('and the team has no lead again', team?.teamLeadEmployeeId ?? null, null);
+
+  console.log('\nproject lead');
+  const listed = async () =>
+    ((await call(A, 'GET', `/v1/organizations/${orgId}/projects`)).payload?.items ?? []).find(
+      (entry) => entry.id === projectId,
+    );
+  r = await call(
+    A,
+    'PATCH',
+    `/v1/organizations/${orgId}/projects/${projectId}`,
+    { projectLeadEmployeeId: employeeId },
+    AH,
+  );
+  check('a lead is assigned afterwards', r.status, 200);
+  let project = await listed();
+  check('the list names the lead', project?.projectLeadEmployeeId, employeeId);
+  check(
+    'with their name, for viewers who cannot read the directory',
+    Boolean(project?.projectLead?.firstName),
+    true,
+  );
+  r = await call(
+    A,
+    'PATCH',
+    `/v1/organizations/${orgId}/projects/${projectId}`,
+    { projectLeadEmployeeId: '00000000-0000-4000-8000-000000000000' },
+    AH,
+  );
+  check('a lead who is not an employee here is refused', r.status, 404);
+  r = await call(
+    A,
+    'PATCH',
+    `/v1/organizations/${orgId}/projects/${projectId}`,
+    { projectLeadEmployeeId: null },
+    AH,
+  );
+  check('the lead can be removed', r.status, 200);
+  project = await listed();
+  check('and the project has no lead again', project?.projectLeadEmployeeId ?? null, null);
+  r = await call(
+    A,
+    'POST',
+    `/v1/organizations/${orgId}/projects`,
+    { name: 'Led from the start', branchId, projectLeadEmployeeId: employeeId },
+    AH,
+  );
+  check('a lead can be chosen when creating', r.payload?.projectLeadEmployeeId, employeeId);
 
   r = await call(
     A,
@@ -232,7 +336,6 @@ async function main() {
     {
       employeeId,
       projectRole: 'Lead',
-      allocationPercentage: 60,
       startsOn: '2026-01-01',
     },
     AH,
@@ -241,20 +344,13 @@ async function main() {
   const projectMemberId = r.payload?.id;
 
   r = await call(A, 'GET', `/v1/organizations/${orgId}/projects`);
+  const verification = (r.payload?.items ?? r.payload)?.find((entry) => entry.id === projectId);
+  check('project list carries branchId', verification?.branchId ?? null, branchId ?? null);
+  check('project list carries the role', verification?.members?.[0]?.projectRole, 'Lead');
   check(
-    'project list carries branchId',
-    (r.payload?.items ?? r.payload)?.[0]?.branchId ?? null,
-    branchId ?? null,
-  );
-  check(
-    'project list carries the role',
-    (r.payload?.items ?? r.payload)?.[0]?.members?.[0]?.projectRole,
-    'Lead',
-  );
-  check(
-    'project list carries the allocation',
-    Number((r.payload?.items ?? r.payload)?.[0]?.members?.[0]?.allocationPercentage),
-    60,
+    'project list carries no percentage',
+    (r.payload?.items ?? r.payload)?.[0]?.members?.[0]?.allocationPercentage,
+    undefined,
   );
 
   r = await call(

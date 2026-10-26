@@ -50,6 +50,36 @@ export const PERMISSION_CATALOGUE: PermissionCatalogueEntry[] = [
   { key: 'employees.compensation.write', label: 'Edit compensation', module: 'Employees' },
   { key: 'employees.access.write', label: 'Link employee to a login', module: 'Employees' },
   { key: 'employees.sessions.revoke', label: 'Revoke employee sessions', module: 'Employees' },
+  {
+    key: 'employees.personal_details.read',
+    label: 'View employee personal details',
+    module: 'Employees',
+  },
+  {
+    key: 'employees.personal_details.write',
+    label: 'Edit employee personal details',
+    module: 'Employees',
+  },
+  {
+    key: 'employees.bank_details.read',
+    label: 'View employee bank details',
+    module: 'Employees',
+  },
+  {
+    key: 'employees.bank_details.write',
+    label: 'Edit employee bank details',
+    module: 'Employees',
+  },
+  {
+    key: 'employees.documents.read',
+    label: 'View employee documents',
+    module: 'Employees',
+  },
+  {
+    key: 'employees.documents.write',
+    label: 'Manage employee documents',
+    module: 'Employees',
+  },
 
   // --- Attendance -----------------------------------------------------------------------------
   { key: 'attendance.read', label: 'View own attendance', module: 'Attendance' },
@@ -154,11 +184,45 @@ export const PERMISSION_CATALOGUE: PermissionCatalogueEntry[] = [
   { key: 'files.read', label: 'View own files', module: 'Files' },
   { key: 'files.read.all', label: 'View everyone’s files', module: 'Files' },
   { key: 'files.write', label: 'Upload and delete files', module: 'Files' },
+  {
+    key: 'files.organization.manage',
+    label: 'Publish company and team documents',
+    module: 'Files',
+  },
+  { key: 'files.share', label: 'Share documents with people, roles and teams', module: 'Files' },
+  { key: 'files.reports.read', label: 'View direct reports’ documents', module: 'Files' },
 
   // --- Shifts ---------------------------------------------------------------------------------
   { key: 'shifts.read', label: 'View shifts', module: 'Shifts' },
   { key: 'shifts.write', label: 'Manage shifts', module: 'Shifts' },
 ];
+
+/** Safe self-service access every employee needs, including managers and custom profiles. */
+export const EMPLOYEE_BASELINE_PERMISSION_KEYS = [
+  'organizations.read',
+  'employees.read',
+  'attendance.read',
+  'attendance.write',
+  'attendance.corrections.write',
+  'attendance.preferences.read',
+  'leave.types.read',
+  'leave.requests.read',
+  'leave.requests.write',
+  'leave.balances.read',
+  'timesheets.read',
+  'timesheets.write',
+  'timesheets.submit',
+  'payroll.payslips.read',
+  'payroll.employee-profile.read',
+  'payroll.preview.read',
+  'payroll.advances.read',
+  'payroll.advances.request',
+  'files.read',
+  'files.write',
+  'teams.read',
+  'projects.read',
+  'shifts.read',
+] as const;
 
 export const PERMISSION_KEYS = new Set(PERMISSION_CATALOGUE.map((entry) => entry.key));
 

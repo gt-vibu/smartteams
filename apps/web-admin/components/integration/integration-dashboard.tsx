@@ -27,11 +27,14 @@ export function IntegrationDashboard({ session, onLogout }: IntegrationDashboard
     <main className="min-h-svh bg-background">
       <header className="border-b border-border bg-card/90 backdrop-blur sticky top-0 z-40">
         <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-5 py-3.5 sm:px-8 lg:px-10">
-          <div className="flex items-center gap-8">
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3 sm:gap-8">
             <Brand />
 
             {/* Navigation Tabs */}
-            <nav className="flex items-center gap-1 bg-muted/60 p-1 rounded-xl border border-border/60">
+            <nav
+              aria-label="Platform sections"
+              className="flex max-w-full items-center gap-1 bg-muted/60 p-1 rounded-xl border border-border/60"
+            >
               <button
                 onClick={() => setActiveTab('COMPANIES')}
                 className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -60,7 +63,7 @@ export function IntegrationDashboard({ session, onLogout }: IntegrationDashboard
             </nav>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex shrink-0 items-center self-start gap-3 sm:self-center">
             <div className="hidden text-right sm:block">
               <p className="max-w-44 truncate text-[11px] font-mono text-muted-foreground">
                 {session.user.email}

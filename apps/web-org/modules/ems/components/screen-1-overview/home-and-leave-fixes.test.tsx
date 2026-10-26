@@ -7,25 +7,36 @@
  *    shows the assigned shift, or says plainly that none is assigned.
  *  - "View all" on Upcoming Holidays had no handler. It now opens the holiday calendar.
  */
-import { describe, expect, it, vi } from 'vitest';
+import type { LeaveRequest } from '@smarteam/contracts';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { LeaveRequest } from '@smarteam/contracts';
+import { describe, expect, it, vi } from 'vitest';
 import { UpcomingHolidaysCard } from './upcoming-holidays-card';
 import { WorkScheduleCard } from './work-schedule-card';
 
 const requests = [
-  { id: 'r1', status: 'PENDING', leaveTypeId: 't1', requestedDays: 2 },
-  { id: 'r2', status: 'APPROVED', leaveTypeId: 't1', requestedDays: 1 },
-].map(
-  (request, index) =>
-    ({
-      ...request,
-      employeeId: 'e1',
-      startDate: `2026-09-2${index}`,
-      endDate: `2026-09-2${index}`,
-    }) as unknown as LeaveRequest,
-);
+  {
+    id: 'r1',
+    status: 'PENDING',
+    leaveTypeId: 't1',
+    requestedDays: 2,
+    startDate: '2026-12-10',
+    endDate: '2026-12-11',
+  },
+  {
+    id: 'r2',
+    status: 'APPROVED',
+    leaveTypeId: 't1',
+    requestedDays: 1,
+    startDate: '2026-11-23',
+    endDate: '2026-11-24',
+  },
+].map((request) => ({ ...request, employeeId: 'e1' }) as unknown as LeaveRequest);
+
+// The team calendar loads its own data; this test is about the request list and balances.
+vi.mock('../screen-7-timeoff/team-leave-calendar', () => ({ TeamLeaveCalendar: () => null }));
+vi.mock('../screen-7-timeoff/leave-extras-panel', () => ({ LeaveExtrasPanel: () => null }));
+vi.mock('../screen-7-timeoff/apply-leave-modal', () => ({ ApplyLeaveModal: () => null }));
 
 vi.mock('../../hooks/use-leave', () => ({
   useLeave: () => ({
@@ -58,20 +69,45 @@ vi.mock('../../hooks/use-leave', () => ({
 
 const { Screen7TimeOff } = await import('../screen-7-timeoff/screen-7-timeoff');
 
-describe('Time Off status tabs', () => {
-  it('filters the request list, which sits above the balances', async () => {
+describe('Employee leave tabs', () => {
+  it('separates balances and request history, and balance cards open matching history', async () => {
     render(<Screen7TimeOff />);
-    const list = screen.getByRole('region', { name: 'Leave requests' });
-    const balances = screen.getByRole('region', { name: 'Leave balances' });
-    // The list the tabs control comes first in the page.
-    expect(list.compareDocumentPosition(balances) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(within(list).getByText('PENDING')).toBeInTheDocument();
-    expect(within(list).getByText('APPROVED')).toBeInTheDocument();
+    screen.getByRole('region', { name: 'Leave balances' });
+    expect(screen.queryByRole('region', { name: 'Leave request history' })).not.toBeInTheDocument();
 
-    await userEvent.setup().click(screen.getByRole('tab', { name: /Approved/ }));
-    expect(within(list).queryByText('PENDING')).not.toBeInTheDocument();
-    expect(within(list).getByText('APPROVED')).toBeInTheDocument();
-    expect(within(list).getByRole('heading')).toHaveTextContent('Approved requests');
+    await userEvent.setup().click(screen.getByRole('button', { name: /Earned Leave balance/ }));
+    const history = screen.getByRole('region', { name: 'Leave request history' });
+    expect(within(history).getByText('December 2026')).toBeInTheDocument();
+    expect(within(history).getByText('November 2026')).toBeInTheDocument();
+    expect(within(history).getByRole('heading')).toHaveTextContent('Request history');
+  });
+
+  it('shows each status filter in history and groups requests by their start month', async () => {
+    render(<Screen7TimeOff />);
+    await userEvent.setup().click(screen.getByRole('tab', { name: /History/ }));
+    const list = screen.getByRole('region', { name: 'Leave request history' });
+    const filter = screen.getByRole('combobox', { name: 'Filter leave requests by status' });
+
+    expect(within(filter).getAllByRole('option')).toHaveLength(5);
+    expect(within(filter).getByRole('option', { name: 'Rejected (0)' })).toBeInTheDocument();
+    expect(within(filter).getByRole('option', { name: 'Cancelled (0)' })).toBeInTheDocument();
+
+    expect(within(list).getByText('December 2026')).toBeInTheDocument();
+    expect(within(list).getByText('November 2026')).toBeInTheDocument();
+    const dateCell = within(list).getByText('10 Dec 2026').closest('td');
+    expect(dateCell).toHaveClass('leave-date-range-start');
+    expect(within(dateCell!).getByText(/11 Dec 2026/)).toHaveClass('leave-date-range-end');
+    expect(
+      within(list)
+        .getByText('December 2026')
+        .compareDocumentPosition(within(list).getByText('November 2026')) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+
+    await userEvent.setup().selectOptions(filter, 'APPROVED');
+    expect(within(list).queryByText('December 2026')).not.toBeInTheDocument();
+    expect(within(list).getByText('November 2026')).toBeInTheDocument();
+    expect(screen.queryByText('Who’s off')).not.toBeInTheDocument();
   });
 });
 

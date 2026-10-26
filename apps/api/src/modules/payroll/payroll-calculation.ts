@@ -1,3 +1,4 @@
+export { summarizeAttendance } from './payroll-attendance-summary';
 import { createHash } from 'node:crypto';
 import { Prisma } from '../../generated/prisma/client';
 import { PayComponentCalculationType, PayrollRunStatus } from '../../generated/prisma/enums';
@@ -15,6 +16,20 @@ export function dateOnly(value: string) {
   )
     throw new ConflictError('Invalid calendar date');
   return date;
+}
+
+/**
+ * Payroll may be calculated before a period closes. Only completed dates can incur absence
+ * deductions; today's attendance is still in progress, and dates after today have not happened.
+ * Leave is measured through today because an approved leave scheduled for today is known.
+ */
+export function payrollPeriodCutoffs(periodStart: Date, periodEnd: Date, now = new Date()) {
+  const today = dateOnly(now.toISOString());
+  const measuredEnd = today < periodEnd ? today : periodEnd;
+  const yesterday = new Date(today);
+  yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+  const absenceEnd = yesterday < periodEnd ? yesterday : periodEnd;
+  return { measuredEnd, absenceEnd: absenceEnd < periodStart ? null : absenceEnd };
 }
 
 export function hash(value: unknown) {
@@ -50,41 +65,131 @@ export function countWorkingDays(
     if (workWeekDays.includes(weekday) && !holidayDates.has(date.toISOString().slice(0, 10)))
       count += 1;
   }
-  return Math.max(1, count);
+  return count;
+}
+
+/**
+ * Monthly salary coverage expressed as a fraction of a normal monthly work calendar.
+ * A one-day off-cycle run on a normal weekday therefore covers one workday out of the month's
+ * scheduled days; a complete calendar month covers exactly one monthly salary period.
+ */
+export function monthlyWorkdayUnits(
+  start: Date,
+  end: Date,
+  workWeekDays: number[],
+  holidays: Array<{ holidayDate: Date; branchId: string | null; isOptional?: boolean }>,
+  branchId: string | null,
+  employeeSelectedDates?: Set<string> | string[],
+) {
+  let units = 0;
+  const cursor = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1));
+  while (cursor <= end) {
+    const monthStart = new Date(cursor);
+    const monthEnd = new Date(Date.UTC(cursor.getUTCFullYear(), cursor.getUTCMonth() + 1, 0));
+    const windowStart = start > monthStart ? start : monthStart;
+    const windowEnd = end < monthEnd ? end : monthEnd;
+    const monthWorkdays = countWorkingDays(
+      monthStart,
+      monthEnd,
+      workWeekDays,
+      holidays,
+      branchId,
+      employeeSelectedDates,
+    );
+    if (monthWorkdays > 0) {
+      units +=
+        countWorkingDays(
+          windowStart,
+          windowEnd,
+          workWeekDays,
+          holidays,
+          branchId,
+          employeeSelectedDates,
+        ) / monthWorkdays;
+    }
+    cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+  }
+  return units;
+}
+
+/**
+ * Optional holidays are paid non-working days only while the employee stays within the
+ * organization (or employee-specific) annual allowance. Selection order is stable so historical
+ * runs can be recalculated consistently when multiple selections exist.
+ */
+export function eligibleOptionalHolidayDates(
+  selections: Array<{
+    employeeId: string;
+    year: number;
+    selectedAt: Date;
+    id: string;
+    holiday: { holidayDate: Date };
+  }>,
+  allowanceForEmployee: (employeeId: string) => number,
+) {
+  const usedByEmployeeYear = new Map<string, number>();
+  const eligibleByEmployee = new Map<string, string[]>();
+  const ordered = selections
+    .slice()
+    .sort(
+      (a, b) =>
+        a.year - b.year ||
+        a.employeeId.localeCompare(b.employeeId) ||
+        a.selectedAt.getTime() - b.selectedAt.getTime() ||
+        a.id.localeCompare(b.id),
+    );
+  for (const selection of ordered) {
+    const bucket = `${selection.employeeId}:${selection.year}`;
+    const used = usedByEmployeeYear.get(bucket) ?? 0;
+    if (used >= Math.max(0, allowanceForEmployee(selection.employeeId))) continue;
+    usedByEmployeeYear.set(bucket, used + 1);
+    const dates = eligibleByEmployee.get(selection.employeeId) ?? [];
+    dates.push(selection.holiday.holidayDate.toISOString().slice(0, 10));
+    eligibleByEmployee.set(selection.employeeId, dates);
+  }
+  return eligibleByEmployee;
 }
 
 /**
  * Days within the period that the employee was not employed for.
  *
- * `payrollDayBasis` is a fixed monthly divisor (30 by default), the standard Indian convention:
- * every unpaid day costs one thirtieth of gross, and weekends and holidays are already priced into
- * the basis rather than counted. Employment dates were not part of that sum, so somebody who
- * joined on the 16th was paid for the whole month.
- *
- * A day before joining or after leaving is unpaid for the same reason an unpaid leave day is: the
- * employee was not owed salary for it. Counting it here applies the existing convention rather
- * than introducing a second one.
+ * Only scheduled workdays reduce salary. Weekend days, organization holidays, and optional
+ * holidays within the employee's allowance are not payable workdays and are never counted as
+ * unpaid days outside employment.
  */
 export function unemployedDays(
   periodStart: Date,
   periodEnd: Date,
   dateOfJoining: Date | null,
   dateOfLeaving: Date | null,
+  workWeekDays: number[] = [1, 2, 3, 4, 5, 6, 7],
+  holidays: Array<{ holidayDate: Date; branchId: string | null; isOptional?: boolean }> = [],
+  branchId: string | null = null,
+  employeeSelectedDates?: Set<string> | string[],
 ) {
   const dayMs = 86_400_000;
-  const inclusiveDays = (from: Date, to: Date) =>
-    Math.max(0, Math.floor((to.getTime() - from.getTime()) / dayMs) + 1);
-
   let days = 0;
   if (dateOfJoining && dateOfJoining > periodStart) {
-    // Days from the start of the period up to the day before joining.
     const lastUnpaid = new Date(Math.min(dateOfJoining.getTime() - dayMs, periodEnd.getTime()));
-    days += inclusiveDays(periodStart, lastUnpaid);
+    days += countWorkingDays(
+      periodStart,
+      lastUnpaid,
+      workWeekDays,
+      holidays,
+      branchId,
+      employeeSelectedDates,
+    );
   }
   if (dateOfLeaving && dateOfLeaving < periodEnd) {
-    // Days from the day after leaving to the end of the period.
     const firstUnpaid = new Date(Math.max(dateOfLeaving.getTime() + dayMs, periodStart.getTime()));
-    days += inclusiveDays(firstUnpaid, periodEnd);
+    days += countWorkingDays(
+      firstUnpaid,
+      periodEnd,
+      workWeekDays,
+      holidays,
+      branchId,
+      employeeSelectedDates,
+    );
   }
   return days;
 }
@@ -102,17 +207,25 @@ export function sumTimesheets(entries: Array<{ regularMinutes: number; overtimeM
 
 export function summarizeLeave(
   requests: Array<{
+    id?: string;
     requestedDays: Prisma.Decimal;
+    session?: string;
+    chargedDates?: Prisma.JsonValue | null;
     startDate?: Date;
     endDate?: Date;
     leaveType: { paid: boolean };
   }>,
   periodStart?: Date,
   periodEnd?: Date,
+  acceptedOverlapUnits: ReadonlyMap<string, number> = new Map(),
 ) {
   return requests.reduce(
     (summary, request) => {
-      const days = proratedLeaveDays(request, periodStart, periodEnd);
+      const days = Math.max(
+        0,
+        proratedLeaveDays(request, periodStart, periodEnd) -
+          (request.id ? (acceptedOverlapUnits.get(request.id) ?? 0) : 0),
+      );
       if (request.leaveType.paid) summary.paidDays += days;
       else summary.unpaidDays += days;
       return summary;
@@ -124,6 +237,8 @@ export function summarizeLeave(
 function proratedLeaveDays(
   request: {
     requestedDays: Prisma.Decimal;
+    session?: string;
+    chargedDates?: Prisma.JsonValue | null;
     startDate?: Date;
     endDate?: Date;
   },
@@ -132,6 +247,14 @@ function proratedLeaveDays(
 ) {
   const requestedDays = Number(request.requestedDays);
   if (!periodStart || !periodEnd || !request.startDate || !request.endDate) return requestedDays;
+  if (Array.isArray(request.chargedDates)) {
+    const from = periodStart.toISOString().slice(0, 10),
+      to = periodEnd.toISOString().slice(0, 10);
+    return (
+      request.chargedDates.filter((date) => typeof date === 'string' && date >= from && date <= to)
+        .length * (request.session && request.session !== 'FULL_DAY' ? 0.5 : 1)
+    );
+  }
   const start = Math.max(request.startDate.getTime(), periodStart.getTime());
   const end = Math.min(request.endDate.getTime(), periodEnd.getTime());
   if (end < start) return 0;
@@ -141,17 +264,6 @@ function proratedLeaveDays(
   return requestedRangeDays > 0
     ? (requestedDays * overlappingRangeDays) / requestedRangeDays
     : requestedDays;
-}
-
-export function summarizeAttendance(records: Array<{ dayStatus: string }>) {
-  return records.reduce(
-    (summary, record) => {
-      if (record.dayStatus === 'ABSENT') summary.absentDays += 1;
-      if (record.dayStatus === 'HALF_DAY') summary.halfDays += 1;
-      return summary;
-    },
-    { absentDays: 0, halfDays: 0 },
-  );
 }
 
 export function calculateComponent(

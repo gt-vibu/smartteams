@@ -86,7 +86,7 @@ export function TimeTrackerToolbar({
           type="button"
           variant="default"
           onClick={onOpenLogTime}
-          className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs"
+          className="px-3 py-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs shadow-xs"
         >
           Log Time
         </Button>

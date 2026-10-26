@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Patch,
   Param,
   ParseUUIDPipe,
   Post,
@@ -16,13 +17,15 @@ import {
   AttendanceCorrectionDto,
   MissingCheckOutCorrectionDto,
   AttendanceCorrectionQueryDto,
-  AttendanceDecisionDto,
+  NativeAttendanceDecisionDto,
   AttendancePreferencesDto,
   AttendancePreferencesQueryDto,
   AttendanceQueryDto,
   HolidayConflictQueryDto,
   HolidayReviewDecisionDto,
   HolidayReviewRequestDto,
+  LeaveOverlapAutoApprovalDto,
+  LeaveOverlapDecisionDto,
   PunchDto,
 } from './attendance.dto';
 import { AttendanceService } from './attendance.service';
@@ -122,6 +125,41 @@ export class AttendanceController {
       .native(request.user.userId, organizationId)
       .then((context) => this.attendance.decideHolidayReview(context, reviewId, body));
   }
+  @Get('leave-overlaps/inbox') leaveOverlapInbox(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.listLeaveOverlapInbox(context));
+  }
+  @Post('leave-overlaps/:reviewId/decision') decideLeaveOverlap(
+    @Param('organizationId') organizationId: string,
+    @Param('reviewId', ParseUUIDPipe) reviewId: string,
+    @Body() body: LeaveOverlapDecisionDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.decideLeaveOverlap(context, reviewId, body));
+  }
+  @Get('leave-overlaps/auto-approval') getLeaveOverlapAutoApproval(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.getLeaveOverlapAutoApproval(context));
+  }
+  @Patch('leave-overlaps/auto-approval') setLeaveOverlapAutoApproval(
+    @Param('organizationId') organizationId: string,
+    @Body() body: LeaveOverlapAutoApprovalDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.attendance.setLeaveOverlapAutoApproval(context, body.enabled));
+  }
   @Post(':attendanceId/holiday-conflict') requestHolidayReview(
     @Param('organizationId') organizationId: string,
     @Param('attendanceId', ParseUUIDPipe) attendanceId: string,
@@ -186,17 +224,17 @@ export class AttendanceController {
   @Post(':correctionId/decision') decision(
     @Param('organizationId') organizationId: string,
     @Param('correctionId') correctionId: string,
-    @Body() body: AttendanceDecisionDto,
+    @Body() body: NativeAttendanceDecisionDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
-      .native(request.user.userId, organizationId, undefined, body.comment)
+      .native(request.user.userId, organizationId, undefined, body.comment ?? '')
       .then((context) =>
         this.attendance.decideCorrection(
           context,
           correctionId,
           body.status,
-          body.comment,
+          body.comment ?? '',
           body.checkOutAt,
         ),
       );

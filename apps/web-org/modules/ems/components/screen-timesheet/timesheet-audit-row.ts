@@ -1,4 +1,10 @@
-import { employeeDisplayName, type Employee, type Timesheet } from '@smarteam/contracts';
+import {
+  employeeDisplayName,
+  formatDateRange,
+  type Employee,
+  type Timesheet,
+  type TimesheetEntry,
+} from '@smarteam/contracts';
 
 /**
  * One row of the timesheet audit table, assembled from what the API actually returns.
@@ -12,8 +18,8 @@ import { employeeDisplayName, type Employee, type Timesheet } from '@smarteam/co
  *
  *   - *Billable hours* has no backend concept. The API reports regular and overtime minutes, so
  *     the table shows overtime, which is a real number that payroll actually prices.
- *   - *Project allocation* would need per-entry project attribution. Timesheet entries carry a
- *     date, minutes and a description; there is no project on them to group by.
+ *   - *Project allocation* is not totalled in the table; the entries themselves name their
+ *     project and job type, and the inspection panel lists them.
  *
  * Inventing either in the frontend would put a number in front of an approver that no system can
  * reproduce, which is worse than the column being absent.
@@ -28,6 +34,8 @@ export type TimesheetAuditRow = {
   overtimeHours: number;
   status: string;
   entryCount: number;
+  /** What the employee logged, in the order they worked it. */
+  entries: TimesheetEntry[];
 };
 
 const minutesToHours = (minutes: number) => Math.round((minutes / 60) * 10) / 10;
@@ -36,7 +44,7 @@ const minutesToHours = (minutes: number) => Math.round((minutes / 60) * 10) / 10
 function periodLabel(timesheet: Timesheet): string {
   if (!timesheet.period) return '--';
   const { periodStart, periodEnd, periodType } = timesheet.period;
-  return `${periodType} · ${periodStart.slice(0, 10)} – ${periodEnd.slice(0, 10)}`;
+  return `${periodType.charAt(0)}${periodType.slice(1).toLowerCase()} · ${formatDateRange(periodStart, periodEnd)}`;
 }
 
 export function toAuditRows(timesheets: Timesheet[], employees: Employee[]): TimesheetAuditRow[] {
@@ -55,6 +63,7 @@ export function toAuditRows(timesheets: Timesheet[], employees: Employee[]): Tim
       overtimeHours: minutesToHours(timesheet.overtimeMinutes),
       status: timesheet.status,
       entryCount: timesheet.entries?.length ?? 0,
+      entries: [...(timesheet.entries ?? [])].sort((a, b) => a.workDate.localeCompare(b.workDate)),
     };
   });
 }

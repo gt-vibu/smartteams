@@ -39,7 +39,7 @@ export class PrismaExceptionFilter implements ExceptionFilter {
 function translate(exception: Prisma.PrismaClientKnownRequestError) {
   switch (exception.code) {
     case 'P2002':
-      return new ConflictError('That value is already in use');
+      return new ConflictError(uniqueMessage(exception));
     case 'P2003':
       return new ConflictError('A related record is missing or still referenced');
     case 'P2025':
@@ -58,4 +58,46 @@ function translate(exception: Prisma.PrismaClientKnownRequestError) {
     default:
       return null;
   }
+}
+
+/** Plain names for the unique fields people run into, so the message says which value clashed. */
+const FIELD_NAMES: Record<string, string> = {
+  user_id: 'login',
+  userId: 'login',
+  employee_number: 'employee ID',
+  employeeNumber: 'employee ID',
+  work_email: 'work email',
+  workEmail: 'work email',
+  email: 'email',
+  code: 'code',
+  name: 'name',
+  slug: 'short name',
+  aadhaar_number_hash: 'Aadhaar number',
+  aadhaarNumberHash: 'Aadhaar number',
+  employee_number_prefix: 'number series',
+  employeeNumberPrefix: 'number series',
+};
+
+/**
+ * "That value is already in use" named nothing, so nobody could tell what to change. The
+ * constraint's fields arrive in `meta.target`; the ones people meet are named in plain words.
+ */
+export function uniqueMessage(exception: Prisma.PrismaClientKnownRequestError): string {
+  const meta = exception.meta as
+    { target?: unknown; constraint?: { fields?: unknown } } | undefined;
+  const raw = Array.isArray(meta?.target)
+    ? meta.target
+    : typeof meta?.target === 'string'
+      ? [meta.target]
+      : Array.isArray(meta?.constraint?.fields)
+        ? meta.constraint.fields
+        : [];
+  const fields = (raw as unknown[])
+    .map(String)
+    .filter((field) => !['organization_id', 'organizationId'].includes(field))
+    .map((field) => FIELD_NAMES[field])
+    .filter((name): name is string => Boolean(name));
+  return fields.length
+    ? `This ${fields.join(' and ')} is already in use. Choose a different one.`
+    : 'That value is already in use';
 }

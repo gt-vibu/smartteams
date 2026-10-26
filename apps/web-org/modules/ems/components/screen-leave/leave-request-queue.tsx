@@ -1,14 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Badge, Button, Input } from '@smarteam/ui';
 import {
   dateKey,
   employeeDisplayName,
   type Employee,
   type LeaveRequest,
 } from '@smarteam/contracts';
-import type { LeaveAdminState } from '../../hooks/use-leave-admin';
+import { Badge, Button } from '@smarteam/ui';
+import React, { useState } from 'react';
+import { leaveAdminBusyKey, type LeaveAdminState } from '../../hooks/use-leave-admin';
+import { statusLabel } from '../../lib/status-label';
+import { LeaveRequestDialog } from './leave-request-dialog';
 
 function statusVariant(status: string): 'outline' | 'secondary' | 'destructive' {
   if (status === 'REJECTED') return 'destructive';
@@ -22,8 +24,7 @@ function statusVariant(status: string): 'outline' | 'secondary' | 'destructive' 
  * `listRequests` and `decide` both existed on the API from the start, but no screen surfaced the
  * queue — a request could be filed and then never be seen or decided from inside the app.
  *
- * A decision needs a comment: the API rejects anything under two characters and writes it to the
- * audit trail, so the field is required here rather than sent as an empty string.
+ * Approval is immediate; rejection asks for a reason recorded in the audit trail.
  */
 export function LeaveRequestQueue({
   admin,
@@ -33,8 +34,7 @@ export function LeaveRequestQueue({
   requests: LeaveRequest[];
 }) {
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [comment, setComment] = useState('');
-  const [error, setError] = useState('');
+  const [viewing, setViewing] = useState<LeaveRequest | null>(null);
 
   const employeesById = new Map<string, Employee>(
     admin.employees.map((employee) => [employee.id, employee]),
@@ -43,15 +43,9 @@ export function LeaveRequestQueue({
   const inboxIds = new Set(admin.inbox.map((entry) => entry.id));
 
   const decide = async (requestId: string, status: 'APPROVED' | 'REJECTED') => {
-    if (comment.trim().length < 2) {
-      setError('A comment is required, and is recorded in the audit trail.');
-      return;
-    }
-    setError('');
-    const decided = await admin.decide(requestId, status, comment.trim());
+    const decided = await admin.decide(requestId, status, '');
     if (decided) {
       setActiveId(null);
-      setComment('');
     }
   };
 
@@ -85,15 +79,30 @@ export function LeaveRequestQueue({
             const employee = employeesById.get(request.employeeId);
             const type = typesById.get(request.leaveTypeId);
             const mine = inboxIds.has(request.id);
+            const busy = admin.isBusy(leaveAdminBusyKey.decide(request.id));
             return (
               <React.Fragment key={request.id}>
-                <tr className="border-b border-border transition-colors last:border-0 hover:bg-muted/40">
+                <tr
+                  className="cursor-pointer border-b border-border transition-colors last:border-0 hover:bg-muted/40 focus-visible:bg-muted/40 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+                  onClick={() => setViewing(request)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      setViewing(request);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  title="Open the request"
+                >
                   <td data-cell="primary" className="px-4 py-2.5">
                     <span className="block font-semibold text-foreground">
-                      {employee ? employeeDisplayName(employee) : 'Not in the directory'}
+                      {employee
+                        ? employeeDisplayName(employee)
+                        : (request.employeeName ?? 'Employee')}
                     </span>
                     <span className="text-[10px] text-muted-foreground">
-                      {employee?.employeeNumber ?? '--'}
+                      {employee?.employeeNumber ?? request.employeeNumber ?? '--'}
                     </span>
                   </td>
                   <td data-label="Type" className="px-4 py-2.5 text-foreground">
@@ -110,74 +119,81 @@ export function LeaveRequestQueue({
                   </td>
                   <td
                     data-label="Days"
-                    className="px-4 py-2.5 font-mono font-semibold tabular-nums text-foreground"
+                    className="px-4 py-2.5 font-semibold tabular-nums text-foreground"
                   >
                     {request.requestedDays}
                   </td>
-                  <td data-label="Status" className="px-4 py-2.5">
-                    <Badge variant={statusVariant(request.status)}>{request.status}</Badge>
+                  <td data-cell="status" data-label="Status" className="px-4 py-2.5">
+                    <Badge variant={statusVariant(request.status)}>
+                      {statusLabel(request.status)}
+                    </Badge>
                   </td>
                   <td data-cell="actions" className="px-4 py-2.5 text-right">
                     {request.status === 'PENDING' && admin.canDecide && activeId !== request.id && (
-                      <Button
-                        disabled={!mine}
-                        onClick={() => {
-                          setActiveId(request.id);
-                          setComment('');
-                          setError('');
-                        }}
-                        size="sm"
-                        title={mine ? undefined : 'This request is not awaiting your decision.'}
-                        type="button"
-                        variant="outline"
-                      >
-                        Decide
-                      </Button>
-                    )}
-                  </td>
-                </tr>
-
-                {activeId === request.id && (
-                  <tr className="border-b border-border bg-muted/30">
-                    <td className="px-4 py-3" colSpan={7}>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Input
-                          aria-label="Decision comment"
-                          className="max-w-sm"
-                          disabled={admin.saving}
-                          onChange={(event) => setComment(event.target.value)}
-                          placeholder="Comment (recorded in the audit trail)"
-                          value={comment}
-                        />
+                      <div className="flex items-center justify-end gap-1.5">
                         <Button
-                          disabled={admin.saving}
-                          onClick={() => void decide(request.id, 'APPROVED')}
+                          disabled={!mine || busy}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            void decide(request.id, 'APPROVED');
+                          }}
                           size="sm"
+                          title={mine ? undefined : 'This request is not awaiting your decision.'}
                           type="button"
                         >
                           Approve
                         </Button>
                         <Button
-                          disabled={admin.saving}
+                          disabled={!mine || busy}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setActiveId(request.id);
+                          }}
+                          size="sm"
+                          title={mine ? undefined : 'This request is not awaiting your decision.'}
+                          type="button"
+                          variant="outline"
+                        >
+                          Reject
+                        </Button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+
+                {activeId === request.id && (
+                  <tr
+                    className="border-b border-border bg-muted/30"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <td className="px-4 py-3" colSpan={7}>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="mr-auto text-xs text-muted-foreground">
+                          Reject this leave request?
+                        </span>
+                        <Button
+                          disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
                           onClick={() => void decide(request.id, 'REJECTED')}
                           size="sm"
                           type="button"
                           variant="destructive"
                         >
-                          Reject
+                          Confirm rejection
                         </Button>
                         <Button
-                          disabled={admin.saving}
-                          onClick={() => setActiveId(null)}
+                          disabled={admin.isBusy(leaveAdminBusyKey.decide(request.id))}
+                          onClick={() => {
+                            setActiveId(null);
+                          }}
                           size="sm"
                           type="button"
                           variant="outline"
                         >
                           Cancel
                         </Button>
-                        {(error || admin.saveError) && (
+                        {admin.saveError && (
                           <span className="text-[11px] font-medium text-destructive" role="alert">
-                            {error || admin.saveError}
+                            {admin.saveError}
                           </span>
                         )}
                       </div>
@@ -189,6 +205,14 @@ export function LeaveRequestQueue({
           })}
         </tbody>
       </table>
+      {viewing && (
+        <LeaveRequestDialog
+          admin={admin}
+          employee={employeesById.get(viewing.employeeId)}
+          onClose={() => setViewing(null)}
+          request={viewing}
+        />
+      )}
     </div>
   );
 }

@@ -16,12 +16,10 @@ import type * as Prisma from "../internal/prismaNamespace"
  * Model EmployeeAccessCode
  * *
  *  * A one-time code that lets an employee activate their own Smarteam login.
- *  *
  *  * Distinct from `UserInvitation`, which is addressed to an email and delivered by email. This is
  *  * addressed to an *employee record*: an administrator hands the code over out of band, and the
  *  * employee chooses their own email and password when they redeem it. That is why there is no
  *  * email column here — at the time the code is issued, nobody has decided what it will be.
- *  *
  *  * The code is a bootstrap credential, never a permanent one. Only its digest is stored, it is
  *  * single-use (`activatedAt`), short-lived (`expiresAt`), revocable (`revokedAt`), and it is
  *  * pinned to exactly one organization and one employee. It carries no authority of its own: the

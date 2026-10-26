@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   hasPermission,
   type PayComponentDefinition,
+  type PayrollPolicy,
   type SalaryProfile,
 } from '@smarteam/contracts';
 import { useSession } from './auth-context';
@@ -15,10 +16,9 @@ import { useMutationRunner } from './use-mutation-runner';
  * Compensation configuration: the organisation's pay-component catalogue, and one employee's
  * salary profile with the components assigned to them.
  *
- * The screen this feeds replaced a builder that modelled "salary structures" — named templates
- * targeted at roles and departments, each with its own statutory switches. No such entity exists
- * in this backend. Compensation is: an organisation payroll policy, a gross salary per employee,
- * and effective-dated component assignments. The hook exposes exactly those.
+ * The screen this feeds combines the tenant payroll defaults with employee salary records and
+ * effective-dated component assignments. Role-wise allotment writes reviewed employee records;
+ * individual records take precedence over the organization default.
  */
 export function useCompensation() {
   const { session, persona } = useSession();
@@ -30,6 +30,7 @@ export function useCompensation() {
   const canReadProfile = hasPermission(permissions, 'payroll.employee-profile.read.all');
   const canWriteProfile = hasPermission(permissions, 'payroll.employee-profile.write');
 
+  const canReadPolicy = hasPermission(permissions, 'payroll.policy.read');
   const canWritePolicy = hasPermission(permissions, 'payroll.policy.write');
 
   const [employeeId, setEmployeeId] = useState<string | null>(null);
@@ -46,9 +47,15 @@ export function useCompensation() {
     { enabled: Boolean(organizationId) && Boolean(employeeId) && canReadProfile },
   );
 
+  const organizationPolicy = useAsyncResource<PayrollPolicy>(
+    () => payrollRepository.getPolicy(organizationId!),
+    [organizationId],
+    { enabled: Boolean(organizationId) && canReadPolicy },
+  );
+
   const refetchAll = useCallback(async () => {
-    await Promise.all([catalog.refetch(), profile.refetch()]);
-  }, [catalog, profile]);
+    await Promise.all([catalog.refetch(), profile.refetch(), organizationPolicy.refetch()]);
+  }, [catalog, organizationPolicy, profile]);
 
   const { saving, saveError, setSaveError, run } = useMutationRunner(refetchAll);
 
@@ -83,6 +90,34 @@ export function useCompensation() {
     [employeeId, organizationId, run],
   );
 
+  /** Adds a component to the catalogue and assigns it to this employee in one step. */
+  const createAndAssignComponent = useCallback(
+    (
+      component: {
+        code: string;
+        name: string;
+        componentType: 'EARNING' | 'DEDUCTION';
+        calculationType: 'FIXED' | 'PERCENTAGE_OF_BASE';
+        isTaxable: boolean;
+      },
+      assignment: {
+        amount?: number;
+        percentage?: number;
+        effectiveFrom: string;
+        effectiveTo?: string;
+      },
+    ) =>
+      run(async () => {
+        const created = await payrollRepository.createComponent(organizationId!, component);
+        await payrollRepository.assignComponent(organizationId!, {
+          ...assignment,
+          payComponentId: created.id,
+          employeeId: employeeId!,
+        });
+      }, 'The component could not be added.'),
+    [employeeId, organizationId, run],
+  );
+
   const saveSalary = useCallback(
     (input: {
       grossSalary: number;
@@ -93,6 +128,7 @@ export function useCompensation() {
       pfEnabled: boolean;
       esiEnabled: boolean;
       ptEnabled: boolean;
+      payrollPolicyId?: string;
     }) =>
       run(
         () =>
@@ -113,6 +149,7 @@ export function useCompensation() {
       basePercentage: number;
       hraPercentage: number;
       baseMinimum?: number;
+      defaultGrossSalary?: number | null;
       payrollDayBasis?: number;
       salarySlipDefault?: boolean;
       payrollEnabledDefault?: boolean;
@@ -123,30 +160,32 @@ export function useCompensation() {
       roundingMode?: 'HALF_UP' | 'DOWN' | 'UP';
     }) =>
       run(() => {
-        const currentPolicy = profile.data?.organizationPolicy;
+        const currentPolicy = organizationPolicy.data;
+        if (!currentPolicy) throw new Error('Load the organization payroll policy before saving.');
         return payrollRepository.savePolicy(organizationId!, {
           effectiveFrom: input.effectiveFrom,
           basePercentage: input.basePercentage,
           hraPercentage: input.hraPercentage,
-          baseMinimum:
-            input.baseMinimum ??
-            (currentPolicy?.baseMinimum ? Number(currentPolicy.baseMinimum) : 15000),
-          payrollDayBasis: input.payrollDayBasis ?? currentPolicy?.payrollDayBasis ?? 30,
-          salarySlipDefault: input.salarySlipDefault ?? currentPolicy?.salarySlipDefault ?? true,
-          payrollEnabledDefault:
-            input.payrollEnabledDefault ?? currentPolicy?.payrollEnabledDefault ?? true,
-          pfDefault: input.pfDefault ?? currentPolicy?.pfDefault ?? true,
-          esiDefault: input.esiDefault ?? currentPolicy?.esiDefault ?? true,
-          ptDefault: input.ptDefault ?? currentPolicy?.ptDefault ?? true,
+          baseMinimum: input.baseMinimum ?? Number(currentPolicy.baseMinimum),
+          defaultGrossSalary:
+            input.defaultGrossSalary === undefined
+              ? (currentPolicy.defaultGrossSalary ?? null)
+              : input.defaultGrossSalary,
+          payrollDayBasis: input.payrollDayBasis ?? currentPolicy.payrollDayBasis,
+          salarySlipDefault: input.salarySlipDefault ?? currentPolicy.salarySlipDefault,
+          payrollEnabledDefault: input.payrollEnabledDefault ?? currentPolicy.payrollEnabledDefault,
+          pfDefault: input.pfDefault ?? currentPolicy.pfDefault,
+          esiDefault: input.esiDefault ?? currentPolicy.esiDefault,
+          ptDefault: input.ptDefault ?? currentPolicy.ptDefault,
           statutoryJurisdiction:
-            input.statutoryJurisdiction ?? currentPolicy?.statutoryJurisdiction ?? 'KARNATAKA',
+            input.statutoryJurisdiction ?? currentPolicy.statutoryJurisdiction ?? undefined,
           roundingMode:
             input.roundingMode ??
-            (currentPolicy?.roundingMode as 'HALF_UP' | 'DOWN' | 'UP' | undefined) ??
+            (currentPolicy.roundingMode as 'HALF_UP' | 'DOWN' | 'UP' | undefined) ??
             'HALF_UP',
         });
       }, 'The salary policy could not be saved.'),
-    [organizationId, profile.data, run],
+    [organizationId, organizationPolicy.data, run],
   );
 
   return {
@@ -162,19 +201,27 @@ export function useCompensation() {
     profileError: profile.error,
     profileForbidden: profile.forbidden || !canReadProfile,
 
+    organizationPolicy: organizationPolicy.data,
+    organizationPolicyLoading: organizationPolicy.loading,
+    organizationPolicyError: organizationPolicy.error,
+    organizationPolicyForbidden: organizationPolicy.forbidden || !canReadPolicy,
+
     saving,
     saveError,
     dismissError: () => setSaveError(null),
     createComponent,
     assignComponent,
+    createAndAssignComponent,
     saveSalary,
     savePolicy,
     refetch: refetchAll,
     can: {
+      readProfiles: canReadProfile,
+      readComponents: canReadComponents,
       createComponent: canWriteComponents,
       assign: canWriteComponents,
       saveSalary: canWriteProfile,
-      savePolicy: canWritePolicy || canWriteProfile,
+      savePolicy: canWritePolicy,
     },
   };
 }

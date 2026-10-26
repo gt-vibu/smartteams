@@ -24,6 +24,7 @@ import { FederationClientDialog } from './federation-client-dialogs';
 import { ActionButton } from './action-button';
 import { formatDateTime, readableError } from '../../lib/format';
 import { FederationSecretDialog } from './federation-secret-dialog';
+import { FederationGrantDialog } from './federation-grant-dialog';
 
 export function FederationClients() {
   const [clients, setClients] = useState<FederationClient[]>([]);
@@ -33,6 +34,7 @@ export function FederationClients() {
   const [createOpen, setCreateOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<FederationClient | null>(null);
   const [oneTimeSecret, setOneTimeSecret] = useState<FederationClientSecret | null>(null);
+  const [accessClient, setAccessClient] = useState<FederationClient | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -209,6 +211,12 @@ export function FederationClients() {
                       />
                       <ActionButton
                         disabled={busy}
+                        icon="shield"
+                        label="Manage grant access"
+                        onClick={() => setAccessClient(c)}
+                      />
+                      <ActionButton
+                        disabled={busy}
                         icon="refresh"
                         label="Rotate secret"
                         onClick={() => void rotate(c)}
@@ -263,6 +271,11 @@ export function FederationClients() {
         open={createOpen || editingClient !== null}
       />
       <FederationSecretDialog onClose={() => setOneTimeSecret(null)} secret={oneTimeSecret} />
+      <FederationGrantDialog
+        client={accessClient}
+        onClose={() => setAccessClient(null)}
+        onSaved={load}
+      />
     </>
   );
 }

@@ -8,6 +8,8 @@ import { ConflictError, NotFoundError, StaleWriteError } from '../../common/erro
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
+import { StorageService } from '../../infrastructure/storage/storage.service';
+import type { Prisma } from '../../generated/prisma/client';
 import { runScoped, toDto } from './organization-shared';
 
 /**
@@ -23,34 +25,95 @@ export class OrganizationLifecycleService {
     private readonly database: TenantDatabaseService,
     private readonly audit: AuditService,
     private readonly outbox: OutboxService,
+    private readonly storage: StorageService,
   ) {}
 
   async get(context: DomainContext) {
     requirePermission(context, 'organizations.read');
-    return runScoped(this.database, context, async (tx) => {
+    const organizationSelect = {
+      id: true,
+      name: true,
+      slug: true,
+      source: true,
+      externalId: true,
+      status: true,
+      timezone: true,
+      currencyCode: true,
+      locale: true,
+      version: true,
+      settings: true,
+      logoFile: true,
+      coverFile: true,
+    } satisfies Prisma.OrganizationSelect;
+    const organization = (await runScoped(this.database, context, async (tx) => {
       const organization = await tx.organization.findUnique({
         where: { id: context.organizationId },
-        include: { settings: true },
+        // Avoid selecting internal employee-numbering state here. Older local databases may
+        // not have the federation-owned sequence column yet, and it is not part of this DTO.
+        select: organizationSelect,
       });
       if (!organization) throw new NotFoundError('Organization');
-      return toDto(organization);
-    });
+      return organization;
+    })) as Prisma.OrganizationGetPayload<{ select: typeof organizationSelect }>;
+    const [logoUrl, coverUrl] = await Promise.all([
+      organization.logoFile
+        ? this.storage.createDownloadUrl(organization.logoFile.objectKey, {
+            expiresIn: 86_400,
+            contentType: organization.logoFile.contentType,
+            inline: true,
+          })
+        : null,
+      organization.coverFile
+        ? this.storage.createDownloadUrl(organization.coverFile.objectKey, {
+            expiresIn: 86_400,
+            contentType: organization.coverFile.contentType,
+            inline: true,
+          })
+        : null,
+    ]);
+    return { ...toDto(organization), logoUrl, coverUrl };
   }
 
   async update(
     context: DomainContext,
     version: number,
-    input: { name?: string; timezone?: string; currencyCode?: string },
+    input: {
+      name?: string;
+      timezone?: string;
+      currencyCode?: string;
+      logoFileId?: string | null;
+      coverFileId?: string | null;
+    },
   ) {
     requirePermission(context, 'organizations.update');
     return this.database.run(context, async (tx) => {
       const before = await tx.organization.findUnique({ where: { id: context.organizationId } });
       if (!before) throw new NotFoundError('Organization');
+      for (const fileId of [input.logoFileId, input.coverFileId]) {
+        if (fileId === undefined || fileId === null) continue;
+        const image = await tx.fileObject.findFirst({
+          where: {
+            id: fileId,
+            organizationId: context.organizationId,
+            purpose: 'ORGANIZATION_BRANDING',
+            accessScope: 'ORGANIZATION',
+            status: 'AVAILABLE',
+            deletedAt: null,
+            employeeId: null,
+            leaveRequestId: null,
+            contentType: { startsWith: 'image/' },
+          },
+          select: { id: true },
+        });
+        if (!image) throw new NotFoundError('Organization image');
+      }
       const updated = await tx.organization.updateMany({
         where: { id: context.organizationId, version },
         data: {
           ...input,
           currencyCode: input.currencyCode?.toUpperCase(),
+          logoFileId: input.logoFileId,
+          coverFileId: input.coverFileId,
           version: { increment: 1 },
         },
       });

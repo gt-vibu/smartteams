@@ -7,6 +7,7 @@ import { workforceRepository } from '../repositories/workforce.repository';
 import {
   teamsProjectsRepository,
   type CreateTeamInput,
+  type UpdateTeamInput,
 } from '../repositories/teams-projects.repository';
 import { membershipRepository } from '../repositories/workforce.repository';
 import { useAsyncResource } from './use-async-resource';
@@ -17,10 +18,11 @@ import {
   toTeamView,
   type TeamView,
 } from '../services/team-directory';
+import { localDateKey } from '../lib/local-date';
 
 /** Today in the `YYYY-MM-DD` form the API's date-only fields expect. */
 function today(): string {
-  return new Date().toISOString().slice(0, 10);
+  return localDateKey();
 }
 
 type Loaded = { teams: Team[]; employees: Employee[]; branches: Branch[] };
@@ -40,7 +42,9 @@ export function useTeamDirectory() {
 
   const canRead = hasPermission(permissions, 'teams.read');
   const canWrite = hasPermission(permissions, 'teams.write');
-  const canReadEmployees = hasPermission(permissions, 'employees.read');
+  const canReadBranches = hasPermission(permissions, 'branches.read');
+  // Without this the API answers with the caller's own rows only, so there is no "all" view.
+  const canReadAll = hasPermission(permissions, 'teams.read.all');
 
   const resource = useAsyncResource<Loaded>(
     async () => {
@@ -48,12 +52,14 @@ export function useTeamDirectory() {
         workforceRepository.listTeams(organizationId!),
         // Names come from the employee directory; without permission the roster still renders,
         // showing membership without the people's names rather than inventing them.
-        canReadEmployees ? workforceRepository.listEmployees(organizationId!) : Promise.resolve([]),
-        workforceRepository.listBranches(organizationId!).catch(() => [] as Branch[]),
+        Promise.resolve([] as Employee[]),
+        canReadBranches
+          ? workforceRepository.listBranches(organizationId!).catch(() => [] as Branch[])
+          : Promise.resolve([] as Branch[]),
       ]);
       return { teams, employees, branches };
     },
-    [organizationId, canReadEmployees],
+    [organizationId, canReadBranches],
     { enabled: Boolean(organizationId) && canRead },
   );
 
@@ -70,27 +76,40 @@ export function useTeamDirectory() {
   const createTeam = useCallback(
     (input: CreateTeamInput, memberEmployeeIds: readonly string[]) =>
       run(async () => {
-        const team = await teamsProjectsRepository.createTeam(organizationId!, input);
-        for (const id of memberEmployeeIds) {
-          await membershipRepository.addTeamMember(organizationId!, team.id, {
-            employeeId: id,
-            joinedAt: today(),
-          });
-        }
-        return team;
-      }, 'The team could not be created.'),
+        return teamsProjectsRepository.createTeam(organizationId!, { ...input, memberEmployeeIds: [...memberEmployeeIds] });
+      }, 'The team could not be created.', 'Team created.'),
+    [organizationId, run],
+  );
+
+  /** Renames a team, moves it to another branch, or changes its lead. */
+  const updateTeam = useCallback(
+    (teamId: string, input: UpdateTeamInput) =>
+      run(
+        () => teamsProjectsRepository.updateTeam(organizationId!, teamId, input),
+        'The team could not be saved.',
+      ),
     [organizationId, run],
   );
 
   const addMember = useCallback(
-    (teamId: string, memberEmployeeId: string) =>
+    (teamId: string, memberEmployeeId: string, teamRole?: string) =>
       run(
         () =>
           membershipRepository.addTeamMember(organizationId!, teamId, {
             employeeId: memberEmployeeId,
             joinedAt: today(),
+            ...(teamRole ? { teamRole } : {}),
           }),
         'The member could not be added.',
+      ),
+    [organizationId, run],
+  );
+
+  const changeRole = useCallback(
+    (teamId: string, memberId: string, teamRole: string) =>
+      run(
+        () => membershipRepository.updateTeamMember(organizationId!, teamId, memberId, teamRole),
+        'The role could not be changed.',
       ),
     [organizationId, run],
   );
@@ -127,10 +146,13 @@ export function useTeamDirectory() {
     saving,
     saveError,
     createTeam,
+    updateTeam,
     addMember,
+    changeRole,
     endMember,
     archiveTeam,
     canRead,
+    canReadAll,
     canWrite,
   };
 }

@@ -15,6 +15,13 @@ export function useFocusTrap(
   onEscape: () => void,
 ) {
   const previousFocusRef = React.useRef<HTMLElement | null>(null);
+  // Kept in a ref so a new handler on every render does not re-run the trap. Re-running it moved
+  // focus back to the first control (the close button) whenever the page re-rendered, so text
+  // typed into the panel ended up on the close button and the next space or enter shut it.
+  const onEscapeRef = React.useRef(onEscape);
+  React.useEffect(() => {
+    onEscapeRef.current = onEscape;
+  });
 
   React.useEffect(() => {
     if (!open) return;
@@ -30,7 +37,7 @@ export function useFocusTrap(
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
-        onEscape();
+        onEscapeRef.current();
         return;
       }
 
@@ -59,5 +66,5 @@ export function useFocusTrap(
       document.removeEventListener('keydown', handleKeyDown);
       previousFocusRef.current?.focus();
     };
-  }, [containerRef, onEscape, open]);
+  }, [containerRef, open]);
 }

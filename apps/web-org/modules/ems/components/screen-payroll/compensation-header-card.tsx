@@ -2,23 +2,20 @@
 
 import React from 'react';
 import { Badge, Button } from '@smarteam/ui';
-import { formatMoney, type Employee, type SalaryProfile } from '@smarteam/contracts';
+import { formatMoney, type Employee, type SalaryProfile, formatDate } from '@smarteam/contracts';
 import {
   Briefcase,
   Calendar,
   DollarSign,
+  Download,
   FileSpreadsheet,
   Mail,
   Phone,
-  Printer,
   TrendingUp,
   User,
   Wallet,
 } from 'lucide-react';
-import {
-  downloadSalaryStructureCsv,
-  openSalaryStructurePrintView,
-} from './salary-structure-export';
+import { downloadSalaryStructureCsv, downloadSalaryStructurePdf } from './salary-structure-export';
 
 interface CompensationHeaderCardProps {
   employee?: Employee | null;
@@ -33,8 +30,8 @@ export function CompensationHeaderCard({
 }: CompensationHeaderCardProps) {
   const { salaryBreakdown, compensation } = profile;
 
-  const handlePrint = () => {
-    openSalaryStructurePrintView({ profile, employee, orgName });
+  const handleDownloadPdf = () => {
+    void downloadSalaryStructurePdf({ profile, employee, orgName });
   };
 
   const handleCsv = () => {
@@ -51,7 +48,7 @@ export function CompensationHeaderCard({
   const annualCtc = monthlyCtc * 12;
 
   const effectiveFrom = compensation?.effectiveFrom
-    ? compensation.effectiveFrom.slice(0, 10)
+    ? formatDate(compensation.effectiveFrom)
     : 'Not configured';
 
   const employeeName = employee
@@ -138,11 +135,11 @@ export function CompensationHeaderCard({
             <Button
               size="sm"
               variant="outline"
-              className="h-7 text-xs font-medium gap-1.5 border-primary/30 text-primary hover:bg-primary/5 shadow-2xs"
-              onClick={handlePrint}
-              title="Download official Salary Annexure as PDF / Printable format"
+              className="h-7 text-xs font-medium gap-1.5 border-primary/30 text-primary hover:bg-primary/5 shadow-2xs cursor-pointer"
+              onClick={handleDownloadPdf}
+              title="Download official Salary Annexure as PDF"
             >
-              <Printer className="h-3.5 w-3.5" />
+              <Download className="h-3.5 w-3.5" />
               <span>Download PDF</span>
             </Button>
             <Button

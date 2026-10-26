@@ -7,19 +7,28 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
-import { FederationClientDto, FederationClientCertificateDto } from './platform-admin.dto';
+import {
+  FederationClientCertificateDto,
+  FederationClientDto,
+  FederationGrantAccessDto,
+} from './platform-admin.dto';
 import { PlatformAuthGuard } from './platform-auth.guard';
 import { PlatformService } from './platform.service';
+import { FederationGrantAdminService } from './federation-grant-admin.service';
 
 @Controller('v1/platform')
 @UseGuards(NativeJwtGuard, PlatformAuthGuard)
 export class PlatformAdminController {
-  constructor(private readonly platform: PlatformService) {}
+  constructor(
+    private readonly platform: PlatformService,
+    private readonly grants: FederationGrantAdminService,
+  ) {}
 
   @Get('federation-clients')
   clients(@Req() request: Request & { user: NativeRequestUser }) {
@@ -45,6 +54,21 @@ export class PlatformAdminController {
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.platform.updateCertificateFingerprints(request.user.userId, clientId, body);
+  }
+
+  @Get('federation-clients/:clientId/grants') listGrants(
+    @Param('clientId', ParseUUIDPipe) clientId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.grants.list(request.user.userId, clientId);
+  }
+
+  @Put('federation-clients/:clientId/grants') updateGrant(
+    @Param('clientId', ParseUUIDPipe) clientId: string,
+    @Body() body: FederationGrantAccessDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.grants.update(request.user.userId, clientId, body);
   }
 
   @Patch('federation-clients/:clientId/enable') enable(

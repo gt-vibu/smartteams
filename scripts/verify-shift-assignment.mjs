@@ -106,21 +106,23 @@ const tooEarly = await t.org('POST', endPath, {
 ok('a last day before it starts is refused', tooEarly.status === 409, status(tooEarly));
 const noReason = await t.org('POST', endPath, { endsOn: YESTERDAY, reason: '' });
 ok('ending needs a reason', noReason.status === 400, status(noReason));
-const blocked = await t.org('POST', `/shifts/employees/${t.a.id}/assignments`, {
-  shiftId: late.payload?.id,
-  startsOn: TODAY,
-});
-ok('before ending it, the next shift overlaps and is refused', blocked.status === 409);
-
-const ended = await t.org('POST', endPath, { endsOn: YESTERDAY, reason: 'Moving to Late' });
-ok('the administrator ends it on yesterday', good(ended) && ended.payload?.endsOn === YESTERDAY);
-const later = await t.org('POST', endPath, { endsOn: TODAY, reason: 'Extend it again' });
-ok('it can only be ended earlier, never extended', later.status === 409, status(later));
+// Moving to another shift: the new assignment ends the current one the day before, so nobody
+// has to end it by hand first (and two open assignments can never overlap).
 const moved = await t.org('POST', `/shifts/employees/${t.a.id}/assignments`, {
   shiftId: late.payload?.id,
   startsOn: TODAY,
 });
-ok('Ada can now be assigned Late from today', good(moved), status(moved));
+ok('assigning Late from today is accepted', good(moved), status(moved));
+const generalNow = rows(
+  (await people(t.org, `shiftId=${day.payload?.id}&includeEnded=true`)).payload,
+).find((row) => row.employee?.id === t.a.id);
+ok('and General ended for her yesterday', generalNow?.endsOn === YESTERDAY, generalNow?.endsOn);
+const later = await t.org('POST', endPath, { endsOn: TODAY, reason: 'Extend it again' });
+ok(
+  'an ended assignment can only be ended earlier, never extended',
+  later.status === 409,
+  status(later),
+);
 const nowOn = await t.a.as('GET', current);
 ok('and her current shift is Late', nowOn.payload?.assignment?.shift?.name === 'Late');
 const stillListed = await people(t.org, `shiftId=${day.payload?.id}`);
@@ -134,11 +136,17 @@ ok(
   rows(history.payload).some((row) => row.employee?.id === t.a.id && row.state === 'ENDED'),
 );
 
+const endLate = await t.org('POST', `/shifts/assignments/${moved.payload?.id}/end`, {
+  endsOn: TODAY,
+  reason: 'Moving to Late',
+});
+ok('an assignment can still be ended by hand', good(endLate), status(endLate));
+
 const db = new Client({ connectionString: resolveDatabaseUrl() });
 await db.connect();
 const audit = await db.query(
   "SELECT reason FROM audit_logs WHERE entity_id = $1 AND action = 'SHIFT_ASSIGNMENT_ENDED'",
-  [adaRow?.id],
+  [moved.payload?.id],
 );
 ok(
   'the end is audited once, with its reason',

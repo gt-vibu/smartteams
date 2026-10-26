@@ -77,7 +77,7 @@ export function Select({
         <SelectPrimitive.Trigger
           id={id}
           className={cn(
-            'flex h-8 w-full items-center justify-between rounded-md border border-input bg-input-surface px-2.5 py-1 text-xs text-foreground shadow-2xs transition-all hover:bg-muted/50 focus:outline-none focus:ring-1 focus:ring-ring focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer',
+            'flex h-9 w-full items-center justify-between rounded-md border border-input bg-input-surface px-3 py-1 text-sm text-foreground shadow-2xs transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer',
             className,
           )}
         >
@@ -101,18 +101,6 @@ export function Select({
             sideOffset={4}
             className="relative z-[200] max-h-64 min-w-[8rem] w-[var(--radix-select-trigger-width)] overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-xl data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
           >
-            <SelectPrimitive.ScrollUpButton className="flex items-center justify-center h-6 bg-popover text-muted-foreground cursor-default">
-              <svg
-                className="h-3 w-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-              </svg>
-            </SelectPrimitive.ScrollUpButton>
-
             <SelectPrimitive.Viewport className="p-1 space-y-0.5 max-h-60 overflow-y-auto">
               {options.map((opt) => {
                 const optVal = opt.value === '' ? EMPTY_VALUE_SENTINEL : opt.value;
@@ -141,18 +129,6 @@ export function Select({
                 );
               })}
             </SelectPrimitive.Viewport>
-
-            <SelectPrimitive.ScrollDownButton className="flex items-center justify-center h-6 bg-popover text-muted-foreground cursor-default">
-              <svg
-                className="h-3 w-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </SelectPrimitive.ScrollDownButton>
           </SelectPrimitive.Content>
         </SelectPrimitive.Portal>
       </SelectPrimitive.Root>
@@ -223,31 +199,9 @@ export const SelectContent = React.forwardRef<
       )}
       {...props}
     >
-      <SelectPrimitive.ScrollUpButton className="flex items-center justify-center h-6 bg-popover text-muted-foreground cursor-default">
-        <svg
-          className="h-3 w-3"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2.5}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-        </svg>
-      </SelectPrimitive.ScrollUpButton>
       <SelectPrimitive.Viewport className="p-1 space-y-0.5 max-h-60 overflow-y-auto">
         {children}
       </SelectPrimitive.Viewport>
-      <SelectPrimitive.ScrollDownButton className="flex items-center justify-center h-6 bg-popover text-muted-foreground cursor-default">
-        <svg
-          className="h-3 w-3"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2.5}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </SelectPrimitive.ScrollDownButton>
     </SelectPrimitive.Content>
   </SelectPrimitive.Portal>
 ));

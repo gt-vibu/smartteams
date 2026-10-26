@@ -1,5 +1,8 @@
 'use client';
 
+import { LoadingIndicator } from '@smarteam/ui';
+
+import { formatDate } from '@smarteam/contracts';
 import React from 'react';
 import {
   CalendarDays,
@@ -14,6 +17,7 @@ import type { TileTone } from '../common/module-tile';
 import type { useEmployeeDirectory } from '../../hooks/use-employee-directory';
 import type { OrganizationState } from '../../hooks/use-organization';
 import type { HolidaysState } from '../../hooks/use-holidays';
+import { localDateKey } from '../../lib/local-date';
 
 /**
  * Who this organization is, and its headline figures.
@@ -40,23 +44,39 @@ export function OrgIdentityRail({
   directory,
   holidays,
   organization,
+  onNavigateTab,
+  onNavigateModule,
 }: {
   directory: ReturnType<typeof useEmployeeDirectory>;
   holidays: HolidaysState;
   organization: OrganizationState;
+  onNavigateTab?: (tab: string) => void;
+  onNavigateModule?: (module: string, view?: string) => void;
 }) {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDateKey();
   const upcoming = holidays.holidays
     .filter((holiday) => holiday.isActive && holiday.holidayDate.slice(0, 10) >= today)
     .slice(0, 4);
 
   const name = organization.organization?.name ?? 'Organization';
-  const active = directory.entries.filter((entry) => entry.status === 'ACTIVE').length;
-  const withoutManager = directory.entries.filter((entry) => !entry.managerEmployeeId).length;
-  const withoutLogin = directory.entries.filter((entry) => !entry.hasUserAccount).length;
+  const current = directory.entries.filter((entry) => entry.status === 'ACTIVE');
+  const active = directory.summary?.active ?? current.length;
+  const former = directory.summary?.former ?? directory.entries.length - current.length;
+  const withoutManager =
+    directory.summary?.withoutManager ?? current.filter((entry) => !entry.managerEmployeeId).length;
+  const withoutLogin =
+    directory.summary?.withoutLogin ?? current.filter((entry) => !entry.hasUserAccount).length;
+  const activeBranches = organization.branches.filter(
+    (branch) => branch.status !== 'DEACTIVATED',
+  ).length;
 
-  const peopleState = directory.forbidden ? 'No permission' : null;
-  const peopleValue = (count: number) => (directory.loading ? null : String(count));
+  const peopleState = directory.forbidden
+    ? 'No permission'
+    : directory.summaryError
+      ? 'Could not load'
+      : null;
+  const peopleValue = (count: number) =>
+    directory.summaryLoading || peopleState ? null : `${count}`;
 
   return (
     <div className="space-y-4">
@@ -78,8 +98,8 @@ export function OrgIdentityRail({
                 </span>
               )}
               <span className="block">
-                {organization.organization?.currencyCode ?? '--'} ·{' '}
-                {organization.organization?.source === 'BLIZBOOKS' ? 'BlizBooks' : 'Native'}
+                {organization.organization?.currencyCode ?? '--'}
+                {organization.organization?.source === 'BLIZBOOKS' ? ' · BlizBooks' : ''}
               </span>
             </div>
           </div>
@@ -88,17 +108,19 @@ export function OrgIdentityRail({
         <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-border pt-3">
           <MiniStat
             icon={Users}
-            label="People"
+            label="Employees"
             tone="primary"
             unavailable={peopleState}
-            value={peopleValue(directory.entries.length)}
+            value={peopleValue(active)}
+            onClick={peopleState ? undefined : () => onNavigateTab?.('people')}
           />
           <MiniStat
             icon={CheckCircle2}
-            label="Active"
-            tone="success"
+            label="Former"
+            tone="neutral"
             unavailable={peopleState}
-            value={peopleValue(active)}
+            value={peopleValue(former)}
+            onClick={peopleState ? undefined : () => onNavigateModule?.('employees', 'former')}
           />
           <MiniStat
             icon={Network}
@@ -106,6 +128,7 @@ export function OrgIdentityRail({
             tone="warning"
             unavailable={peopleState}
             value={peopleValue(withoutManager)}
+            onClick={peopleState ? undefined : () => onNavigateModule?.('employees', 'unassigned')}
           />
           <MiniStat
             icon={KeyRound}
@@ -113,13 +136,17 @@ export function OrgIdentityRail({
             tone="accent"
             unavailable={peopleState}
             value={peopleValue(withoutLogin)}
+            onClick={peopleState ? undefined : () => onNavigateModule?.('employees', 'no-login')}
           />
           <MiniStat
             icon={MapPin}
             label="Branches"
             tone="neutral"
             unavailable={organization.branchesForbidden ? 'No permission' : null}
-            value={organization.loading ? null : String(organization.branches.length)}
+            value={organization.loading ? null : String(activeBranches)}
+            onClick={
+              organization.branchesForbidden ? undefined : () => onNavigateTab?.('org-setup')
+            }
           />
         </dl>
       </section>
@@ -134,9 +161,7 @@ export function OrgIdentityRail({
             You do not have permission to view the holiday calendar.
           </p>
         ) : holidays.loading ? (
-          <p className="mt-2 text-[11px] text-muted-foreground" role="status">
-            Loading...
-          </p>
+          <LoadingIndicator variant="inline" label="Preparing content" className="mt-2 text-[11px] text-muted-foreground" />
         ) : upcoming.length === 0 ? (
           <p className="mt-2 text-[11px] text-muted-foreground">
             No holidays are scheduled after today.
@@ -147,7 +172,7 @@ export function OrgIdentityRail({
               <li className="flex items-baseline justify-between gap-3 py-1.5" key={holiday.id}>
                 <span className="min-w-0 truncate text-xs text-foreground">{holiday.name}</span>
                 <span className="shrink-0 font-mono text-[11px] tabular-nums text-muted-foreground">
-                  {holiday.holidayDate.slice(0, 10)}
+                  {formatDate(holiday.holidayDate)}
                 </span>
               </li>
             ))}
@@ -179,15 +204,17 @@ function MiniStat({
   tone,
   unavailable,
   value,
+  onClick,
 }: {
   icon: LucideIcon;
   label: string;
   tone: TileTone;
   unavailable: string | null;
   value: string | null;
+  onClick?: () => void;
 }) {
-  return (
-    <div className="flex items-center gap-2">
+  const content = (
+    <>
       <span
         aria-hidden="true"
         className={`grid h-7 w-7 shrink-0 place-items-center rounded-md ${TONES[tone]}`}
@@ -202,13 +229,22 @@ function MiniStat({
           className={
             unavailable
               ? 'truncate text-[11px] text-muted-foreground'
-              : 'font-mono text-sm font-semibold tabular-nums text-foreground'
+              : ' text-sm font-semibold tabular-nums text-foreground'
           }
           title={unavailable ?? undefined}
         >
           {unavailable ?? value ?? '--'}
         </dd>
       </div>
-    </div>
+    </>
+  );
+  const className =
+    'flex min-w-0 items-center gap-2 rounded-md text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
+  return onClick ? (
+    <button className={`${className} hover:bg-muted/40`} onClick={onClick} type="button">
+      {content}
+    </button>
+  ) : (
+    <div className={className}>{content}</div>
   );
 }

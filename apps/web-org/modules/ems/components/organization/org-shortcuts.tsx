@@ -43,7 +43,7 @@ const SHORTCUTS: Shortcut[] = [
   {
     module: 'attendance',
     label: 'Attendance',
-    detail: 'Records and corrections',
+    detail: 'Records and regularization',
     icon: Clock3,
     tone: 'success',
   },
@@ -79,7 +79,7 @@ const SHORTCUTS: Shortcut[] = [
   {
     module: 'approvals',
     label: 'Approvals',
-    detail: 'Routing policies',
+    detail: 'Approval workflows',
     icon: CheckCircle2,
     tone: 'success',
   },

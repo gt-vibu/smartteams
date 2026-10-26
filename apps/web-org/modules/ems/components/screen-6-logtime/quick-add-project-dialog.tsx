@@ -12,6 +12,7 @@ import {
   Label,
   Textarea,
 } from '@smarteam/ui';
+import { LIMITS, textProblem } from '@smarteam/contracts';
 
 interface QuickAddProjectDialogProps {
   isOpen: boolean;
@@ -64,9 +65,11 @@ export function QuickAddProjectDialog({ isOpen, onClose, onAdd }: QuickAddProjec
         <form onSubmit={handleSubmit} className="space-y-4 p-5 text-xs">
           <div className="space-y-1.5">
             <Label htmlFor="quick-project-name" className="text-xs font-medium text-foreground">
-              Project Name <span className="text-destructive font-bold">*</span>
+              Project name <span className="text-destructive font-bold">*</span>
             </Label>
             <Input
+              maxLength={LIMITS.title}
+              problem={textProblem(name, 'Project name', LIMITS.title, 2)}
               id="quick-project-name"
               placeholder="e.g. Website Redesign, Mobile Application"
               value={name}
@@ -82,6 +85,7 @@ export function QuickAddProjectDialog({ isOpen, onClose, onAdd }: QuickAddProjec
               Description (Optional)
             </Label>
             <Textarea
+              maxLength={500}
               id="quick-project-desc"
               placeholder="Brief summary of project scope..."
               value={description}

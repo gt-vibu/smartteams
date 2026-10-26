@@ -4,6 +4,77 @@ import { useAsyncResource } from './use-async-resource';
 import { ApiError } from '../lib/api-client';
 
 describe('useAsyncResource', () => {
+  it('discards in-flight data when access or required inputs become unavailable', async () => {
+    let finish: (value: string) => void = () => undefined;
+    const load = vi.fn(
+      () =>
+        new Promise<string>((resolve) => {
+          finish = resolve;
+        }),
+    );
+    const { result, rerender } = renderHook(
+      ({ enabled }) => useAsyncResource(load, [], { enabled }),
+      {
+        initialProps: { enabled: true },
+      },
+    );
+    rerender({ enabled: false });
+    await act(async () => {
+      finish('private employee data');
+      await Promise.resolve();
+    });
+    expect(result.current.data).toBeNull();
+    expect(result.current.loading).toBe(false);
+    await act(async () => {
+      await result.current.refetch();
+    });
+    expect(load).toHaveBeenCalledTimes(1);
+  });
+
+  it('clears already loaded data when a resource becomes disabled', async () => {
+    const { result, rerender } = renderHook(
+      ({ enabled }) => useAsyncResource(() => Promise.resolve('private data'), [], { enabled }),
+      {
+        initialProps: { enabled: true },
+      },
+    );
+    await waitFor(() => expect(result.current.data).toBe('private data'));
+    rerender({ enabled: false });
+    expect(result.current.data).toBeNull();
+  });
+  it('never shows an answer for the wrong subject, even when requests finish out of order', async () => {
+    // A salary for employee A arrives after the one for B, which was selected later.
+    let finishA: (value: string) => void = () => undefined;
+    const load = vi.fn((id: string) =>
+      id === 'A'
+        ? new Promise<string>((resolve) => {
+            finishA = resolve;
+          })
+        : Promise.resolve('salary of B'),
+    );
+    const { result, rerender } = renderHook(({ id }) => useAsyncResource(() => load(id), [id]), {
+      initialProps: { id: 'A' },
+    });
+    rerender({ id: 'B' });
+    await waitFor(() => expect(result.current.data).toBe('salary of B'));
+    await act(async () => {
+      finishA('salary of A');
+      await Promise.resolve();
+    });
+    expect(result.current.data).toBe('salary of B');
+  });
+
+  it('clears the previous subject while the next one loads', async () => {
+    const load = vi.fn((id: string) => Promise.resolve(`data of ${id}`));
+    const { result, rerender } = renderHook(({ id }) => useAsyncResource(() => load(id), [id]), {
+      initialProps: { id: 'A' },
+    });
+    await waitFor(() => expect(result.current.data).toBe('data of A'));
+    rerender({ id: 'B' });
+    expect(result.current.data).not.toBe('data of A');
+    await waitFor(() => expect(result.current.data).toBe('data of B'));
+  });
+
   it('loads data and clears the loading flag', async () => {
     const load = vi.fn().mockResolvedValue(['a', 'b']);
     const { result } = renderHook(() => useAsyncResource(load, []));

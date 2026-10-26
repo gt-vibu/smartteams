@@ -5,9 +5,9 @@
  * says where the time came from, that approving as-is sends no time of its own, and that a time
  * the approver enters is the one that reaches the API.
  */
-import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 import type { ApprovalInboxItem, ApprovalInboxState } from '../../hooks/use-approval-inbox';
 import { ApprovalQueue } from './approval-queue';
 
@@ -15,6 +15,7 @@ const autoClosed: ApprovalInboxItem = {
   id: 'correction-1',
   domain: 'ATTENDANCE_CORRECTION',
   employeeId: 'employee-1',
+  requester: null,
   title: 'Day closed with no check-out',
   detail: 'Proposed check-out at 16 Sep, 23:59 · Closed automatically',
   submittedAt: '2026-09-16T18:30:00.000Z',
@@ -57,9 +58,8 @@ describe('an automatically closed day in the approvals queue', () => {
     const user = userEvent.setup();
     render(<ApprovalQueue inbox={inboxState({ decide })} />);
     await user.click(screen.getByRole('button', { name: 'Approve' }));
-    await user.type(screen.getByLabelText('Comment'), 'Checked with the team');
     await user.click(screen.getByRole('button', { name: 'Approve', hidden: false }));
-    expect(decide).toHaveBeenCalledWith(autoClosed, 'APPROVED', 'Checked with the team', undefined);
+    expect(decide).toHaveBeenCalledWith(autoClosed, 'APPROVED', '');
   });
 
   it('sends the time the approver enters instead', async () => {
@@ -70,7 +70,6 @@ describe('an automatically closed day in the approvals queue', () => {
     await user.click(screen.getByLabelText('Date'));
     await user.click(screen.getByRole('button', { name: '16' }));
     await user.type(screen.getByLabelText('Time'), '18:07');
-    await user.type(screen.getByLabelText('Comment'), 'He left at six');
     await user.click(screen.getAllByRole('button', { name: 'Approve' }).at(-1)!);
 
     const [, status, comment, checkOutAt] = decide.mock.calls.at(-1) as [
@@ -80,7 +79,7 @@ describe('an automatically closed day in the approvals queue', () => {
       string,
     ];
     expect(status).toBe('APPROVED');
-    expect(comment).toBe('He left at six');
+    expect(comment).toBe('');
     // Sent as an instant, from the approver's own date and time.
     expect(new Date(checkOutAt).getHours()).toBe(18);
     expect(new Date(checkOutAt).getMinutes()).toBe(7);

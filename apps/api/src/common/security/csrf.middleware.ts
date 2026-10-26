@@ -29,6 +29,10 @@ export class CsrfMiddleware implements NestMiddleware {
   use(request: Request, _response: Response, next: NextFunction) {
     if (SAFE_METHODS.has(request.method)) return next();
     if (request.headers.authorization) return next();
+    // Logging out is intentionally idempotent and must remain reachable when an old CSRF cookie
+    // is stranded by a domain migration. The guarded controller still revokes a valid session and
+    // clears the cookies; allowing this endpoint through cannot create an authenticated action.
+    if (request.method === 'POST' && request.path === '/v1/auth/logout') return next();
 
     const cookieName = `${this.config.get<string>('SESSION_COOKIE_NAME', 'smarteam_session')}${CSRF_COOKIE_SUFFIX}`;
     const expected = readCookie(request, cookieName);

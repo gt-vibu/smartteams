@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AccessMode, PayrollRunStatus } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
-import { ConflictError } from '../../common/errors/domain-error';
+import { ConflictError, ForbiddenDomainError } from '../../common/errors/domain-error';
 import { mergeSalaryComponents } from './payroll-component-rules';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import {
@@ -27,6 +27,26 @@ export class PayrollPayslipsService {
     return this.database.run(context, async (tx) => {
       const canReadAll =
         context.permissions.has('*') || context.permissions.has('payroll.payslips.read.all');
+      // Organization admins can always review payroll. For an employee's self-service request,
+      // the currently effective organization policy controls whether payslips are exposed at all.
+      // Apply this only to native self-service; federation keeps its existing authorization path.
+      if (context.accessMode === AccessMode.NATIVE && !canReadAll) {
+        const today = new Date();
+        const startOfToday = new Date(
+          Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+        );
+        const policy = await tx.payrollPolicy.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            isDefault: true,
+            effectiveFrom: { lte: startOfToday },
+            OR: [{ effectiveTo: null }, { effectiveTo: { gte: startOfToday } }],
+          },
+          orderBy: { effectiveFrom: 'desc' },
+          select: { salarySlipDefault: true },
+        });
+        if (policy?.salarySlipDefault === false) return [];
+      }
       let employeeId = requestedEmployeeId;
       if (context.accessMode === AccessMode.FEDERATION && !requestedEmployeeId && !canReadAll)
         return [];
@@ -87,16 +107,33 @@ export class PayrollPayslipsService {
               },
             },
           },
-          employee: { select: { externalId: true, employeeNumber: true } },
+          employee: {
+            select: { externalId: true, employeeNumber: true, firstName: true, lastName: true },
+          },
           fileObject: { select: { id: true, status: true } },
         },
         orderBy: { issuedAt: 'desc' },
       });
+      const native = context.accessMode === AccessMode.NATIVE;
+      // The employer's name heads a printed payslip; employees cannot read the organization itself.
+      const employer = native
+        ? await tx.organization.findUnique({
+            where: { id: context.organizationId },
+            select: { name: true },
+          })
+        : null;
       return payslips.map((payslip) => ({
         id: payslip.id,
         employeeId: payslip.employeeId,
         externalEmployeeId: payslip.employee.externalId,
         employeeNumber: payslip.employee.employeeNumber,
+        // The app's run breakdown names people; a partner's payslip shape stays as it was.
+        ...(native
+          ? {
+              employeeName: `${payslip.employee.firstName} ${payslip.employee.lastName}`.trim(),
+              organizationName: employer?.name ?? null,
+            }
+          : {}),
         status: payslip.status,
         issuedAt: payslip.issuedAt,
         file: payslip.fileObject,
@@ -106,6 +143,37 @@ export class PayrollPayslipsService {
           deductionAmount: payslip.payrollLineItem.deductionAmount,
           netAmount: payslip.payrollLineItem.netAmount,
         },
+        ...(native &&
+        (canReadAll || detailedSalarySlipAllowed(payslip.payrollLineItem.inputSnapshot))
+          ? (() => {
+              const breakdown = (payslip.payrollLineItem.calculationBreakdown ?? {}) as {
+                periodWorkingDays?: unknown;
+                payableDays?: unknown;
+                paidLeaveDays?: unknown;
+                unpaidLeaveDays?: unknown;
+                unpaidAttendanceDays?: unknown;
+                unemployedDays?: unknown;
+                unpaidLeaveAdjustment?: unknown;
+                monthlyStructure?: { gross?: unknown };
+              };
+              const workingDays = Number(breakdown.periodWorkingDays ?? 0);
+              const unpaidDays =
+                Number(breakdown.unpaidLeaveDays ?? 0) +
+                Number(breakdown.unpaidAttendanceDays ?? 0) +
+                Number(breakdown.unemployedDays ?? 0);
+              return {
+                payrollSummary: {
+                  workingDays,
+                  payableDays: Number(breakdown.payableDays ?? Math.max(0, workingDays - unpaidDays)),
+                  monthlyGross: Number(breakdown.monthlyStructure?.gross ?? 0),
+                  paidLeaveDays: Number(breakdown.paidLeaveDays ?? 0),
+                  unpaidDays,
+                  unpaidTimeReduction:
+                    Math.round(Number(breakdown.unpaidLeaveAdjustment ?? 0) * 100) / 100,
+                },
+              };
+            })()
+          : {}),
         components:
           canReadAll || detailedSalarySlipAllowed(payslip.payrollLineItem.inputSnapshot)
             ? mergeSalaryComponents(
@@ -126,8 +194,11 @@ export class PayrollPayslipsService {
       const canReadAll =
         context.permissions.has('*') || context.permissions.has('payroll.ledger.read.all');
       let employeeId = requestedEmployeeId;
-      if (context.accessMode === AccessMode.FEDERATION && !requestedEmployeeId && !canReadAll)
-        return { entries: [], nextCursor: undefined };
+      if (context.accessMode === AccessMode.FEDERATION && !requestedEmployeeId && !canReadAll) {
+        throw new ForbiddenDomainError(
+          'Federation clients need payroll.ledger.read.all to read payroll ledger entries for all employees',
+        );
+      }
       if (!canReadAll && !requestedEmployeeId) {
         const employee = await tx.employee.findFirst({
           where: {

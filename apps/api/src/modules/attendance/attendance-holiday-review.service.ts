@@ -10,8 +10,8 @@ import { AttendanceStatus } from '../../generated/prisma/enums';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { canApprove } from '../approvals/approval-authorization';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
-import { canActForAllEmployees, assertMayActForEmployee } from '../employees/employee-scope';
 import { findSelfEmployeeId } from '../employees/employee-access';
+import { assertMayActForEmployee, canActForAllEmployees } from '../employees/employee-scope';
 import type { OutboxService } from '../federation/outbox.service';
 import { cancelHolidaySelection } from '../holidays/employee-holiday-cancellation';
 import { markPayrollStale } from '../payroll/payroll-staleness';
@@ -232,11 +232,10 @@ export class AttendanceHolidayReviewService {
   async decide(
     context: DomainContext,
     reviewId: string,
-    input: { outcome: HolidayReviewOutcome; comment: string },
+    input: { outcome: HolidayReviewOutcome; comment?: string },
   ) {
     requirePermission(context, 'attendance.corrections.decide');
-    const comment = input.comment.trim();
-    if (!comment) throw new ConflictError('A decision reason is required');
+    const comment = input.comment?.trim() || '';
     const userId = context.actor.userId;
     if (!userId) throw new ConflictError('A human approver is required');
     return this.database.run(context, async (tx) => {

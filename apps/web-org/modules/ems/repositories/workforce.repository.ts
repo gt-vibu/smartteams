@@ -8,7 +8,9 @@ import {
   parseStatutoryProfileList,
   parseProjectList,
   parseTeamList,
+  parseDepartments,
   type Branch,
+  type Department,
   type Employee,
   type EmployeeDetail,
   type EmployeeDirectoryEntry,
@@ -69,7 +71,11 @@ export const workforceRepository = {
   async createEmployee(
     organizationId: string,
     input: {
-      employeeNumber: string;
+      /** Left out when the department's number series should supply it. */
+      employeeNumber?: string;
+      departmentId?: string;
+      aadhaarNumber: string;
+      createLogin?: boolean;
       firstName: string;
       lastName: string;
       middleName?: string;
@@ -215,6 +221,9 @@ export const workforceRepository = {
       workEmail: string;
       personalEmail: string;
       phone: string;
+      employmentType: string;
+      dateOfJoining: string;
+      primaryBranchId: string;
     }>,
   ): Promise<Employee> {
     return expectShape(
@@ -278,6 +287,38 @@ export const workforceRepository = {
     );
   },
 
+  async listDepartments(organizationId: string): Promise<Department[]> {
+    return parseDepartments(
+      await apiRequest(`${orgPath(organizationId)}/departments`, { method: 'GET' }),
+    );
+  },
+
+  async saveDepartment(
+    organizationId: string,
+    departmentId: string | null,
+    input: DepartmentInput,
+  ): Promise<{ id: string }> {
+    const payload = (await apiRequest(
+      departmentId
+        ? `${orgPath(organizationId)}/departments/${encodeURIComponent(departmentId)}`
+        : `${orgPath(organizationId)}/departments`,
+      { method: departmentId ? 'PATCH' : 'POST', body: input },
+    )) as { id?: string } | null;
+    if (!payload?.id) throw new Error('The department response was not valid.');
+    return { id: payload.id };
+  },
+
+  async removeDepartmentMember(
+    organizationId: string,
+    departmentId: string,
+    employeeId: string,
+  ): Promise<unknown> {
+    return apiRequest(
+      `${orgPath(organizationId)}/departments/${encodeURIComponent(departmentId)}/members/${encodeURIComponent(employeeId)}/remove`,
+      { method: 'POST' },
+    );
+  },
+
   async listBranches(organizationId: string): Promise<Branch[]> {
     return expectShape(
       parseBranchList(await apiRequest(`${orgPath(organizationId)}/branches`, { method: 'GET' })),
@@ -286,12 +327,17 @@ export const workforceRepository = {
   },
 };
 
-export type AddTeamMemberInput = { employeeId: string; joinedAt: string };
+export type DepartmentInput = {
+  name?: string;
+  employeeNumberPrefix?: string | null;
+  headEmployeeId?: string | null;
+  employeeIds?: string[];
+};
+
+export type AddTeamMemberInput = { employeeId: string; joinedAt: string; teamRole?: string };
 
 export type AddProjectMemberInput = {
   employeeId: string;
-  projectRole?: string;
-  allocationPercentage?: number;
   startsOn: string;
   endsOn?: string;
 };
@@ -318,6 +364,14 @@ export const membershipRepository = {
         method: 'POST',
         body: { ...input },
       },
+    );
+  },
+
+  /** A current member's role in the team, from the Team Roles list; empty clears it. */
+  updateTeamMember(organizationId: string, teamId: string, memberId: string, teamRole: string) {
+    return apiRequest(
+      `${orgPath(organizationId)}/teams/${encodeURIComponent(teamId)}/members/${encodeURIComponent(memberId)}`,
+      { method: 'PATCH', body: { teamRole } },
     );
   },
 

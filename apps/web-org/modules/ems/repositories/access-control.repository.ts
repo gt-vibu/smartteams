@@ -40,6 +40,21 @@ export const accessControlRepository = {
     });
   },
 
+  /**
+   * Replaces a role's permissions. The API refuses the Organization Admin role, permissions the
+   * caller does not hold, and a caller removing role management from a role they hold.
+   */
+  async updateRolePermissions(
+    organizationId: string,
+    roleId: string,
+    input: { permissionKeys: string[]; reason: string },
+  ): Promise<void> {
+    await apiRequest(orgPath(organizationId, `/roles/${encodeURIComponent(roleId)}/permissions`), {
+      method: 'PUT',
+      body: input,
+    });
+  },
+
   async assignRole(organizationId: string, userId: string, roleId: string): Promise<void> {
     await apiRequest(orgPath(organizationId, '/role-assignments'), {
       method: 'POST',

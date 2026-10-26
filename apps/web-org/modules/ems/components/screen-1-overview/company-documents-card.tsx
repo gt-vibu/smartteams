@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { formatDate } from '@smarteam/contracts';
 import { Card, CardContent, CardHeader, CardTitle, Badge, Button } from '@smarteam/ui';
 import {
   Download,
@@ -11,7 +12,7 @@ import {
   File,
   Loader2,
 } from 'lucide-react';
-import { useFiles } from '../../hooks/use-files';
+import { useDocuments } from '../../hooks/use-documents';
 import { formatBytes } from '../../utils/formatters';
 
 function getFileIcon(fileName: string, mimeType?: string) {
@@ -36,10 +37,15 @@ function getFileIcon(fileName: string, mimeType?: string) {
 }
 
 export function CompanyDocumentsCard() {
-  const { files, listLoading, download, busy } = useFiles();
-
-  // Only include ready files
-  const activeFiles = files.filter((f) => f.status === 'READY');
+  // Company-wide documents the server says this person may see. It filtered on a status of
+  // 'READY', which the API never uses (files become AVAILABLE), so the card was always empty.
+  const {
+    documents: activeFiles,
+    loading: listLoading,
+    view,
+    download,
+    busy,
+  } = useDocuments('organization');
 
   return (
     <Card className="border border-border bg-card shadow-xs">
@@ -50,10 +56,10 @@ export function CompanyDocumentsCard() {
             Company Documents & Shared Files
           </CardTitle>
           <p className="text-[11px] text-muted-foreground">
-            Official policies, company assets, and documents published for your organization.
+            Official policies, forms, and documents published for your organization.
           </p>
         </div>
-        <Badge variant="outline" className="text-[10px] font-mono">
+        <Badge variant="outline" className="text-[10px] tabular-nums">
           {activeFiles.length} {activeFiles.length === 1 ? 'file' : 'files'}
         </Badge>
       </CardHeader>
@@ -80,17 +86,14 @@ export function CompanyDocumentsCard() {
               >
                 <div className="flex items-center gap-2.5 min-w-0 pr-2">
                   <div className="p-1.5 rounded-md bg-card border border-border/80 shrink-0">
-                    {getFileIcon(file.originalName, file.contentType)}
+                    {getFileIcon(file.name, file.contentType)}
                   </div>
                   <div className="min-w-0">
-                    <p
-                      className="text-xs font-medium text-foreground truncate"
-                      title={file.originalName}
-                    >
-                      {file.originalName}
+                    <p className="text-xs font-medium text-foreground truncate" title={file.name}>
+                      {file.name}
                     </p>
-                    <p className="text-[10px] text-muted-foreground font-mono">
-                      {formatBytes(file.byteSize)} · {new Date(file.createdAt).toLocaleDateString()}
+                    <p className="text-[10px] text-muted-foreground tabular-nums">
+                      {formatBytes(file.byteSize)} · {formatDate(file.uploadedAt)}
                     </p>
                   </div>
                 </div>
@@ -100,12 +103,13 @@ export function CompanyDocumentsCard() {
                   variant="ghost"
                   size="sm"
                   disabled={busy}
-                  onClick={() => download(file.id)}
+                  // A view-only document opens in the browser; nothing offers a download it refuses.
+                  onClick={() => void (file.access.download ? download(file.id) : view(file.id))}
                   className="h-7 px-2 text-xs font-medium text-primary hover:text-primary hover:bg-primary/10 shrink-0 cursor-pointer"
-                  title={`Download ${file.originalName}`}
+                  title={`${file.access.download ? 'Download' : 'View'} ${file.name}`}
                 >
                   <Download className="h-3.5 w-3.5 mr-1" />
-                  Download
+                  {file.access.download ? 'Download' : 'View'}
                 </Button>
               </div>
             ))}

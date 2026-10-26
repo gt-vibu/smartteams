@@ -1,11 +1,13 @@
 import {
   parseJobTypeList,
   parseProject,
-  parseTimesheet,
+  parseTimesheetEntryResult,
   parseTimesheetList,
+  parseTimesheetPage,
   type JobType,
   type Project,
   type Timesheet,
+  type TimesheetEntryResult,
 } from '@smarteam/contracts';
 import { apiRequest } from '../lib/api-client';
 import { expectShape, orgPath, queryString } from './api-helpers';
@@ -41,6 +43,11 @@ export type ManualEntryInput = {
 };
 
 export const timesheetRepository = {
+  async listPage(organizationId: string, filters: { employeeId?: string; periodId?: string; status?: string; departmentId?: string; from?: string; to?: string; search?: string; cursor?: string; limit?: number } = {}) {
+    const page = parseTimesheetPage(await apiRequest(`${base(organizationId)}/admin-page${queryString(filters)}`, { method: 'GET' }));
+    if (!page) throw new Error('The timesheet page response was not valid.');
+    return page;
+  },
   async list(
     organizationId: string,
     filters: { employeeId?: string; periodId?: string } = {},
@@ -114,13 +121,13 @@ export const timesheetRepository = {
     organizationId: string,
     timesheetId: string | undefined,
     input: ManualEntryInput,
-  ): Promise<Timesheet> {
+  ): Promise<TimesheetEntryResult> {
     const url = timesheetId
       ? `${base(organizationId)}/${encodeURIComponent(timesheetId)}/entries`
       : `${base(organizationId)}/entries`;
 
     return expectShape(
-      parseTimesheet(
+      parseTimesheetEntryResult(
         await apiRequest(url, {
           method: 'POST',
           body: { ...input, timesheetId },
@@ -142,16 +149,16 @@ export const timesheetRepository = {
     });
   },
 
-  /** The API requires a comment of at least two characters and audits it. */
+  /** Approves directly, or rejects with an audited comment. */
   async decide(
     organizationId: string,
     timesheetId: string,
     status: 'APPROVED' | 'REJECTED',
-    comment: string,
+    comment?: string,
   ): Promise<unknown> {
     return apiRequest(`${base(organizationId)}/${encodeURIComponent(timesheetId)}/decision`, {
       method: 'POST',
-      body: { status, comment },
+      body: { status, ...(comment?.trim() ? { comment: comment.trim() } : {}) },
     });
   },
 };

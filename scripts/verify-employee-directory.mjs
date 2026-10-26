@@ -11,9 +11,10 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { testAadhaar } from './lib/aadhaar.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const BASE = 'http://localhost:4000';
+const BASE = process.env.AUTHZ_API_URL ?? 'http://localhost:4000';
 const env = Object.fromEntries(
   readFileSync(resolve(ROOT, '.env'), 'utf8')
     .split(/\r?\n/)
@@ -134,6 +135,7 @@ async function main() {
     workEmail: `asha@${a.slug}.test`,
     personalEmail: `asha.personal@${a.slug}.test`,
     phone: '+91 90000 00001',
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
   });
   check('create employee A', r.status, [200, 201]);
@@ -146,6 +148,7 @@ async function main() {
     workEmail: `bala@${a.slug}.test`,
     personalEmail: `bala.personal@${a.slug}.test`,
     phone: '+91 90000 00002',
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
   });
   check('create employee B', r.status, [200, 201]);

@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { type LeaveAccrualType } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
-import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import {
+  TenantDatabaseService,
+  type TenantTransaction,
+} from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { toTypeDto } from './leave-shared';
 import { provisionBalancesForAll } from './leave-balance-ops';
+import { markPayrollStale } from '../payroll/payroll-staleness';
 
 type LeaveTypeInput = {
   code: string;
@@ -15,6 +19,12 @@ type LeaveTypeInput = {
   annualAllowance?: number;
   monthlyAccrual?: number;
   carryoverLimit?: number;
+  prorateForJoiners?: boolean;
+  sandwichOffDays?: boolean;
+  encashable?: boolean;
+  maxEncashDays?: number;
+  isCompOff?: boolean;
+  compOffExpiryDays?: number;
   requiresAttachment: boolean;
 };
 
@@ -35,6 +45,8 @@ export class LeaveTypesService {
   async createType(context: DomainContext, input: LeaveTypeInput) {
     requirePermission(context, 'leave.types.write');
     return this.database.run(context, async (tx) => {
+      if (context.accessMode === 'NATIVE')
+        await assertTypeIsNew(tx, context.organizationId, input.name, input.code);
       const type = await tx.leaveType.create({
         data: {
           organizationId: context.organizationId,
@@ -45,6 +57,12 @@ export class LeaveTypesService {
           annualAllowance: input.annualAllowance,
           monthlyAccrual: input.monthlyAccrual,
           carryoverLimit: input.carryoverLimit,
+          prorateForJoiners: input.prorateForJoiners,
+          sandwichOffDays: input.sandwichOffDays,
+          encashable: input.encashable,
+          maxEncashDays: input.maxEncashDays,
+          isCompOff: input.isCompOff,
+          compOffExpiryDays: input.compOffExpiryDays,
           requiresAttachment: input.requiresAttachment,
         },
       });
@@ -58,7 +76,74 @@ export class LeaveTypesService {
         },
         tx,
       );
-      return toTypeDto(type);
+      return toTypeDto(type, context.accessMode === 'NATIVE');
+    });
+  }
+
+  /**
+   * Changes a type's rules. The code stays: requests, balances and reports refer to it. A new
+   * allowance or rate applies from the next accrual pass and only ever adds — days already
+   * granted are not taken back.
+   */
+  async updateType(context: DomainContext, typeId: string, input: Omit<LeaveTypeInput, 'code'>) {
+    requirePermission(context, 'leave.types.write');
+    return this.database.run(context, async (tx) => {
+      const before = await tx.leaveType.findFirst({
+        where: { id: typeId, organizationId: context.organizationId },
+      });
+      if (!before) throw new NotFoundError('Leave type');
+      if (context.accessMode === 'NATIVE')
+        await assertTypeIsNew(tx, context.organizationId, input.name, null, before.id);
+      const type = await tx.leaveType.update({
+        where: { id: before.id },
+        data: {
+          name: input.name.trim(),
+          paid: input.paid,
+          accrualType: input.accrualType,
+          annualAllowance: input.annualAllowance ?? null,
+          monthlyAccrual: input.monthlyAccrual ?? null,
+          carryoverLimit: input.carryoverLimit ?? null,
+          prorateForJoiners: input.prorateForJoiners ?? before.prorateForJoiners,
+          sandwichOffDays: input.sandwichOffDays ?? before.sandwichOffDays,
+          encashable: input.encashable ?? before.encashable,
+          maxEncashDays: input.maxEncashDays ?? null,
+          isCompOff: input.isCompOff ?? before.isCompOff,
+          compOffExpiryDays: input.compOffExpiryDays ?? null,
+          requiresAttachment: input.requiresAttachment,
+        },
+      });
+      // Paid or unpaid decides what payroll deducts for every approved day of this type. A run
+      // already calculated over those days kept the old figures and could be approved with them.
+      if (before.paid !== type.paid) {
+        const span = await tx.leaveRequest.aggregate({
+          where: {
+            organizationId: context.organizationId,
+            leaveTypeId: type.id,
+            status: 'APPROVED',
+          },
+          _min: { startDate: true },
+          _max: { endDate: true },
+        });
+        if (span._min.startDate && span._max.endDate)
+          await markPayrollStale(
+            tx,
+            context.organizationId,
+            span._min.startDate,
+            span._max.endDate,
+          );
+      }
+      await this.audit.record(
+        context,
+        {
+          entityType: 'LEAVE_TYPE',
+          entityId: type.id,
+          action: 'LEAVE_TYPE_UPDATED',
+          beforeState: jsonSnapshot(before),
+          afterState: jsonSnapshot(type),
+        },
+        tx,
+      );
+      return toTypeDto(type, context.accessMode === 'NATIVE');
     });
   }
 
@@ -70,7 +155,7 @@ export class LeaveTypesService {
           where: { organizationId: context.organizationId, isActive: true },
           orderBy: { code: 'asc' },
         })
-        .then((types) => types.map((type) => toTypeDto(type))),
+        .then((types) => types.map((type) => toTypeDto(type, context.accessMode === 'NATIVE'))),
     );
   }
 
@@ -92,6 +177,12 @@ export class LeaveTypesService {
           annualAllowance: input.annualAllowance,
           monthlyAccrual: input.monthlyAccrual,
           carryoverLimit: input.carryoverLimit,
+          prorateForJoiners: input.prorateForJoiners,
+          sandwichOffDays: input.sandwichOffDays,
+          encashable: input.encashable,
+          maxEncashDays: input.maxEncashDays,
+          isCompOff: input.isCompOff,
+          compOffExpiryDays: input.compOffExpiryDays,
           requiresAttachment: input.requiresAttachment,
         },
         update: {
@@ -101,6 +192,12 @@ export class LeaveTypesService {
           annualAllowance: input.annualAllowance,
           monthlyAccrual: input.monthlyAccrual,
           carryoverLimit: input.carryoverLimit,
+          prorateForJoiners: input.prorateForJoiners,
+          sandwichOffDays: input.sandwichOffDays,
+          encashable: input.encashable,
+          maxEncashDays: input.maxEncashDays,
+          isCompOff: input.isCompOff,
+          compOffExpiryDays: input.compOffExpiryDays,
           requiresAttachment: input.requiresAttachment,
         },
       });
@@ -115,7 +212,7 @@ export class LeaveTypesService {
         },
         tx,
       );
-      return toTypeDto(type);
+      return toTypeDto(type, context.accessMode === 'NATIVE');
     });
   }
 
@@ -171,7 +268,7 @@ export class LeaveTypesService {
       });
       const balancesProvisioned = await provisionBalancesForAll(
         tx,
-        context.organizationId,
+        context,
         employees.map((employee) => employee.id),
         type,
         settings.leaveYearStartMonth,
@@ -190,7 +287,7 @@ export class LeaveTypesService {
       return {
         id: assignment.id,
         branch: assignment.branch,
-        leaveType: toTypeDto(assignment.leaveType),
+        leaveType: toTypeDto(assignment.leaveType, context.accessMode === 'NATIVE'),
         assignedEmployeeCount: employees.length,
         balancesProvisioned,
       };
@@ -220,9 +317,39 @@ export class LeaveTypesService {
       return assignments.map((assignment) => ({
         id: assignment.id,
         branch: assignment.branch,
-        leaveType: toTypeDto(assignment.leaveType),
+        leaveType: toTypeDto(assignment.leaveType, context.accessMode === 'NATIVE'),
         assignedEmployeeCount,
       }));
     });
   }
+}
+
+/**
+ * Two leave types with one name are indistinguishable wherever an employee picks one, and a code
+ * already in use would fail at the database. Both are refused with a sentence instead.
+ */
+async function assertTypeIsNew(
+  tx: TenantTransaction,
+  organizationId: string,
+  name: string,
+  code: string | null,
+  exceptId?: string,
+) {
+  const clash = await tx.leaveType.findFirst({
+    where: {
+      organizationId,
+      ...(exceptId ? { id: { not: exceptId } } : {}),
+      OR: [
+        { name: { equals: name.trim(), mode: 'insensitive' } },
+        ...(code ? [{ code: code.trim().toUpperCase() }] : []),
+      ],
+    },
+    select: { name: true, code: true },
+  });
+  if (!clash) return;
+  throw new ConflictError(
+    code && clash.code === code.trim().toUpperCase()
+      ? `The code ${clash.code} is already used by ${clash.name}.`
+      : `A leave type called ${clash.name} already exists.`,
+  );
 }

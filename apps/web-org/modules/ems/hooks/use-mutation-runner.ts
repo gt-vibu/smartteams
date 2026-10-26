@@ -20,15 +20,28 @@ export function useMutationRunner(refetch: () => Promise<unknown>) {
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const run = useCallback(
-    async (operation: () => Promise<unknown>, fallbackMessage: string) => {
+    async (
+      operation: () => Promise<unknown>,
+      fallbackMessage: string,
+      successMessage = 'Changes saved.',
+    ) => {
       setSaving(true);
       setSaveError(null);
       try {
         await operation();
         await refetch();
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(
+            new CustomEvent('ems:feedback', { detail: { tone: 'success', message: successMessage } }),
+          );
+        }
         return true;
       } catch (caught) {
-        setSaveError(caught instanceof Error ? caught.message : fallbackMessage);
+        const message = caught instanceof Error ? caught.message : fallbackMessage;
+        setSaveError(message);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('ems:feedback', { detail: { tone: 'error', message } }));
+        }
         await refetch();
         return false;
       } finally {

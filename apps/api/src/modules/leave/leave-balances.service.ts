@@ -1,3 +1,4 @@
+import { leaveBalancePage, type BalancePageFilters } from './leave-balance-page';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma/client';
 import { LeaveBalanceTransactionType } from '../../generated/prisma/enums';
@@ -25,6 +26,11 @@ export class LeaveBalancesService {
     private readonly database: TenantDatabaseService,
     private readonly audit: AuditService,
   ) {}
+
+  listPage(context: DomainContext, filters: BalancePageFilters) {
+    requirePermission(context, 'leave.balances.read');
+    return this.database.run(context, (tx) => leaveBalancePage(tx, context, filters));
+  }
 
   async listBalances(context: DomainContext, requestedEmployeeId?: string) {
     requirePermission(context, 'leave.balances.read');
@@ -75,7 +81,7 @@ export class LeaveBalancesService {
         for (const branchId of branchIds)
           await provisionAssignedBalances(
             tx,
-            context.organizationId,
+            context,
             employee.id,
             branchId,
             settings.leaveYearStartMonth,
@@ -86,9 +92,14 @@ export class LeaveBalancesService {
           organizationId: context.organizationId,
           employeeId,
           ...(context.branchId ? { employee: employeeScope(context) } : {}),
-          ...(context.branchId
-            ? { leaveType: { policyAssignments: { some: { branchId: context.branchId } } } }
-            : {}),
+          leaveType: {
+            ...(context.branchId
+              ? { policyAssignments: { some: { branchId: context.branchId } } }
+              : {}),
+            // A deactivated type is no longer offered, so its balance card goes too. Federation
+            // keeps reading every balance, as its contract always has.
+            ...(context.accessMode === 'NATIVE' ? { isActive: true } : {}),
+          },
         },
         include: { leaveType: true },
         orderBy: [{ employeeId: 'asc' }, { periodStart: 'desc' }],

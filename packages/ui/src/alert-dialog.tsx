@@ -4,13 +4,14 @@ import * as React from 'react';
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import { buttonVariants } from './button';
 import { cn } from './cn';
+import { withBackToClose } from './use-back-to-close';
 
 /**
  * Radix's AlertDialog differs from Dialog in exactly the way a confirmation should: it is
  * `role="alertdialog"`, it traps focus on the confirm/cancel pair, and it cannot be dismissed
  * by clicking the overlay — a destructive action must be answered deliberately.
  */
-const AlertDialog = AlertDialogPrimitive.Root;
+const AlertDialog = withBackToClose(AlertDialogPrimitive.Root);
 const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
 const AlertDialogPortal = AlertDialogPrimitive.Portal;
 

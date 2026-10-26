@@ -30,6 +30,10 @@ export class TimesheetsService {
     return this.periods.list(...args);
   }
 
+  listPage(...args: Parameters<TimesheetPeriodsService['listPage']>) {
+    return this.periods.listPage(...args);
+  }
+
   createPeriod(...args: Parameters<TimesheetPeriodsService['createPeriod']>) {
     return this.periods.createPeriod(...args);
   }

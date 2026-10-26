@@ -24,6 +24,10 @@ export function EmployeeProfilePanel() {
     checkIn,
     checkOut,
     saving,
+    loading: attendanceLoading,
+    saveError,
+    canWrite,
+    hasNoEmployeeRecord,
   } = useAttendance();
   const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -38,6 +42,7 @@ export function EmployeeProfilePanel() {
   const isCheckedIn = isMounted && checkedIn;
 
   const handleToggleAttendance = () => {
+    if (saving || !canWrite || hasNoEmployeeRecord) return;
     if (checkedIn) {
       void checkOut();
     } else if (canCheckInAgain) {
@@ -127,7 +132,7 @@ export function EmployeeProfilePanel() {
           </div>
 
           {/* Timestamp-derived live timer or completed day duration */}
-          <div className="text-xl font-bold font-mono tracking-wider text-slate-800 dark:text-white">
+          <div className="text-xl font-bold tabular-nums tracking-wider text-slate-800 dark:text-white">
             {isMounted
               ? `${timerDisplay.hrs} : ${timerDisplay.mins} : ${timerDisplay.secs}`
               : '00 : 00 : 00'}
@@ -151,22 +156,45 @@ export function EmployeeProfilePanel() {
             <Button
               variant={isCheckedIn ? 'outline' : 'default'}
               size="sm"
-              disabled={saving}
+              disabled={
+                attendanceLoading ||
+                saving ||
+                !canWrite ||
+                hasNoEmployeeRecord ||
+                (!isCheckedIn && !canCheckInAgain)
+              }
               onClick={handleToggleAttendance}
               className={`w-full py-1.5 px-3 rounded text-xs font-semibold shadow-xs transition-colors cursor-pointer ${
                 isCheckedIn
                   ? 'bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60'
-                  : 'bg-slate-900 hover:bg-slate-800 text-white font-bold'
+                  : 'bg-primary hover:bg-primary/90 text-primary-foreground font-bold'
               }`}
             >
-              {saving
-                ? 'Processing...'
-                : isCheckedIn
-                  ? 'Check out'
-                  : isDayCompleted
-                    ? 'Check in again'
-                    : 'Check in'}
+              {attendanceLoading
+                ? 'Loading attendance…'
+                : saving
+                  ? 'Processing...'
+                  : isCheckedIn
+                    ? 'Check out'
+                    : isDayCompleted
+                      ? 'Check in again'
+                      : 'Check in'}
             </Button>
+          )}
+          {saveError && (
+            <p className="w-full text-left text-[11px] font-medium text-destructive" role="alert">
+              {saveError}
+            </p>
+          )}
+          {!saveError && hasNoEmployeeRecord && (
+            <p className="w-full text-left text-[11px] text-muted-foreground" role="status">
+              Attendance is unavailable because this account is not linked to an employee record.
+            </p>
+          )}
+          {!saveError && !hasNoEmployeeRecord && !canWrite && (
+            <p className="w-full text-left text-[11px] text-muted-foreground" role="status">
+              Your account does not have permission to record attendance.
+            </p>
           )}
         </div>
 

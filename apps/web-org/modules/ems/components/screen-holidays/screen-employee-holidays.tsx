@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { formatDate } from '@smarteam/contracts';
 import {
   Badge,
   Button,
@@ -22,7 +23,7 @@ function formatHolidayDate(dateStr: string) {
   try {
     const d = new Date(dateStr.slice(0, 10) + 'T00:00:00');
     return {
-      formatted: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      formatted: formatDate(dateStr),
       dayName: d.toLocaleDateString('en-US', { weekday: 'short' }),
     };
   } catch {
@@ -35,7 +36,7 @@ interface UnifiedHolidayItem {
   holidayDate: string;
   name: string;
   isOptional: boolean;
-  typeLabel: 'Public Holiday' | 'Optional Holiday';
+  typeLabel: 'Public holiday' | 'Restricted holiday';
   statusLabel: 'Required' | 'Selected' | 'Available';
   isSelected: boolean;
 }
@@ -51,6 +52,7 @@ export function ScreenEmployeeHolidays() {
   const currentYearNum = Number.parseInt(employeeHolidays.year, 10) || new Date().getFullYear();
 
   const [typeFilter, setTypeFilter] = useState<'ALL' | 'PUBLIC' | 'OPTIONAL'>('ALL');
+  const [monthFilter, setMonthFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'REQUIRED' | 'AVAILABLE' | 'SELECTED'>(
     'ALL',
   );
@@ -83,7 +85,7 @@ export function ScreenEmployeeHolidays() {
       holidayDate: h.holidayDate,
       name: h.name,
       isOptional: false,
-      typeLabel: 'Public Holiday',
+      typeLabel: 'Public holiday',
       statusLabel: 'Required',
       isSelected: false,
     }));
@@ -95,7 +97,7 @@ export function ScreenEmployeeHolidays() {
         holidayDate: h.holidayDate,
         name: h.name,
         isOptional: true,
-        typeLabel: 'Optional Holiday',
+        typeLabel: 'Restricted holiday',
         statusLabel: isSelected ? 'Selected' : 'Available',
         isSelected,
       };
@@ -118,10 +120,11 @@ export function ScreenEmployeeHolidays() {
       if (statusFilter === 'REQUIRED' && item.statusLabel !== 'Required') return false;
       if (statusFilter === 'AVAILABLE' && item.statusLabel !== 'Available') return false;
       if (statusFilter === 'SELECTED' && item.statusLabel !== 'Selected') return false;
+      if (monthFilter !== 'ALL' && item.holidayDate.slice(5, 7) !== monthFilter) return false;
 
       return true;
     });
-  }, [unifiedHolidays, typeFilter, statusFilter]);
+  }, [unifiedHolidays, typeFilter, statusFilter, monthFilter]);
 
   const handleConfirmApply = async () => {
     if (!holidayToApply) return;
@@ -135,15 +138,22 @@ export function ScreenEmployeeHolidays() {
     <div className="flex w-full flex-col">
       {/* Context Top Header */}
       <div className="sticky top-[var(--ems-context-bar-height)] z-20 border-b border-border bg-card/95 px-4 backdrop-blur sm:px-6 py-3">
-        <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
-          <div>
-            <h2 className="text-sm font-bold text-foreground">Holiday Calendar</h2>
-            <p className="text-xs text-muted-foreground">
-              Official company holiday calendar and your applicable optional holidays for{' '}
-              {employeeHolidays.year}.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-sm font-bold text-foreground">Holiday calendar</h2>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <Select
+              aria-label="Filter holidays by month"
+              value={monthFilter}
+              onChange={(event) => setMonthFilter(event.target.value)}
+              className="h-8 w-28 text-xs"
+            >
+              <option value="ALL">All months</option>
+              {Array.from({ length: 12 }, (_, index) => (
+                <option key={index + 1} value={String(index + 1).padStart(2, '0')}>
+                  {new Date(2020, index, 1).toLocaleDateString('en', { month: 'long' })}
+                </option>
+              ))}
+            </Select>
             <Button
               size="sm"
               variant="outline"
@@ -169,74 +179,81 @@ export function ScreenEmployeeHolidays() {
 
       <PageShell>
         <div className="space-y-4">
-          {/* Top Summary Metric Banner */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="rounded-lg border border-border bg-card p-3.5 flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary">
-                <Calendar className="h-4 w-4" />
+          {/* The totals matter only when there are optional holidays to choose; otherwise the
+              list below already says everything. */}
+          {employeeHolidays.allowance > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="rounded-lg border border-border bg-card p-3.5 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/10 text-primary">
+                  <Calendar className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-muted-foreground">Public Holidays</p>
+                  <p className="text-lg font-bold text-foreground">
+                    {employeeHolidays.mandatoryHolidays.length}{' '}
+                    {employeeHolidays.mandatoryHolidays.length === 1 ? 'day' : 'days'}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-[11px] font-medium text-muted-foreground">Public Holidays</p>
-                <p className="text-lg font-bold text-foreground">
-                  {employeeHolidays.mandatoryHolidays.length} Days
-                </p>
-              </div>
-            </div>
 
-            <div className="rounded-lg border border-border bg-card p-3.5 flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                <Sparkles className="h-4 w-4" />
+              <div className="rounded-lg border border-border bg-card p-3.5 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                  <Sparkles className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-muted-foreground">
+                    Optional Allowance
+                  </p>
+                  <p className="text-lg font-bold text-foreground">
+                    {employeeHolidays.selectedCount} / {employeeHolidays.allowance} Chosen
+                    <span className="text-xs font-normal text-muted-foreground ml-1">
+                      ({employeeHolidays.remainingAllowance} remaining)
+                    </span>
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-[11px] font-medium text-muted-foreground">Optional Allowance</p>
-                <p className="text-lg font-bold text-foreground">
-                  {employeeHolidays.selectedCount} / {employeeHolidays.allowance} Chosen
-                  <span className="text-xs font-normal text-muted-foreground ml-1">
-                    ({employeeHolidays.remainingAllowance} remaining)
-                  </span>
-                </p>
-              </div>
-            </div>
 
-            <div className="rounded-lg border border-border bg-card p-3.5 flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-success/10 text-success">
-                <CheckCircle2 className="h-4 w-4" />
-              </div>
-              <div>
-                <p className="text-[11px] font-medium text-muted-foreground">
-                  Total Holiday Benefit
-                </p>
-                <p className="text-lg font-bold text-foreground">
-                  {employeeHolidays.mandatoryHolidays.length + employeeHolidays.selectedCount} Days
-                </p>
+              <div className="rounded-lg border border-border bg-card p-3.5 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-md bg-success/10 text-success">
+                  <CheckCircle2 className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-muted-foreground">
+                    Total Holiday Benefit
+                  </p>
+                  <p className="text-lg font-bold text-foreground">
+                    {employeeHolidays.mandatoryHolidays.length + employeeHolidays.selectedCount}{' '}
+                    days
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Compact Filter Bar */}
           <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-            <div className="flex items-center gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
               <Select
                 value={typeFilter}
                 onChange={(e) => setTypeFilter(e.target.value as typeof typeFilter)}
-                className="w-36 text-xs h-8"
+                className="h-8 min-w-0 flex-1 text-xs sm:w-36 sm:flex-none"
               >
-                <option value="ALL">All Types</option>
-                <option value="PUBLIC">Public Holidays</option>
-                <option value="OPTIONAL">Optional Holidays</option>
+                <option value="ALL">All types</option>
+                <option value="PUBLIC">Public holidays</option>
+                <option value="OPTIONAL">Restricted holidays</option>
               </Select>
               <Select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-                className="w-36 text-xs h-8"
+                className="h-8 min-w-0 flex-1 text-xs sm:w-36 sm:flex-none"
               >
-                <option value="ALL">All Statuses</option>
+                <option value="ALL">All statuses</option>
                 <option value="REQUIRED">Required</option>
                 <option value="AVAILABLE">Available</option>
                 <option value="SELECTED">Selected</option>
               </Select>
             </div>
-            <span className="text-xs text-muted-foreground font-mono">
+            <span className="text-xs text-muted-foreground">
               {filteredHolidays.length} holiday{filteredHolidays.length === 1 ? '' : 's'}
             </span>
           </div>
@@ -286,18 +303,23 @@ export function ScreenEmployeeHolidays() {
                         className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors"
                       >
                         <td
+                          data-bare=""
                           data-label="Date"
-                          className="px-4 py-3 font-mono font-medium text-foreground"
+                          className="px-4 py-3 font-medium text-foreground"
                         >
                           {formatted}
                         </td>
-                        <td data-label="Day" className="px-4 py-3 text-muted-foreground">
+                        <td
+                          data-bare=""
+                          data-label="Day"
+                          className="px-4 py-3 text-muted-foreground"
+                        >
                           {dayName}
                         </td>
                         <td data-cell="primary" className="px-4 py-3 font-semibold text-foreground">
                           {item.name}
                         </td>
-                        <td data-label="Type" className="px-4 py-3">
+                        <td data-bare="" data-label="Type" className="px-4 py-3">
                           <Badge
                             variant={item.isOptional ? 'outline' : 'secondary'}
                             className={`text-[10px] font-medium ${
@@ -309,7 +331,7 @@ export function ScreenEmployeeHolidays() {
                             {item.typeLabel}
                           </Badge>
                         </td>
-                        <td data-label="Status" className="px-4 py-3">
+                        <td data-bare="" data-label="Status" className="px-4 py-3">
                           {conflicts.get(item.id) && (
                             <span
                               className={`mb-1 block w-fit rounded-full border px-2 py-0.5 text-[10px] font-semibold ${HOLIDAY_CONFLICT_PILL[conflicts.get(item.id)!.tone]}`}
@@ -334,7 +356,10 @@ export function ScreenEmployeeHolidays() {
                             </span>
                           )}
                         </td>
-                        <td data-cell="actions" className="px-4 py-3 text-right">
+                        <td
+                          data-cell="actions"
+                          className={`px-4 py-3 text-right ${item.isOptional ? '' : 'hidden md:table-cell'}`}
+                        >
                           {!item.isOptional && (
                             <span className="text-muted-foreground font-mono">—</span>
                           )}
@@ -395,14 +420,16 @@ export function ScreenEmployeeHolidays() {
       >
         <DialogContent className="max-w-md gap-0 p-0">
           <DialogHeader className="border-b border-border px-5 py-4">
-            <DialogTitle className="text-sm font-semibold">Apply for Optional Holiday</DialogTitle>
+            <DialogTitle className="text-sm font-semibold">
+              Apply for restricted holiday
+            </DialogTitle>
           </DialogHeader>
 
           {holidayToApply && (
             <div className="space-y-3 p-5 text-xs">
               <div className="rounded-md border border-border bg-muted/20 p-3 space-y-1">
                 <p className="font-semibold text-foreground text-sm">{holidayToApply.name}</p>
-                <p className="font-mono text-muted-foreground">
+                <p className="tabular-nums text-muted-foreground">
                   {formatHolidayDate(holidayToApply.holidayDate).formatted} (
                   {formatHolidayDate(holidayToApply.holidayDate).dayName})
                 </p>

@@ -1,5 +1,5 @@
-import { PayrollRunStatus } from '../../generated/prisma/enums';
 import type { Prisma } from '../../generated/prisma/client';
+import { PayrollRunStatus } from '../../generated/prisma/enums';
 
 /**
  * Marks a calculated payroll run as needing recalculation when one of its inputs changes.
@@ -30,7 +30,7 @@ export async function markPayrollStale(
   const result = await tx.payrollRun.updateMany({
     where: {
       organizationId,
-      status: PayrollRunStatus.CALCULATED,
+      status: { in: [PayrollRunStatus.CALCULATED, PayrollRunStatus.APPROVED] },
       calculationStaleAt: null,
       // Overlap, not containment: a change on any day the run covers invalidates it.
       periodStart: { lte: to ?? new Date('9999-12-31') },

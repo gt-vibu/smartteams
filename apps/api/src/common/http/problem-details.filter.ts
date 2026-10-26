@@ -9,6 +9,7 @@ import {
 import type { Request, Response } from 'express';
 import { DomainError } from '../errors/domain-error';
 import { RequestContextStore } from '../context/request-context';
+import { redactSensitiveText, safeRequestPath } from './logging-safety';
 
 @Catch()
 export class ProblemDetailsFilter implements ExceptionFilter {
@@ -20,10 +21,12 @@ export class ProblemDetailsFilter implements ExceptionFilter {
     const response = host.switchToHttp().getResponse<Response>();
     const request = host.switchToHttp().getRequest<Request>();
     const context = this.contexts.get();
+    const requestPath = safeRequestPath(request.originalUrl);
     if (!(exception instanceof HttpException)) {
+      const details =
+        exception instanceof Error ? (exception.stack ?? exception.message) : exception;
       this.logger.error(
-        exception instanceof Error ? (exception.stack ?? exception.message) : exception,
-        `${request.method} ${request.originalUrl}`,
+        `Unhandled request error for ${request.method} ${requestPath}: ${redactSensitiveText(String(details))}`,
       );
     }
     const status =
@@ -39,7 +42,7 @@ export class ProblemDetailsFilter implements ExceptionFilter {
       title: HttpStatus[status] ?? 'Error',
       status,
       detail: message,
-      instance: request.originalUrl,
+      instance: requestPath,
       code,
       meta: {
         requestId: context?.requestId,

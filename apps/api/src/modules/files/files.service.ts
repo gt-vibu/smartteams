@@ -12,13 +12,7 @@ import { FilesUploadService } from './files-upload.service';
 
 export { toFileDto } from './files-shared';
 
-/**
- * The files module's entry point.
- *
- * Upload is a handshake — presign, then verify what landed — while reading and deleting are a
- * different concern with different authorization. They are two services now; this forwards to
- * them with the same constructor Nest and the specs already use.
- */
+/** Entry point for native and federation file operations. */
 @Injectable()
 export class FilesService {
   private readonly access: FilesAccessService;
@@ -39,8 +33,13 @@ export class FilesService {
     return this.uploads.beginUpload(...args);
   }
 
-  completeUpload(context: DomainContext, fileId: string, employeeId?: string) {
-    return this.uploads.completeUpload(context, fileId, employeeId);
+  completeUpload(
+    context: DomainContext,
+    fileId: string,
+    employeeId?: string,
+    purpose?: FilePurpose | FilePurpose[],
+  ) {
+    return this.uploads.completeUpload(context, fileId, employeeId, purpose);
   }
 
   list(
@@ -50,8 +49,17 @@ export class FilesService {
     return this.access.list(context, filters);
   }
 
-  download(context: DomainContext, fileId: string) {
-    return this.access.download(context, fileId);
+  listEmployeeDocuments(context: DomainContext, employeeId: string) {
+    return this.access.listEmployeeDocuments(context, employeeId);
+  }
+
+  download(
+    context: DomainContext,
+    fileId: string,
+    employeeId?: string,
+    purpose?: FilePurpose | FilePurpose[],
+  ) {
+    return this.access.download(context, fileId, employeeId, purpose);
   }
 
   softDelete(...args: Parameters<FilesAccessService['softDelete']>) {

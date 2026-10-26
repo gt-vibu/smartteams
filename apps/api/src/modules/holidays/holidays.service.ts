@@ -7,12 +7,15 @@ import {
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
+import { dateOnly, toEmployeePolicyDto, toHolidayDto } from './holidays-shared';
 import type {
   HolidayQueryDto,
   HolidaySelectionsQueryDto,
   UpdateHolidaySettingsDto,
   UpsertEmployeeHolidayPolicyDto,
 } from './holidays.dto';
+
+export { dateOnly };
 
 /**
  * Holiday management.
@@ -63,7 +66,8 @@ export class HolidaysService {
   async create(context: DomainContext, input: HolidayInput) {
     requirePermission(context, 'organizations.update');
     const holidayDate = dateOnly(input.holidayDate);
-    if (!input.name.trim()) throw new ConflictError('A holiday requires a name');
+    const cleanName = input.name.trim();
+    if (!cleanName) throw new ConflictError('A holiday requires a name');
     const branchId = context.branchId ?? input.branchId;
     return this.database.run(context, async (tx) => {
       if (
@@ -81,12 +85,13 @@ export class HolidaysService {
         },
       });
       if (existing) throw new ConflictError('A holiday already exists on that date for this scope');
+
       const holiday = await tx.holiday.create({
         data: {
           organizationId: context.organizationId,
           branchId: branchId ?? null,
           holidayDate,
-          name: input.name.trim(),
+          name: cleanName,
           isOptional: input.isOptional ?? false,
           sourceAccessMode: context.accessMode,
         },
@@ -102,6 +107,47 @@ export class HolidaysService {
         tx,
       );
       return toHolidayDto(holiday);
+    });
+  }
+
+  /**
+   * Seeds default national holiday templates for India.
+   */
+  async seedIndiaNationalHolidays(context: DomainContext, year: number, branchId?: string) {
+    requirePermission(context, 'organizations.update');
+    const nationalHolidays = [
+      { name: 'Republic Day', holidayDate: `${year}-01-26`, isOptional: false },
+      { name: 'May Day / Labor Day', holidayDate: `${year}-05-01`, isOptional: true },
+      { name: 'Independence Day', holidayDate: `${year}-08-15`, isOptional: false },
+      { name: 'Mahatma Gandhi Jayanti', holidayDate: `${year}-10-02`, isOptional: false },
+      { name: 'Christmas Day', holidayDate: `${year}-12-25`, isOptional: false },
+    ];
+    return this.database.run(context, async (tx) => {
+      const results = [];
+      for (const item of nationalHolidays) {
+        const date = dateOnly(item.holidayDate);
+        const existing = await tx.holiday.findFirst({
+          where: {
+            organizationId: context.organizationId,
+            branchId: branchId ?? null,
+            holidayDate: date,
+          },
+        });
+        if (!existing) {
+          const created = await tx.holiday.create({
+            data: {
+              organizationId: context.organizationId,
+              branchId: branchId ?? null,
+              holidayDate: date,
+              name: item.name,
+              isOptional: item.isOptional,
+              sourceAccessMode: context.accessMode,
+            },
+          });
+          results.push(toHolidayDto(created));
+        }
+      }
+      return results;
     });
   }
 
@@ -334,6 +380,19 @@ export class HolidaysService {
     input: UpsertEmployeeHolidayPolicyDto,
   ) {
     requirePermission(context, 'organizations.update');
+    if (input.allowanceOverride !== null && input.allowanceOverride !== undefined) {
+      if (input.allowanceOverride < 0) {
+        throw new ConflictError('Allowance override cannot be negative');
+      }
+      if (
+        input.restrictedHolidayIds.length > 0 &&
+        input.allowanceOverride > input.restrictedHolidayIds.length
+      ) {
+        throw new ConflictError(
+          'Allowance override cannot exceed the number of assigned restricted holidays',
+        );
+      }
+    }
     return this.database.run(context, async (tx) => {
       // Validate that the employee belongs to this org
       const employee = await tx.employee.findFirst({
@@ -413,67 +472,4 @@ export class HolidaysService {
       return { deleted: true };
     });
   }
-}
-
-/** Matches the date handling the rest of the backend uses for `@db.Date` columns. */
-export function dateOnly(value: string) {
-  const dateValue = value.slice(0, 10);
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateValue);
-  if (!match) throw new ConflictError('Invalid calendar date');
-  const date = new Date(`${dateValue}T00:00:00.000Z`);
-  if (
-    date.getUTCFullYear() !== Number(match[1]) ||
-    date.getUTCMonth() + 1 !== Number(match[2]) ||
-    date.getUTCDate() !== Number(match[3])
-  )
-    throw new ConflictError('Invalid calendar date');
-  return date;
-}
-
-function toHolidayDto(holiday: {
-  id: string;
-  organizationId: string;
-  branchId: string | null;
-  holidayDate: Date;
-  name: string;
-  isOptional: boolean;
-  isActive: boolean;
-}) {
-  return {
-    id: holiday.id,
-    organizationId: holiday.organizationId,
-    branchId: holiday.branchId,
-    holidayDate: holiday.holidayDate.toISOString().slice(0, 10),
-    name: holiday.name,
-    isOptional: holiday.isOptional,
-    isActive: holiday.isActive,
-  };
-}
-
-function toEmployeePolicyDto(policy: {
-  id: string;
-  organizationId: string;
-  employeeId: string;
-  allowanceOverride: number | null;
-  restrictedHolidayIds: string[];
-  createdAt: Date;
-  updatedAt: Date;
-  employee: {
-    id: string;
-    employeeNumber: string;
-    firstName: string;
-    lastName: string;
-    workEmail: string | null;
-  };
-}) {
-  return {
-    id: policy.id,
-    organizationId: policy.organizationId,
-    employeeId: policy.employeeId,
-    allowanceOverride: policy.allowanceOverride,
-    restrictedHolidayIds: policy.restrictedHolidayIds,
-    createdAt: policy.createdAt.toISOString(),
-    updatedAt: policy.updatedAt.toISOString(),
-    employee: policy.employee,
-  };
 }

@@ -84,7 +84,8 @@ const SERVER_STATE_PATHS = [
   'components/organization/org-profile-panel.tsx',
   'components/organization/org-branches-panel.tsx',
   'repositories/files.repository.ts',
-  'hooks/use-files.ts',
+  'repositories/documents.repository.ts',
+  'hooks/use-documents.ts',
   'components/screen-files/screen-files.tsx',
   'repositories/holidays.repository.ts',
   'hooks/use-holidays.ts',
@@ -111,15 +112,14 @@ function sourceFiles(dir: string, found: string[] = []): string[] {
 
 describe('retired fixtures stay retired', () => {
   const files = sourceFiles(MODULE_ROOT);
+  const fileContents = files.map((file) => ({
+    rel: relative(MODULE_ROOT, file),
+    text: code(readFileSync(file, 'utf8')),
+  }));
 
   it.each(RETIRED_FIXTURES)('no runtime file imports %s', (fixture) => {
-    const offenders = files
-      .filter((file) => {
-        const text = code(readFileSync(file, 'utf8'));
-        // Only import statements count; a mention in a comment explaining the removal is fine.
-        return new RegExp(`from '[^']*${fixture.replace('.', '\\.')}'`).test(text);
-      })
-      .map((file) => relative(MODULE_ROOT, file));
+    const pattern = new RegExp(`from '[^']*${fixture.replace('.', '\\.')}'`);
+    const offenders = fileContents.filter(({ text }) => pattern.test(text)).map(({ rel }) => rel);
 
     expect(offenders).toEqual([]);
   });
@@ -135,7 +135,8 @@ describe('retired fixtures stay retired', () => {
  */
 describe('no component seeds its state with records', () => {
   it('no runtime file initialises state with an array of objects', () => {
-    const offenders = sourceFiles(MODULE_ROOT)
+    const files = sourceFiles(MODULE_ROOT);
+    const offenders = files
       .filter((file) => /useState(<[^()]*>)?\(\[\s*\{/.test(code(readFileSync(file, 'utf8'))))
       .map((file) => relative(MODULE_ROOT, file));
 

@@ -13,10 +13,16 @@ import {
 } from '@nestjs/common';
 import {
   AttendanceCorrectionDto,
+  AttendanceDateCorrectionDto,
   AttendanceDecisionDto,
   PunchDto,
 } from '../attendance/attendance.dto';
 import { AttendanceService } from '../attendance/attendance.service';
+import { WorkWeekDto } from '../attendance/attendance-work-week.controller';
+import {
+  AttendanceWorkWeekService,
+  type WorkWeek,
+} from '../attendance/attendance-work-week.service';
 import { parseWebauthnResponse, WebauthnService } from '../attendance/webauthn.service';
 import { ShiftsService } from '../shifts/shifts.service';
 import { FederationAuthGuard } from './federation-auth.guard';
@@ -41,6 +47,7 @@ import { FederatedEmployeeService } from './federated-employee.service';
 export class FederationAttendanceController {
   constructor(
     private readonly attendance: AttendanceService,
+    private readonly workWeek: AttendanceWorkWeekService,
     private readonly webauthn: WebauthnService,
     private readonly shifts: ShiftsService,
     private readonly support: FederationControllerSupport,
@@ -127,6 +134,35 @@ export class FederationAttendanceController {
     return this.attendance.getPreferences(context, context.branchId);
   }
 
+  @Get('federation/attendance/work-week')
+  @UseGuards(FederationAuthGuard)
+  async workWeekSettings(
+    @Headers('x-organization-id') organizationId: string,
+    @Req() request: FederationRequest,
+  ): Promise<WorkWeek> {
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'attendance.preferences.read',
+    );
+    return this.workWeek.get(context, 'attendance.preferences.read');
+  }
+
+  @Put('federation/attendance/work-week')
+  @UseGuards(FederationAuthGuard)
+  async updateWorkWeekSettings(
+    @Headers('x-organization-id') organizationId: string,
+    @Body() body: WorkWeekDto,
+    @Req() request: FederationRequest,
+  ): Promise<WorkWeek> {
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'attendance.preferences.write',
+    );
+    return this.workWeek.update(context, body.workWeekDays, body.unmarkedDaysAreAbsent);
+  }
+
   @Get('federation/attendance/shifts')
   @UseGuards(FederationAuthGuard)
   async shiftsList(
@@ -178,6 +214,25 @@ export class FederationAttendanceController {
       attendanceId,
       body,
     );
+  }
+
+  @Post('federation/attendance/corrections')
+  @UseGuards(FederationAuthGuard)
+  async correctionForDate(
+    @Headers('x-organization-id') organizationId: string,
+    @Body() body: AttendanceDateCorrectionDto,
+    @Headers('x-branch-id') branchId: string | undefined,
+    @Req() request: FederationRequest,
+  ) {
+    const context = await this.support.context(
+      request,
+      organizationId,
+      'attendance.corrections.write',
+      branchId,
+      body.reason,
+    );
+    const employeeId = await this.employees.internalId(context, body.employeeId);
+    return this.attendance.requestCorrectionForDate(context, employeeId, body.workDate, body);
   }
 
   @Post('federation/attendance/:correctionId/decision')

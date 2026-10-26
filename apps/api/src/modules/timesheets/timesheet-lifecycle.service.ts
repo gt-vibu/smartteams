@@ -1,17 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { AccessMode, TimesheetStatus } from '../../generated/prisma/enums';
-import {
-  requirePermission,
-  requireReason,
-  type DomainContext,
-} from '../../common/context/domain-context';
+import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, ForbiddenDomainError } from '../../common/errors/domain-error';
+import type { Prisma } from '../../generated/prisma/client';
+import { AccessMode, TimesheetStatus } from '../../generated/prisma/enums';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
-import { AuditService, jsonSnapshot } from '../audit/audit.service';
-import { markPayrollStale } from '../payroll/payroll-staleness';
-import { OutboxService } from '../federation/outbox.service';
 import { assertApprover, assertResolvableApprovers } from '../approvals/approval-authorization';
+import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { assertMayActForEmployee } from '../employees/employee-scope';
+import { OutboxService } from '../federation/outbox.service';
+import { describeDays, notify, requesterRouting, stepApprovers } from '../notifications/notify';
+import { markPayrollStale } from '../payroll/payroll-staleness';
+import { WorkingDayService } from '../shifts/working-day.service';
 
 /**
  * A timesheet's approval cycle: submit, recall, and the approver's decision.
@@ -21,11 +20,15 @@ import { assertMayActForEmployee } from '../employees/employee-scope';
  */
 @Injectable()
 export class TimesheetLifecycleService {
+  private readonly workingDays: WorkingDayService;
+
   constructor(
     private readonly database: TenantDatabaseService,
     private readonly audit: AuditService,
     private readonly outbox: OutboxService,
-  ) {}
+  ) {
+    this.workingDays = new WorkingDayService(database);
+  }
 
   async unsubmit(context: DomainContext, timesheetId: string) {
     requirePermission(context, 'timesheets.write');
@@ -129,6 +132,23 @@ export class TimesheetLifecycleService {
         employeeForPolicy?.userId,
         policy.steps,
       );
+      const period = await tx.timesheetPeriod.findUnique({
+        where: { id: timesheet.timesheetPeriodId },
+        select: { periodStart: true, periodEnd: true },
+      });
+      const expectedInfo = period
+        ? await this.workingDays.expectedHours(
+            tx,
+            context.organizationId,
+            timesheet.employeeId,
+            period.periodStart,
+            period.periodEnd,
+          )
+        : null;
+      const isUnderLogged = expectedInfo
+        ? timesheet.totalMinutes < expectedInfo.totalMinutes
+        : false;
+
       const updated = await tx.timesheet.update({
         where: { id: timesheet.id },
         data: {
@@ -145,10 +165,32 @@ export class TimesheetLifecycleService {
           entityId: timesheet.id,
           action: 'TIMESHEET_SUBMITTED',
           beforeState: jsonSnapshot(timesheet),
-          afterState: jsonSnapshot(updated),
+          afterState: jsonSnapshot({
+            ...updated,
+            expectedMinutes: expectedInfo?.totalMinutes,
+            isUnderLogged,
+          }),
         },
         tx,
       );
+      const requester = await requesterRouting(tx, context.organizationId, timesheet.employeeId);
+      const firstStep = policy.steps[0];
+      if (firstStep)
+        await notify(tx, context, {
+          recipients: await stepApprovers(
+            tx,
+            context.organizationId,
+            firstStep,
+            requester,
+            approvalBranchId,
+          ),
+          kind: 'TIMESHEET_PENDING',
+          title: 'Timesheet awaiting your approval',
+          body: `${requester.name} submitted their timesheet for ${periodLabel(await periodOf(tx, timesheet.timesheetPeriodId))}.`,
+          module: 'approvals',
+          entityType: 'TIMESHEET',
+          entityId: timesheet.id,
+        });
       return updated;
     });
   }
@@ -157,10 +199,9 @@ export class TimesheetLifecycleService {
     context: DomainContext,
     timesheetId: string,
     status: 'APPROVED' | 'REJECTED',
-    comment: string,
+    comment?: string | null,
   ) {
     requirePermission(context, 'timesheets.decide');
-    requireReason({ ...context, reason: comment }, 'Timesheet decisions require a comment');
     const approverUserId = context.actor.userId;
     if (!approverUserId) throw new ConflictError('A human approver is required');
     return this.database.run(context, async (tx) => {
@@ -237,7 +278,7 @@ export class TimesheetLifecycleService {
               approverUserId,
               approvalPolicyStepId: pendingStep?.id,
               status,
-              comment,
+              comment: comment ?? null,
             },
           },
         },
@@ -250,7 +291,7 @@ export class TimesheetLifecycleService {
           action: `TIMESHEET_${status}`,
           beforeState: jsonSnapshot(timesheet),
           afterState: jsonSnapshot(updated),
-          reason: comment,
+          reason: comment ?? '',
         },
         tx,
       );
@@ -265,7 +306,53 @@ export class TimesheetLifecycleService {
         },
         tx,
       );
+      const requester = await requesterRouting(tx, context.organizationId, timesheet.employeeId);
+      const which = periodLabel(period);
+      if (hasMoreSteps && status !== 'REJECTED') {
+        const next = timesheet.approvalPolicy.steps.find((step) => step.stepNumber > stepNumber);
+        if (next)
+          await notify(tx, context, {
+            recipients: await stepApprovers(
+              tx,
+              context.organizationId,
+              next,
+              requester,
+              timesheet.branchId ?? context.branchId,
+            ),
+            kind: 'TIMESHEET_PENDING',
+            title: 'Timesheet awaiting your approval',
+            body: `${requester.name}'s timesheet for ${which} passed the previous approval step.`,
+            module: 'approvals',
+            entityType: 'TIMESHEET',
+            entityId: timesheet.id,
+          });
+      } else {
+        const approved = status === TimesheetStatus.APPROVED;
+        await notify(tx, context, {
+          recipients: [requester.userId],
+          kind: 'TIMESHEET_DECIDED',
+          title: approved ? 'Timesheet approved' : 'Timesheet returned',
+          body: approved
+            ? `Your timesheet for ${which} was approved.`
+            : `Your timesheet for ${which} was rejected: ${comment}`,
+          module: 'timesheet',
+          entityType: 'TIMESHEET',
+          entityId: timesheet.id,
+        });
+      }
       return updated;
     });
   }
+}
+
+async function periodOf(tx: Prisma.TransactionClient, periodId: string) {
+  return tx.timesheetPeriod.findUnique({
+    where: { id: periodId },
+    select: { periodStart: true, periodEnd: true },
+  });
+}
+
+/** "1 – 30 Sept 2026", or "this period" if the period is gone. */
+function periodLabel(period: { periodStart: Date; periodEnd: Date } | null) {
+  return period ? describeDays(period.periodStart, period.periodEnd) : 'this period';
 }

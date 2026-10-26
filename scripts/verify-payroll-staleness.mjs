@@ -16,8 +16,9 @@
  */
 import { setupCall } from './lib/setup-call.mjs';
 import { weekdaysAgo } from './lib/dates.mjs';
+import { testAadhaar } from './lib/aadhaar.mjs';
 
-const BASE = 'http://localhost:4000';
+const BASE = process.env.AUTHZ_API_URL ?? 'http://localhost:4000';
 let pass = 0,
   fail = 0;
 const ok = (l, c, d = '') => {
@@ -139,6 +140,7 @@ async function tenant(tag) {
     firstName: 'Sam',
     lastName: 'Case',
     workEmail: email,
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
     dateOfJoining: '2026-01-01',
   });
@@ -293,31 +295,60 @@ await scenario('2. POST /payroll/statutory-rules — statutory rule', async (t) 
     : 'skip',
 );
 
-await scenario('3. PUT /payroll/employee-policy — employee payroll policy', async (t) => {
-  // The salary profile already wrote an open-ended employee policy; close it before adding one
-  // that starts inside the run's period, or the overlap guard refuses.
-  await t.org('PUT', '/payroll/employee-policy', {
-    employeeId: t.employeeId,
-    effectiveFrom: '2026-01-01',
-    effectiveTo: daysAgo(2),
-    payrollEnabled: true,
-    salarySlipMode: 'ENABLED',
-    pfEnabled: false,
-    esiEnabled: false,
-    ptEnabled: false,
-  });
-  const r = await t.org('PUT', '/payroll/employee-policy', {
-    employeeId: t.employeeId,
-    effectiveFrom: daysAgo(1),
-    payrollEnabled: true,
-    salarySlipMode: 'ENABLED',
-    pfEnabled: true,
-    esiEnabled: false,
-    ptEnabled: false,
-  });
-  if (!good(r)) console.log('    (employee-policy: ' + detail(r) + ')');
-  return good(r) ? 'ok' : 'skip';
-});
+await scenario(
+  '3. PUT /payroll/employee-policy — employee payroll policy',
+  async (t) => {
+    // Payroll now runs under a named policy, which an enabled employee policy must name.
+    const policies = await t.org('GET', '/payroll/policies');
+    const list = Array.isArray(policies.payload)
+      ? policies.payload
+      : (policies.payload?.items ?? []);
+    const payrollPolicyId = list[0]?.id;
+    // The salary profile already wrote an open-ended employee policy; close it before adding one
+    // that starts inside the run's period, or the overlap guard refuses.
+    await t.org('PUT', '/payroll/employee-policy', {
+      employeeId: t.employeeId,
+      effectiveFrom: '2026-01-01',
+      effectiveTo: daysAgo(2),
+      payrollEnabled: true,
+      payrollPolicyId,
+      salarySlipMode: 'ENABLED',
+      pfEnabled: false,
+      esiEnabled: false,
+      ptEnabled: false,
+    });
+    const r = await t.org('PUT', '/payroll/employee-policy', {
+      employeeId: t.employeeId,
+      effectiveFrom: daysAgo(1),
+      payrollEnabled: true,
+      payrollPolicyId,
+      salarySlipMode: 'ENABLED',
+      pfEnabled: true,
+      esiEnabled: false,
+      ptEnabled: false,
+    });
+    if (!good(r)) console.log('    (employee-policy: ' + detail(r) + ')');
+    return good(r) ? 'ok' : 'skip';
+  },
+  {
+    // A named payroll policy to enrol the employee in, saved before the run is calculated so the
+    // only change the run sees afterwards is the employee policy itself.
+    setup: (t) =>
+      t.org('PUT', '/payroll/policy', {
+        effectiveFrom: '2026-01-01',
+        payrollDayBasis: 30,
+        basePercentage: 50,
+        baseMinimum: 15000,
+        hraPercentage: 40,
+        roundingMode: 'HALF_UP',
+        salarySlipDefault: true,
+        payrollEnabledDefault: true,
+        pfDefault: false,
+        esiDefault: false,
+        ptDefault: false,
+      }),
+  },
+);
 
 await scenario('4. POST /payroll/components/assignments — pay component', async (t) => {
   const c = await t.org('POST', '/payroll/components', {
@@ -742,6 +773,105 @@ console.log('\n=== ISOLATION AND SCOPING ===');
       : 'setup skipped (calc ' + calcPast.status + ', derive ' + red.status + ')',
   );
 }
+
+// A recalculation first unwinds what the run recovered, then recovers again. It read the
+// outstanding advances before unwinding, so an advance this run had recovered in full was left
+// out, then marked unrecovered: the money was never taken back.
+await scenario(
+  '13. an advance recovered in full stays recovered through a recalculation',
+  async (t, runId) =>
+    good(
+      await t.org('POST', '/payroll/runs/' + runId + '/adjustments', {
+        payrollRunId: runId,
+        employeeId: t.employeeId,
+        type: 'BONUS',
+        amount: 100,
+        description: 'forces a recalculation',
+        taxable: false,
+      }),
+    )
+      ? 'ok'
+      : 'skip',
+  {
+    setup: async (t) => {
+      const a = await t.org('POST', '/payroll/advances', {
+        employeeId: t.employeeId,
+        requestedAmount: 1000,
+        reason: 'recovered before the recalculation',
+      });
+      await t.org('POST', '/payroll/advances/' + a.payload?.id + '/decision', {
+        status: 'APPROVED',
+        comment: 'approved before the first calculation',
+      });
+    },
+    after: async (t) => {
+      const list = rows(
+        (await t.org('GET', '/payroll/advances?employeeId=' + t.employeeId)).payload,
+      );
+      const advance = list.find((row) => row.reason === 'recovered before the recalculation');
+      ok(
+        'the advance is still recovered in full',
+        advance?.status === 'RECOVERED' && Number(advance?.recoveredAmount) === 1000,
+        advance ? advance.status + ' ' + advance.recoveredAmount : 'advance not found',
+      );
+    },
+  },
+);
+
+// Paid or unpaid decides what payroll deducts for a leave day, and payroll reads it from the type
+// when it calculates. Switching a type after a run was calculated left the run's figures as they
+// were, so it could be approved paying the day in full.
+const reviewOf = async (t) => {
+  const review = await t.org('GET', '/payroll/runs/' + t.runId + '/review');
+  return review.payload?.items?.find((item) => item.employeeId === t.employeeId)?.breakdown;
+};
+await scenario(
+  '14. a leave type switched from paid to unpaid',
+  async (t) => {
+    t.paidBefore = (await reviewOf(t))?.paidLeaveDays;
+    const r = await t.org('PATCH', '/leave/types/' + t.switchType.id, {
+      name: t.switchType.name,
+      paid: false,
+      accrualType: 'FIXED_ANNUAL',
+      annualAllowance: 10,
+      requiresAttachment: false,
+    });
+    return good(r) ? 'ok' : 'skip';
+  },
+  {
+    setup: async (t) => {
+      const type = await t.org('POST', '/leave/types', {
+        code: 'SWITCH',
+        name: 'Switchable Leave',
+        paid: true,
+        accrualType: 'FIXED_ANNUAL',
+        annualAllowance: 10,
+        requiresAttachment: false,
+      });
+      t.switchType = type.payload;
+      await t.org('POST', '/leave/types/SWITCH/assign', { branchId: t.branchId });
+      const leave = await t.org('POST', '/leave/requests', {
+        employeeId: t.employeeId,
+        leaveTypeId: type.payload?.id,
+        startDate: weekdaysAgo(3),
+        endDate: weekdaysAgo(3),
+        reason: 'paid until the type changes',
+      });
+      await t.org('POST', '/leave/requests/' + leave.payload?.id + '/decision', {
+        status: 'APPROVED',
+        comment: 'approved before payroll',
+      });
+    },
+    after: async (t) => {
+      const now = await reviewOf(t);
+      ok(
+        'the day counted as paid leave, and after the switch as unpaid',
+        t.paidBefore === 1 && now?.paidLeaveDays === 0 && now?.unpaidDays >= 1,
+        'paid before=' + t.paidBefore + ' after=' + JSON.stringify(now),
+      );
+    },
+  },
+);
 
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
 if (fail > 0) process.exitCode = 1;

@@ -26,13 +26,13 @@ export function CalendarToolbar({
 
   return (
     <div className="flex w-full flex-col justify-between gap-2 border-b border-border/90 bg-card/95 px-4 pb-3 pt-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:flex-row sm:items-center sm:gap-3 sm:px-6">
-      <div className="flex items-center gap-3">
+      <div className="flex w-full items-center justify-between sm:w-auto sm:justify-start gap-3">
         {onToday && (
           <Button type="button" variant="outline" size="sm" onClick={onToday}>
             Today
           </Button>
         )}
-        <div className="flex items-center rounded border border-border bg-card px-2 py-1 text-xs font-semibold text-foreground shadow-xs">
+        <div className="ml-auto sm:ml-0 flex items-center rounded border border-border bg-card px-2 py-1 text-xs font-semibold text-foreground shadow-xs">
           <Button
             type="button"
             variant="ghost"

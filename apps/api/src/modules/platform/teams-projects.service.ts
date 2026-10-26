@@ -1,10 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import type { Prisma } from '../../generated/prisma/client';
 import { ProjectStatus } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { toProjectDto, toTeamDto } from './workforce-mappers';
+import { assertProjectLead } from './project-lead';
+import {
+  createInitialMembers,
+  validateInitialMembers,
+  type InitialMember,
+} from './initial-group-members';
+import { endLeadMembership } from './team-lead';
+import { findProjectRetry, findTeamRetry } from './teams-projects-idempotency';
+import { organizationToday } from '../employees/employee-branch-rules';
 
 @Injectable()
 export class TeamsProjectsService {
@@ -13,14 +23,55 @@ export class TeamsProjectsService {
     private readonly audit: AuditService,
   ) {}
 
+  /**
+   * Teams the caller may see. Someone who manages teams sees them all; everyone else sees only
+   * the teams they are on or lead — as projects already worked. Employees used to receive every
+   * team in the company, with every member of it.
+   */
   async listTeams(context: DomainContext) {
     requirePermission(context, 'teams.read');
+    const seesAll =
+      context.permissions.has('*') ||
+      context.permissions.has('teams.write') ||
+      context.accessMode === 'FEDERATION';
     return this.database.run(context, async (tx) => {
+      const self = seesAll
+        ? null
+        : await tx.employee.findFirst({
+            where: { organizationId: context.organizationId, userId: context.actor.userId },
+            select: { id: true },
+          });
+      if (!seesAll && !self) return { items: [], truncated: false };
       // Bounded: the previous read returned every team with every membership row attached, so a
       // large tenant produced one very large response and no way to ask for less.
       const teams = await tx.team.findMany({
-        where: { organizationId: context.organizationId, status: 'ACTIVE' },
-        include: { members: true },
+        where: {
+          organizationId: context.organizationId,
+          status: 'ACTIVE',
+          ...(self
+            ? {
+                OR: [
+                  { members: { some: { employeeId: self.id } } },
+                  { teamLeadEmployeeId: self.id },
+                ],
+              }
+            : {}),
+        },
+        include: {
+          // The lead's name, for the same reason as the members' below.
+          teamLead: {
+            select: { id: true, firstName: true, lastName: true, employeeNumber: true },
+          },
+          members: {
+            // The colleague's name, so a member list reads as people rather than ids. An employee
+            // may only read their own employee record, so the name cannot come from there.
+            include: {
+              employee: {
+                select: { id: true, firstName: true, lastName: true, employeeNumber: true },
+              },
+            },
+          },
+        },
         orderBy: { name: 'asc' },
         // One over the cap, so a truncated list can say so rather than looking complete.
         take: 201,
@@ -30,12 +81,65 @@ export class TeamsProjectsService {
     });
   }
 
+  /**
+   * Projects the caller may see. Someone who manages projects sees them all; everyone else sees
+   * only the projects they are, or were, a member of. Employees used to see every project in the
+   * company, including ones they had nothing to do with.
+   */
   async listProjects(context: DomainContext) {
     requirePermission(context, 'projects.read');
+    const seesAll =
+      context.permissions.has('*') ||
+      context.permissions.has('projects.write') ||
+      context.accessMode === 'FEDERATION';
     return this.database.run(context, async (tx) => {
+      const today = await organizationToday(tx, context.organizationId);
+      const self = seesAll
+        ? null
+        : await tx.employee.findFirst({
+            where: { organizationId: context.organizationId, userId: context.actor.userId ?? '' },
+            select: { id: true },
+          });
+      if (!seesAll && !self) return { items: [], truncated: false };
       const projects = await tx.project.findMany({
-        where: { organizationId: context.organizationId },
-        include: { members: true },
+        where: {
+          organizationId: context.organizationId,
+          // Their projects are the ones they work on or lead.
+          ...(self
+            ? {
+                OR: [
+                  { members: { some: { employeeId: self.id } } },
+                  { projectLeadEmployeeId: self.id },
+                ],
+              }
+            : {}),
+        },
+        include: {
+          // The lead's name, for the same reason as the members' below.
+          projectLead: {
+            select: { id: true, firstName: true, lastName: true, employeeNumber: true },
+          },
+          members: {
+            // The colleague's name, so a member list reads as people rather than ids. An employee
+            // may only read their own employee record, so the name cannot come from there.
+            include: {
+              employee: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  employeeNumber: true,
+                  employmentRecords: {
+                    where: { effectiveTo: null, effectiveFrom: { lte: today } },
+                    orderBy: { effectiveFrom: 'desc' },
+                    take: 1,
+                    select: { jobTitle: true },
+                  },
+                },
+              },
+            },
+          },
+        },
         orderBy: [{ status: 'asc' }, { code: 'asc' }],
         take: 201,
       });
@@ -46,10 +150,24 @@ export class TeamsProjectsService {
 
   async createTeam(
     context: DomainContext,
-    input: { name: string; description?: string; branchId?: string; teamLeadEmployeeId?: string },
+    input: {
+      id?: string;
+      name: string;
+      description?: string;
+      branchId?: string;
+      teamLeadEmployeeId?: string;
+      memberEmployeeIds?: string[];
+    },
   ) {
     requirePermission(context, 'teams.write');
+    // A team belongs somewhere. Partners send what their own systems hold, so the requirement is
+    // the app's alone: making it universal would refuse federated payloads that were accepted
+    // yesterday.
+    if (context.accessMode === 'NATIVE' && !input.branchId)
+      throw new ConflictError('Choose the branch this team belongs to');
     return this.database.run(context, async (tx) => {
+      const retry = await findTeamRetry(tx, context.organizationId, input);
+      if (retry) return retry;
       if (
         input.branchId &&
         !(await tx.branch.findFirst({
@@ -68,8 +186,11 @@ export class TeamsProjectsService {
         }))
       )
         throw new NotFoundError('Team lead employee');
+      const members = (input.memberEmployeeIds ?? []).map((employeeId) => ({ employeeId }));
+      await validateInitialMembers(tx, context, members, input.teamLeadEmployeeId);
       const team = await tx.team.create({
         data: {
+          ...(input.id ? { id: input.id } : {}),
           organizationId: context.organizationId,
           name: input.name.trim(),
           description: input.description,
@@ -87,6 +208,7 @@ export class TeamsProjectsService {
         },
         tx,
       );
+      await createInitialMembers(tx, context, this.audit, 'TEAM', team.id, members);
       return team;
     });
   }
@@ -94,7 +216,13 @@ export class TeamsProjectsService {
   async updateTeam(
     context: DomainContext,
     teamId: string,
-    input: { name?: string; description?: string; branchId?: string; teamLeadEmployeeId?: string },
+    input: {
+      id?: string;
+      name?: string;
+      description?: string;
+      branchId?: string;
+      teamLeadEmployeeId?: string | null;
+    },
   ) {
     requirePermission(context, 'teams.write');
     return this.database.run(context, async (tx) => {
@@ -126,9 +254,15 @@ export class TeamsProjectsService {
           name: input.name?.trim(),
           description: input.description,
           branchId: input.branchId,
-          teamLeadEmployeeId: input.teamLeadEmployeeId,
+          ...(input.teamLeadEmployeeId !== undefined
+            ? { teamLeadEmployeeId: input.teamLeadEmployeeId }
+            : {}),
         },
       });
+      // The lead leads the team; they are not also one of its members. A member made lead leaves
+      // the member list today, with their membership history kept.
+      if (input.teamLeadEmployeeId && input.teamLeadEmployeeId !== before.teamLeadEmployeeId)
+        await endLeadMembership(tx, context, this.audit, before.id, input.teamLeadEmployeeId);
       await this.audit.record(
         context,
         {
@@ -175,18 +309,29 @@ export class TeamsProjectsService {
   async createProject(
     context: DomainContext,
     input: {
-      code: string;
+      id?: string;
+      /** Optional: PRJ-001, PRJ-002 … is generated when left out. */
+      code?: string;
       name: string;
       description?: string;
       branchId?: string;
       startDate?: string;
       endDate?: string;
+      /** Optional: a project may be created before anyone leads it. */
+      projectLeadEmployeeId?: string;
+      members?: InitialMember[];
     },
   ) {
     requirePermission(context, 'projects.write');
+    if (!input.name.trim()) throw new ConflictError('Give the project a name');
+    // As for teams: the app requires a branch, federation keeps its existing contract.
+    if (context.accessMode === 'NATIVE' && !input.branchId)
+      throw new ConflictError('Choose the branch this project belongs to');
     if (input.startDate && input.endDate && input.endDate < input.startDate)
       throw new ConflictError('Project end date must not precede start date');
     return this.database.run(context, async (tx) => {
+      const retry = await findProjectRetry(tx, context.organizationId, input);
+      if (retry) return retry;
       if (
         input.branchId &&
         !(await tx.branch.findFirst({
@@ -194,15 +339,27 @@ export class TeamsProjectsService {
         }))
       )
         throw new NotFoundError('Branch');
+      if (input.projectLeadEmployeeId)
+        await assertProjectLead(tx, context.organizationId, input.projectLeadEmployeeId);
+      const code =
+        input.code?.trim().toUpperCase() || (await nextProjectCode(tx, context.organizationId));
+      const clash = await tx.project.findFirst({
+        where: { organizationId: context.organizationId, code },
+        select: { name: true },
+      });
+      if (clash) throw new ConflictError(`Project code ${code} is already used by ${clash.name}`);
+      await validateInitialMembers(tx, context, input.members ?? [], input.projectLeadEmployeeId);
       const project = await tx.project.create({
         data: {
+          ...(input.id ? { id: input.id } : {}),
           organizationId: context.organizationId,
-          code: input.code.trim().toUpperCase(),
+          code,
           name: input.name.trim(),
           description: input.description,
           branchId: input.branchId,
           startDate: input.startDate ? dateOnly(input.startDate) : undefined,
           endDate: input.endDate ? dateOnly(input.endDate) : undefined,
+          projectLeadEmployeeId: input.projectLeadEmployeeId,
         },
       });
       await this.audit.record(
@@ -214,6 +371,15 @@ export class TeamsProjectsService {
           afterState: jsonSnapshot(project),
         },
         tx,
+      );
+      await createInitialMembers(
+        tx,
+        context,
+        this.audit,
+        'PROJECT',
+        project.id,
+        input.members ?? [],
+        input.startDate ? dateOnly(input.startDate) : undefined,
       );
       return project;
     });
@@ -230,6 +396,8 @@ export class TeamsProjectsService {
       startDate?: string;
       endDate?: string;
       status?: ProjectStatus;
+      /** A new lead, or `null` to leave the project without one. Absent leaves it unchanged. */
+      projectLeadEmployeeId?: string | null;
     },
   ) {
     requirePermission(context, 'projects.write');
@@ -249,9 +417,14 @@ export class TeamsProjectsService {
         }))
       )
         throw new NotFoundError('Branch');
+      if (input.projectLeadEmployeeId)
+        await assertProjectLead(tx, context.organizationId, input.projectLeadEmployeeId);
       const updated = await tx.project.update({
         where: { id: before.id },
         data: {
+          ...(input.projectLeadEmployeeId !== undefined
+            ? { projectLeadEmployeeId: input.projectLeadEmployeeId }
+            : {}),
           code: input.code?.trim().toUpperCase(),
           name: input.name?.trim(),
           description: input.description,
@@ -319,4 +492,16 @@ function dateOnly(value: string) {
   )
     throw new ConflictError('Invalid calendar date');
   return date;
+}
+
+/**
+ * The next generated project code. The organization's settings row is locked for the transaction,
+ * so two projects created at once cannot be given the same code.
+ */
+async function nextProjectCode(tx: Prisma.TransactionClient, organizationId: string) {
+  await tx.$queryRaw`SELECT organization_id FROM organization_settings WHERE organization_id = ${organizationId}::uuid FOR UPDATE`;
+  const rows = await tx.$queryRaw<Array<{ highest: number | null }>>`
+    SELECT max(substring(code FROM ${'^PRJ-([0-9]+)$'})::int) AS highest
+    FROM projects WHERE organization_id = ${organizationId}::uuid AND code ~ ${'^PRJ-[0-9]+$'}`;
+  return `PRJ-${String((rows[0]?.highest ?? 0) + 1).padStart(3, '0')}`;
 }

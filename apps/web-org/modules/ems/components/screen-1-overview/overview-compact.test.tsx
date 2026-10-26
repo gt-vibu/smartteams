@@ -56,11 +56,14 @@ describe('OverviewCompact', () => {
     expect(onScreen()).toEqual(['activities']);
   });
 
-  it('has one strip, and it marks the section on screen', () => {
-    renderAt('Dashboard');
+  it('has one strip, and it marks the selected section on screen', () => {
+    renderAt('Activities');
     expect(screen.getAllByRole('tablist')).toHaveLength(1);
-    expect(screen.getByRole('tab', { name: 'Dashboard' })).toHaveAttribute('aria-selected', 'true');
-    expect(onScreen()).toEqual(['dashboard']);
+    expect(screen.getByRole('tab', { name: 'Activities' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(onScreen()).toEqual(['activities']);
   });
 
   it('keeps module previews out of the strip — the bottom bar already opens those', () => {

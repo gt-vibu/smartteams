@@ -8,11 +8,12 @@ import { useEmployees, useProjects } from '../../hooks/use-workforce';
 import { useAttendance } from '../../hooks/use-attendance';
 import { COMMAND_MODULE_BY_ID, buildCommandItems } from './command-palette-items';
 import type { CommandItem } from './command-palette-types';
+import { workspaceTitle } from '../../services/authorization.policy';
 
 interface CommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
-  onNavigateModule: (module: string) => void;
+  onNavigateModule: (module: string, subView?: string) => void;
   onNavigateSpace: (space: string) => void;
   onSelectEmployee?: (employeeId: string) => void;
   onSelectProject?: (projectId: string) => void;
@@ -26,12 +27,11 @@ export function CommandPalette({
   onSelectEmployee,
   onSelectProject,
 }: CommandPaletteProps) {
-  const { workspaceContext, isAssignedToAnyTeam, canAccessModule } = useAuth();
-  const { data: employeeList } = useEmployees();
-  const employees = employeeList ?? [];
+  const { persona, workspaceContext, isAssignedToAnyTeam, canAccessModule } = useAuth();
   const { data: projectList } = useProjects();
   const { isCheckedIn, checkIn, checkOut } = useAttendance();
   const [query, setQuery] = useState('');
+  const { data: employeeList } = useEmployees({ search: query, enabled: isOpen });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -74,7 +74,7 @@ export function CommandPalette({
     workspaceContext,
   });
 
-  const people: CommandItem[] = employees.map((employee) => ({
+  const people: CommandItem[] = (employeeList ?? []).map((employee) => ({
     id: employee.id,
     title: employeeDisplayName(employee),
     subtitle: employee.employeeNumber,
@@ -146,15 +146,15 @@ export function CommandPalette({
 
   if (!isOpen) return null;
 
-  // On a phone the palette opens with the keyboard up, so it sits at the top and stops at about
-  // half the screen: at 80vh its lower results were behind the keyboard with no way to reach them.
+  // On a phone the palette fills the screen. The keyboard shrinks the layout, so any height tied to
+  // the viewport squeezed the results to nothing; filling it leaves them all the space above the keys.
   return (
     <div
-      className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-start justify-center pt-[max(0.75rem,env(safe-area-inset-top))] sm:pt-24 px-3 sm:px-4 animate-in fade-in duration-100"
+      className="fixed inset-0 z-50 bg-background sm:bg-background/80 sm:backdrop-blur-sm flex items-stretch sm:items-start justify-center pt-[env(safe-area-inset-top)] sm:pt-24 sm:px-4 animate-in fade-in duration-100"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-xl bg-popover border border-border rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[55dvh] sm:max-h-[80vh] animate-in zoom-in-95 duration-100"
+        className="w-full h-full sm:h-auto sm:max-w-xl bg-popover sm:border sm:border-border sm:rounded-xl sm:shadow-2xl overflow-hidden flex flex-col sm:max-h-[80vh] animate-in zoom-in-95 duration-100"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
         role="dialog"
@@ -191,7 +191,7 @@ export function CommandPalette({
                 ? 'Search actions, policies, payroll, staff, or projects (⌘K)...'
                 : 'Search actions, timesheets, leaves, staff, or projects (⌘K)...'
             }
-            className="w-full bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 text-xs text-foreground placeholder:text-muted-foreground h-7"
+            className="w-full bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 px-0 text-base sm:text-xs text-foreground placeholder:text-muted-foreground h-9 sm:h-7"
           />
           {query && (
             <Button
@@ -205,6 +205,15 @@ export function CommandPalette({
               ✕
             </Button>
           )}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="sm:hidden h-9 px-2 text-sm font-semibold text-primary shrink-0"
+          >
+            Cancel
+          </Button>
           <kbd className="hidden sm:inline-block text-[10px] font-mono font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded border border-border">
             ESC
           </kbd>
@@ -293,11 +302,13 @@ export function CommandPalette({
         </div>
 
         {/* Footer Shortcut Bar */}
-        <div className="p-2 border-t border-border bg-card flex items-center justify-between text-[11px] text-muted-foreground px-3">
+        <div className="hidden sm:flex p-2 border-t border-border bg-card items-center justify-between text-[11px] text-muted-foreground px-3">
           <span>
             Context:{' '}
             <span className="font-medium text-foreground">
-              {workspaceContext === 'ADMIN' ? 'Admin Workspace' : 'Employee Workspace'}
+              {workspaceContext === 'ADMIN'
+                ? workspaceTitle(persona).workspace
+                : 'Employee workspace'}
             </span>
           </span>
           <span className="flex items-center gap-1">

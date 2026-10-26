@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { formatDate } from '@smarteam/contracts';
 import { ChevronDown, ChevronUp, Layers } from 'lucide-react';
 import { Badge, Button, Checkbox } from '@smarteam/ui';
 import type { Holiday } from '@smarteam/contracts';
@@ -95,12 +96,12 @@ export function AvailableHolidayPlanCard({
           </div>
 
           {isMultiDay ? (
-            <div className="text-[11px] text-muted-foreground font-mono mt-0.5">
+            <div className="text-[11px] text-muted-foreground tabular-nums mt-0.5">
               {formatDateDisplay(group.startDate)} → {formatDateDisplay(group.endDate)}
             </div>
           ) : (
-            <div className="text-[11px] text-muted-foreground font-mono mt-0.5">
-              {group.startDate} · {weekday(group.startDate)}
+            <div className="text-[11px] text-muted-foreground tabular-nums mt-0.5">
+              {formatDate(group.startDate)} · {weekday(group.startDate)}
             </div>
           )}
         </div>

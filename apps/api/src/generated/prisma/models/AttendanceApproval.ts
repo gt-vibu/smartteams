@@ -39,6 +39,7 @@ export type AttendanceApprovalMinAggregateOutputType = {
   organizationId: string | null
   attendanceCorrectionId: string | null
   approverUserId: string | null
+  decisionActor: string | null
   approvalPolicyStepId: string | null
   stepNumber: number | null
   status: $Enums.ApprovalStatus | null
@@ -51,6 +52,7 @@ export type AttendanceApprovalMaxAggregateOutputType = {
   organizationId: string | null
   attendanceCorrectionId: string | null
   approverUserId: string | null
+  decisionActor: string | null
   approvalPolicyStepId: string | null
   stepNumber: number | null
   status: $Enums.ApprovalStatus | null
@@ -63,6 +65,7 @@ export type AttendanceApprovalCountAggregateOutputType = {
   organizationId: number
   attendanceCorrectionId: number
   approverUserId: number
+  decisionActor: number
   approvalPolicyStepId: number
   stepNumber: number
   status: number
@@ -85,6 +88,7 @@ export type AttendanceApprovalMinAggregateInputType = {
   organizationId?: true
   attendanceCorrectionId?: true
   approverUserId?: true
+  decisionActor?: true
   approvalPolicyStepId?: true
   stepNumber?: true
   status?: true
@@ -97,6 +101,7 @@ export type AttendanceApprovalMaxAggregateInputType = {
   organizationId?: true
   attendanceCorrectionId?: true
   approverUserId?: true
+  decisionActor?: true
   approvalPolicyStepId?: true
   stepNumber?: true
   status?: true
@@ -109,6 +114,7 @@ export type AttendanceApprovalCountAggregateInputType = {
   organizationId?: true
   attendanceCorrectionId?: true
   approverUserId?: true
+  decisionActor?: true
   approvalPolicyStepId?: true
   stepNumber?: true
   status?: true
@@ -207,7 +213,8 @@ export type AttendanceApprovalGroupByOutputType = {
   id: string
   organizationId: string
   attendanceCorrectionId: string
-  approverUserId: string
+  approverUserId: string | null
+  decisionActor: string
   approvalPolicyStepId: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -242,7 +249,8 @@ export type AttendanceApprovalWhereInput = {
   id?: Prisma.UuidFilter<"AttendanceApproval"> | string
   organizationId?: Prisma.UuidFilter<"AttendanceApproval"> | string
   attendanceCorrectionId?: Prisma.UuidFilter<"AttendanceApproval"> | string
-  approverUserId?: Prisma.UuidFilter<"AttendanceApproval"> | string
+  approverUserId?: Prisma.UuidNullableFilter<"AttendanceApproval"> | string | null
+  decisionActor?: Prisma.StringFilter<"AttendanceApproval"> | string
   approvalPolicyStepId?: Prisma.UuidNullableFilter<"AttendanceApproval"> | string | null
   stepNumber?: Prisma.IntFilter<"AttendanceApproval"> | number
   status?: Prisma.EnumApprovalStatusFilter<"AttendanceApproval"> | $Enums.ApprovalStatus
@@ -250,7 +258,7 @@ export type AttendanceApprovalWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"AttendanceApproval"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   attendanceCorrection?: Prisma.XOR<Prisma.AttendanceCorrectionScalarRelationFilter, Prisma.AttendanceCorrectionWhereInput>
-  approver?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  approver?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   approvalPolicyStep?: Prisma.XOR<Prisma.ApprovalPolicyStepNullableScalarRelationFilter, Prisma.ApprovalPolicyStepWhereInput> | null
 }
 
@@ -258,7 +266,8 @@ export type AttendanceApprovalOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   attendanceCorrectionId?: Prisma.SortOrder
-  approverUserId?: Prisma.SortOrder
+  approverUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  decisionActor?: Prisma.SortOrder
   approvalPolicyStepId?: Prisma.SortOrderInput | Prisma.SortOrder
   stepNumber?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -278,7 +287,8 @@ export type AttendanceApprovalWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.AttendanceApprovalWhereInput | Prisma.AttendanceApprovalWhereInput[]
   organizationId?: Prisma.UuidFilter<"AttendanceApproval"> | string
   attendanceCorrectionId?: Prisma.UuidFilter<"AttendanceApproval"> | string
-  approverUserId?: Prisma.UuidFilter<"AttendanceApproval"> | string
+  approverUserId?: Prisma.UuidNullableFilter<"AttendanceApproval"> | string | null
+  decisionActor?: Prisma.StringFilter<"AttendanceApproval"> | string
   approvalPolicyStepId?: Prisma.UuidNullableFilter<"AttendanceApproval"> | string | null
   stepNumber?: Prisma.IntFilter<"AttendanceApproval"> | number
   status?: Prisma.EnumApprovalStatusFilter<"AttendanceApproval"> | $Enums.ApprovalStatus
@@ -286,7 +296,7 @@ export type AttendanceApprovalWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"AttendanceApproval"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   attendanceCorrection?: Prisma.XOR<Prisma.AttendanceCorrectionScalarRelationFilter, Prisma.AttendanceCorrectionWhereInput>
-  approver?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  approver?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   approvalPolicyStep?: Prisma.XOR<Prisma.ApprovalPolicyStepNullableScalarRelationFilter, Prisma.ApprovalPolicyStepWhereInput> | null
 }, "id" | "attendanceCorrectionId_stepNumber">
 
@@ -294,7 +304,8 @@ export type AttendanceApprovalOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
   attendanceCorrectionId?: Prisma.SortOrder
-  approverUserId?: Prisma.SortOrder
+  approverUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  decisionActor?: Prisma.SortOrder
   approvalPolicyStepId?: Prisma.SortOrderInput | Prisma.SortOrder
   stepNumber?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -314,7 +325,8 @@ export type AttendanceApprovalScalarWhereWithAggregatesInput = {
   id?: Prisma.UuidWithAggregatesFilter<"AttendanceApproval"> | string
   organizationId?: Prisma.UuidWithAggregatesFilter<"AttendanceApproval"> | string
   attendanceCorrectionId?: Prisma.UuidWithAggregatesFilter<"AttendanceApproval"> | string
-  approverUserId?: Prisma.UuidWithAggregatesFilter<"AttendanceApproval"> | string
+  approverUserId?: Prisma.UuidNullableWithAggregatesFilter<"AttendanceApproval"> | string | null
+  decisionActor?: Prisma.StringWithAggregatesFilter<"AttendanceApproval"> | string
   approvalPolicyStepId?: Prisma.UuidNullableWithAggregatesFilter<"AttendanceApproval"> | string | null
   stepNumber?: Prisma.IntWithAggregatesFilter<"AttendanceApproval"> | number
   status?: Prisma.EnumApprovalStatusWithAggregatesFilter<"AttendanceApproval"> | $Enums.ApprovalStatus
@@ -324,13 +336,14 @@ export type AttendanceApprovalScalarWhereWithAggregatesInput = {
 
 export type AttendanceApprovalCreateInput = {
   id?: string
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutAttendanceApprovalsInput
   attendanceCorrection: Prisma.AttendanceCorrectionCreateNestedOneWithoutApprovalsInput
-  approver: Prisma.UserCreateNestedOneWithoutAttendanceApprovalsInput
+  approver?: Prisma.UserCreateNestedOneWithoutAttendanceApprovalsInput
   approvalPolicyStep?: Prisma.ApprovalPolicyStepCreateNestedOneWithoutAttendanceApprovalsInput
 }
 
@@ -338,7 +351,8 @@ export type AttendanceApprovalUncheckedCreateInput = {
   id?: string
   organizationId: string
   attendanceCorrectionId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -348,13 +362,14 @@ export type AttendanceApprovalUncheckedCreateInput = {
 
 export type AttendanceApprovalUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendanceApprovalsNestedInput
   attendanceCorrection?: Prisma.AttendanceCorrectionUpdateOneRequiredWithoutApprovalsNestedInput
-  approver?: Prisma.UserUpdateOneRequiredWithoutAttendanceApprovalsNestedInput
+  approver?: Prisma.UserUpdateOneWithoutAttendanceApprovalsNestedInput
   approvalPolicyStep?: Prisma.ApprovalPolicyStepUpdateOneWithoutAttendanceApprovalsNestedInput
 }
 
@@ -362,7 +377,8 @@ export type AttendanceApprovalUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   attendanceCorrectionId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -374,7 +390,8 @@ export type AttendanceApprovalCreateManyInput = {
   id?: string
   organizationId: string
   attendanceCorrectionId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -384,6 +401,7 @@ export type AttendanceApprovalCreateManyInput = {
 
 export type AttendanceApprovalUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -394,22 +412,13 @@ export type AttendanceApprovalUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   attendanceCorrectionId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type AttendanceApprovalListRelationFilter = {
-  every?: Prisma.AttendanceApprovalWhereInput
-  some?: Prisma.AttendanceApprovalWhereInput
-  none?: Prisma.AttendanceApprovalWhereInput
-}
-
-export type AttendanceApprovalOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
 }
 
 export type AttendanceApprovalAttendanceCorrectionIdStepNumberCompoundUniqueInput = {
@@ -422,6 +431,7 @@ export type AttendanceApprovalCountOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   attendanceCorrectionId?: Prisma.SortOrder
   approverUserId?: Prisma.SortOrder
+  decisionActor?: Prisma.SortOrder
   approvalPolicyStepId?: Prisma.SortOrder
   stepNumber?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -438,6 +448,7 @@ export type AttendanceApprovalMaxOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   attendanceCorrectionId?: Prisma.SortOrder
   approverUserId?: Prisma.SortOrder
+  decisionActor?: Prisma.SortOrder
   approvalPolicyStepId?: Prisma.SortOrder
   stepNumber?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -450,6 +461,7 @@ export type AttendanceApprovalMinOrderByAggregateInput = {
   organizationId?: Prisma.SortOrder
   attendanceCorrectionId?: Prisma.SortOrder
   approverUserId?: Prisma.SortOrder
+  decisionActor?: Prisma.SortOrder
   approvalPolicyStepId?: Prisma.SortOrder
   stepNumber?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -459,6 +471,40 @@ export type AttendanceApprovalMinOrderByAggregateInput = {
 
 export type AttendanceApprovalSumOrderByAggregateInput = {
   stepNumber?: Prisma.SortOrder
+}
+
+export type AttendanceApprovalListRelationFilter = {
+  every?: Prisma.AttendanceApprovalWhereInput
+  some?: Prisma.AttendanceApprovalWhereInput
+  none?: Prisma.AttendanceApprovalWhereInput
+}
+
+export type AttendanceApprovalOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type StringFieldUpdateOperationsInput = {
+  set?: string
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
+export type EnumApprovalStatusFieldUpdateOperationsInput = {
+  set?: $Enums.ApprovalStatus
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
+export type DateTimeFieldUpdateOperationsInput = {
+  set?: Date | string
 }
 
 export type AttendanceApprovalCreateNestedManyWithoutApproverInput = {
@@ -631,6 +677,7 @@ export type AttendanceApprovalUncheckedUpdateManyWithoutApprovalPolicyStepNested
 
 export type AttendanceApprovalCreateWithoutApproverInput = {
   id?: string
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
@@ -644,6 +691,7 @@ export type AttendanceApprovalUncheckedCreateWithoutApproverInput = {
   id?: string
   organizationId: string
   attendanceCorrectionId: string
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -684,7 +732,8 @@ export type AttendanceApprovalScalarWhereInput = {
   id?: Prisma.UuidFilter<"AttendanceApproval"> | string
   organizationId?: Prisma.UuidFilter<"AttendanceApproval"> | string
   attendanceCorrectionId?: Prisma.UuidFilter<"AttendanceApproval"> | string
-  approverUserId?: Prisma.UuidFilter<"AttendanceApproval"> | string
+  approverUserId?: Prisma.UuidNullableFilter<"AttendanceApproval"> | string | null
+  decisionActor?: Prisma.StringFilter<"AttendanceApproval"> | string
   approvalPolicyStepId?: Prisma.UuidNullableFilter<"AttendanceApproval"> | string | null
   stepNumber?: Prisma.IntFilter<"AttendanceApproval"> | number
   status?: Prisma.EnumApprovalStatusFilter<"AttendanceApproval"> | $Enums.ApprovalStatus
@@ -694,19 +743,21 @@ export type AttendanceApprovalScalarWhereInput = {
 
 export type AttendanceApprovalCreateWithoutAttendanceCorrectionInput = {
   id?: string
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutAttendanceApprovalsInput
-  approver: Prisma.UserCreateNestedOneWithoutAttendanceApprovalsInput
+  approver?: Prisma.UserCreateNestedOneWithoutAttendanceApprovalsInput
   approvalPolicyStep?: Prisma.ApprovalPolicyStepCreateNestedOneWithoutAttendanceApprovalsInput
 }
 
 export type AttendanceApprovalUncheckedCreateWithoutAttendanceCorrectionInput = {
   id?: string
   organizationId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -742,19 +793,21 @@ export type AttendanceApprovalUpdateManyWithWhereWithoutAttendanceCorrectionInpu
 
 export type AttendanceApprovalCreateWithoutOrganizationInput = {
   id?: string
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
   createdAt?: Date | string
   attendanceCorrection: Prisma.AttendanceCorrectionCreateNestedOneWithoutApprovalsInput
-  approver: Prisma.UserCreateNestedOneWithoutAttendanceApprovalsInput
+  approver?: Prisma.UserCreateNestedOneWithoutAttendanceApprovalsInput
   approvalPolicyStep?: Prisma.ApprovalPolicyStepCreateNestedOneWithoutAttendanceApprovalsInput
 }
 
 export type AttendanceApprovalUncheckedCreateWithoutOrganizationInput = {
   id?: string
   attendanceCorrectionId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -790,20 +843,22 @@ export type AttendanceApprovalUpdateManyWithWhereWithoutOrganizationInput = {
 
 export type AttendanceApprovalCreateWithoutApprovalPolicyStepInput = {
   id?: string
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutAttendanceApprovalsInput
   attendanceCorrection: Prisma.AttendanceCorrectionCreateNestedOneWithoutApprovalsInput
-  approver: Prisma.UserCreateNestedOneWithoutAttendanceApprovalsInput
+  approver?: Prisma.UserCreateNestedOneWithoutAttendanceApprovalsInput
 }
 
 export type AttendanceApprovalUncheckedCreateWithoutApprovalPolicyStepInput = {
   id?: string
   organizationId: string
   attendanceCorrectionId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
@@ -840,6 +895,7 @@ export type AttendanceApprovalCreateManyApproverInput = {
   id?: string
   organizationId: string
   attendanceCorrectionId: string
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -849,6 +905,7 @@ export type AttendanceApprovalCreateManyApproverInput = {
 
 export type AttendanceApprovalUpdateWithoutApproverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -862,6 +919,7 @@ export type AttendanceApprovalUncheckedUpdateWithoutApproverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   attendanceCorrectionId?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -873,6 +931,7 @@ export type AttendanceApprovalUncheckedUpdateManyWithoutApproverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   attendanceCorrectionId?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -883,7 +942,8 @@ export type AttendanceApprovalUncheckedUpdateManyWithoutApproverInput = {
 export type AttendanceApprovalCreateManyAttendanceCorrectionInput = {
   id?: string
   organizationId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -893,19 +953,21 @@ export type AttendanceApprovalCreateManyAttendanceCorrectionInput = {
 
 export type AttendanceApprovalUpdateWithoutAttendanceCorrectionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendanceApprovalsNestedInput
-  approver?: Prisma.UserUpdateOneRequiredWithoutAttendanceApprovalsNestedInput
+  approver?: Prisma.UserUpdateOneWithoutAttendanceApprovalsNestedInput
   approvalPolicyStep?: Prisma.ApprovalPolicyStepUpdateOneWithoutAttendanceApprovalsNestedInput
 }
 
 export type AttendanceApprovalUncheckedUpdateWithoutAttendanceCorrectionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -916,7 +978,8 @@ export type AttendanceApprovalUncheckedUpdateWithoutAttendanceCorrectionInput = 
 export type AttendanceApprovalUncheckedUpdateManyWithoutAttendanceCorrectionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -927,7 +990,8 @@ export type AttendanceApprovalUncheckedUpdateManyWithoutAttendanceCorrectionInpu
 export type AttendanceApprovalCreateManyOrganizationInput = {
   id?: string
   attendanceCorrectionId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   approvalPolicyStepId?: string | null
   stepNumber: number
   status: $Enums.ApprovalStatus
@@ -937,19 +1001,21 @@ export type AttendanceApprovalCreateManyOrganizationInput = {
 
 export type AttendanceApprovalUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attendanceCorrection?: Prisma.AttendanceCorrectionUpdateOneRequiredWithoutApprovalsNestedInput
-  approver?: Prisma.UserUpdateOneRequiredWithoutAttendanceApprovalsNestedInput
+  approver?: Prisma.UserUpdateOneWithoutAttendanceApprovalsNestedInput
   approvalPolicyStep?: Prisma.ApprovalPolicyStepUpdateOneWithoutAttendanceApprovalsNestedInput
 }
 
 export type AttendanceApprovalUncheckedUpdateWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   attendanceCorrectionId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -960,7 +1026,8 @@ export type AttendanceApprovalUncheckedUpdateWithoutOrganizationInput = {
 export type AttendanceApprovalUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   attendanceCorrectionId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   approvalPolicyStepId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
@@ -972,7 +1039,8 @@ export type AttendanceApprovalCreateManyApprovalPolicyStepInput = {
   id?: string
   organizationId: string
   attendanceCorrectionId: string
-  approverUserId: string
+  approverUserId?: string | null
+  decisionActor?: string
   stepNumber: number
   status: $Enums.ApprovalStatus
   comment?: string | null
@@ -981,20 +1049,22 @@ export type AttendanceApprovalCreateManyApprovalPolicyStepInput = {
 
 export type AttendanceApprovalUpdateWithoutApprovalPolicyStepInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutAttendanceApprovalsNestedInput
   attendanceCorrection?: Prisma.AttendanceCorrectionUpdateOneRequiredWithoutApprovalsNestedInput
-  approver?: Prisma.UserUpdateOneRequiredWithoutAttendanceApprovalsNestedInput
+  approver?: Prisma.UserUpdateOneWithoutAttendanceApprovalsNestedInput
 }
 
 export type AttendanceApprovalUncheckedUpdateWithoutApprovalPolicyStepInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   attendanceCorrectionId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1005,7 +1075,8 @@ export type AttendanceApprovalUncheckedUpdateManyWithoutApprovalPolicyStepInput 
   id?: Prisma.StringFieldUpdateOperationsInput | string
   organizationId?: Prisma.StringFieldUpdateOperationsInput | string
   attendanceCorrectionId?: Prisma.StringFieldUpdateOperationsInput | string
-  approverUserId?: Prisma.StringFieldUpdateOperationsInput | string
+  approverUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  decisionActor?: Prisma.StringFieldUpdateOperationsInput | string
   stepNumber?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1019,6 +1090,7 @@ export type AttendanceApprovalSelect<ExtArgs extends runtime.Types.Extensions.In
   organizationId?: boolean
   attendanceCorrectionId?: boolean
   approverUserId?: boolean
+  decisionActor?: boolean
   approvalPolicyStepId?: boolean
   stepNumber?: boolean
   status?: boolean
@@ -1026,7 +1098,7 @@ export type AttendanceApprovalSelect<ExtArgs extends runtime.Types.Extensions.In
   createdAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   attendanceCorrection?: boolean | Prisma.AttendanceCorrectionDefaultArgs<ExtArgs>
-  approver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.AttendanceApproval$approverArgs<ExtArgs>
   approvalPolicyStep?: boolean | Prisma.AttendanceApproval$approvalPolicyStepArgs<ExtArgs>
 }, ExtArgs["result"]["attendanceApproval"]>
 
@@ -1035,6 +1107,7 @@ export type AttendanceApprovalSelectCreateManyAndReturn<ExtArgs extends runtime.
   organizationId?: boolean
   attendanceCorrectionId?: boolean
   approverUserId?: boolean
+  decisionActor?: boolean
   approvalPolicyStepId?: boolean
   stepNumber?: boolean
   status?: boolean
@@ -1042,7 +1115,7 @@ export type AttendanceApprovalSelectCreateManyAndReturn<ExtArgs extends runtime.
   createdAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   attendanceCorrection?: boolean | Prisma.AttendanceCorrectionDefaultArgs<ExtArgs>
-  approver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.AttendanceApproval$approverArgs<ExtArgs>
   approvalPolicyStep?: boolean | Prisma.AttendanceApproval$approvalPolicyStepArgs<ExtArgs>
 }, ExtArgs["result"]["attendanceApproval"]>
 
@@ -1051,6 +1124,7 @@ export type AttendanceApprovalSelectUpdateManyAndReturn<ExtArgs extends runtime.
   organizationId?: boolean
   attendanceCorrectionId?: boolean
   approverUserId?: boolean
+  decisionActor?: boolean
   approvalPolicyStepId?: boolean
   stepNumber?: boolean
   status?: boolean
@@ -1058,7 +1132,7 @@ export type AttendanceApprovalSelectUpdateManyAndReturn<ExtArgs extends runtime.
   createdAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   attendanceCorrection?: boolean | Prisma.AttendanceCorrectionDefaultArgs<ExtArgs>
-  approver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.AttendanceApproval$approverArgs<ExtArgs>
   approvalPolicyStep?: boolean | Prisma.AttendanceApproval$approvalPolicyStepArgs<ExtArgs>
 }, ExtArgs["result"]["attendanceApproval"]>
 
@@ -1067,6 +1141,7 @@ export type AttendanceApprovalSelectScalar = {
   organizationId?: boolean
   attendanceCorrectionId?: boolean
   approverUserId?: boolean
+  decisionActor?: boolean
   approvalPolicyStepId?: boolean
   stepNumber?: boolean
   status?: boolean
@@ -1074,23 +1149,23 @@ export type AttendanceApprovalSelectScalar = {
   createdAt?: boolean
 }
 
-export type AttendanceApprovalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "attendanceCorrectionId" | "approverUserId" | "approvalPolicyStepId" | "stepNumber" | "status" | "comment" | "createdAt", ExtArgs["result"]["attendanceApproval"]>
+export type AttendanceApprovalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "organizationId" | "attendanceCorrectionId" | "approverUserId" | "decisionActor" | "approvalPolicyStepId" | "stepNumber" | "status" | "comment" | "createdAt", ExtArgs["result"]["attendanceApproval"]>
 export type AttendanceApprovalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   attendanceCorrection?: boolean | Prisma.AttendanceCorrectionDefaultArgs<ExtArgs>
-  approver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.AttendanceApproval$approverArgs<ExtArgs>
   approvalPolicyStep?: boolean | Prisma.AttendanceApproval$approvalPolicyStepArgs<ExtArgs>
 }
 export type AttendanceApprovalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   attendanceCorrection?: boolean | Prisma.AttendanceCorrectionDefaultArgs<ExtArgs>
-  approver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.AttendanceApproval$approverArgs<ExtArgs>
   approvalPolicyStep?: boolean | Prisma.AttendanceApproval$approvalPolicyStepArgs<ExtArgs>
 }
 export type AttendanceApprovalIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   attendanceCorrection?: boolean | Prisma.AttendanceCorrectionDefaultArgs<ExtArgs>
-  approver?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.AttendanceApproval$approverArgs<ExtArgs>
   approvalPolicyStep?: boolean | Prisma.AttendanceApproval$approvalPolicyStepArgs<ExtArgs>
 }
 
@@ -1099,14 +1174,15 @@ export type $AttendanceApprovalPayload<ExtArgs extends runtime.Types.Extensions.
   objects: {
     organization: Prisma.$OrganizationPayload<ExtArgs>
     attendanceCorrection: Prisma.$AttendanceCorrectionPayload<ExtArgs>
-    approver: Prisma.$UserPayload<ExtArgs>
+    approver: Prisma.$UserPayload<ExtArgs> | null
     approvalPolicyStep: Prisma.$ApprovalPolicyStepPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     organizationId: string
     attendanceCorrectionId: string
-    approverUserId: string
+    approverUserId: string | null
+    decisionActor: string
     approvalPolicyStepId: string | null
     stepNumber: number
     status: $Enums.ApprovalStatus
@@ -1508,7 +1584,7 @@ export interface Prisma__AttendanceApprovalClient<T, Null = never, ExtArgs exten
   readonly [Symbol.toStringTag]: "PrismaPromise"
   organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   attendanceCorrection<T extends Prisma.AttendanceCorrectionDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendanceCorrectionDefaultArgs<ExtArgs>>): Prisma.Prisma__AttendanceCorrectionClient<runtime.Types.Result.GetResult<Prisma.$AttendanceCorrectionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  approver<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  approver<T extends Prisma.AttendanceApproval$approverArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendanceApproval$approverArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   approvalPolicyStep<T extends Prisma.AttendanceApproval$approvalPolicyStepArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AttendanceApproval$approvalPolicyStepArgs<ExtArgs>>): Prisma.Prisma__ApprovalPolicyStepClient<runtime.Types.Result.GetResult<Prisma.$ApprovalPolicyStepPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1543,6 +1619,7 @@ export interface AttendanceApprovalFieldRefs {
   readonly organizationId: Prisma.FieldRef<"AttendanceApproval", 'String'>
   readonly attendanceCorrectionId: Prisma.FieldRef<"AttendanceApproval", 'String'>
   readonly approverUserId: Prisma.FieldRef<"AttendanceApproval", 'String'>
+  readonly decisionActor: Prisma.FieldRef<"AttendanceApproval", 'String'>
   readonly approvalPolicyStepId: Prisma.FieldRef<"AttendanceApproval", 'String'>
   readonly stepNumber: Prisma.FieldRef<"AttendanceApproval", 'Int'>
   readonly status: Prisma.FieldRef<"AttendanceApproval", 'ApprovalStatus'>
@@ -1946,6 +2023,25 @@ export type AttendanceApprovalDeleteManyArgs<ExtArgs extends runtime.Types.Exten
    * Limit how many AttendanceApprovals to delete.
    */
   limit?: number
+}
+
+/**
+ * AttendanceApproval.approver
+ */
+export type AttendanceApproval$approverArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

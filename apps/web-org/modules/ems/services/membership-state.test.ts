@@ -1,10 +1,6 @@
-import { describe, expect, it } from 'vitest';
 import type { Project, ProjectMember, Team, TeamMember } from '@smarteam/contracts';
-import {
-  projectMembershipsFor,
-  teamMembershipsFor,
-  totalActiveAllocation,
-} from './membership-state';
+import { describe, expect, it } from 'vitest';
+import { projectMembershipsFor, teamMembershipsFor } from './membership-state';
 
 const EMPLOYEE = '33333333-3333-4333-8333-333333333333';
 const OTHER = '44444444-4444-4444-8444-444444444444';
@@ -50,7 +46,6 @@ function projectMember(overrides: Partial<ProjectMember>): ProjectMember {
     projectId: PROJECT_ID,
     employeeId: EMPLOYEE,
     projectRole: null,
-    allocationPercentage: null,
     startsOn: '2026-01-01',
     endsOn: null,
     ...overrides,
@@ -112,67 +107,48 @@ describe('team membership state', () => {
     );
 
     expect(membership.state).toBe('NOT_A_MEMBER');
+    expect(membership.isLead).toBe(false);
+  });
+
+  it('reports team lead as ACTIVE with isLead=true even without explicit member row', () => {
+    const leadTeam: Team = {
+      ...team([]),
+      teamLeadEmployeeId: EMPLOYEE,
+    };
+    const membership = only(teamMembershipsFor([leadTeam], EMPLOYEE));
+
+    expect(membership.state).toBe('ACTIVE');
+    expect(membership.isLead).toBe(true);
   });
 });
 
 describe('project membership state', () => {
-  it('carries the allocation of the active row only', () => {
+  it('reports an active assignment', () => {
     const membership = only(
-      projectMembershipsFor(
-        [project([projectMember({ projectRole: 'Contributor', allocationPercentage: 60 })])],
-        EMPLOYEE,
-      ),
+      projectMembershipsFor([project([projectMember({ projectRole: 'Contributor' })])], EMPLOYEE),
     );
-
     expect(membership.state).toBe('ACTIVE');
-    expect(membership.allocationPercentage).toBe(60);
   });
 
-  it('does not report an allocation for an ended assignment', () => {
+  it('reports an ended assignment with its end date', () => {
     const membership = only(
       projectMembershipsFor(
-        [
-          project([
-            projectMember({
-              allocationPercentage: 60,
-              startsOn: '2025-01-01',
-              endsOn: '2026-05-31',
-            }),
-          ]),
-        ],
+        [project([projectMember({ startsOn: '2025-01-01', endsOn: '2026-05-31' })])],
         EMPLOYEE,
       ),
     );
-
     expect(membership.state).toBe('ENDED');
-    expect(membership.allocationPercentage).toBeNull();
     expect(membership.endedOn).toBe('2026-05-31');
   });
 
-  it('sums only active allocations', () => {
-    const memberships = projectMembershipsFor(
-      [
-        project([
-          projectMember({ allocationPercentage: 40 }),
-          projectMember({
-            id: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
-            allocationPercentage: 90,
-            startsOn: '2024-01-01',
-            endsOn: '2025-12-31',
-          }),
-        ]),
-      ],
-      EMPLOYEE,
-    );
+  it('reports project lead as ACTIVE with isLead=true even without explicit member row', () => {
+    const leadProject: Project = {
+      ...project([]),
+      projectLeadEmployeeId: EMPLOYEE,
+    };
+    const membership = only(projectMembershipsFor([leadProject], EMPLOYEE));
 
-    expect(totalActiveAllocation(memberships)).toBe(40);
-  });
-
-  it('treats a missing allocation as unknown rather than zero', () => {
-    const membership = only(
-      projectMembershipsFor([project([projectMember({ allocationPercentage: null })])], EMPLOYEE),
-    );
-
-    expect(membership.allocationPercentage).toBeNull();
+    expect(membership.state).toBe('ACTIVE');
+    expect(membership.isLead).toBe(true);
   });
 });

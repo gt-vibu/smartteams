@@ -1,3 +1,4 @@
+import { IsAcceptablePassword } from './password-rule';
 import {
   IsEmail,
   IsOptional,
@@ -6,20 +7,24 @@ import {
   Length,
   MaxLength,
   MinLength,
+  IsTimeZone,
 } from 'class-validator';
+import { LIMITS } from '@smarteam/contracts';
+import { IsText } from '../../common/validation/field-rules';
 
 export class RegisterDto {
-  @IsString() @MinLength(2) organizationName!: string;
-  @IsString() @MinLength(2) timezone!: string;
+  @IsText('Organization name', LIMITS.title, 2) organizationName!: string;
+  @IsTimeZone({ message: 'Choose a time zone from the list, like Asia/Kolkata.' })
+  timezone!: string;
   @IsString() @Length(3, 3) currencyCode!: string;
   @IsEmail() email!: string;
-  @IsString() @MinLength(2) displayName!: string;
-  @IsString() @MinLength(12) password!: string;
+  @IsText('Your name', LIMITS.title, 2) displayName!: string;
+  @IsString() @IsAcceptablePassword() password!: string;
 }
 
 export class LoginDto {
   @IsEmail() email!: string;
-  @IsString() password!: string;
+  @IsString() @MaxLength(1024) password!: string;
   /**
    * Optional tenant *selection*. It is never an authorization input: the server honours it
    * only when the authenticated user holds an ACTIVE membership of that organization. A user
@@ -30,7 +35,7 @@ export class LoginDto {
 
 export class PlatformLoginDto {
   @IsEmail() email!: string;
-  @IsString() password!: string;
+  @IsString() @MaxLength(1024) password!: string;
 }
 
 export class PasswordResetRequestDto {
@@ -39,14 +44,14 @@ export class PasswordResetRequestDto {
 }
 
 export class PasswordResetConfirmDto {
-  @IsString() @MinLength(32) token!: string;
-  @IsString() @MinLength(12) password!: string;
+  @IsString() @MinLength(32) @MaxLength(512) token!: string;
+  @IsString() @IsAcceptablePassword() password!: string;
 }
 
 export class InvitationAcceptDto {
-  @IsString() @MinLength(32) token!: string;
-  @IsString() @MinLength(2) displayName!: string;
-  @IsString() @MinLength(12) password!: string;
+  @IsString() @MinLength(32) @MaxLength(512) token!: string;
+  @IsText('Your name', LIMITS.title, 2) displayName!: string;
+  @IsString() @IsAcceptablePassword() password!: string;
 }
 
 /**
@@ -63,5 +68,5 @@ export class AccessCodePreviewDto {
 export class AccessCodeActivateDto {
   @IsString() @MinLength(8) @MaxLength(64) code!: string;
   @IsEmail() email!: string;
-  @IsString() @MinLength(12) password!: string;
+  @IsString() @IsAcceptablePassword() password!: string;
 }

@@ -35,6 +35,21 @@ const nextConfig: NextConfig = {
     Promise.resolve(
       apiProxyTarget ? [{ source: '/v1/:path*', destination: `${apiProxyTarget}/v1/:path*` }] : [],
     ),
+  // Public product illustrations are versioned with the app release. Cache them briefly at
+  // browsers/CDNs and allow stale-while-revalidate during deployment; authenticated workspace
+  // data is fetched from the API with `cache: 'no-store'` and is not covered by this rule.
+  headers: () =>
+    Promise.resolve([
+      {
+        source: '/landing/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=604800',
+          },
+        ],
+      },
+    ]),
 };
 
 export default nextConfig;

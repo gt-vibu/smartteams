@@ -80,14 +80,40 @@ export async function findPolicy(
   tx: TenantTransaction,
   organizationId: string,
   effectiveDate: Date,
+  payrollPolicyId?: string | null,
+  assignmentEffectiveFrom?: Date,
 ) {
-  const policy = await tx.payrollPolicy.findFirst({
+  if (payrollPolicyId) {
+    const selected = await tx.payrollPolicy.findFirst({
+      where: { organizationId, id: payrollPolicyId },
+      include: {
+        components: { include: { payComponent: true }, orderBy: { displayOrder: 'asc' } },
+      },
+    });
+    if (!selected) throw new ConflictError('The assigned payroll policy is unavailable');
+    // Default is an organization-wide, effective-dated rule. Selecting it must not
+    // freeze an employee onto the initial baseline when a newer default takes effect.
+    if (!selected.isDefault) {
+      const selectedDate =
+        assignmentEffectiveFrom && assignmentEffectiveFrom > effectiveDate
+          ? assignmentEffectiveFrom
+          : effectiveDate;
+      if (
+        selected.effectiveFrom > selectedDate ||
+        (selected.effectiveTo && selected.effectiveTo < selectedDate)
+      )
+        throw new ConflictError('The assigned payroll policy is not effective for this period');
+      return selected;
+    }
+  }
+  return tx.payrollPolicy.findFirst({
     where: {
       organizationId,
+      isDefault: true,
       effectiveFrom: { lte: effectiveDate },
       OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveDate } }],
     },
     orderBy: { effectiveFrom: 'desc' },
+    include: { components: { include: { payComponent: true }, orderBy: { displayOrder: 'asc' } } },
   });
-  return policy;
 }

@@ -9,6 +9,9 @@ model AttendanceRecord {
   scheduledMinutes Int?                @map("scheduled_minutes")
   workedMinutes    Int                 @default(0) @map("worked_minutes")
   overtimeMinutes  Int                 @default(0) @map("overtime_minutes")
+  /// What kind of day the overtime was worked on: WORKING_DAY, WEEKLY_OFF or HOLIDAY. Payroll
+  /// pays weekly-off and holiday overtime at their own rates. Null before shifts were counted.
+  overtimeDayType  String?             @map("overtime_day_type")
   sourceAccessMode AccessMode          @map("source_access_mode")
   externalId       String?             @map("external_id")
   correctionNote   String?             @map("correction_note")
@@ -22,6 +25,7 @@ model AttendanceRecord {
   punches          AttendancePunch[]
   corrections      AttendanceCorrection[]
   holidayReviews   AttendanceHolidayReview[]
+  leaveOverlapReviews AttendanceLeaveOverlapReview[]
   timesheetEntries TimesheetEntry[]
 
   @@unique([employeeId, workDate])
@@ -94,27 +98,6 @@ model AttendanceCorrection {
   @@map("attendance_corrections")
 }
 
-model AttendanceApproval {
-  id                     String         @id @default(uuid()) @db.Uuid
-  organizationId         String         @map("organization_id") @db.Uuid
-  attendanceCorrectionId String         @map("attendance_correction_id") @db.Uuid
-  approverUserId         String         @map("approver_user_id") @db.Uuid
-  approvalPolicyStepId   String?        @map("approval_policy_step_id") @db.Uuid
-  stepNumber             Int            @map("step_number") @db.SmallInt
-  status                 ApprovalStatus
-  comment                String?
-  createdAt              DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  organization         Organization         @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  attendanceCorrection AttendanceCorrection @relation(fields: [attendanceCorrectionId], references: [id], onDelete: Restrict)
-  approver             User                 @relation(fields: [approverUserId], references: [id], onDelete: Restrict)
-  approvalPolicyStep   ApprovalPolicyStep?  @relation(fields: [approvalPolicyStepId], references: [id], onDelete: Restrict)
-
-  @@unique([attendanceCorrectionId, stepNumber])
-  @@index([organizationId, approverUserId, status])
-  @@map("attendance_approvals")
-}
-
 model Holiday {
   id               String     @id @default(uuid()) @db.Uuid
   organizationId   String     @map("organization_id") @db.Uuid
@@ -172,6 +155,16 @@ model LeaveType {
   annualAllowance    Decimal?         @map("annual_allowance") @db.Decimal(10, 2)
   monthlyAccrual     Decimal?         @map("monthly_accrual") @db.Decimal(10, 2)
   carryoverLimit     Decimal?         @map("carryover_limit") @db.Decimal(10, 2)
+  /// Whether someone joining mid-year gets the part of the allowance for the months left.
+  prorateForJoiners  Boolean          @default(true) @map("prorate_for_joiners")
+  /// Weekends and holidays between two leave days count as leave too.
+  sandwichOffDays    Boolean          @default(false) @map("sandwich_off_days")
+  /// Unused days may be exchanged for pay, up to `maxEncashDays` a year.
+  encashable         Boolean          @default(false)
+  maxEncashDays      Decimal?         @map("max_encash_days") @db.Decimal(10, 2)
+  /// Credited for working a day off rather than accrued; each credit lapses after `compOffExpiryDays`.
+  isCompOff          Boolean          @default(false) @map("is_comp_off")
+  compOffExpiryDays  Int?             @map("comp_off_expiry_days") @db.SmallInt
   requiresAttachment Boolean          @default(false) @map("requires_attachment")
   isActive           Boolean          @default(true) @map("is_active")
   createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
@@ -179,6 +172,8 @@ model LeaveType {
 
   organization      Organization            @relation(fields: [organizationId], references: [id], onDelete: Restrict)
   policyAssignments LeavePolicyAssignment[]
+  compOffCredits    CompOffCredit[]
+  encashments       LeaveEncashment[]
   balances          LeaveBalance[]
   requests          LeaveRequest[]
 
@@ -264,6 +259,9 @@ model LeaveRequest {
   startDate        DateTime           @map("start_date") @db.Date
   endDate          DateTime           @map("end_date") @db.Date
   requestedDays    Decimal            @map("requested_days") @db.Decimal(8, 2)
+  session          String             @default("FULL_DAY")
+  cancellation     Json?
+  chargedDates     Json?              @map("charged_dates")
   reason           String?
   status           LeaveRequestStatus @default(DRAFT)
   sourceAccessMode AccessMode         @map("source_access_mode")
@@ -283,33 +281,12 @@ model LeaveRequest {
   approvals           LeaveApproval[]
   balanceTransactions LeaveBalanceTransaction[]
   files               FileObject[]
+  attendanceOverlapReviews AttendanceLeaveOverlapReview[]
 
   @@unique([organizationId, externalId])
   @@index([organizationId, status, startDate])
   @@index([organizationId, employeeId, startDate])
   @@map("leave_requests")
-}
-
-model LeaveApproval {
-  id                   String         @id @default(uuid()) @db.Uuid
-  organizationId       String         @map("organization_id") @db.Uuid
-  leaveRequestId       String         @map("leave_request_id") @db.Uuid
-  approverUserId       String         @map("approver_user_id") @db.Uuid
-  approvalPolicyStepId String?        @map("approval_policy_step_id") @db.Uuid
-  stepNumber           Int            @map("step_number") @db.SmallInt
-  status               ApprovalStatus
-  comment              String?
-  decidedAt            DateTime?      @map("decided_at") @db.Timestamptz(6)
-  createdAt            DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-  leaveRequest       LeaveRequest        @relation(fields: [leaveRequestId], references: [id], onDelete: Restrict)
-  approver           User                @relation(fields: [approverUserId], references: [id], onDelete: Restrict)
-  approvalPolicyStep ApprovalPolicyStep? @relation(fields: [approvalPolicyStepId], references: [id], onDelete: Restrict)
-
-  @@unique([leaveRequestId, stepNumber])
-  @@index([organizationId, approverUserId, status])
-  @@map("leave_approvals")
 }
 
 model Shift {
@@ -495,4 +472,34 @@ model AttendanceHolidayReview {
   @@index([organizationId, status, createdAt])
   @@index([organizationId, employeeId])
   @@map("attendance_holiday_reviews")
+}
+
+/// A check-in during approved leave, reviewed separately from leave cancellation so one worked
+/// date can be restored without cancelling the employee's entire leave request.
+model AttendanceLeaveOverlapReview {
+  id                 String    @id @default(uuid()) @db.Uuid
+  organizationId     String    @map("organization_id") @db.Uuid
+  employeeId         String    @map("employee_id") @db.Uuid
+  attendanceRecordId String    @map("attendance_record_id") @db.Uuid
+  leaveRequestId     String    @map("leave_request_id") @db.Uuid
+  workDate           DateTime  @map("work_date") @db.Date
+  leaveUnits         Decimal   @map("leave_units") @db.Decimal(4, 2)
+  status             String    @default("PENDING")
+  autoApproved       Boolean   @default(false) @map("auto_approved")
+  requestedByUserId  String?   @map("requested_by_user_id") @db.Uuid
+  decidedByUserId    String?   @map("decided_by_user_id") @db.Uuid
+  decisionComment    String?   @map("decision_comment")
+  decidedAt          DateTime? @map("decided_at") @db.Timestamptz(6)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization     Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  employee         Employee         @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  attendanceRecord AttendanceRecord @relation(fields: [attendanceRecordId], references: [id], onDelete: Restrict)
+  leaveRequest     LeaveRequest     @relation(fields: [leaveRequestId], references: [id], onDelete: Restrict)
+
+  @@unique([attendanceRecordId, leaveRequestId])
+  @@index([organizationId, status, createdAt])
+  @@index([organizationId, employeeId, workDate])
+  @@map("attendance_leave_overlap_reviews")
 }

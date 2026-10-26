@@ -9,6 +9,8 @@ import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { PasswordService } from '../auth/auth.passwords';
+import { PasswordInvitationService } from '../auth/auth.password-invitation.service';
+import { sendInvitation } from '../organizations/organization-onboarding.service';
 import { RbacService } from '../rbac/rbac.service';
 
 /**
@@ -32,6 +34,7 @@ export class MembersService {
     private readonly audit: AuditService,
     private readonly passwords: PasswordService,
     private readonly rbac: RbacService,
+    private readonly invitations: PasswordInvitationService,
   ) {}
 
   /**
@@ -113,7 +116,7 @@ export class MembersService {
     const temporaryPassword = `ST!${randomBytes(9).toString('base64url')}9aA`;
     const passwordHash = await this.passwords.hashPassword(temporaryPassword);
 
-    return this.database.run(context, async (tx) => {
+    const result = await this.database.run(context, async (tx) => {
       const roles = await tx.role.findMany({
         where: { id: { in: input.roleIds }, organizationId: context.organizationId },
         include: { permissions: { include: { permission: true } } },
@@ -192,17 +195,39 @@ export class MembersService {
         tx,
       );
 
+      // A new login is emailed its temporary password and a link to choose its own. An existing
+      // user keeps the password they already have, and this route is not a password reset.
+      const organization = await tx.organization.findUniqueOrThrow({
+        where: { id: context.organizationId },
+        select: { name: true },
+      });
+      const invitation = existing
+        ? null
+        : await this.invitations.prepare(tx, {
+            userId: user.id,
+            email: user.email,
+            displayName: user.displayName,
+            organizationName: organization.name,
+            temporaryPassword,
+          });
+
       return {
-        userId: user.id,
-        email: user.email,
-        displayName: user.displayName,
-        roleIds: roles.map((role) => role.id),
-        /**
-         * Present only for an identity created by this call. An existing user keeps the password
-         * they already have, and this route is not a password reset.
-         */
-        temporaryPassword: existing ? null : temporaryPassword,
+        invitation,
+        member: {
+          userId: user.id,
+          email: user.email,
+          displayName: user.displayName,
+          roleIds: roles.map((role) => role.id),
+          /** Present only for an identity created by this call — the fallback if the email is lost. */
+          temporaryPassword: existing ? null : temporaryPassword,
+        },
       };
     });
+    return {
+      ...result.member,
+      invitation: result.invitation
+        ? await sendInvitation(result.invitation, result.member.email)
+        : null,
+    };
   }
 }

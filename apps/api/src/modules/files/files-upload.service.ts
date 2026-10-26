@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { FilePurpose, FileStatus } from '../../generated/prisma/enums';
+import { FileAccessScope, FilePurpose, FileStatus } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import {
   ConflictError,
@@ -10,7 +10,9 @@ import { TenantDatabaseService } from '../../infrastructure/database/tenant-data
 import { StorageService } from '../../infrastructure/storage/storage.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { canActForAllEmployees, resolveActingEmployeeId } from '../employees/employee-scope';
-import { limits, toFileDto } from './files-shared';
+import { limits, requireFilePermission, toFileDto } from './files-shared';
+import type { EmployeeDocumentType } from './file.constants';
+import { fileDisplayName } from './file-naming';
 
 /**
  * The breadth marker for files, as in listing, download and deletion: `files.read.all`, the
@@ -27,6 +29,7 @@ const ORGANIZATION_PURPOSES: ReadonlySet<FilePurpose> = new Set([
   FilePurpose.PAYSLIP,
   FilePurpose.PAYROLL_EXPORT,
   FilePurpose.IMPORT,
+  FilePurpose.ORGANIZATION_BRANDING,
 ]);
 
 @Injectable()
@@ -47,15 +50,33 @@ export class FilesUploadService {
       checksumSha256?: string;
       employeeId?: string;
       leaveRequestId?: string;
+      documentType?: EmployeeDocumentType;
+    },
+    /**
+     * Who the file is for. Callers that do not say (federation) get what they always had: the
+     * employee's file, or an internal one when there is no employee. The documents service
+     * checks the caller may publish to the scope before passing it.
+     */
+    access?: {
+      scope: FileAccessScope;
+      teamId?: string;
+      projectId?: string;
+      allowDownload?: boolean;
     },
   ) {
-    requirePermission(context, 'files.write');
+    const branding = input.purpose === FilePurpose.ORGANIZATION_BRANDING;
+    if (branding) requirePermission(context, 'organizations.update');
+    else requireFilePermission(context, 'write');
+    const sharedScope = branding ||
+      access?.scope === 'ORGANIZATION' || access?.scope === 'TEAM' || access?.scope === 'PROJECT';
     // `files.write` is a self-service permission. It used to accept any employee id and any
     // purpose, so an employee could attach documents to a colleague's record or leave request, and
     // file payroll documents under anyone's name.
     const breadth = canActForAllEmployees(context, FILES_BREADTH);
-    if (!breadth && ORGANIZATION_PURPOSES.has(input.purpose))
+    if (!breadth && ORGANIZATION_PURPOSES.has(input.purpose) && !branding)
       throw new ForbiddenDomainError('Only file administrators may upload this kind of file');
+    if (branding && (input.employeeId || input.leaveRequestId || !input.contentType.startsWith('image/')))
+      throw new ConflictError('Organization branding must be an organization image');
     const rule = limits[input.purpose];
     if (
       !rule.types.includes(input.contentType) ||
@@ -65,6 +86,14 @@ export class FilesUploadService {
       throw new ConflictError('File type or size is not allowed for this purpose');
     if (input.checksumSha256 && !/^[0-9a-f]{64}$/i.test(input.checksumSha256))
       throw new ConflictError('Checksum must be a SHA-256 hexadecimal digest');
+    // Federation's dedicated DTO requires a document type. The generic native file endpoint
+    // predates that taxonomy and remains compatible with unclassified employee documents.
+    if (
+      input.purpose === FilePurpose.PROFILE_IMAGE &&
+      input.documentType &&
+      input.documentType !== 'PROFILE_PICTURE'
+    )
+      throw new ConflictError('Employee profile images must use the profile picture type');
     if (
       input.purpose === FilePurpose.LEAVE_ATTACHMENT &&
       !input.employeeId &&
@@ -75,13 +104,45 @@ export class FilesUploadService {
       context.organizationId,
       input.purpose,
       input.originalName,
+      {
+        employeeId: input.employeeId,
+        documentType: input.documentType,
+        contentType: input.contentType,
+      },
+    );
+    const displayName = fileDisplayName(
+      input.purpose,
+      input.originalName,
+      input.documentType,
+      input.contentType,
     );
     const file = await this.database.run(context, async (tx) => {
       // A self-service upload is always the caller's own, whether or not it named them: a file
       // with no employee is readable only with breadth, so the uploader could not see it again.
-      const employeeId = breadth
-        ? input.employeeId
-        : await resolveActingEmployeeId(tx, context, input.employeeId, FILES_BREADTH);
+      // A company or team document is about nobody, so it is never filed against the uploader.
+      const employeeId = sharedScope
+        ? undefined
+        : breadth
+          ? input.employeeId
+          : await resolveActingEmployeeId(tx, context, input.employeeId, FILES_BREADTH);
+      if (access?.teamId) {
+        const team = await tx.team.findFirst({
+          where: { id: access.teamId, organizationId: context.organizationId },
+          select: { status: true },
+        });
+        if (!team) throw new NotFoundError('Team');
+        if (team.status === 'ARCHIVED')
+          throw new ConflictError('An archived team takes no new files');
+      }
+      if (access?.projectId) {
+        const project = await tx.project.findFirst({
+          where: { id: access.projectId, organizationId: context.organizationId },
+          select: { status: true },
+        });
+        if (!project) throw new NotFoundError('Project');
+        if (project.status === 'ARCHIVED')
+          throw new ConflictError('An archived project takes no new files');
+      }
       const employee = employeeId
         ? await tx.employee.findFirst({
             where: { id: employeeId, organizationId: context.organizationId },
@@ -107,10 +168,21 @@ export class FilesUploadService {
           purpose: input.purpose,
           bucket: this.storage.getBucket(),
           objectKey: key,
-          originalName: input.originalName.replace(/[\\/]/g, '_'),
+          originalName: displayName,
           contentType: input.contentType,
           byteSize: BigInt(input.byteSize),
           checksumSha256: input.checksumSha256,
+          accessScope: branding ? FileAccessScope.ORGANIZATION :
+            access?.scope ??
+            (employeeId || leaveRequest?.employeeId
+              ? FileAccessScope.EMPLOYEE
+              : FileAccessScope.INTERNAL),
+          teamId: access?.scope === 'TEAM' ? access.teamId : undefined,
+          projectId: access?.scope === 'PROJECT' ? access.projectId : undefined,
+          allowDownload: access?.allowDownload ?? true,
+          metadata: input.documentType
+            ? { documentType: input.documentType, displayName }
+            : { displayName },
         },
       });
       await this.audit.record(
@@ -130,13 +202,20 @@ export class FilesUploadService {
       );
       return file;
     });
-    const uploadUrl = await this.storage.createUploadUrl({
+    const upload = await this.storage.createUploadUrl({
       key,
       contentType: input.contentType,
       byteSize: input.byteSize,
       checksumSha256: input.checksumSha256,
     });
-    return { fileId: file.id, objectKey: key, uploadUrl, expiresIn: 600 };
+    return {
+      fileId: file.id,
+      objectKey: key,
+      uploadUrl: upload.url,
+      uploadHeaders: upload.headers,
+      displayName,
+      expiresIn: 600,
+    };
   }
 
   /**
@@ -165,8 +244,14 @@ export class FilesUploadService {
    * want it.
    */
 
-  async completeUpload(context: DomainContext, fileId: string, employeeId?: string) {
-    requirePermission(context, 'files.write');
+  async completeUpload(
+    context: DomainContext,
+    fileId: string,
+    employeeId?: string,
+    purpose?: FilePurpose | FilePurpose[],
+  ) {
+    const hasFileWrite = context.permissions.has('files.write') || context.permissions.has('*');
+    if (!hasFileWrite) requirePermission(context, 'organizations.update');
     const file = await this.database.run(context, (tx) =>
       tx.fileObject.findFirst({
         where: {
@@ -174,6 +259,7 @@ export class FilesUploadService {
           organizationId: context.organizationId,
           status: { in: [FileStatus.PENDING_UPLOAD, FileStatus.AVAILABLE] },
           ...(employeeId ? { employeeId } : {}),
+          ...(purpose ? { purpose: Array.isArray(purpose) ? { in: purpose } : purpose } : {}),
           // Completing publishes the file. A self-service caller may only complete an upload they
           // began; anyone else's pending file reads as missing, as it does everywhere else.
           ...(canActForAllEmployees(context, FILES_BREADTH)
@@ -183,6 +269,8 @@ export class FilesUploadService {
       }),
     );
     if (!file) throw new NotFoundError('Pending file');
+    if (file.purpose === FilePurpose.ORGANIZATION_BRANDING) requirePermission(context, 'organizations.update');
+    else requireFilePermission(context, 'write');
     // Already completed by an earlier call. Nothing to verify and nothing to write.
     if (file.status === FileStatus.AVAILABLE)
       return { ...toFileDto(file), versionId: file.currentVersionId };

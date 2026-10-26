@@ -1,12 +1,8 @@
-/**
- * How long an attendance correction reason must be.
- *
- * Shared because it was not: the drawer enabled its submit button at five characters while
- * `AttendanceCorrectionDto` required ten, so a reason of six to nine characters passed the form,
- * failed the API, and the drawer reported success anyway. One number, imported by both sides.
- */
-export const ATTENDANCE_CORRECTION_REASON_MIN_LENGTH = 10;
+/** Minimum length for a correction reason; blank and whitespace-only values are rejected by the API. */
+export const ATTENDANCE_CORRECTION_REASON_MIN_LENGTH = 1;
 export const ATTENDANCE_CORRECTION_REASON_MAX_LENGTH = 500;
+/** Holiday attendance reviews require a more descriptive explanation than ordinary corrections. */
+export const ATTENDANCE_HOLIDAY_REVIEW_REASON_MIN_LENGTH = 10;
 
 import { z } from 'zod';
 
@@ -49,6 +45,7 @@ export const attendanceRecordSchema = z.object({
   dayStatus: z.string(),
   workedMinutes: z.number(),
   overtimeMinutes: z.number(),
+  leaveUnits: z.number().min(0).max(1).optional(),
   version: z.number(),
   employee: attendanceEmployeeSchema.optional(),
   punches: z.array(attendancePunchSchema).optional(),
@@ -73,6 +70,16 @@ export const attendanceCorrectionSchema = z.object({
   workDate: z.string().optional(),
   /** What the correction asks for; a missing check-out carries `missingCheckOut.occurredAt`. */
   afterSnapshot: z.unknown().optional(),
+  beforeSnapshot: z.unknown().optional(),
+  warningReason: z.string().nullable().optional(),
+  currentStep: z
+    .object({
+      stepNumber: z.number(),
+      approverType: z.string(),
+      roleId: z.string().nullable().optional(),
+      approverUserId: z.string().nullable().optional(),
+    })
+    .optional(),
   branchId: z.string().uuid().nullable().optional(),
   employee: attendanceEmployeeSchema.optional(),
   approvals: z
@@ -97,10 +104,44 @@ export const attendanceCorrectionSchema = z.object({
 });
 
 export const attendanceCorrectionPageSchema = z.object({
+  nextCursor: z.string().optional(),
   corrections: z.array(attendanceCorrectionSchema),
 });
 
+export const missedCheckOutPolicySchema = z
+  .object({
+    version: z.number().int().min(1).default(1),
+    effectiveFrom: z.string().date().default('1970-01-01'),
+    resolutionMethod: z.enum(['LEAVE_OPEN', 'EMPLOYEE_CORRECTION', 'PROVISIONAL_AUTO_CLOSE']),
+    correctionDeadline: z.enum(['SAME_DAY', 'NEXT_CALENDAR_DAY', 'BEFORE_PAYROLL_CUTOFF']),
+    deadlineFallback: z.enum(['KEEP_OPEN', 'ROUTE_TO_APPROVAL_POLICY']),
+    closeTimeSource: z.enum(['SHIFT_END', 'CONFIGURED_TIME']),
+    configuredTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+    employeeCorrectionsAllowed: z.boolean(),
+    payrollTreatment: z.literal('HOLD_UNRESOLVED').default('HOLD_UNRESOLVED'),
+  })
+  .refine(
+    (policy) =>
+      policy.resolutionMethod !== 'EMPLOYEE_CORRECTION' || policy.employeeCorrectionsAllowed,
+    { message: 'Employee correction mode requires employee correction requests to be enabled' },
+  );
+
+export type MissedCheckOutPolicy = z.infer<typeof missedCheckOutPolicySchema>;
+
+export const DEFAULT_MISSED_CHECK_OUT_POLICY: MissedCheckOutPolicy = {
+  version: 1,
+  effectiveFrom: '1970-01-01',
+  resolutionMethod: 'LEAVE_OPEN',
+  correctionDeadline: 'NEXT_CALENDAR_DAY',
+  deadlineFallback: 'ROUTE_TO_APPROVAL_POLICY',
+  closeTimeSource: 'CONFIGURED_TIME',
+  configuredTime: '23:59',
+  employeeCorrectionsAllowed: true,
+  payrollTreatment: 'HOLD_UNRESOLVED',
+};
+
 export const attendancePreferencesSchema = z.object({
+  requireGps: z.boolean().optional().default(false),
   id: z.string().optional(),
   organizationId: z.string().optional(),
   geofenceMode: z.string().nullable(),
@@ -111,6 +152,20 @@ export const attendancePreferencesSchema = z.object({
   /** Whether a day with no check-out is closed for review, and the local time it closes at. */
   autoCheckOutMode: z.enum(['DISABLED', 'REVIEW_REQUIRED']).nullable().optional(),
   autoCheckOutAt: z.string().nullable().optional(),
+  missedCheckOutPolicy: missedCheckOutPolicySchema.optional(),
+  workLocations: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        branchId: z.string().nullable().optional(),
+        name: z.string(),
+        latitude: z.number(),
+        longitude: z.number(),
+        radiusMeters: z.number(),
+      }),
+    )
+    .optional()
+    .default([]),
 });
 
 export type AttendancePunch = z.infer<typeof attendancePunchSchema>;
@@ -143,6 +198,40 @@ export function firstPunch(
   if (matching.length === 0) return null;
   // Punches arrive oldest-first; the last OUT is the one that closes the day.
   return (type === 'IN' ? matching[0] : matching[matching.length - 1]) ?? null;
+}
+
+/** The viewer's own calendar date, which is the date a punch is filed under. */
+function todayKeyAt(now: number): string {
+  const date = new Date(now);
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${`${date.getDate()}`.padStart(2, '0')}`;
+}
+
+/**
+ * Minutes worked so far today, counting a session that is still open.
+ *
+ * The server totals a session when it closes, so a record read while someone is checked in says
+ * 0 until they check out. This adds the open session (last IN with no OUT after it) up to `now`.
+ *
+ * Only for a day that is still running. A forgotten check-out leaves an open IN on a past day
+ * for ever, and counting it to `now` billed a single September day as 36 hours worked. Such a day
+ * is missing a check-out, not in progress: it counts only its closed pairs until a correction
+ * supplies the check-out.
+ */
+export function liveWorkedMinutes(
+  record: Pick<AttendanceRecord, 'punches' | 'workedMinutes'> & { workDate?: string },
+  now: number = Date.now(),
+): number {
+  const day = record.workDate?.slice(0, 10);
+  if (day && day !== todayKeyAt(now)) return record.workedMinutes;
+  const punches = [...(record.punches ?? [])].sort((a, b) =>
+    a.occurredAt.localeCompare(b.occurredAt),
+  );
+  const last = punches[punches.length - 1];
+  if (!last || last.punchType !== 'IN') return record.workedMinutes;
+  const started = new Date(last.occurredAt).getTime();
+  if (Number.isNaN(started) || started > now) return record.workedMinutes;
+  return record.workedMinutes + Math.floor((now - started) / 60_000);
 }
 
 /**

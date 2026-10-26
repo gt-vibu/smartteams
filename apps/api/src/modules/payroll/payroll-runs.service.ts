@@ -21,6 +21,7 @@ import {
   validTransition,
 } from './payroll-calculation';
 import { createPayslips } from './payroll-line-calculator';
+import { describeDays, notify } from '../notifications/notify';
 
 /**
  * The life of a payroll run: creating one, adjusting it, moving it between states, and
@@ -43,6 +44,22 @@ export class PayrollRunsService {
       tx.payrollRun.findMany({
         where: { organizationId: context.organizationId },
         orderBy: { periodStart: 'desc' },
+        // Return only the public payroll-run fields the native screen consumes. The raw Prisma
+        // row also carries the internal calculation input hash and creator metadata.
+        select: {
+          id: true,
+          periodStart: true,
+          periodEnd: true,
+          payFrequency: true,
+          currencyCode: true,
+          status: true,
+          calculatedAt: true,
+          calculationStaleAt: true,
+          approvedAt: true,
+          releasedAt: true,
+          lockedAt: true,
+          version: true,
+        },
       }),
     );
   }
@@ -57,22 +74,48 @@ export class PayrollRunsService {
       const periodEnd = dateOnly(input.periodEnd);
       if (periodEnd < periodStart)
         throw new ConflictError('Payroll period end must not precede its start');
-      const organization = await tx.organization.findUniqueOrThrow({
-        where: { id: context.organizationId },
-        include: { settings: true },
-      });
-      const run = await tx.payrollRun.create({
-        data: {
+      const existingRun = await tx.payrollRun.findFirst({
+        where: {
           organizationId: context.organizationId,
           periodStart,
           periodEnd,
-          payFrequency:
-            input.payFrequency ?? organization.settings?.payrollFrequency ?? PayFrequency.MONTHLY,
-          currencyCode: organization.currencyCode,
-          calculationVersion: 'v1-deterministic',
-          inputSnapshotHash: emptyHash(),
+          status: { not: PayrollRunStatus.VOIDED },
+        },
+        select: { id: true },
+      });
+      if (existingRun)
+        throw new ConflictError(
+          'A payroll run already exists for this period. Continue the existing run instead of creating a duplicate.',
+        );
+      const organization = await tx.organization.findUniqueOrThrow({
+        where: { id: context.organizationId },
+        // Select the two values needed to create the run. Selecting the full organization
+        // record also reads optional fields owned by newer, not-yet-applied migrations, which
+        // can turn an otherwise valid payroll draft into a P2022 on an existing local database.
+        select: {
+          currencyCode: true,
+          settings: { select: { payrollFrequency: true } },
         },
       });
+      const run = await tx.payrollRun
+        .create({
+          data: {
+            organizationId: context.organizationId,
+            periodStart,
+            periodEnd,
+            payFrequency:
+              input.payFrequency ?? organization.settings?.payrollFrequency ?? PayFrequency.MONTHLY,
+            currencyCode: organization.currencyCode,
+            calculationVersion: 'v1-deterministic',
+            inputSnapshotHash: emptyHash(),
+          },
+        })
+        .catch((error: unknown) => {
+          // The partial unique index is the final guard against concurrent create requests.
+          if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002')
+            throw new ConflictError('A payroll run already exists for this period');
+          throw error;
+        });
       await this.audit.record(
         context,
         {
@@ -239,7 +282,6 @@ export class PayrollRunsService {
 
   async advance(context: DomainContext, runId: string, target: PayrollRunStatus, comment: string) {
     requirePermission(context, payrollTransitionPermission(target));
-    requireReason({ ...context, reason: comment }, 'Payroll state changes require a reason');
     return this.database.run(context, async (tx) => {
       // Lock before reading the state the transition is judged against, so two callers cannot both
       // see CALCULATED and both move the run to APPROVED. The unique constraint on
@@ -257,6 +299,15 @@ export class PayrollRunsService {
         throw new ConflictError(
           'Payroll inputs changed after this run was calculated; calculate it again before approving or releasing it',
         );
+      if (target === PayrollRunStatus.APPROVED || target === PayrollRunStatus.RELEASED) {
+        const lineCount = await tx.payrollLineItem.count({
+          where: { organizationId: context.organizationId, payrollRunId: run.id },
+        });
+        if (lineCount === 0)
+          throw new ConflictError(
+            'This payroll run has no employee pay lines. Calculate a run with eligible employees before approving or releasing it.',
+          );
+      }
       const updated = await tx.payrollRun.update({
         where: { id: run.id },
         data: {
@@ -272,14 +323,28 @@ export class PayrollRunsService {
                     organizationId: context.organizationId,
                     approverUserId: context.actor.userId,
                     status: 'APPROVED',
-                    comment,
+                    comment: comment.trim() || null,
                   },
                 }
               : undefined,
         },
       });
-      if (target === PayrollRunStatus.RELEASED)
+      if (target === PayrollRunStatus.RELEASED) {
         await createPayslips(tx, context.organizationId, run.id);
+        const paid = await tx.payslip.findMany({
+          where: { organizationId: context.organizationId, payrollRunId: run.id },
+          select: { employee: { select: { userId: true } } },
+        });
+        await notify(tx, context, {
+          recipients: paid.map((slip) => slip.employee.userId),
+          kind: 'PAYSLIP_RELEASED',
+          title: 'Your payslip is ready',
+          body: `Your payslip for ${describeDays(run.periodStart, run.periodEnd)} is ready to view and download.`,
+          module: 'payroll',
+          entityType: 'PAYROLL_RUN',
+          entityId: run.id,
+        });
+      }
       await this.audit.record(
         context,
         {
@@ -288,7 +353,7 @@ export class PayrollRunsService {
           action: `PAYROLL_RUN_${target}`,
           beforeState: jsonSnapshot(run),
           afterState: jsonSnapshot(updated),
-          reason: comment,
+          reason: comment.trim() || undefined,
         },
         tx,
       );

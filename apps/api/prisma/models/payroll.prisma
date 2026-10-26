@@ -46,6 +46,8 @@ model PayrollRun {
 model PayrollPolicy {
   id                    String              @id @default(uuid()) @db.Uuid
   organizationId        String              @map("organization_id") @db.Uuid
+  name                  String              @default("Standard payroll")
+  isDefault             Boolean             @default(false) @map("is_default")
   effectiveFrom         DateTime            @map("effective_from") @db.Date
   effectiveTo           DateTime?           @map("effective_to") @db.Date
   salarySlipDefault     Boolean             @default(true) @map("salary_slip_default")
@@ -54,6 +56,7 @@ model PayrollPolicy {
   basePercentage        Decimal             @default(50) @map("base_percentage") @db.Decimal(8, 4)
   baseMinimum           Decimal             @default(15000) @map("base_minimum") @db.Decimal(14, 2)
   hraPercentage         Decimal             @default(40) @map("hra_percentage") @db.Decimal(8, 4)
+  defaultGrossSalary    Decimal?            @map("default_gross_salary") @db.Decimal(14, 2)
   pfDefault             Boolean             @default(false) @map("pf_default")
   esiDefault            Boolean             @default(false) @map("esi_default")
   ptDefault             Boolean             @default(false) @map("pt_default")
@@ -63,11 +66,35 @@ model PayrollPolicy {
   createdAt             DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt             DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  organization Organization             @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  components   PayrollPolicyComponent[]
+  employees    EmployeePayrollPolicy[]
 
-  @@unique([organizationId, effectiveFrom])
+  @@unique([organizationId, name, effectiveFrom])
+  @@unique([organizationId, id])
   @@index([organizationId, effectiveFrom, effectiveTo])
   @@map("payroll_policies")
+}
+
+model PayrollPolicyComponent {
+  id                String   @id @default(uuid()) @db.Uuid
+  organizationId    String   @map("organization_id") @db.Uuid
+  payrollPolicyId   String   @map("payroll_policy_id") @db.Uuid
+  payComponentId    String   @map("pay_component_id") @db.Uuid
+  amount            Decimal? @db.Decimal(14, 2)
+  percentage        Decimal? @db.Decimal(8, 4)
+  formulaParameters Json     @default("{}") @map("formula_parameters")
+  displayOrder      Int      @default(0) @map("display_order") @db.SmallInt
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization  Organization  @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  payrollPolicy PayrollPolicy @relation(fields: [organizationId, payrollPolicyId], references: [organizationId, id], onDelete: Restrict)
+  payComponent  PayComponent  @relation(fields: [organizationId, payComponentId], references: [organizationId, id], onDelete: Restrict)
+
+  @@unique([payrollPolicyId, payComponentId])
+  @@index([organizationId, payrollPolicyId, displayOrder])
+  @@map("payroll_policy_components")
 }
 
 model PayrollStatutoryRule {
@@ -91,6 +118,60 @@ model PayrollStatutoryRule {
   @@unique([organizationId, schemeCode, jurisdiction, effectiveFrom])
   @@index([organizationId, schemeCode, jurisdiction, effectiveFrom])
   @@map("payroll_statutory_rules")
+}
+
+/// Per-tenant cursor for an allowlisted, jurisdiction-matched government source.
+model PayrollComplianceSourceCheck {
+  organizationId String   @map("organization_id") @db.Uuid
+  sourceKey      String   @map("source_key")
+  schemeCode     String   @map("scheme_code")
+  jurisdiction   String
+  sourceLabel    String   @map("source_label")
+  sourceUrl      String   @map("source_url")
+  contentHash    String?  @map("content_hash") @db.Char(64)
+  etag           String?
+  lastModified   String?  @map("last_modified")
+  checkedAt      DateTime? @map("checked_at") @db.Timestamptz(6)
+  sourceChangedAt DateTime? @map("source_changed_at") @db.Timestamptz(6)
+  lastError      String?  @map("last_error")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@id([organizationId, sourceKey])
+  @@index([organizationId, checkedAt])
+  @@map("payroll_compliance_source_checks")
+}
+
+/// A detected source change that an organization must review before any payroll rule is changed.
+model PayrollRuleUpdateProposal {
+  id               String    @id @default(uuid()) @db.Uuid
+  organizationId   String    @map("organization_id") @db.Uuid
+  sourceKey        String    @map("source_key")
+  sourceHash       String    @map("source_hash") @db.Char(64)
+  schemeCode       String    @map("scheme_code")
+  jurisdiction     String
+  sourceLabel      String    @map("source_label")
+  sourceUrl        String    @map("source_url")
+  status           String    @default("NEEDS_REVIEW")
+  changeSummary    String    @map("change_summary")
+  currentRule      Json?     @map("current_rule")
+  proposedRule     Json?     @map("proposed_rule")
+  impactPreview    Json?     @map("impact_preview")
+  effectiveFrom    DateTime? @map("effective_from") @db.Date
+  decidedByUserId  String?   @map("decided_by_user_id") @db.Uuid
+  decidedAt        DateTime? @map("decided_at") @db.Timestamptz(6)
+  decisionNote     String?   @map("decision_note")
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  decidedBy   User?         @relation(fields: [decidedByUserId], references: [id], onDelete: SetNull)
+
+  @@unique([organizationId, sourceKey, sourceHash])
+  @@index([organizationId, status, createdAt])
+  @@map("payroll_rule_update_proposals")
 }
 
 model PayrollLineItem {

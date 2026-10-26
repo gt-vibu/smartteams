@@ -4,6 +4,7 @@ import type {
   BiometricVerificationMode,
 } from '../../generated/prisma/enums';
 import { wallClock } from './attendance-auto-checkout';
+import { readMissedCheckOutPolicy } from './attendance-missed-checkout-policy';
 import { AttendancePunchType, AttendanceDayStatus } from '../../generated/prisma/enums';
 import { type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, ForbiddenDomainError } from '../../common/errors/domain-error';
@@ -34,17 +35,24 @@ export function assertSettingOwnership(
 ) {
   if (!requested) return;
   if (context.accessMode === 'PLATFORM') return;
-  const clientId = context.actor.clientId;
-  if (clientId) {
-    if (ownerSource !== 'FEDERATED' || ownerClientId !== clientId)
+  if (context.accessMode === 'FEDERATION') {
+    const clientId = context.actor.clientId;
+    if (!clientId)
       throw new ForbiddenDomainError(
-        `Federation ownership has not been granted for ${setting} attendance settings`,
+        `Federation client identity is missing for ${setting} attendance settings`,
+      );
+    // A federation scope is the explicit grant to manage this setting. NATIVE is the
+    // unclaimed default; the first authorized federation write claims it. Once claimed,
+    // only that same client may continue to update it.
+    if (ownerSource === 'FEDERATED' && ownerClientId !== clientId)
+      throw new ForbiddenDomainError(
+        `${setting} attendance settings are owned by a different federation client`,
       );
     return;
   }
   if (ownerSource === 'FEDERATED')
     throw new ForbiddenDomainError(
-      `Native writes cannot modify federated-owned ${setting} attendance settings`,
+      `Native writes cannot modify ${setting} attendance settings owned by a federation client`,
     );
 }
 
@@ -85,6 +93,9 @@ export function toPunchDto(punch: {
   distanceFromLocationMeters: unknown;
   biometricVerified: boolean;
   webauthnCredentialId: string | null;
+  latitude?: unknown;
+  longitude?: unknown;
+  accuracyMeters?: unknown;
 }) {
   return {
     id: punch.id,
@@ -97,6 +108,9 @@ export function toPunchDto(punch: {
     distanceFromLocationMeters: punch.distanceFromLocationMeters,
     biometricVerified: punch.biometricVerified,
     webauthnCredentialId: punch.webauthnCredentialId,
+    latitude: punch.latitude,
+    longitude: punch.longitude,
+    accuracyMeters: punch.accuracyMeters,
   };
 }
 
@@ -111,6 +125,7 @@ export function attendanceCaptureMode(value: unknown) {
 export function toPreferencesDto(value: {
   id?: string;
   organizationId?: string;
+  requireGps?: boolean | null;
   geofenceMode: GeofenceMode | null;
   biometricVerificationMode: BiometricVerificationMode | null;
   geofenceOwnerSource: string;
@@ -118,6 +133,7 @@ export function toPreferencesDto(value: {
   metadata?: unknown;
   autoCheckOutMode?: AutoCheckOutMode;
   autoCheckOutAt?: Date;
+  missedCheckOutPolicy?: unknown;
 }) {
   const meta =
     value.metadata && typeof value.metadata === 'object'
@@ -128,12 +144,18 @@ export function toPreferencesDto(value: {
   return {
     id: value.id,
     organizationId: value.organizationId,
+    requireGps: value.requireGps ?? false,
     geofenceMode: value.geofenceMode,
     biometricVerificationMode: value.biometricVerificationMode,
     attendanceSessionMode: mode,
     // Organization-wide, so a branch's preferences carry neither.
     autoCheckOutMode: value.autoCheckOutMode ?? null,
     autoCheckOutAt: value.autoCheckOutAt ? wallClock(value.autoCheckOutAt) : null,
+    missedCheckOutPolicy: readMissedCheckOutPolicy(
+      value.metadata,
+      value.autoCheckOutMode,
+      value.autoCheckOutAt,
+    ),
     geofenceOwnerSource: value.geofenceOwnerSource,
     biometricOwnerSource: value.biometricOwnerSource,
   };

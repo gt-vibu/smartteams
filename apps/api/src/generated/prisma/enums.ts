@@ -293,6 +293,15 @@ export const AttendancePunchSource = {
 export type AttendancePunchSource = (typeof AttendancePunchSource)[keyof typeof AttendancePunchSource]
 
 
+export const PasswordTokenPurpose = {
+  RESET_LINK: 'RESET_LINK',
+  SETUP_LINK: 'SETUP_LINK',
+  RESET_CODE: 'RESET_CODE'
+} as const
+
+export type PasswordTokenPurpose = (typeof PasswordTokenPurpose)[keyof typeof PasswordTokenPurpose]
+
+
 export const AutoCheckOutMode = {
   DISABLED: 'DISABLED',
   REVIEW_REQUIRED: 'REVIEW_REQUIRED'
@@ -569,10 +578,32 @@ export const FilePurpose = {
   PAYSLIP: 'PAYSLIP',
   PAYROLL_EXPORT: 'PAYROLL_EXPORT',
   IMPORT: 'IMPORT',
-  OTHER: 'OTHER'
+  OTHER: 'OTHER',
+  ORGANIZATION_BRANDING: 'ORGANIZATION_BRANDING'
 } as const
 
 export type FilePurpose = (typeof FilePurpose)[keyof typeof FilePurpose]
+
+
+export const FileAccessScope = {
+  PERSONAL: 'PERSONAL',
+  EMPLOYEE: 'EMPLOYEE',
+  TEAM: 'TEAM',
+  ORGANIZATION: 'ORGANIZATION',
+  INTERNAL: 'INTERNAL',
+  PROJECT: 'PROJECT'
+} as const
+
+export type FileAccessScope = (typeof FileAccessScope)[keyof typeof FileAccessScope]
+
+
+export const FileShareGrantee = {
+  USER: 'USER',
+  ROLE: 'ROLE',
+  TEAM: 'TEAM'
+} as const
+
+export type FileShareGrantee = (typeof FileShareGrantee)[keyof typeof FileShareGrantee]
 
 
 export const FileStatus = {
@@ -610,3 +641,14 @@ export const ExternalEntityType = {
 } as const
 
 export type ExternalEntityType = (typeof ExternalEntityType)[keyof typeof ExternalEntityType]
+
+
+export const ResignationStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+  WITHDRAWN: 'WITHDRAWN',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type ResignationStatus = (typeof ResignationStatus)[keyof typeof ResignationStatus]

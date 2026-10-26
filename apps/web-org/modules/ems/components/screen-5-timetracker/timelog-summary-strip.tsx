@@ -11,13 +11,13 @@ export function TimeLogSummaryStrip({ summary }: TimeLogSummaryStripProps) {
       <div className="flex items-center gap-8 text-right">
         {/* Total */}
         <div className="border-l-2 border-sky-500 pl-3 text-left">
-          <div className="text-xs font-mono font-bold text-sky-600">{summary.totalHours}</div>
+          <div className="text-xs tabular-nums font-bold text-sky-600">{summary.totalHours}</div>
           <div className="text-[10px] text-muted-foreground font-medium">Total</div>
         </div>
 
         {/* Submitted */}
         <div className="border-l-2 border-emerald-500 pl-3 text-left">
-          <div className="text-xs font-mono font-bold text-emerald-600">
+          <div className="text-xs tabular-nums font-bold text-emerald-600">
             {summary.submittedHours}
           </div>
           <div className="text-[10px] text-muted-foreground font-medium">Submitted</div>
@@ -26,7 +26,7 @@ export function TimeLogSummaryStrip({ summary }: TimeLogSummaryStripProps) {
         {/* Not Submitted */}
         <div className="border-l-2 border-amber-500 pl-3 text-left flex items-center gap-2">
           <div>
-            <div className="text-xs font-mono font-bold text-amber-600">
+            <div className="text-xs tabular-nums font-bold text-amber-600">
               {summary.notSubmittedHours}
             </div>
             <div className="text-[10px] text-muted-foreground font-medium">Not Submitted</div>

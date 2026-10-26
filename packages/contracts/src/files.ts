@@ -18,6 +18,7 @@ export const filePurposeSchema = z.enum([
   'PAYROLL_EXPORT',
   'IMPORT',
   'OTHER',
+  'ORGANIZATION_BRANDING',
 ]);
 
 /** What `POST /files/uploads` returns: the record, plus a presigned URL to PUT the bytes to. */

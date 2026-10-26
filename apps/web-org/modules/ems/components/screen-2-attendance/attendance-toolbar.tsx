@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Button, Tabs, TabsList, TabsTrigger } from '@smarteam/ui';
+import { Button, DateRangePicker, Tabs, TabsList, TabsTrigger } from '@smarteam/ui';
 
 export interface AttendanceToolbarProps {
   title?: string;
@@ -12,6 +12,8 @@ export interface AttendanceToolbarProps {
   onNextDate?: () => void;
   onFilterToggle?: () => void;
   isFilterActive?: boolean;
+  dateWindow?: { from: string; to: string };
+  onSelectRange?: (from: string, to: string) => void;
 }
 
 const VIEWS: Array<{ value: AttendanceToolbarProps['viewMode']; label: string }> = [
@@ -29,6 +31,8 @@ export function AttendanceToolbar({
   onNextDate,
   onFilterToggle,
   isFilterActive,
+  dateWindow,
+  onSelectRange,
 }: AttendanceToolbarProps) {
   return (
     <div className="flex w-full flex-col justify-between gap-2 border-b border-border bg-card/95 px-4 pb-3 pt-3 shadow-[0_1px_2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:flex-row sm:items-center sm:gap-3 sm:px-6">
@@ -37,7 +41,9 @@ export function AttendanceToolbar({
       </h1>
 
       <div className="flex flex-wrap items-center gap-2">
-        <div className="flex items-center rounded border border-border bg-card px-2 py-1 text-xs font-semibold text-foreground shadow-xs">
+        {dateWindow && onSelectRange ? (
+          <DateRangePicker aria-label="Choose attendance date or range" from={dateWindow.from} to={dateWindow.to} onChange={onSelectRange} className="h-9 min-w-[180px]" />
+        ) : <div className="flex items-center rounded border border-border bg-card px-2 py-1 text-xs font-semibold text-foreground shadow-xs">
           <Button
             type="button"
             variant="ghost"
@@ -83,19 +89,19 @@ export function AttendanceToolbar({
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </Button>
-        </div>
+        </div>}
 
         {onChangeViewMode && (
           <Tabs
             aria-label="Attendance views"
-            className="hidden xs:block"
+            className="w-full xs:w-auto"
             onValueChange={(value) => onChangeViewMode(value as 'timeline' | 'table' | 'calendar')}
             value={viewMode}
           >
-            <TabsList className="h-auto rounded-md border border-border bg-card p-0">
+            <TabsList className="grid h-auto w-full grid-cols-3 rounded-md border border-border bg-card p-0 xs:flex xs:w-auto">
               {VIEWS.map((view) => (
                 <TabsTrigger
-                  className="rounded-none px-3 py-1.5 text-xs text-muted-foreground data-[state=active]:bg-muted data-[state=active]:font-bold data-[state=active]:text-foreground data-[state=active]:shadow-none"
+                  className="rounded-none px-2 py-1.5 text-[11px] text-muted-foreground data-[state=active]:bg-muted data-[state=active]:font-bold data-[state=active]:text-foreground data-[state=active]:shadow-none xs:px-3 xs:text-xs"
                   key={view.value}
                   value={view.value}
                 >

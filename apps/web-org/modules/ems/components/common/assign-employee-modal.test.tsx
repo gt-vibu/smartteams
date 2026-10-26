@@ -1,9 +1,13 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AssignmentsState } from '../../hooks/use-assignments';
 import type { ProjectMembership, TeamMembership } from '../../services/membership-state';
 import { AssignEmployeeModal } from './assign-employee-modal';
+
+// The role dropdown reads the organization's list through the session; these tests are about
+// which membership calls a selection produces, so it is stood in for.
+vi.mock('./picklist-select', () => ({ PicklistSelect: () => null }));
 
 const applyChanges = vi.fn().mockResolvedValue(true);
 
@@ -18,6 +22,7 @@ function teamMembership(overrides: Partial<TeamMembership> = {}): TeamMembership
       members: [],
     },
     state: 'NOT_A_MEMBER',
+    isLead: false,
     memberId: null,
     endedOn: null,
     ...overrides,
@@ -35,8 +40,8 @@ function projectMembership(overrides: Partial<ProjectMembership> = {}): ProjectM
       members: [],
     },
     state: 'NOT_A_MEMBER',
+    isLead: false,
     memberId: null,
-    allocationPercentage: null,
     endedOn: null,
     ...overrides,
   };
@@ -84,9 +89,20 @@ describe('AssignEmployeeModal', () => {
   it('sends nothing and keeps save disabled when nothing changed', async () => {
     renderModal({ teamMemberships: [teamMembership({ state: 'ACTIVE', memberId: 'member-1' })] });
 
-    await screen.findByText('Platform Core');
+    // Twice: once as a current team at the top, once as a ticked row in the list.
+    await screen.findAllByText('Platform Core');
     expect(screen.getByRole('button', { name: /save assignments/i })).toBeDisabled();
     expect(screen.getByText('No changes to save.')).toBeInTheDocument();
+  });
+
+  it('states what the employee is on now, above the lists to join', async () => {
+    renderModal({
+      teamMemberships: [teamMembership({ state: 'ACTIVE', memberId: 'member-1' })],
+      projectMemberships: [projectMembership()],
+    });
+
+    await screen.findByText('Current teams · 1');
+    expect(screen.getByText('Not on any project yet.')).toBeInTheDocument();
   });
 
   it('ticking a team the employee never joined produces an add', async () => {
@@ -103,7 +119,8 @@ describe('AssignEmployeeModal', () => {
   it('unticking an active team ends the membership rather than deleting it', async () => {
     renderModal({ teamMemberships: [teamMembership({ state: 'ACTIVE', memberId: 'member-1' })] });
 
-    await screen.findByText('Platform Core');
+    // Twice: once as a current team at the top, once as a ticked row in the list.
+    await screen.findAllByText('Platform Core');
     await userEvent.click(screen.getByRole('checkbox'));
     await userEvent.click(screen.getByRole('button', { name: /save assignments/i }));
 
@@ -116,7 +133,7 @@ describe('AssignEmployeeModal', () => {
   it('shows an ended membership as previously held, unticked but distinct from never', async () => {
     renderModal({ teamMemberships: [teamMembership({ state: 'ENDED', endedOn: '2026-06-30' })] });
 
-    expect(await screen.findByText(/previously a member until 2026-06-30/i)).toBeInTheDocument();
+    expect(await screen.findByText(/previously a member until 30 Jun 2026/i)).toBeInTheDocument();
     expect(screen.getByRole('checkbox')).not.toBeChecked();
   });
 
@@ -131,7 +148,7 @@ describe('AssignEmployeeModal', () => {
     expect(applyChanges).toHaveBeenCalledWith([{ kind: 'ADD_TEAM', teamId: 'team-a' }]);
   });
 
-  it('adds a project with the drafted allocation', async () => {
+  it('adds a project with no percentage attached', async () => {
     renderModal({ projectMemberships: [projectMembership()] });
 
     await screen.findByText('Smarteam EMS');
@@ -139,21 +156,8 @@ describe('AssignEmployeeModal', () => {
     await userEvent.click(screen.getByRole('button', { name: /save assignments/i }));
 
     await waitFor(() => expect(applyChanges).toHaveBeenCalledTimes(1));
-    expect(applyChanges).toHaveBeenCalledWith([
-      { kind: 'ADD_PROJECT', projectId: 'project-a', allocationPercentage: 50 },
-    ]);
-  });
-
-  it('states that allocation cannot be changed on an existing assignment', async () => {
-    renderModal({
-      projectMemberships: [
-        projectMembership({ state: 'ACTIVE', memberId: 'member-2', allocationPercentage: 60 }),
-      ],
-    });
-
-    expect(await screen.findByText(/allocation cannot be changed/i)).toBeInTheDocument();
-    // No slider is offered, because there is no API route behind it.
-    expect(screen.queryByLabelText(/^allocation \(/i)).not.toBeInTheDocument();
+    expect(applyChanges).toHaveBeenCalledWith([{ kind: 'ADD_PROJECT', projectId: 'project-a' }]);
+    expect(screen.queryByText(/%/)).not.toBeInTheDocument();
   });
 
   it('disables team checkboxes without write permission', async () => {

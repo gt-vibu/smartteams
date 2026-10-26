@@ -6,6 +6,7 @@ import {
   isCalculationStale,
   type PayrollRun,
   type PayrollRunStatus,
+  type SalaryAdvance,
   type Payslip,
 } from '@smarteam/contracts';
 import { useSession } from './auth-context';
@@ -33,6 +34,7 @@ export function usePayrollAdmin() {
 
   const canReadRuns = hasPermission(permissions, 'payroll.runs.read');
   const canReadPayslips = hasPermission(permissions, 'payroll.payslips.read.all');
+  const canReadAdvances = hasPermission(permissions, 'payroll.advances.read');
   const can = {
     write: hasPermission(permissions, 'payroll.runs.write'),
     calculate: hasPermission(permissions, 'payroll.runs.calculate'),
@@ -40,6 +42,7 @@ export function usePayrollAdmin() {
     release: hasPermission(permissions, 'payroll.runs.release'),
     lock: hasPermission(permissions, 'payroll.runs.lock'),
     adjust: hasPermission(permissions, 'payroll.adjustments.write'),
+    pay: hasPermission(permissions, 'payroll.payments.write'),
   };
 
   const runResource = useAsyncResource<PayrollRun[]>(
@@ -56,10 +59,19 @@ export function usePayrollAdmin() {
     [organizationId],
     { enabled: Boolean(organizationId) && canReadPayslips },
   );
+  const advancesResource = useAsyncResource<SalaryAdvance[]>(
+    () => payrollRepository.listAdvances(organizationId!),
+    [organizationId],
+    { enabled: Boolean(organizationId) && canReadAdvances },
+  );
 
   const refetchAll = useCallback(async () => {
-    await Promise.all([runResource.refetch(), payslipResource.refetch()]);
-  }, [payslipResource, runResource]);
+    await Promise.all([
+      runResource.refetch(),
+      payslipResource.refetch(),
+      advancesResource.refetch(),
+    ]);
+  }, [advancesResource, payslipResource, runResource]);
 
   const { saving, saveError, setSaveError, run: mutate } = useMutationRunner(refetchAll);
   // An attendance or holiday decision can make a calculated run stale; read the runs again.
@@ -82,9 +94,9 @@ export function usePayrollAdmin() {
   );
 
   const calculateRun = useCallback(
-    (runId: string) =>
+    (runId: string, deferAdvanceEmployeeIds: string[] = []) =>
       mutate(
-        () => payrollRepository.calculateRun(organizationId!, runId),
+        () => payrollRepository.calculateRun(organizationId!, runId, deferAdvanceEmployeeIds),
         'The payroll run could not be calculated.',
       ),
     [mutate, organizationId],
@@ -120,6 +132,9 @@ export function usePayrollAdmin() {
     /** True when the selected run was calculated and an input changed afterwards. */
     selectedRunStale: selectedRun ? isCalculationStale(selectedRun) : false,
     payslips: useMemo(() => payslipResource.data ?? [], [payslipResource.data]),
+    advances: useMemo(() => advancesResource.data ?? [], [advancesResource.data]),
+    advancesLoading: advancesResource.loading,
+    advancesUnavailable: !canReadAdvances || advancesResource.forbidden,
     payslipsForRun,
 
     loading: runResource.loading,

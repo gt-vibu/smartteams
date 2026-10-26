@@ -37,6 +37,11 @@ export interface OnboardOrganizationResult {
   adminUser: { id: string; email: string; displayName: string };
   /** Shown once, immediately after onboarding, and never persisted by the client. */
   temporaryPassword: string;
+  /**
+   * The email the administrator was sent: their address, this password and a link to choose their
+   * own. `queued: false` means it could not be handed to the mail queue, so share the password.
+   */
+  invitation?: { emailedTo: string; queued: boolean };
 }
 
 /**

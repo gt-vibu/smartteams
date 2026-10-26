@@ -430,6 +430,11 @@ export type ApprovalPolicyStepUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type ApprovalPolicyStepNullableScalarRelationFilter = {
+  is?: Prisma.ApprovalPolicyStepWhereInput | null
+  isNot?: Prisma.ApprovalPolicyStepWhereInput | null
+}
+
 export type ApprovalPolicyStepListRelationFilter = {
   every?: Prisma.ApprovalPolicyStepWhereInput
   some?: Prisma.ApprovalPolicyStepWhereInput
@@ -438,11 +443,6 @@ export type ApprovalPolicyStepListRelationFilter = {
 
 export type ApprovalPolicyStepOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
-}
-
-export type ApprovalPolicyStepNullableScalarRelationFilter = {
-  is?: Prisma.ApprovalPolicyStepWhereInput | null
-  isNot?: Prisma.ApprovalPolicyStepWhereInput | null
 }
 
 export type ApprovalPolicyStepApprovalPolicyIdStepNumberCompoundUniqueInput = {
@@ -494,6 +494,38 @@ export type ApprovalPolicyStepSumOrderByAggregateInput = {
   stepNumber?: Prisma.SortOrder
 }
 
+export type ApprovalPolicyStepCreateNestedOneWithoutAttendanceApprovalsInput = {
+  create?: Prisma.XOR<Prisma.ApprovalPolicyStepCreateWithoutAttendanceApprovalsInput, Prisma.ApprovalPolicyStepUncheckedCreateWithoutAttendanceApprovalsInput>
+  connectOrCreate?: Prisma.ApprovalPolicyStepCreateOrConnectWithoutAttendanceApprovalsInput
+  connect?: Prisma.ApprovalPolicyStepWhereUniqueInput
+}
+
+export type ApprovalPolicyStepUpdateOneWithoutAttendanceApprovalsNestedInput = {
+  create?: Prisma.XOR<Prisma.ApprovalPolicyStepCreateWithoutAttendanceApprovalsInput, Prisma.ApprovalPolicyStepUncheckedCreateWithoutAttendanceApprovalsInput>
+  connectOrCreate?: Prisma.ApprovalPolicyStepCreateOrConnectWithoutAttendanceApprovalsInput
+  upsert?: Prisma.ApprovalPolicyStepUpsertWithoutAttendanceApprovalsInput
+  disconnect?: Prisma.ApprovalPolicyStepWhereInput | boolean
+  delete?: Prisma.ApprovalPolicyStepWhereInput | boolean
+  connect?: Prisma.ApprovalPolicyStepWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ApprovalPolicyStepUpdateToOneWithWhereWithoutAttendanceApprovalsInput, Prisma.ApprovalPolicyStepUpdateWithoutAttendanceApprovalsInput>, Prisma.ApprovalPolicyStepUncheckedUpdateWithoutAttendanceApprovalsInput>
+}
+
+export type ApprovalPolicyStepCreateNestedOneWithoutLeaveApprovalsInput = {
+  create?: Prisma.XOR<Prisma.ApprovalPolicyStepCreateWithoutLeaveApprovalsInput, Prisma.ApprovalPolicyStepUncheckedCreateWithoutLeaveApprovalsInput>
+  connectOrCreate?: Prisma.ApprovalPolicyStepCreateOrConnectWithoutLeaveApprovalsInput
+  connect?: Prisma.ApprovalPolicyStepWhereUniqueInput
+}
+
+export type ApprovalPolicyStepUpdateOneWithoutLeaveApprovalsNestedInput = {
+  create?: Prisma.XOR<Prisma.ApprovalPolicyStepCreateWithoutLeaveApprovalsInput, Prisma.ApprovalPolicyStepUncheckedCreateWithoutLeaveApprovalsInput>
+  connectOrCreate?: Prisma.ApprovalPolicyStepCreateOrConnectWithoutLeaveApprovalsInput
+  upsert?: Prisma.ApprovalPolicyStepUpsertWithoutLeaveApprovalsInput
+  disconnect?: Prisma.ApprovalPolicyStepWhereInput | boolean
+  delete?: Prisma.ApprovalPolicyStepWhereInput | boolean
+  connect?: Prisma.ApprovalPolicyStepWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ApprovalPolicyStepUpdateToOneWithWhereWithoutLeaveApprovalsInput, Prisma.ApprovalPolicyStepUpdateWithoutLeaveApprovalsInput>, Prisma.ApprovalPolicyStepUncheckedUpdateWithoutLeaveApprovalsInput>
+}
+
 export type ApprovalPolicyStepCreateNestedManyWithoutApproverUserInput = {
   create?: Prisma.XOR<Prisma.ApprovalPolicyStepCreateWithoutApproverUserInput, Prisma.ApprovalPolicyStepUncheckedCreateWithoutApproverUserInput> | Prisma.ApprovalPolicyStepCreateWithoutApproverUserInput[] | Prisma.ApprovalPolicyStepUncheckedCreateWithoutApproverUserInput[]
   connectOrCreate?: Prisma.ApprovalPolicyStepCreateOrConnectWithoutApproverUserInput | Prisma.ApprovalPolicyStepCreateOrConnectWithoutApproverUserInput[]
@@ -534,38 +566,6 @@ export type ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserNestedInput 
   update?: Prisma.ApprovalPolicyStepUpdateWithWhereUniqueWithoutApproverUserInput | Prisma.ApprovalPolicyStepUpdateWithWhereUniqueWithoutApproverUserInput[]
   updateMany?: Prisma.ApprovalPolicyStepUpdateManyWithWhereWithoutApproverUserInput | Prisma.ApprovalPolicyStepUpdateManyWithWhereWithoutApproverUserInput[]
   deleteMany?: Prisma.ApprovalPolicyStepScalarWhereInput | Prisma.ApprovalPolicyStepScalarWhereInput[]
-}
-
-export type ApprovalPolicyStepCreateNestedOneWithoutAttendanceApprovalsInput = {
-  create?: Prisma.XOR<Prisma.ApprovalPolicyStepCreateWithoutAttendanceApprovalsInput, Prisma.ApprovalPolicyStepUncheckedCreateWithoutAttendanceApprovalsInput>
-  connectOrCreate?: Prisma.ApprovalPolicyStepCreateOrConnectWithoutAttendanceApprovalsInput
-  connect?: Prisma.ApprovalPolicyStepWhereUniqueInput
-}
-
-export type ApprovalPolicyStepUpdateOneWithoutAttendanceApprovalsNestedInput = {
-  create?: Prisma.XOR<Prisma.ApprovalPolicyStepCreateWithoutAttendanceApprovalsInput, Prisma.ApprovalPolicyStepUncheckedCreateWithoutAttendanceApprovalsInput>
-  connectOrCreate?: Prisma.ApprovalPolicyStepCreateOrConnectWithoutAttendanceApprovalsInput
-  upsert?: Prisma.ApprovalPolicyStepUpsertWithoutAttendanceApprovalsInput
-  disconnect?: Prisma.ApprovalPolicyStepWhereInput | boolean
-  delete?: Prisma.ApprovalPolicyStepWhereInput | boolean
-  connect?: Prisma.ApprovalPolicyStepWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ApprovalPolicyStepUpdateToOneWithWhereWithoutAttendanceApprovalsInput, Prisma.ApprovalPolicyStepUpdateWithoutAttendanceApprovalsInput>, Prisma.ApprovalPolicyStepUncheckedUpdateWithoutAttendanceApprovalsInput>
-}
-
-export type ApprovalPolicyStepCreateNestedOneWithoutLeaveApprovalsInput = {
-  create?: Prisma.XOR<Prisma.ApprovalPolicyStepCreateWithoutLeaveApprovalsInput, Prisma.ApprovalPolicyStepUncheckedCreateWithoutLeaveApprovalsInput>
-  connectOrCreate?: Prisma.ApprovalPolicyStepCreateOrConnectWithoutLeaveApprovalsInput
-  connect?: Prisma.ApprovalPolicyStepWhereUniqueInput
-}
-
-export type ApprovalPolicyStepUpdateOneWithoutLeaveApprovalsNestedInput = {
-  create?: Prisma.XOR<Prisma.ApprovalPolicyStepCreateWithoutLeaveApprovalsInput, Prisma.ApprovalPolicyStepUncheckedCreateWithoutLeaveApprovalsInput>
-  connectOrCreate?: Prisma.ApprovalPolicyStepCreateOrConnectWithoutLeaveApprovalsInput
-  upsert?: Prisma.ApprovalPolicyStepUpsertWithoutLeaveApprovalsInput
-  disconnect?: Prisma.ApprovalPolicyStepWhereInput | boolean
-  delete?: Prisma.ApprovalPolicyStepWhereInput | boolean
-  connect?: Prisma.ApprovalPolicyStepWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ApprovalPolicyStepUpdateToOneWithWhereWithoutLeaveApprovalsInput, Prisma.ApprovalPolicyStepUpdateWithoutLeaveApprovalsInput>, Prisma.ApprovalPolicyStepUncheckedUpdateWithoutLeaveApprovalsInput>
 }
 
 export type ApprovalPolicyStepCreateNestedOneWithoutTimesheetApprovalsInput = {
@@ -730,77 +730,6 @@ export type EnumApproverTypeFieldUpdateOperationsInput = {
   set?: $Enums.ApproverType
 }
 
-export type ApprovalPolicyStepCreateWithoutApproverUserInput = {
-  id?: string
-  stepNumber: number
-  approverType: $Enums.ApproverType
-  required?: boolean
-  createdAt?: Date | string
-  organization: Prisma.OrganizationCreateNestedOneWithoutApprovalPolicyStepsInput
-  approvalPolicy: Prisma.ApprovalPolicyCreateNestedOneWithoutStepsInput
-  role?: Prisma.RoleCreateNestedOneWithoutApprovalStepsInput
-  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApprovalPolicyStepInput
-  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApprovalPolicyStepInput
-  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApprovalPolicyStepInput
-  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApprovalPolicyStepInput
-}
-
-export type ApprovalPolicyStepUncheckedCreateWithoutApproverUserInput = {
-  id?: string
-  organizationId: string
-  approvalPolicyId: string
-  stepNumber: number
-  approverType: $Enums.ApproverType
-  roleId?: string | null
-  required?: boolean
-  createdAt?: Date | string
-  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApprovalPolicyStepInput
-  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApprovalPolicyStepInput
-  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApprovalPolicyStepInput
-  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApprovalPolicyStepInput
-}
-
-export type ApprovalPolicyStepCreateOrConnectWithoutApproverUserInput = {
-  where: Prisma.ApprovalPolicyStepWhereUniqueInput
-  create: Prisma.XOR<Prisma.ApprovalPolicyStepCreateWithoutApproverUserInput, Prisma.ApprovalPolicyStepUncheckedCreateWithoutApproverUserInput>
-}
-
-export type ApprovalPolicyStepCreateManyApproverUserInputEnvelope = {
-  data: Prisma.ApprovalPolicyStepCreateManyApproverUserInput | Prisma.ApprovalPolicyStepCreateManyApproverUserInput[]
-  skipDuplicates?: boolean
-}
-
-export type ApprovalPolicyStepUpsertWithWhereUniqueWithoutApproverUserInput = {
-  where: Prisma.ApprovalPolicyStepWhereUniqueInput
-  update: Prisma.XOR<Prisma.ApprovalPolicyStepUpdateWithoutApproverUserInput, Prisma.ApprovalPolicyStepUncheckedUpdateWithoutApproverUserInput>
-  create: Prisma.XOR<Prisma.ApprovalPolicyStepCreateWithoutApproverUserInput, Prisma.ApprovalPolicyStepUncheckedCreateWithoutApproverUserInput>
-}
-
-export type ApprovalPolicyStepUpdateWithWhereUniqueWithoutApproverUserInput = {
-  where: Prisma.ApprovalPolicyStepWhereUniqueInput
-  data: Prisma.XOR<Prisma.ApprovalPolicyStepUpdateWithoutApproverUserInput, Prisma.ApprovalPolicyStepUncheckedUpdateWithoutApproverUserInput>
-}
-
-export type ApprovalPolicyStepUpdateManyWithWhereWithoutApproverUserInput = {
-  where: Prisma.ApprovalPolicyStepScalarWhereInput
-  data: Prisma.XOR<Prisma.ApprovalPolicyStepUpdateManyMutationInput, Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserInput>
-}
-
-export type ApprovalPolicyStepScalarWhereInput = {
-  AND?: Prisma.ApprovalPolicyStepScalarWhereInput | Prisma.ApprovalPolicyStepScalarWhereInput[]
-  OR?: Prisma.ApprovalPolicyStepScalarWhereInput[]
-  NOT?: Prisma.ApprovalPolicyStepScalarWhereInput | Prisma.ApprovalPolicyStepScalarWhereInput[]
-  id?: Prisma.UuidFilter<"ApprovalPolicyStep"> | string
-  organizationId?: Prisma.UuidFilter<"ApprovalPolicyStep"> | string
-  approvalPolicyId?: Prisma.UuidFilter<"ApprovalPolicyStep"> | string
-  stepNumber?: Prisma.IntFilter<"ApprovalPolicyStep"> | number
-  approverType?: Prisma.EnumApproverTypeFilter<"ApprovalPolicyStep"> | $Enums.ApproverType
-  roleId?: Prisma.UuidNullableFilter<"ApprovalPolicyStep"> | string | null
-  approverUserId?: Prisma.UuidNullableFilter<"ApprovalPolicyStep"> | string | null
-  required?: Prisma.BoolFilter<"ApprovalPolicyStep"> | boolean
-  createdAt?: Prisma.DateTimeFilter<"ApprovalPolicyStep"> | Date | string
-}
-
 export type ApprovalPolicyStepCreateWithoutAttendanceApprovalsInput = {
   id?: string
   stepNumber: number
@@ -951,6 +880,77 @@ export type ApprovalPolicyStepUncheckedUpdateWithoutLeaveApprovalsInput = {
   attendanceApprovals?: Prisma.AttendanceApprovalUncheckedUpdateManyWithoutApprovalPolicyStepNestedInput
   timesheetApprovals?: Prisma.TimesheetApprovalUncheckedUpdateManyWithoutApprovalPolicyStepNestedInput
   payrollApprovals?: Prisma.PayrollApprovalUncheckedUpdateManyWithoutApprovalPolicyStepNestedInput
+}
+
+export type ApprovalPolicyStepCreateWithoutApproverUserInput = {
+  id?: string
+  stepNumber: number
+  approverType: $Enums.ApproverType
+  required?: boolean
+  createdAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutApprovalPolicyStepsInput
+  approvalPolicy: Prisma.ApprovalPolicyCreateNestedOneWithoutStepsInput
+  role?: Prisma.RoleCreateNestedOneWithoutApprovalStepsInput
+  attendanceApprovals?: Prisma.AttendanceApprovalCreateNestedManyWithoutApprovalPolicyStepInput
+  leaveApprovals?: Prisma.LeaveApprovalCreateNestedManyWithoutApprovalPolicyStepInput
+  timesheetApprovals?: Prisma.TimesheetApprovalCreateNestedManyWithoutApprovalPolicyStepInput
+  payrollApprovals?: Prisma.PayrollApprovalCreateNestedManyWithoutApprovalPolicyStepInput
+}
+
+export type ApprovalPolicyStepUncheckedCreateWithoutApproverUserInput = {
+  id?: string
+  organizationId: string
+  approvalPolicyId: string
+  stepNumber: number
+  approverType: $Enums.ApproverType
+  roleId?: string | null
+  required?: boolean
+  createdAt?: Date | string
+  attendanceApprovals?: Prisma.AttendanceApprovalUncheckedCreateNestedManyWithoutApprovalPolicyStepInput
+  leaveApprovals?: Prisma.LeaveApprovalUncheckedCreateNestedManyWithoutApprovalPolicyStepInput
+  timesheetApprovals?: Prisma.TimesheetApprovalUncheckedCreateNestedManyWithoutApprovalPolicyStepInput
+  payrollApprovals?: Prisma.PayrollApprovalUncheckedCreateNestedManyWithoutApprovalPolicyStepInput
+}
+
+export type ApprovalPolicyStepCreateOrConnectWithoutApproverUserInput = {
+  where: Prisma.ApprovalPolicyStepWhereUniqueInput
+  create: Prisma.XOR<Prisma.ApprovalPolicyStepCreateWithoutApproverUserInput, Prisma.ApprovalPolicyStepUncheckedCreateWithoutApproverUserInput>
+}
+
+export type ApprovalPolicyStepCreateManyApproverUserInputEnvelope = {
+  data: Prisma.ApprovalPolicyStepCreateManyApproverUserInput | Prisma.ApprovalPolicyStepCreateManyApproverUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type ApprovalPolicyStepUpsertWithWhereUniqueWithoutApproverUserInput = {
+  where: Prisma.ApprovalPolicyStepWhereUniqueInput
+  update: Prisma.XOR<Prisma.ApprovalPolicyStepUpdateWithoutApproverUserInput, Prisma.ApprovalPolicyStepUncheckedUpdateWithoutApproverUserInput>
+  create: Prisma.XOR<Prisma.ApprovalPolicyStepCreateWithoutApproverUserInput, Prisma.ApprovalPolicyStepUncheckedCreateWithoutApproverUserInput>
+}
+
+export type ApprovalPolicyStepUpdateWithWhereUniqueWithoutApproverUserInput = {
+  where: Prisma.ApprovalPolicyStepWhereUniqueInput
+  data: Prisma.XOR<Prisma.ApprovalPolicyStepUpdateWithoutApproverUserInput, Prisma.ApprovalPolicyStepUncheckedUpdateWithoutApproverUserInput>
+}
+
+export type ApprovalPolicyStepUpdateManyWithWhereWithoutApproverUserInput = {
+  where: Prisma.ApprovalPolicyStepScalarWhereInput
+  data: Prisma.XOR<Prisma.ApprovalPolicyStepUpdateManyMutationInput, Prisma.ApprovalPolicyStepUncheckedUpdateManyWithoutApproverUserInput>
+}
+
+export type ApprovalPolicyStepScalarWhereInput = {
+  AND?: Prisma.ApprovalPolicyStepScalarWhereInput | Prisma.ApprovalPolicyStepScalarWhereInput[]
+  OR?: Prisma.ApprovalPolicyStepScalarWhereInput[]
+  NOT?: Prisma.ApprovalPolicyStepScalarWhereInput | Prisma.ApprovalPolicyStepScalarWhereInput[]
+  id?: Prisma.UuidFilter<"ApprovalPolicyStep"> | string
+  organizationId?: Prisma.UuidFilter<"ApprovalPolicyStep"> | string
+  approvalPolicyId?: Prisma.UuidFilter<"ApprovalPolicyStep"> | string
+  stepNumber?: Prisma.IntFilter<"ApprovalPolicyStep"> | number
+  approverType?: Prisma.EnumApproverTypeFilter<"ApprovalPolicyStep"> | $Enums.ApproverType
+  roleId?: Prisma.UuidNullableFilter<"ApprovalPolicyStep"> | string | null
+  approverUserId?: Prisma.UuidNullableFilter<"ApprovalPolicyStep"> | string | null
+  required?: Prisma.BoolFilter<"ApprovalPolicyStep"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"ApprovalPolicyStep"> | Date | string
 }
 
 export type ApprovalPolicyStepCreateWithoutTimesheetApprovalsInput = {

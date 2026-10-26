@@ -11,9 +11,10 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { testAadhaar } from './lib/aadhaar.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const BASE = 'http://localhost:4000';
+const BASE = process.env.AUTHZ_API_URL ?? 'http://localhost:4000';
 const env = Object.fromEntries(
   readFileSync(resolve(ROOT, '.env'), 'utf8')
     .split(/\r?\n/)
@@ -136,6 +137,7 @@ async function main() {
       firstName: 'Asha',
       lastName: 'Rao',
       workEmail: `asha@${slug}.test`,
+      aadhaarNumber: testAadhaar(),
       employmentType: 'FULL_TIME',
       dateOfJoining: '2024-03-15',
     },
@@ -203,8 +205,70 @@ async function main() {
   r = await call(A, 'GET', `/v1/organizations/${orgId}/employees/${employeeId}`);
   check('phone persisted (survives a fresh read)', r.payload?.phone, '+91 90000 11111');
 
+  console.log('\nfield rules');
+  // A second person cannot be given a number someone here already has, written any way.
+  r = await call(
+    A,
+    'POST',
+    `/v1/organizations/${orgId}/employees`,
+    {
+      firstName: 'Ravi',
+      lastName: 'Kumar',
+      phone: '9000011111',
+      aadhaarNumber: testAadhaar(),
+      employmentType: 'FULL_TIME',
+    },
+    AH,
+  );
+  check('a phone number already in use is refused', r.status, 409);
+  check(
+    'and the refusal names who has it',
+    /already belongs to Asha Rao/.test(r.payload?.detail ?? ''),
+    true,
+  );
+  r = await call(
+    A,
+    'POST',
+    `/v1/organizations/${orgId}/employees`,
+    {
+      firstName: 'Ravi2',
+      lastName: 'Kumar',
+      workEmail: 'ravi@',
+      phone: '98765abc43',
+      aadhaarNumber: testAadhaar(),
+      employmentType: 'FULL_TIME',
+    },
+    AH,
+  );
+  check('a malformed employee is refused', r.status, 400);
+  const said = JSON.stringify(r.payload ?? {});
+  check(
+    'a name with digits is explained',
+    said.includes('First name cannot contain numbers.'),
+    true,
+  );
+  check(
+    'a bad email is explained',
+    said.includes('Enter an email address like name@company.com.'),
+    true,
+  );
+  check(
+    'letters in a phone are explained',
+    said.includes('A phone number can contain only digits.'),
+    true,
+  );
+
   console.log('\nmembership add + end (new endpoint)');
-  r = await call(A, 'POST', `/v1/organizations/${orgId}/teams`, { name: 'Platform' }, AH);
+  // A team and a project each belong to a branch when created from the app.
+  const branchRows = (await call(A, 'GET', `/v1/organizations/${orgId}/branches`)).payload;
+  const teamBranchId = (branchRows?.items ?? branchRows)[0]?.id;
+  r = await call(
+    A,
+    'POST',
+    `/v1/organizations/${orgId}/teams`,
+    { name: 'Platform', branchId: teamBranchId },
+    AH,
+  );
   check('create team', r.status, 201);
   const teamId = r.payload?.id;
   r = await call(
@@ -300,6 +364,7 @@ async function main() {
     {
       code: 'VERIFY-1',
       name: 'Verification Project',
+      branchId: teamBranchId,
     },
     AH,
   );
@@ -311,7 +376,6 @@ async function main() {
     `/v1/organizations/${orgId}/projects/${projectId}/members`,
     {
       employeeId,
-      allocationPercentage: 60,
       startsOn: '2026-01-01',
     },
     AH,
@@ -321,11 +385,11 @@ async function main() {
 
   r = await call(A, 'GET', `/v1/organizations/${orgId}/projects`);
   check('project list includes members', (r.payload?.items ?? r.payload)?.[0]?.members?.length, 1);
-  // Prisma serialises Decimal as a string; the contract coerces it, so compare numerically.
+  // Project membership carries no percentage.
   check(
-    'allocation persisted',
-    Number((r.payload?.items ?? r.payload)?.[0]?.members?.[0]?.allocationPercentage),
-    60,
+    'no allocation percentage is returned',
+    (r.payload?.items ?? r.payload)?.[0]?.members?.[0]?.allocationPercentage,
+    undefined,
   );
 
   r = await call(

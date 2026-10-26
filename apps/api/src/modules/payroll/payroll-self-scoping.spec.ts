@@ -38,6 +38,7 @@ function setup(self: { id: string } | null = { id: EMPLOYEE_A }) {
     $queryRaw: jest.fn().mockResolvedValue([]),
     employee: { findFirst: jest.fn().mockResolvedValue(self) },
     payslip: { findMany: jest.fn().mockResolvedValue([]) },
+    organization: { findUnique: jest.fn().mockResolvedValue({ name: 'Acme' }) },
     payrollLineItem: { findMany: jest.fn().mockResolvedValue([]) },
   };
   const database = {
@@ -149,6 +150,30 @@ describe('PayrollService.ledger self-scoping', () => {
   it('leaves the wildcard admin unrestricted', async () => {
     const { tx, service } = setup();
     await service.ledger(context(['*']));
+    expect(ledgerFilter(tx).employeeId).toBeUndefined();
+  });
+
+  it('explains that federated all-employee reads need the dedicated grant', async () => {
+    const { tx, service } = setup();
+    await expect(
+      service.ledger(
+        context(['payroll.ledger.read'], {
+          accessMode: 'FEDERATION' as AccessMode,
+          actor: { type: 'FEDERATION_CLIENT', clientId: 'blizbooks' },
+        }),
+      ),
+    ).rejects.toThrow('payroll.ledger.read.all');
+    expect(tx.payrollLineItem.findMany).not.toHaveBeenCalled();
+  });
+
+  it('allows a federated client with the dedicated grant to read all employee ledger lines', async () => {
+    const { tx, service } = setup();
+    await service.ledger(
+      context(['payroll.ledger.read', 'payroll.ledger.read.all'], {
+        accessMode: 'FEDERATION' as AccessMode,
+        actor: { type: 'FEDERATION_CLIENT', clientId: 'blizbooks' },
+      }),
+    );
     expect(ledgerFilter(tx).employeeId).toBeUndefined();
   });
 

@@ -14,16 +14,19 @@ import { DomainContextFactory } from '../../common/context/domain-context.factor
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   PayComponentAssignmentDto,
-  PayComponentDto,
-  PayrollActionDto,
   PayrollCorrectionDto,
-  PayrollAdjustmentDto,
   PayrollPayslipQueryDto,
-  PayrollRunDto,
 } from './payroll.dto';
 import { PayrollService } from './payroll.service';
 import { PayrollAdjustmentSource } from '../../generated/prisma/enums';
 
+import {
+  NativePayComponentDto,
+  NativeRunAdjustmentDto,
+  NativePayrollActionDto,
+  NativePayrollCalculationDto,
+  NativePayrollRunDto,
+} from './payroll-native.dto';
 @Controller('v1/organizations/:organizationId/payroll')
 @UseGuards(NativeJwtGuard)
 export class PayrollController {
@@ -58,7 +61,7 @@ export class PayrollController {
   }
   @Post('components') component(
     @Param('organizationId') organizationId: string,
-    @Body() body: PayComponentDto,
+    @Body() body: NativePayComponentDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -76,7 +79,7 @@ export class PayrollController {
   }
   @Post('runs') run(
     @Param('organizationId') organizationId: string,
-    @Body() body: PayrollRunDto,
+    @Body() body: NativePayrollRunDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -86,16 +89,17 @@ export class PayrollController {
   @Post('runs/:runId/calculate') calculate(
     @Param('organizationId') organizationId: string,
     @Param('runId', ParseUUIDPipe) runId: string,
+    @Body() body: NativePayrollCalculationDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
-      .then((context) => this.payroll.calculate(context, runId));
+      .then((context) => this.payroll.calculate(context, runId, body.deferAdvanceEmployeeIds));
   }
   @Post('runs/:runId/adjustments') adjustment(
     @Param('organizationId') organizationId: string,
     @Param('runId', ParseUUIDPipe) runId: string,
-    @Body() body: Omit<PayrollAdjustmentDto, 'payrollRunId'>,
+    @Body() body: NativeRunAdjustmentDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -111,12 +115,12 @@ export class PayrollController {
   @Post('runs/:runId/action') action(
     @Param('organizationId') organizationId: string,
     @Param('runId', ParseUUIDPipe) runId: string,
-    @Body() body: PayrollActionDto,
+    @Body() body: NativePayrollActionDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
       .native(request.user.userId, organizationId, undefined, body.comment)
-      .then((context) => this.payroll.advance(context, runId, body.target, body.comment));
+      .then((context) => this.payroll.advance(context, runId, body.target, body.comment ?? ''));
   }
 
   /**

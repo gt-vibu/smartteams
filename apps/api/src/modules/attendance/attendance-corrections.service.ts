@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { describeDays, notify, requesterRouting, stepApprovers } from '../notifications/notify';
 import {
+  AttendanceDayStatus,
   AttendancePunchSource,
   AttendancePunchType,
   AttendanceStatus,
@@ -21,6 +23,8 @@ import {
   attendanceTotals,
   correctionPunchUpdates,
   dayStatusFromSnapshot,
+  snapshotDate,
+  snapshotRecord,
 } from './attendance-shared';
 import {
   assertValidMissingCheckOut,
@@ -28,6 +32,8 @@ import {
   MISSING_CHECK_OUT_KEY,
   type PunchLike,
 } from './attendance-missing-checkout';
+import { expectedDayOn } from './attendance-shift-day';
+import { assertCorrectionIsNotFuture } from './attendance-correction-future';
 
 /** The employee's first punch after this day's open check-in, on any day. */
 async function nextPunchAfterOpenCheckIn(
@@ -87,6 +93,19 @@ export class AttendanceCorrectionsService {
       // request. Without this an employee holding `attendance.corrections.write` — which every
       // seeded employee holds — could raise a correction against a colleague's day.
       await assertMayActForEmployee(tx, context, record.employeeId, 'attendance.read.all');
+      const organization = await tx.organization.findUniqueOrThrow({
+        where: { id: context.organizationId },
+        select: { timezone: true },
+      });
+      const afterSnapshot = snapshotRecord(input.afterSnapshot ?? record) ?? {};
+      assertCorrectionIsNotFuture(
+        record.workDate,
+        [
+          snapshotDate(afterSnapshot.correctedCheckIn, 'check-in'),
+          snapshotDate(afterSnapshot.correctedCheckOut, 'check-out'),
+        ],
+        organization.timezone,
+      );
       return createAttendanceCorrection(
         tx,
         this.audit,
@@ -95,6 +114,82 @@ export class AttendanceCorrectionsService {
         input.reason,
         input.afterSnapshot ?? record,
       );
+    });
+  }
+
+  /** Creates a correction for a day that does not yet have an attendance row. */
+  async requestCorrectionForDate(
+    context: DomainContext,
+    employeeId: string,
+    workDate: string,
+    input: { reason: string; afterSnapshot?: Record<string, unknown> },
+  ) {
+    requirePermission(context, 'attendance.corrections.write');
+    requireReason({ ...context, reason: input.reason }, 'Attendance correction requires a reason');
+    return this.database.run(context, async (tx) => {
+      const employee = await tx.employee.findFirst({
+        where: { id: employeeId, organizationId: context.organizationId, status: 'ACTIVE' },
+        include: { manager: { select: { userId: true } } },
+      });
+      if (!employee) throw new NotFoundError('Active employee');
+      const branchId = context.branchId ?? employee.primaryBranchId;
+      if (!branchId)
+        throw new ConflictError('An outlet is required to resolve attendance approvers');
+
+      const date = attendanceDate(workDate);
+      const afterSnapshot = snapshotRecord(input.afterSnapshot);
+      const correctedCheckIn = snapshotDate(afterSnapshot?.correctedCheckIn, 'check-in');
+      const correctedCheckOut = snapshotDate(afterSnapshot?.correctedCheckOut, 'check-out');
+      if (!correctedCheckIn)
+        throw new ConflictError('An attendance request requires a check-in time');
+      if (correctedCheckOut && correctedCheckOut < correctedCheckIn)
+        throw new ConflictError('Attendance check-out must be after check-in');
+      const organization = await tx.organization.findUniqueOrThrow({
+        where: { id: context.organizationId },
+        select: { timezone: true },
+      });
+      assertCorrectionIsNotFuture(
+        date,
+        [correctedCheckIn, correctedCheckOut],
+        organization.timezone,
+      );
+
+      const record = await tx.attendanceRecord.upsert({
+        where: { employeeId_workDate: { employeeId, workDate: date } },
+        create: {
+          organizationId: context.organizationId,
+          employeeId,
+          branchId,
+          workDate: date,
+          status: AttendanceStatus.OPEN,
+          dayStatus: AttendanceDayStatus.ABSENT,
+          sourceAccessMode: context.accessMode,
+        },
+        update: { branchId, sourceAccessMode: context.accessMode },
+        include: {
+          punches: true,
+          employee: { include: { manager: { select: { userId: true } } } },
+        },
+      });
+      const pending = await tx.attendanceCorrection.findFirst({
+        where: {
+          organizationId: context.organizationId,
+          attendanceRecordId: record.id,
+          status: 'PENDING',
+        },
+        select: { id: true },
+      });
+      if (pending)
+        throw new ConflictError(
+          'An attendance correction is already awaiting approval for this date',
+        );
+
+      return createAttendanceCorrection(tx, this.audit, context, record, input.reason, {
+        ...afterSnapshot,
+        correctedCheckIn: correctedCheckIn.toISOString(),
+        ...(correctedCheckOut ? { correctedCheckOut: correctedCheckOut.toISOString() } : {}),
+        dayStatus: AttendanceDayStatus.PRESENT,
+      });
     });
   }
 
@@ -270,7 +365,21 @@ export class AttendanceCorrectionsService {
           where: { organizationId: context.organizationId },
           select: { standardDayMinutes: true },
         });
-        const totals = attendanceTotals(correctedPunches, settings.standardDayMinutes);
+        const expected =
+          context.accessMode === 'NATIVE'
+            ? await expectedDayOn(
+                tx,
+                context.organizationId,
+                correction.attendanceRecord.employeeId,
+                correction.attendanceRecord.branchId,
+                correction.attendanceRecord.workDate,
+                settings.standardDayMinutes,
+              )
+            : null;
+        const totals = attendanceTotals(
+          correctedPunches,
+          expected?.minutes ?? settings.standardDayMinutes,
+        );
         const correctedDayStatus = dayStatusFromSnapshot(correction.afterSnapshot);
         correctedRecord = await tx.attendanceRecord.update({
           where: { id: correction.attendanceRecordId },
@@ -278,6 +387,7 @@ export class AttendanceCorrectionsService {
             status: AttendanceStatus.CORRECTED,
             correctionNote: correction.reason,
             workedMinutes: totals.workedMinutes,
+            ...(expected ? { overtimeDayType: expected.dayType } : {}),
             overtimeMinutes: totals.overtimeMinutes,
             ...(correctedDayStatus ? { dayStatus: correctedDayStatus } : {}),
             version: { increment: 1 },
@@ -302,6 +412,40 @@ export class AttendanceCorrectionsService {
         },
         tx,
       );
+      const record = correction.attendanceRecord;
+      const requester = await requesterRouting(tx, context.organizationId, record.employeeId);
+      const on = describeDays(record.workDate, record.workDate);
+      if (finalStatus === 'PENDING') {
+        const next = correction.approvalPolicy?.steps.find((step) => step.stepNumber > stepNumber);
+        if (next)
+          await notify(tx, context, {
+            recipients: await stepApprovers(
+              tx,
+              context.organizationId,
+              next,
+              requester,
+              record.branchId ?? context.branchId,
+            ),
+            kind: 'ATTENDANCE_CORRECTION_PENDING',
+            title: 'Attendance correction awaiting your decision',
+            body: `${requester.name}'s correction for ${on} passed the previous approval step.`,
+            module: 'approvals',
+            entityType: 'ATTENDANCE_CORRECTION',
+            entityId: correction.id,
+          });
+      } else {
+        const approved = finalStatus === 'APPROVED';
+        await notify(tx, context, {
+          // The employee, and whoever raised it for them if that was someone else.
+          recipients: [requester.userId, correction.requestedByUserId],
+          kind: 'ATTENDANCE_CORRECTION_DECIDED',
+          title: approved ? 'Attendance correction approved' : 'Attendance correction rejected',
+          body: `The correction to ${on} was ${approved ? 'approved' : 'rejected'}: ${comment}`,
+          module: 'attendance',
+          entityType: 'ATTENDANCE_CORRECTION',
+          entityId: correction.id,
+        });
+      }
       return updated;
     });
   }
@@ -390,4 +534,14 @@ function replaceMissingCheckOut(
     ...snapshot,
     [MISSING_CHECK_OUT_KEY]: { ...existing, occurredAt: replacement.toISOString() },
   };
+}
+
+function attendanceDate(value: string) {
+  const dateValue = value.slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateValue))
+    throw new ConflictError('Attendance work date must be a valid calendar date');
+  const date = new Date(`${dateValue}T00:00:00.000Z`);
+  if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== dateValue)
+    throw new ConflictError('Attendance work date must be a valid calendar date');
+  return date;
 }

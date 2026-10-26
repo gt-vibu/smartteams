@@ -92,6 +92,15 @@ const PAYROLL_MODULE_PERMISSIONS = [
   'payroll.ledger.read',
 ];
 
+/** One per tab of the organization payroll screen; any of them makes the screen worth opening. */
+const ADMIN_PAYROLL_PERMISSIONS = [
+  'payroll.runs.read',
+  'payroll.payslips.read.all',
+  'payroll.employee-profile.read.all',
+  'payroll.components.read',
+  'payroll.policy.read',
+];
+
 function canOpenPayroll(permissions: readonly string[]): boolean {
   return canAny(permissions, PAYROLL_MODULE_PERMISSIONS);
 }
@@ -111,19 +120,58 @@ function canOpenPayroll(permissions: readonly string[]): boolean {
  */
 const ADMIN_MODULE_PERMISSIONS: Record<string, string[]> = {
   home: ['organizations.read'],
+  'org-setup': [
+    'branches.read',
+    'employees.write',
+    'projects.write',
+    'teams.write',
+    'members.read',
+    'rbac.read',
+    'organizations.read',
+  ],
   onboarding: ['employees.write'],
+  employees: ['employees.read.all'],
   attendance: ['attendance.read.all'],
   'time-off': ['leave.requests.read.all'],
   timesheet: ['timesheets.read.all'],
   teams: ['teams.read'],
   projects: ['projects.read'],
   shifts: ['shifts.read'],
-  // Holidays are part of the organization record: reading is `organizations.read`, editing is
-  // `organizations.update`. Viewing the screen only requires the former.
-  holidays: ['organizations.read'],
-  approvals: ['approval-policies.read'],
+  // The admin workspace holiday page is for managing the tenant calendar. A person who can only
+  // read organization details must not get a page they cannot administer. Employee self-service
+  // holiday visibility remains separately available below.
+  holidays: ['organizations.update'],
+  // Whoever decides requests needs the inbox even without reading the routing policies (HR).
+  approvals: ['approval-policies.read', ...APPROVAL_DECISION_PERMISSIONS],
   files: ['files.read.all'],
+  // Each report is held to its own screen's organization-wide read; any one opens the screen.
+  reports: [
+    'employees.read.all',
+    'attendance.read.all',
+    'leave.requests.read.all',
+    'timesheets.read.all',
+  ],
 };
+
+/** Admin pages whose main purpose is maintaining a directory or schedule, not read-only review. */
+const ADMIN_MANAGEMENT_MODULE_PERMISSIONS: Record<string, readonly [string, string]> = {
+  employees: ['employees.read.all', 'employees.write'],
+  teams: ['teams.read', 'teams.write'],
+  projects: ['projects.read', 'projects.write'],
+  shifts: ['shifts.read', 'shifts.write'],
+  holidays: ['organizations.read', 'organizations.update'],
+};
+
+const ADMIN_SETUP_WRITE_PERMISSIONS = [
+  'organizations.update',
+  'branches.write',
+  'employees.write',
+  'projects.write',
+  'teams.write',
+  'members.write',
+  'rbac.write',
+  'approval-policies.write',
+];
 
 /**
  * The permissions that mean "this person acts on the organization", not just on their own record.
@@ -137,8 +185,9 @@ const ADMIN_MODULE_PERMISSIONS: Record<string, string[]> = {
  * and ORG_ADMIN are at or above it. Drawing the line here corrects the employee case without
  * moving anybody else, which is why it is drawn here rather than somewhere tidier.
  */
+// `rbac.read` is not here: the MANAGER role holds it to see role names, and treating it as an
+// administrative signal put every manager in the Organization workspace with nothing to do there.
 const ORGANIZATION_WIDE_PERMISSIONS = [
-  'rbac.read',
   'rbac.write',
   'members.read',
   'members.write',
@@ -168,7 +217,24 @@ function canOpenAdminModule(moduleName: string, permissions: readonly string[]):
   // out of a new screen by an omission here would be a bug, not a safeguard — they can grant
   // themselves any named permission anyway.
   if (can(permissions, '*')) return true;
-  if (moduleName === 'payroll') return canOpenPayroll(permissions);
+  // These admin screens are for maintaining organization records. Require both the data read and
+  // the corresponding write permission; read-only users should not get a management destination
+  // whose primary actions are unavailable. Other operational screens intentionally remain usable
+  // in read-only mode for review and reporting.
+  const managementPermissions = ADMIN_MANAGEMENT_MODULE_PERMISSIONS[moduleName];
+  if (managementPermissions)
+    return managementPermissions.every((permission) => can(permissions, permission));
+  // Setup is a collection of admin editors. A read-only organization or branch listing does not
+  // make the setup destination useful; each individual section still checks its own read/write
+  // permissions after this module-level gate.
+  if (moduleName === 'org-setup') return canAny(permissions, ADMIN_SETUP_WRITE_PERMISSIONS);
+  // The approvals screen is an action queue. Reading policy configuration alone does not grant
+  // access to any decision queue, so require at least one actual decision capability.
+  if (moduleName === 'approvals') return canAny(permissions, APPROVAL_DECISION_PERMISSIONS);
+  // Organization payroll needs something organization-wide. The self-service keys every
+  // employee holds (their own payslip, their own salary) opened it before, onto tabs that each
+  // then refused.
+  if (moduleName === 'payroll') return canAny(permissions, ADMIN_PAYROLL_PERMISSIONS);
   const required = ADMIN_MODULE_PERMISSIONS[moduleName];
   // Anyone short of the wildcard needs the module to say what it requires. An unlisted module
   // stays shut rather than inheriting the old blanket `true`.
@@ -202,6 +268,8 @@ export function canAccessModule(
   workspaceContext: WorkspaceContext,
   permissions: readonly string[],
   isAssignedToAnyTeam: boolean,
+  /** Decides approvals as themselves (a manager, a named approver, covering someone). */
+  approvesInOwnRight = false,
 ): boolean {
   if (workspaceContext === 'ADMIN') {
     return canOpenAdminModule(moduleName, permissions);
@@ -221,8 +289,9 @@ export function canAccessModule(
     case 'payroll':
       return canOpenPayroll(permissions);
     case 'approvals':
-      // Wildcard alone is not enough here, for the reason given on `canApprove`.
-      return decidesApprovals(permissions);
+      // In their own workspace, only someone who approves as themselves. An HR or administrator
+      // role reaches the organization's approvals from the admin workspace instead.
+      return approvesInOwnRight;
     case 'teams':
       return isAssignedToAnyTeam;
     case 'onboarding':
@@ -230,4 +299,33 @@ export function canAccessModule(
     default:
       return false;
   }
+}
+
+/**
+ * What the organization workspace is called for this person, and the label under their name.
+ *
+ * "Admin" belongs to someone who administers the whole tenant. An HR Admin runs people
+ * operations from the same workspace but is not the company's administrator, and seeing "Admin
+ * workspace" and "Tenant Admin" read as if they had been handed everything.
+ */
+export function workspaceTitle(persona: {
+  permissions: readonly string[];
+  roles: ReadonlyArray<{ code: string; name: string }>;
+}): { workspace: string; badge: string } {
+  const organizationAdmin = persona.roles.find((role) => role.code === 'ORG_ADMIN');
+  if (organizationAdmin)
+    return { workspace: 'Admin workspace', badge: organizationAdmin.name || 'Tenant Admin' };
+  const hrAdmin = persona.roles.find((role) => role.code === 'HR_ADMIN');
+  if (hrAdmin) return { workspace: 'HR workspace', badge: hrAdmin.name || 'HR Admin' };
+  if (persona.permissions.includes('*'))
+    return { workspace: 'Admin workspace', badge: 'Tenant Admin' };
+  const role = persona.roles.find((entry) => !['EMPLOYEE', 'MANAGER'].includes(entry.code));
+  return role
+    ? { workspace: `${role.name} workspace`, badge: role.name }
+    : { workspace: 'Admin workspace', badge: 'Admin' };
+}
+
+/** Only self-service employees may hand in a resignation; people-management roles decide them. */
+export function canSubmitSelfResignation(permissions: readonly string[]): boolean {
+  return !permissions.includes('*') && !permissions.includes('employees.write');
 }

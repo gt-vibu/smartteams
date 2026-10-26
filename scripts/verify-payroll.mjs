@@ -14,6 +14,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
+import { testAadhaar } from './lib/aadhaar.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 /**
@@ -22,7 +23,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
  * rather than as an empty panel in the browser.
  */
 const contracts = createRequire(import.meta.url)(resolve(ROOT, 'packages/contracts/dist/index.js'));
-const BASE = 'http://localhost:4000';
+const BASE = process.env.AUTHZ_API_URL ?? 'http://localhost:4000';
 const env = Object.fromEntries(
   readFileSync(resolve(ROOT, '.env'), 'utf8')
     .split(/\r?\n/)
@@ -151,12 +152,20 @@ async function main() {
     firstName: 'Asha',
     lastName: 'Rao',
     workEmail: `asha@${slug}.test`,
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
     dateOfJoining: '2024-03-15',
     primaryBranchId: branchId,
   });
   const employeeId = r.payload?.id;
   check('employee created', typeof employeeId, 'string');
+  // This suite records attendance on a few days only and checks leave, overtime and adjustments.
+  // Unmarked working days are priced separately, at the end, so they are switched off here.
+  r = await org('PUT', '/attendance/work-week', {
+    workWeekDays: [1, 2, 3, 4, 5],
+    unmarkedDaysAreAbsent: false,
+  });
+  check('unmarked days are not counted as absences for this run', r.status, 200);
 
   console.log('\npolicy and statutory rules');
   r = await org('PUT', '/payroll/policy', {
@@ -547,6 +556,7 @@ async function main() {
     firstName: 'Mid',
     lastName: 'Joiner',
     workEmail: `mid@${slug}.test`,
+    aadhaarNumber: testAadhaar(),
     employmentType: 'FULL_TIME',
     dateOfJoining: midMonth,
     primaryBranchId: branchId,
@@ -579,6 +589,35 @@ async function main() {
   check(
     'so preview never offers more payable days than employment allows',
     num(r.payload?.payableDays) <= 15,
+    true,
+  );
+
+  console.log('\nunmarked working days are absences, when the organization says so');
+  r = await org('POST', '/payroll/preview', {
+    employeeId,
+    periodStart: period.start,
+    periodEnd: period.end,
+  });
+  const payableWithoutRule = num(r.payload?.payableDays);
+  r = await org('PUT', '/attendance/work-week', {
+    workWeekDays: [1, 2, 3, 4, 5],
+    unmarkedDaysAreAbsent: true,
+  });
+  check('the organization turns the rule on', r.status, 200);
+  r = await org('POST', '/payroll/preview', {
+    employeeId,
+    periodStart: period.start,
+    periodEnd: period.end,
+  });
+  // Last month had working days with no attendance and no leave: each now costs a day.
+  check(
+    'working days with no attendance reduce payable days',
+    num(r.payload?.payableDays) < payableWithoutRule,
+    true,
+  );
+  check(
+    'and are reported as absences',
+    num(r.payload?.attendance?.absentDays ?? r.payload?.absentDays) > 0,
     true,
   );
 

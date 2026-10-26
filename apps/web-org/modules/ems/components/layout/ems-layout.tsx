@@ -9,6 +9,10 @@ import { CommandPalette } from './command-palette';
 import { HolidayCheckInPrompt } from '../common/holiday-check-in-prompt';
 import { NotificationDrawer } from './notification-drawer';
 import { EntityDetailDrawer } from '../common/entity-detail-drawer';
+import { useBackToClose } from '@smarteam/ui';
+import { NotificationsProvider, useNotifications } from '../../hooks/use-notifications';
+import { useAutoHideScrollbar } from '../../hooks/use-auto-hide-scrollbar';
+import { FeedbackToasts } from './feedback-toasts';
 
 interface EmsLayoutProps {
   children: React.ReactNode;
@@ -20,7 +24,16 @@ interface EmsLayoutProps {
   orgActiveTab?: string;
 }
 
-export function EmsLayout({
+/** The workspace frame, with the one notification feed its bell, dots and screens share. */
+export function EmsLayout(props: EmsLayoutProps) {
+  return (
+    <NotificationsProvider>
+      <EmsLayoutBody {...props} />
+    </NotificationsProvider>
+  );
+}
+
+function EmsLayoutBody({
   children,
   activeModule,
   onSelectModule,
@@ -31,7 +44,20 @@ export function EmsLayout({
 }: EmsLayoutProps) {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
+  const notifications = useNotifications();
+  const { markModuleRead, unreadByModule } = notifications;
+  const unreadHere = unreadByModule[activeModule] ?? 0;
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
+  const mainCanvasRef = useAutoHideScrollbar<HTMLElement>();
+
+  // Back closes the palette rather than the page behind it. Drawers and dialogs do this themselves.
+  useBackToClose(isCommandPaletteOpen, () => setIsCommandPaletteOpen(false));
+
+  // The screen on show is where its notifications are seen: opening it reads them, and so does
+  // one arriving while it is open (the screen reloads to show what it is about).
+  useEffect(() => {
+    if (unreadHere > 0) void markModuleRead(activeModule);
+  }, [activeModule, unreadHere, markModuleRead]);
 
   // Global event listeners
   useEffect(() => {
@@ -60,6 +86,7 @@ export function EmsLayout({
         activeSpace={activeSpace}
         onSelectSpace={onSelectSpace}
         onOpenSearch={() => setIsCommandPaletteOpen(true)}
+        hasUnreadNotifications={notifications.unread > 0}
         onOpenNotifications={() => setIsNotificationDrawerOpen(true)}
       />
 
@@ -87,7 +114,8 @@ export function EmsLayout({
         {/* Dedicated Scrollable Main Content Canvas with Context Bar */}
         <main
           id="ems-main-canvas"
-          className="flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-6 relative scroll-smooth focus:outline-none flex flex-col"
+          ref={mainCanvasRef}
+          className="scrollbar-auto-hide flex-1 min-w-0 h-full overflow-y-auto overflow-x-hidden pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-6 relative scroll-smooth focus:outline-none flex flex-col"
         >
           {/* Context Breadcrumbs & Scope Indicator */}
           <ContextBar
@@ -138,7 +166,10 @@ export function EmsLayout({
       <NotificationDrawer
         isOpen={isNotificationDrawerOpen}
         onClose={() => setIsNotificationDrawerOpen(false)}
+        onSelectModule={onSelectModule}
       />
+
+      <FeedbackToasts />
 
       {/* 6. Entity Detail Drawer */}
       <EntityDetailDrawer

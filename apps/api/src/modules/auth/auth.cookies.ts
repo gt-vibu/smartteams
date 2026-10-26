@@ -81,13 +81,23 @@ export class AuthCookieService {
   }
 
   clear(response: Response): void {
-    response.clearCookie(this.accessCookieName, { ...this.baseOptions(), httpOnly: true });
+    const options = this.baseOptions();
+    this.clearAt(response, options);
+
+    // A previous deployment may have issued host-only cookies before SESSION_COOKIE_DOMAIN was
+    // configured. A Domain=blizbooks.com Set-Cookie cannot delete those host-only cookies, so send
+    // a second matching deletion for the API host during the migration window.
+    if (options.domain) this.clearAt(response, { ...options, domain: undefined });
+  }
+
+  private clearAt(response: Response, options: CookieOptions): void {
+    response.clearCookie(this.accessCookieName, { ...options, httpOnly: true });
     response.clearCookie(this.refreshCookieName, {
-      ...this.baseOptions(),
+      ...options,
       httpOnly: true,
       path: REFRESH_COOKIE_PATH,
     });
-    response.clearCookie(this.csrfCookieName, { ...this.baseOptions(), httpOnly: false });
+    response.clearCookie(this.csrfCookieName, { ...options, httpOnly: false });
   }
 
   private baseOptions(): CookieOptions {

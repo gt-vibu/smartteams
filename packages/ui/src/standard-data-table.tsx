@@ -1,10 +1,16 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Checkbox, Input } from './form';
+import { Button } from './button';
 import { Select } from './select';
-import { Checkbox } from './form';
+import {
+  displayValue,
+  pluralLower,
+  useStandardDataTable,
+  type ColumnDef,
+} from './standard-data-table-model';
 import { StandardDataTablePagination } from './standard-data-table-pagination';
-import { displayValue, useStandardDataTable, type ColumnDef } from './standard-data-table-model';
 
 // Re-exported so every existing `import { ColumnDef } from '@smarteam/ui'` keeps working: the
 // split is internal, and the component's public surface is unchanged.
@@ -28,6 +34,13 @@ export interface StandardDataTableProps<T> {
   compact?: boolean;
   showColumnVisibilityToggle?: boolean;
   defaultSort?: { columnId: string; direction: 'asc' | 'desc' };
+  pagination?: boolean;
+  /** Enables the phone filter sheet for HR tables. Off by default for shared consumers. */
+  mobileFilterSheet?: boolean;
+  /** Prevents the mobile pagination controls from crowding the final row. */
+  responsivePagination?: boolean;
+  /** Reset to page one after sort/search changes. Off by default for compatibility. */
+  resetPageOnSort?: boolean;
 }
 
 export function StandardDataTable<T>({
@@ -48,7 +61,20 @@ export function StandardDataTable<T>({
   compact = false,
   showColumnVisibilityToggle = true,
   defaultSort,
+  pagination = true,
+  mobileFilterSheet = false,
+  responsivePagination = false,
+  resetPageOnSort = false,
 }: StandardDataTableProps<T>) {
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  React.useEffect(() => {
+    if (!mobileFiltersOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMobileFiltersOpen(false);
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [mobileFiltersOpen]);
   const {
     searchQuery,
     setSearchQuery,
@@ -80,11 +106,43 @@ export function StandardDataTable<T>({
     searchFields,
     initialRowsPerPage,
     defaultSort,
+    resetPageOnSort,
+  });
+  const filterIds = Object.keys(resolvedFilterOptions);
+  const activeColumnFilterCount = Object.values(columnFilters).filter(
+    (value) => value && value !== 'ALL',
+  ).length;
+  const filterControls = filterIds.map((colId) => {
+    const col = initialColumns.find((column) => column.id === colId);
+    if (!col) return null;
+    const options = resolvedFilterOptions[colId] || [];
+    const currentVal = columnFilters[colId] || 'ALL';
+    const label = typeof col.header === 'string' ? col.header : col.id;
+
+    return (
+      <div key={colId} className={mobileFilterSheet ? 'w-full sm:w-40' : 'w-40'}>
+        <Select
+          aria-label={`Filter by ${label}`}
+          value={currentVal}
+          onChange={(event) => {
+            setColumnFilters((previous) => ({ ...previous, [colId]: event.target.value }));
+            setCurrentPage(1);
+          }}
+        >
+          <option value="ALL">All {pluralLower(label)}</option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+      </div>
+    );
   });
 
   return (
     <div
-      className={`w-full flex flex-col bg-card rounded-[6px] border border-border shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden ${className}`}
+      className={`flex w-full flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm ${className}`}
     >
       {/* ─── Top Control Toolbar ─────────────────────────────────────────── */}
       {(title ||
@@ -92,13 +150,21 @@ export function StandardDataTable<T>({
         Object.keys(resolvedFilterOptions).length > 0 ||
         actions ||
         showColumnVisibilityToggle) && (
-        <div className="p-3.5 sm:p-4 border-b border-border bg-muted/40 space-y-3">
+        <div className="space-y-3 border-b border-border bg-muted/30 p-4 sm:p-5">
           {/* Header row with Title & Custom Actions */}
           {(title || actions) && (
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                {title && <h3 className="text-sm font-bold text-foreground">{title}</h3>}
-                {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+                {title && (
+                  <h3 className="text-base font-semibold tracking-tight text-foreground">
+                    {title}
+                  </h3>
+                )}
+                {subtitle && (
+                  <p className="mt-1 max-w-[60ch] text-[13px] leading-5 text-muted-foreground">
+                    {subtitle}
+                  </p>
+                )}
               </div>
               {actions && <div className="flex items-center gap-2">{actions}</div>}
             </div>
@@ -125,7 +191,7 @@ export function StandardDataTable<T>({
                       />
                     </svg>
                   </span>
-                  <input
+                  <Input
                     type="text"
                     aria-label={searchPlaceholder}
                     value={searchQuery}
@@ -134,13 +200,16 @@ export function StandardDataTable<T>({
                       setCurrentPage(1);
                     }}
                     placeholder={searchPlaceholder}
-                    className="w-full pl-8 pr-7 py-1.5 text-xs bg-card border border-border rounded-md text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-all"
+                    className="h-10 w-full pl-9 pr-8 text-[13px] shadow-none"
                   />
                   {searchQuery && (
                     <button
                       type="button"
                       aria-label="Clear search"
-                      onClick={() => setSearchQuery('')}
+                      onClick={() => {
+                        setSearchQuery('');
+                        if (resetPageOnSort) setCurrentPage(1);
+                      }}
                       className="absolute inset-y-0 right-0 pr-2 flex items-center text-muted-foreground hover:text-foreground"
                     >
                       <svg
@@ -161,41 +230,25 @@ export function StandardDataTable<T>({
                 </div>
               )}
 
-              {/* Column Filter Dropdowns */}
-              {Object.keys(resolvedFilterOptions).map((colId) => {
-                const col = initialColumns.find((c) => c.id === colId);
-                if (!col) return null;
-                const options = resolvedFilterOptions[colId] || [];
-                const currentVal = columnFilters[colId] || 'ALL';
-
-                return (
-                  <div key={colId} className="w-40">
-                    <Select
-                      value={currentVal}
-                      onChange={(e) => {
-                        setColumnFilters((prev) => ({ ...prev, [colId]: e.target.value }));
-                        setCurrentPage(1);
-                      }}
-                    >
-                      <option value="ALL">
-                        All {typeof col.header === 'string' ? col.header : col.id}
-                      </option>
-                      {options.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                );
-              })}
+              {/* Desktop filters stay beside the search. Phones open them in a compact sheet. */}
+              {filterIds.length > 0 && (
+                <div
+                  className={
+                    mobileFilterSheet
+                      ? 'hidden flex-wrap items-center gap-2.5 sm:flex'
+                      : 'flex flex-wrap items-center gap-2.5'
+                  }
+                >
+                  {filterControls}
+                </div>
+              )}
 
               {/* Active Filter Clear Button */}
               {hasActiveFilters && (
                 <button
                   type="button"
                   onClick={handleResetFilters}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:opacity-80 bg-primary/10 hover:bg-primary/15 border border-primary/25 rounded-md px-2.5 py-1.5 transition-colors cursor-pointer"
+                  className="inline-flex h-9 items-center gap-1 rounded-md border border-primary/20 bg-primary/5 px-3 text-xs font-medium text-primary transition-colors hover:bg-primary/10"
                 >
                   <svg
                     className="w-3 h-3"
@@ -215,15 +268,30 @@ export function StandardDataTable<T>({
               )}
             </div>
 
+            {mobileFilterSheet && filterIds.length > 0 && (
+              <Button
+                aria-expanded={mobileFiltersOpen}
+                className="shrink-0 gap-2 sm:hidden"
+                onClick={() => setMobileFiltersOpen(true)}
+                size="sm"
+                type="button"
+                variant={activeColumnFilterCount ? 'secondary' : 'outline'}
+              >
+                Filters{activeColumnFilterCount ? ` · ${activeColumnFilterCount}` : ''}
+              </Button>
+            )}
+
             {/* Column Visibility Menu Button */}
             {showColumnVisibilityToggle && (
               <div className="relative">
-                <button
+                <Button
                   type="button"
                   aria-expanded={isColumnMenuOpen}
                   aria-haspopup="menu"
                   onClick={() => setIsColumnMenuOpen(!isColumnMenuOpen)}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground bg-card hover:bg-muted/50 border border-border rounded-md px-3 py-1.5 cursor-pointer shadow-2xs transition-colors"
+                  className="h-9 shadow-none"
+                  size="sm"
+                  variant="outline"
                 >
                   <svg
                     className="w-3.5 h-3.5 text-muted-foreground"
@@ -239,12 +307,12 @@ export function StandardDataTable<T>({
                     />
                   </svg>
                   Columns
-                </button>
+                </Button>
 
                 {isColumnMenuOpen && (
-                  <div className="absolute right-0 mt-1 w-52 bg-card border border-border rounded-lg shadow-xl z-30 p-2 text-xs space-y-1">
-                    <div className="font-bold text-muted-foreground text-[10px] uppercase tracking-wider px-2 py-1 border-b border-border">
-                      Toggle Columns & Pin
+                  <div className="absolute right-0 z-30 mt-1 w-56 space-y-1 rounded-xl border border-border bg-card p-2 text-[13px] shadow-lg">
+                    <div className="border-b border-border px-2 py-2 text-xs font-semibold text-muted-foreground">
+                      Table columns
                     </div>
                     <div className="max-h-60 overflow-y-auto space-y-1 py-1">
                       {initialColumns.map((col) => {
@@ -288,15 +356,59 @@ export function StandardDataTable<T>({
               </div>
             )}
           </div>
+
+          {mobileFilterSheet && mobileFiltersOpen && (
+            <div className="sm:hidden">
+              <button
+                aria-label="Close table filters"
+                className="fixed inset-0 z-40 cursor-default bg-slate-950/25"
+                onClick={() => setMobileFiltersOpen(false)}
+                tabIndex={-1}
+                type="button"
+              />
+              <section
+                aria-label="Table filters"
+                className="fixed inset-x-0 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-50 flex max-h-[min(64dvh,34rem)] flex-col overflow-hidden rounded-t-2xl border border-border bg-card shadow-2xl"
+              >
+                <div className="flex shrink-0 items-center justify-between border-b border-border px-4 py-3">
+                  <div>
+                    <h3 className="text-sm font-semibold text-foreground">Filters</h3>
+                    <p className="text-xs text-muted-foreground">Results update as you choose</p>
+                  </div>
+                  <Button
+                    onClick={() => setMobileFiltersOpen(false)}
+                    size="sm"
+                    type="button"
+                    variant="ghost"
+                  >
+                    Done
+                  </Button>
+                </div>
+                <div className="grid min-h-0 flex-1 gap-3 overflow-y-auto overscroll-contain p-4">
+                  {filterControls}
+                </div>
+                <div className="flex shrink-0 items-center justify-between border-t border-border bg-card px-4 py-3">
+                  <span className="text-xs text-muted-foreground">
+                    {activeColumnFilterCount
+                      ? `${activeColumnFilterCount} active`
+                      : 'No filters selected'}
+                  </span>
+                  <Button onClick={handleResetFilters} size="sm" type="button" variant="outline">
+                    Clear all
+                  </Button>
+                </div>
+              </section>
+            </div>
+          )}
         </div>
       )}
 
       {/* ─── Main Scrollable Table Area ───────────────────────────────────── */}
       <div className="w-full overflow-x-auto relative">
-        <table className="w-full text-left text-xs border-collapse">
+        <table className="w-full border-collapse text-left text-[13px]">
           {/* Sticky Table Header */}
           <thead className="sticky top-0 z-20">
-            <tr className="bg-table-header border-b border-border backdrop-blur-xs text-[11px] font-semibold text-table-header-foreground uppercase tracking-wider shadow-2xs">
+            <tr className="border-b border-border bg-table-header text-[11px] font-semibold tracking-wide text-table-header-foreground">
               {displayColumns.map((col) => {
                 const isSortable = col.sortable !== false;
                 const isSorted = sortState?.columnId === col.id;
@@ -317,7 +429,7 @@ export function StandardDataTable<T>({
                   <th
                     key={col.id}
                     style={{ width: col.width }}
-                    className={`${compact ? 'py-2 px-3' : 'py-3 px-4'} ${
+                    className={`${compact ? 'py-2.5 px-3' : 'py-3.5 px-4'} ${
                       col.align === 'center'
                         ? 'text-center'
                         : col.align === 'right'
@@ -388,13 +500,6 @@ export function StandardDataTable<T>({
                           )}
                         </span>
                       )}
-
-                      {/* Pin indicator tag if pinned */}
-                      {pin && (
-                        <span className="text-[9px] font-bold text-primary bg-primary/15 px-1 rounded uppercase">
-                          {pin}
-                        </span>
-                      )}
                     </button>
                   </th>
                 );
@@ -403,7 +508,7 @@ export function StandardDataTable<T>({
           </thead>
 
           {/* Table Body */}
-          <tbody className="divide-y divide-border text-foreground">
+          <tbody className="divide-y divide-border text-[13px] text-foreground">
             {paginatedData.length === 0 ? (
               <tr>
                 <td colSpan={displayColumns.length} className="py-12 px-4 text-center">
@@ -464,7 +569,7 @@ export function StandardDataTable<T>({
                       return (
                         <td
                           key={col.id}
-                          className={`${compact ? 'py-2 px-3' : 'py-3 px-4'} ${
+                          className={`${compact ? 'py-2.5 px-3' : 'py-3.5 px-4'} ${
                             col.align === 'center'
                               ? 'text-center'
                               : col.align === 'right'
@@ -484,18 +589,21 @@ export function StandardDataTable<T>({
         </table>
       </div>
 
-      <StandardDataTablePagination
-        totalItems={totalItems}
-        currentPage={validCurrentPage}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        rowsPerPageOptions={rowsPerPageOptions}
-        onPageChange={setCurrentPage}
-        onPageSizeChange={(nextPageSize) => {
-          setPageSize(nextPageSize);
-          setCurrentPage(1);
-        }}
-      />
+      {pagination && (
+        <StandardDataTablePagination
+          totalItems={totalItems}
+          currentPage={validCurrentPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          rowsPerPageOptions={rowsPerPageOptions}
+          onPageChange={setCurrentPage}
+          responsiveMobile={responsivePagination}
+          onPageSizeChange={(nextPageSize) => {
+            setPageSize(nextPageSize);
+            setCurrentPage(1);
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import React from 'react';
 import { Badge } from '@smarteam/ui';
 import { dateKey, entitlementOf } from '@smarteam/contracts';
 import { useLeave } from '../../hooks/use-leave';
+import { statusLabel } from '../../lib/status-label';
 
 /** Compact leave summary for the overview screen, reading the same API as the Time Off screen. */
 export function OverviewLeavePreviewTab() {
@@ -73,7 +74,7 @@ export function OverviewLeavePreviewTab() {
                     >
                       {request.requestedDays}
                     </td>
-                    <td data-label="Status" className="px-3 py-2.5 text-right">
+                    <td data-cell="status" data-label="Status" className="px-3 py-2.5 text-right">
                       <Badge
                         variant={
                           request.status === 'REJECTED'
@@ -83,7 +84,7 @@ export function OverviewLeavePreviewTab() {
                               : 'outline'
                         }
                       >
-                        {request.status}
+                        {statusLabel(request.status)}
                       </Badge>
                     </td>
                   </tr>

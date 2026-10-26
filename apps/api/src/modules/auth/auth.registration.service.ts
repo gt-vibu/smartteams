@@ -10,7 +10,11 @@ import {
   type SessionMetadata,
 } from './auth.session.service';
 import { AuthTokenService } from './auth.tokens';
-import { seedLeaveDefaults, seedStandardRoles } from '../organizations/organization-roles';
+import {
+  seedApprovalDefaults,
+  seedLeaveDefaults,
+  seedStandardRoles,
+} from '../organizations/organization-roles';
 
 export type RegisterInput = {
   organizationName: string;
@@ -79,6 +83,7 @@ export class AuthRegistrationService {
       // fell back to creating employees who could never sign in.
       await seedStandardRoles(tx, organization.id);
       await seedLeaveDefaults(tx, organization.id, branch.id, adminRoleId);
+      await seedApprovalDefaults(tx, organization.id, adminRoleId);
       return { userId: user.id, tokenVersion: user.tokenVersion, organizationId: organization.id };
     });
     return this.sessions.issue(result.userId, result.tokenVersion, result.organizationId);

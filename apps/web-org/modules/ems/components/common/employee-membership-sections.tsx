@@ -1,7 +1,8 @@
 'use client';
 
-import { Badge, Progress } from '@smarteam/ui';
 import type { EmployeeDetail } from '@smarteam/contracts';
+import { formatDate } from '@smarteam/contracts';
+import { Badge } from '@smarteam/ui';
 import type { ProjectMembership, TeamMembership } from '../../services/membership-state';
 
 /**
@@ -38,7 +39,19 @@ export function EmployeeTeamsSection({ memberships }: { memberships: TeamMembers
               className="flex items-center justify-between rounded-md border border-border bg-card px-3 py-2"
               key={m.team.id}
             >
-              <span className="truncate text-xs font-semibold text-foreground">{m.team.name}</span>
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="truncate text-xs font-semibold text-foreground">
+                  {m.team.name}
+                </span>
+                {m.isLead && (
+                  <Badge
+                    className="border-amber-500/20 bg-amber-500/10 text-[10px] text-amber-600 dark:text-amber-400"
+                    variant="outline"
+                  >
+                    Lead
+                  </Badge>
+                )}
+              </div>
               <Badge className="text-[10px]" variant="outline">
                 Active
               </Badge>
@@ -51,7 +64,7 @@ export function EmployeeTeamsSection({ memberships }: { memberships: TeamMembers
             >
               <span className="truncate text-xs text-muted-foreground">{m.team.name}</span>
               <span className="text-[10px] text-muted-foreground">
-                Left {m.endedOn?.slice(0, 10)}
+                Left {formatDate(m.endedOn)}
               </span>
             </div>
           ))}
@@ -67,9 +80,9 @@ export function EmployeeProjectsSection({ memberships }: { memberships: ProjectM
 
   return (
     <div className="border-t border-border pt-3">
-      <SectionHeading count={active.length} title="Projects &amp; Allocation" />
+      <SectionHeading count={active.length} title="Projects" />
       {active.length === 0 && ended.length === 0 ? (
-        <p className="text-xs text-muted-foreground">No project allocations.</p>
+        <p className="text-xs text-muted-foreground">Not on any project.</p>
       ) : (
         <div className="space-y-2.5">
           {active.map((m) => (
@@ -81,16 +94,15 @@ export function EmployeeProjectsSection({ memberships }: { memberships: ProjectM
                 <span className="truncate text-xs font-semibold text-foreground">
                   {m.project.name}
                 </span>
-                <span className="font-mono text-xs font-bold text-primary">
-                  {m.allocationPercentage === null ? '—' : `${m.allocationPercentage}%`}
-                </span>
+                {m.isLead && (
+                  <Badge
+                    className="border-amber-500/20 bg-amber-500/10 text-[10px] text-amber-600 dark:text-amber-400"
+                    variant="outline"
+                  >
+                    Lead
+                  </Badge>
+                )}
               </div>
-              {m.allocationPercentage !== null && (
-                <Progress
-                  aria-label={`Allocation ${m.allocationPercentage}%`}
-                  value={m.allocationPercentage}
-                />
-              )}
             </div>
           ))}
           {ended.map((m) => (
@@ -100,7 +112,7 @@ export function EmployeeProjectsSection({ memberships }: { memberships: ProjectM
             >
               <span className="truncate text-xs text-muted-foreground">{m.project.name}</span>
               <span className="text-[10px] text-muted-foreground">
-                Ended {m.endedOn?.slice(0, 10)}
+                Ended {formatDate(m.endedOn)}
               </span>
             </div>
           ))}

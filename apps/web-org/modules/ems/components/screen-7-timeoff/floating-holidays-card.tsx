@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { formatDate } from '@smarteam/contracts';
 import { Calendar, CheckCircle2, CheckSquare, Sparkles, XCircle } from 'lucide-react';
-import { Badge, Button } from '@smarteam/ui';
+import { LoadingIndicator, Badge, Button } from '@smarteam/ui';
 import type { Holiday, EmployeeHolidaySelection } from '@smarteam/contracts';
 import { useEmployeeHolidays } from '../../hooks/use-employee-holidays';
 import {
@@ -58,7 +59,7 @@ export function OptionalHolidaysCard() {
   const availableGroups = useMemo(() => {
     const map = new Map<string, Holiday[]>();
     for (const hol of availablePool) {
-      const planName = hol.name.trim() || 'Optional Holiday';
+      const planName = hol.name.trim() || 'Restricted holiday';
       if (!map.has(planName)) map.set(planName, []);
       map.get(planName)!.push(hol);
     }
@@ -77,7 +78,7 @@ export function OptionalHolidaysCard() {
   const selectedGroups = useMemo(() => {
     const map = new Map<string, EmployeeHolidaySelection[]>();
     for (const sel of activeSelections) {
-      const planName = sel.holiday?.name.trim() || 'Optional Holiday';
+      const planName = sel.holiday?.name.trim() || 'Restricted holiday';
       if (!map.has(planName)) map.set(planName, []);
       map.get(planName)!.push(sel);
     }
@@ -100,9 +101,7 @@ export function OptionalHolidaysCard() {
   if (loading) {
     return (
       <div className="rounded-xl border border-border bg-card p-5">
-        <p className="py-4 text-center text-xs text-muted-foreground" role="status">
-          Loading optional holiday allowance...
-        </p>
+        <LoadingIndicator variant="panel" label="Loading optional holiday allowance" className="py-4 text-center text-xs text-muted-foreground" />
       </div>
     );
   }
@@ -166,7 +165,7 @@ export function OptionalHolidaysCard() {
           </div>
           <div>
             <h3 className="text-sm font-bold text-foreground">
-              Optional Holidays ({employeeHolidays.year})
+              Restricted holidays ({employeeHolidays.year})
             </h3>
             <p className="text-xs text-muted-foreground">
               Select optional holidays from your eligible pool. Choose entire multi-day plans or
@@ -249,7 +248,7 @@ export function OptionalHolidaysCard() {
                           )}
                         </div>
                         {isMultiDay && (
-                          <div className="text-[11px] text-muted-foreground font-mono mt-0.5">
+                          <div className="text-[11px] text-muted-foreground tabular-nums mt-0.5">
                             {formatDateDisplay(group.startDate)} →{' '}
                             {formatDateDisplay(group.endDate)}
                           </div>
@@ -305,8 +304,8 @@ export function OptionalHolidaysCard() {
                         </div>
                       </div>
                     ) : (
-                      <div className="text-[11px] text-muted-foreground font-mono">
-                        {group.startDate} · {weekday(group.startDate)}
+                      <div className="text-[11px] text-muted-foreground tabular-nums">
+                        {formatDate(group.startDate)} · {weekday(group.startDate)}
                       </div>
                     )}
                   </div>
@@ -321,7 +320,7 @@ export function OptionalHolidaysCard() {
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5 text-primary" />
-              Available Optional Pool ({availablePool.length})
+              Restricted holidays available ({availablePool.length})
             </h4>
 
             {validCheckedCount > 0 && (

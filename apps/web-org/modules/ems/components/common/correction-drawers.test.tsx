@@ -4,9 +4,8 @@
  * Both had the same defect from opposite ends. The calendar drawer's button called
  * `setSubmitted(true)` and nothing else — no request was ever made, so a refresh or the approval
  * inbox showed nothing. The attendance drawer did call its callback, but did not await it and
- * closed on a timer, so a rejected correction was reported to the employee as accepted. It also
- * enabled its button at five characters while the API requires ten, which is how a request that
- * could never succeed was made easy to send.
+ * closed on a timer, so a rejected correction was reported to the employee as accepted. Short,
+ * non-empty reasons are now accepted consistently by the form and API.
  */
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -19,7 +18,7 @@ import type { CalendarDayItem } from '../../types/calendar.types';
 
 const RECORD_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const LONG_ENOUGH = 'Machine rebooted and the punch was lost';
-const TOO_SHORT = 'too short';
+const SHORT_REASON = 'sdc';
 
 const row = {
   id: RECORD_ID,
@@ -36,10 +35,10 @@ const day: CalendarDayItem = {
   attendanceRecordId: RECORD_ID,
 };
 
-const submitButton = () => screen.getByRole('button', { name: /submit correction request/i });
+const submitButton = () => screen.getByRole('button', { name: /submit regularization request/i });
 
 describe('AttendanceDetailDrawer', () => {
-  it('keeps submission disabled below the length the API accepts', async () => {
+  it('accepts a short, non-empty reason that the API accepts', async () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
     render(
       <AttendanceDetailDrawer
@@ -50,10 +49,11 @@ describe('AttendanceDetailDrawer', () => {
       />,
     );
     const box = screen.getByRole('textbox');
-    await userEvent.type(box, TOO_SHORT);
-    // Nine characters: enough for the old five-character rule, refused by the DTO.
-    expect(TOO_SHORT.length).toBeLessThan(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH);
-    expect(submitButton()).toBeDisabled();
+    await userEvent.type(box, SHORT_REASON);
+    expect(SHORT_REASON.length).toBeGreaterThanOrEqual(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH);
+    expect(submitButton()).toBeEnabled();
+    await userEvent.click(submitButton());
+    expect(onSubmit).toHaveBeenCalledWith(RECORD_ID, SHORT_REASON);
   });
 
   it('sends the correction and reports success only after the request resolves', async () => {

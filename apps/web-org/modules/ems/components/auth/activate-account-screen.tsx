@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import type { AccessCodePreview } from '@smarteam/contracts';
-import { Button } from '@smarteam/ui';
+import { Brand, Button } from '@smarteam/ui';
 import { accessCodeRepository } from '../../repositories/access-code.repository';
 import { CodeStep, CredentialsStep } from './activation-steps';
 
@@ -49,7 +50,7 @@ export function ActivateAccountScreen({ onSignIn }: { onSignIn: () => void }) {
       await accessCodeRepository.activate({ code, email, password });
       // The response set the session cookies. A full reload is the honest way in: every provider
       // re-reads the session from the API rather than being patched into an authenticated state.
-      window.location.assign('/');
+      window.location.assign('/tenant');
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Your account could not be activated.');
       setBusy(false);
@@ -64,6 +65,9 @@ export function ActivateAccountScreen({ onSignIn }: { onSignIn: () => void }) {
       </div>
 
       <div className="relative w-full max-w-sm my-auto">
+        <Link href="/" className="mb-5 flex justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring" aria-label="Smarteam home">
+          <Brand subtitle="People, time & pay" />
+        </Link>
         <div className="rounded-2xl border border-border bg-card p-6 shadow-lg">
           <h1 className="text-lg font-bold text-foreground">
             {preview ? 'Set up your account' : 'Activate your account'}

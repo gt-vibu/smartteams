@@ -15,8 +15,8 @@ import {
  * names from the branch list — both real API data. Nothing is invented for an id that has no
  * match: the row says the employee is no longer in the directory rather than guessing a name.
  *
- * Job titles are deliberately absent here. They live on employment records, one request per
- * employee, which a roster view cannot issue; the employee drawer shows them instead.
+ * Project members reuse the employee's current job title, so there is one source of truth for a
+ * person's professional role across their profile and project assignments.
  */
 
 export type MemberView = {
@@ -28,6 +28,8 @@ export type MemberView = {
   initials: string;
   since: string;
   until: string | null;
+  /** Team responsibility for teams, or the employee's job title for project assignments. */
+  role: string | null;
 };
 
 export type TeamView = {
@@ -38,14 +40,12 @@ export type TeamView = {
   pastMembers: MemberView[];
 };
 
-export type ProjectMemberView = MemberView & {
-  projectRole: string | null;
-  allocationPercentage: number | null;
-};
+export type ProjectMemberView = MemberView;
 
 export type ProjectView = {
   project: Project;
   branchName: string | null;
+  lead: { employeeId: string; displayName: string; employeeNumber: string } | null;
   activeMembers: ProjectMemberView[];
   pastMembers: ProjectMemberView[];
 };
@@ -68,6 +68,7 @@ export function indexEmployees(employees: readonly Employee[]): Map<string, Empl
 
 function branchNameOf(branches: readonly Branch[], branchId: string | null | undefined) {
   if (!branchId) return null;
+  // Someone who cannot read branches sees no branch name rather than a placeholder for one.
   return branches.find((branch) => branch.id === branchId)?.name ?? null;
 }
 
@@ -80,7 +81,9 @@ function memberView(
   until: string | null,
   employees: Map<string, Employee>,
 ): MemberView {
-  const employee = employees.get(member.employeeId);
+  // The directory when the viewer may read it, otherwise the summary the membership carries:
+  // an employee may only read their own record, and a team list of "?" named nobody.
+  const employee = employees.get(member.employeeId) ?? member.employee ?? undefined;
   const displayName = employee ? employeeDisplayName(employee) : MISSING.displayName;
   return {
     memberId: member.id,
@@ -90,7 +93,24 @@ function memberView(
     initials: employee ? initialsOf(displayName) : '?',
     since,
     until,
+    role: 'teamRole' in member ? (member.teamRole ?? null) : (member.employee?.jobTitle ?? null),
   };
+}
+
+/**
+ * Current until its last day has passed: an end date later than today is still current.
+ *
+ * Today is the viewer's own date, which is the date the server ends a membership on. Read from
+ * `toISOString()` it was UTC's, so after 18:30 in Kolkata a membership ended earlier the same day
+ * still counted as current: the person stayed in Members with "until <yesterday>" beside their
+ * name and an End membership button that the server then refused as already ended.
+ */
+function current(until: string | null | undefined) {
+  if (!until) return true;
+  const now = new Date();
+  const month = `${now.getMonth() + 1}`.padStart(2, '0');
+  const today = `${now.getFullYear()}-${month}-${`${now.getDate()}`.padStart(2, '0')}`;
+  return until.slice(0, 10) >= today;
 }
 
 export function toTeamView(
@@ -99,7 +119,10 @@ export function toTeamView(
   branches: readonly Branch[],
 ): TeamView {
   const members = team.members ?? [];
-  const leadEmployee = team.teamLeadEmployeeId ? employees.get(team.teamLeadEmployeeId) : undefined;
+  // The directory entry when this viewer may read it; otherwise the name the team carries.
+  const leadEmployee = team.teamLeadEmployeeId
+    ? (employees.get(team.teamLeadEmployeeId) ?? team.teamLead ?? undefined)
+    : undefined;
 
   return {
     team,
@@ -112,10 +135,10 @@ export function toTeamView(
         }
       : null,
     activeMembers: members
-      .filter((member) => !member.leftAt)
-      .map((member) => memberView(member, member.joinedAt, null, employees)),
+      .filter((member) => current(member.leftAt))
+      .map((member) => memberView(member, member.joinedAt, member.leftAt ?? null, employees)),
     pastMembers: members
-      .filter((member) => member.leftAt)
+      .filter((member) => !current(member.leftAt))
       .map((member) => memberView(member, member.joinedAt, member.leftAt ?? null, employees)),
   };
 }
@@ -124,11 +147,7 @@ function projectMemberView(
   member: ProjectMember,
   employees: Map<string, Employee>,
 ): ProjectMemberView {
-  return {
-    ...memberView(member, member.startsOn, member.endsOn ?? null, employees),
-    projectRole: member.projectRole ?? null,
-    allocationPercentage: member.allocationPercentage ?? null,
-  };
+  return memberView(member, member.startsOn, member.endsOn ?? null, employees);
 }
 
 export function toProjectView(
@@ -137,14 +156,26 @@ export function toProjectView(
   branches: readonly Branch[],
 ): ProjectView {
   const members = project.members ?? [];
+  const leadId = project.projectLeadEmployeeId ?? null;
+  // The directory entry when this viewer may read it; otherwise the name the project carries.
+  const leadEmployee = leadId
+    ? (employees.get(leadId) ?? project.projectLead ?? undefined)
+    : undefined;
   return {
     project,
     branchName: branchNameOf(branches, project.branchId),
+    lead: leadId
+      ? {
+          employeeId: leadId,
+          displayName: leadEmployee ? employeeDisplayName(leadEmployee) : MISSING.displayName,
+          employeeNumber: leadEmployee?.employeeNumber ?? MISSING.employeeNumber,
+        }
+      : null,
     activeMembers: members
-      .filter((member) => !member.endsOn)
+      .filter((member) => current(member.endsOn))
       .map((member) => projectMemberView(member, employees)),
     pastMembers: members
-      .filter((member) => member.endsOn)
+      .filter((member) => !current(member.endsOn))
       .map((member) => projectMemberView(member, employees)),
   };
 }

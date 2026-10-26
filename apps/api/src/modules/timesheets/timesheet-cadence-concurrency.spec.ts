@@ -143,8 +143,14 @@ describe('Timesheet Entry Auto-Provisioning & Project Logging', () => {
         upsert: jest.fn(),
       },
       organizationSettings: {
-        findUnique: jest.fn(),
+        findUnique: jest
+          .fn()
+          .mockResolvedValue({ workWeekDays: [1, 2, 3, 4, 5], standardDayMinutes: 480 }),
       },
+      leaveRequest: { findFirst: jest.fn().mockResolvedValue(null) },
+      holiday: { findFirst: jest.fn().mockResolvedValue(null) },
+      employeeHolidaySelection: { findFirst: jest.fn().mockResolvedValue(null) },
+      employeeShiftAssignment: { findFirst: jest.fn().mockResolvedValue(null) },
       timesheet: {
         upsert: jest.fn().mockResolvedValue({ id: 'sheet-1' }),
         findFirst: jest.fn().mockResolvedValue({
@@ -214,8 +220,16 @@ describe('Timesheet Entry Auto-Provisioning & Project Logging', () => {
         }),
       },
       organizationSettings: {
-        findUnique: jest.fn().mockResolvedValue({ payrollFrequency: 'WEEKLY' }),
+        findUnique: jest.fn().mockResolvedValue({
+          payrollFrequency: 'WEEKLY',
+          workWeekDays: [1, 2, 3, 4, 5],
+          standardDayMinutes: 480,
+        }),
       },
+      leaveRequest: { findFirst: jest.fn().mockResolvedValue(null) },
+      holiday: { findFirst: jest.fn().mockResolvedValue(null) },
+      employeeHolidaySelection: { findFirst: jest.fn().mockResolvedValue(null) },
+      employeeShiftAssignment: { findFirst: jest.fn().mockResolvedValue(null) },
       timesheet: {
         upsert: jest.fn().mockResolvedValue({ id: 'sheet-weekly-1' }),
         findFirst: jest.fn().mockResolvedValue({

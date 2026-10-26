@@ -14,19 +14,38 @@ import { expectShape, orgPath } from './api-helpers';
  */
 
 export type CreateTeamInput = {
+  id?: string;
+  memberEmployeeIds?: string[];
   name: string;
   description?: string;
   branchId?: string;
   teamLeadEmployeeId?: string;
 };
 
+/** As creating, but every field optional, and a `null` lead removes the current one. */
+export type UpdateTeamInput = Omit<Partial<CreateTeamInput>, 'id' | 'teamLeadEmployeeId'> & {
+  teamLeadEmployeeId?: string | null;
+};
+
 export type CreateProjectInput = {
-  code: string;
+  id?: string;
+  members?: { employeeId: string }[];
+  /** Left out to have one generated (PRJ-001 …). */
+  code?: string;
   name: string;
   description?: string;
   branchId?: string;
   startDate?: string;
   endDate?: string;
+  projectLeadEmployeeId?: string;
+};
+
+/** A change to a project. `projectLeadEmployeeId: null` leaves it without a lead. */
+export type UpdateProjectInput = Partial<
+  Omit<CreateProjectInput, 'id' | 'projectLeadEmployeeId'>
+> & {
+  status?: string;
+  projectLeadEmployeeId?: string | null;
 };
 
 export const teamsProjectsRepository = {
@@ -39,11 +58,7 @@ export const teamsProjectsRepository = {
     );
   },
 
-  async updateTeam(
-    organizationId: string,
-    teamId: string,
-    input: Partial<CreateTeamInput>,
-  ): Promise<Team> {
+  async updateTeam(organizationId: string, teamId: string, input: UpdateTeamInput): Promise<Team> {
     return expectShape(
       parseTeam(
         await apiRequest(`${orgPath(organizationId)}/teams/${encodeURIComponent(teamId)}`, {
@@ -75,7 +90,7 @@ export const teamsProjectsRepository = {
   async updateProject(
     organizationId: string,
     projectId: string,
-    input: Partial<CreateProjectInput> & { status?: string },
+    input: UpdateProjectInput,
   ): Promise<Project> {
     return expectShape(
       parseProject(

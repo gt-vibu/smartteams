@@ -20,9 +20,9 @@ import React from 'react';
 /** Vertical rhythm between a page's top-level sections. */
 const GAP = {
   /** Ordinary screens: header, controls, content. */
-  default: 'space-y-4',
+  default: 'space-y-5',
   /** Dense, table-led screens where the toolbar belongs tight against its table. */
-  tight: 'space-y-3',
+  tight: 'space-y-4',
   /** The screen manages its own spacing — grids and split layouts that are not a stack. */
   none: '',
 } as const;

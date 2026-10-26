@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Badge } from '@smarteam/ui';
+import { LoadingIndicator, Badge } from '@smarteam/ui';
 import type { EmployeeHolidaySelection } from '@smarteam/contracts';
+import { statusLabel } from '../../lib/status-label';
 
 interface EmployeeSelectionsTableProps {
   selections: EmployeeHolidaySelection[];
@@ -15,9 +16,7 @@ export function EmployeeSelectionsTable({
 }: EmployeeSelectionsTableProps) {
   if (loading) {
     return (
-      <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-        Loading employee selections...
-      </p>
+      <LoadingIndicator variant="panel" label="Loading employee selections" className="py-10 text-center text-xs text-muted-foreground" />
     );
   }
 
@@ -49,7 +48,7 @@ export function EmployeeSelectionsTable({
             const empName = sel.employee
               ? `${sel.employee.firstName} ${sel.employee.lastName}`.trim()
               : sel.employeeId;
-            const holName = sel.holiday?.name ?? 'Optional Holiday';
+            const holName = sel.holiday?.name ?? 'Restricted holiday';
             const holDate = sel.holiday?.holidayDate ? sel.holiday.holidayDate.slice(0, 10) : '—';
             const selectedDate = sel.selectedAt ? sel.selectedAt.slice(0, 10) : '—';
 
@@ -71,12 +70,12 @@ export function EmployeeSelectionsTable({
                 <td data-label="Holiday" className="px-4 py-2.5 font-semibold text-foreground">
                   {holName}
                 </td>
-                <td data-label="Holiday Date" className="px-4 py-2.5 font-mono text-foreground">
+                <td data-label="Holiday Date" className="px-4 py-2.5 tabular-nums text-foreground">
                   {holDate}
                 </td>
-                <td data-label="Status" className="px-4 py-2.5">
+                <td data-cell="status" data-label="Status" className="px-4 py-2.5">
                   <Badge variant={sel.status === 'CONFIRMED' ? 'success' : 'secondary'}>
-                    {sel.status}
+                    {statusLabel(sel.status)}
                   </Badge>
                 </td>
                 <td data-label="Selected On" className="px-4 py-2.5 text-muted-foreground">

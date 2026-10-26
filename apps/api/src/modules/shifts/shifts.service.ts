@@ -1,12 +1,19 @@
+import { approvalLocalDate, assertOpenPayrollPeriod } from '../approvals/approval-automation';
+import { markPayrollStale } from '../payroll/payroll-staleness';
 import { Injectable } from '@nestjs/common';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
-import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
+import {
+  TenantDatabaseService,
+  type TenantTransaction,
+} from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { OutboxService } from '../federation/outbox.service';
+import { describeDays, notify } from '../notifications/notify';
 
 type ShiftInput = {
-  code: string;
+  /** Federation sends one; the app leaves it out and it is made from the name. */
+  code?: string;
   name: string;
   branchId?: string;
   daysOfWeek: number[];
@@ -43,7 +50,7 @@ export class ShiftsService {
         data: {
           organizationId: context.organizationId,
           branchId,
-          code: input.code.trim().toUpperCase(),
+          code: await shiftCode(tx, context.organizationId, input),
           name: input.name.trim(),
           daysOfWeek: input.daysOfWeek,
           startsAt: timeOnly(input.startsAt),
@@ -102,6 +109,36 @@ export class ShiftsService {
         include: { breakRules: { orderBy: { sequence: 'asc' } } },
       });
       if (!before) throw new NotFoundError('Shift');
+      const scheduleChanged =
+        (input.daysOfWeek !== undefined &&
+          JSON.stringify([...input.daysOfWeek].sort()) !==
+            JSON.stringify([...before.daysOfWeek].sort())) ||
+        (input.startsAt !== undefined &&
+          timeOnly(input.startsAt).getTime() !== before.startsAt.getTime()) ||
+        (input.endsAt !== undefined &&
+          timeOnly(input.endsAt).getTime() !== before.endsAt.getTime()) ||
+        (input.crossesMidnight !== undefined && input.crossesMidnight !== before.crossesMidnight) ||
+        (input.breakMinutes !== undefined && input.breakMinutes !== before.breakMinutes) ||
+        (input.branchId !== undefined && input.branchId !== before.branchId) ||
+        (input.breakRules !== undefined &&
+          JSON.stringify(input.breakRules) !==
+            JSON.stringify(
+              before.breakRules.map(({ name, durationMinutes, isPaid, sequence }) => ({
+                name,
+                durationMinutes,
+                isPaid,
+                sequence,
+              })),
+            ));
+      if (
+        scheduleChanged &&
+        (await tx.employeeShiftAssignment.count({
+          where: { organizationId: context.organizationId, shiftId },
+        }))
+      )
+        throw new ConflictError(
+          'This shift has employee assignments. Copy the schedule and publish new assignments from an effective date to preserve attendance history.',
+        );
       if (
         input.branchId !== undefined &&
         input.branchId &&
@@ -158,13 +195,22 @@ export class ShiftsService {
         },
       });
       if (!before) throw new NotFoundError('Shift');
+      const today = new Date(`${await approvalLocalDate(tx, context.organizationId)}T00:00:00Z`);
+      if (
+        await tx.employeeShiftAssignment.count({
+          where: {
+            organizationId: context.organizationId,
+            shiftId,
+            OR: [{ endsOn: null }, { endsOn: { gte: today } }],
+          },
+        })
+      )
+        throw new ConflictError(
+          'This shift has current or future assignments. Publish a replacement or end those assignments before deactivating it.',
+        );
       const updated = await tx.shift.update({
         where: { id: before.id },
         data: { isActive: false },
-      });
-      await tx.employeeShiftAssignment.updateMany({
-        where: { organizationId: context.organizationId, shiftId: before.id, endsOn: null },
-        data: { endsOn: new Date() },
       });
       await this.audit.record(
         { ...context, reason },
@@ -232,6 +278,18 @@ export class ShiftsService {
         }))
       )
         throw new NotFoundError('Branch');
+      // Moving someone to another shift: the shift they are on when the new one starts ends the
+      // day before. Native only; federation assignments keep refusing any overlap.
+      if (context.accessMode === 'NATIVE')
+        await tx.employeeShiftAssignment.updateMany({
+          where: {
+            organizationId: context.organizationId,
+            employeeId,
+            startsOn: { lt: start },
+            OR: [{ endsOn: null }, { endsOn: { gte: start } }],
+          },
+          data: { endsOn: new Date(start.getTime() - 86_400_000) },
+        });
       const overlap = await tx.employeeShiftAssignment.findFirst({
         where: {
           organizationId: context.organizationId,
@@ -241,6 +299,13 @@ export class ShiftsService {
         },
       });
       if (overlap) throw new ConflictError('Employee shift assignments must not overlap');
+      if (context.accessMode === 'NATIVE')
+        await assertOpenPayrollPeriod(
+          tx,
+          context.organizationId,
+          start,
+          end ?? new Date('9999-12-31'),
+        );
       const assignment = await tx.employeeShiftAssignment.create({
         data: {
           organizationId: context.organizationId,
@@ -252,6 +317,15 @@ export class ShiftsService {
           sourceAccessMode: context.accessMode,
         },
       });
+      await notify(tx, context, {
+        recipients: [employee.userId],
+        kind: 'SHIFT_ASSIGNED',
+        title: 'Your shift has changed',
+        body: `You are on the ${shift.name} shift from ${describeDays(start, start)}${end ? ` until ${describeDays(end, end)}` : ''}.`,
+        module: 'attendance',
+        entityType: 'EMPLOYEE_SHIFT_ASSIGNMENT',
+        entityId: assignment.id,
+      });
       await this.audit.record(
         context,
         {
@@ -262,6 +336,8 @@ export class ShiftsService {
         },
         tx,
       );
+      if (context.accessMode === 'NATIVE')
+        await markPayrollStale(tx, context.organizationId, start, end ?? new Date('9999-12-31'));
       await this.outbox.append(
         context,
         {
@@ -351,4 +427,30 @@ function formatTime(value: Date) {
   return [value.getUTCHours(), value.getUTCMinutes(), value.getUTCSeconds()]
     .map((part) => String(part).padStart(2, '0'))
     .join(':');
+}
+
+/**
+ * The shift's code: the one supplied (federation always sends one), or one made from the name —
+ * "Night Shift" becomes NIGHT-SHIFT, and a second of that name NIGHT-SHIFT-2. The app's form asks
+ * only for a name, because nobody types a code for a shift.
+ */
+async function shiftCode(
+  tx: TenantTransaction,
+  organizationId: string,
+  input: { code?: string; name: string },
+) {
+  if (input.code?.trim()) return input.code.trim().toUpperCase();
+  const base =
+    input.name
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+      .slice(0, 16) || 'SHIFT';
+  for (let attempt = 1; attempt < 100; attempt++) {
+    const code = attempt === 1 ? base : `${base}-${attempt}`;
+    if (!(await tx.shift.findFirst({ where: { organizationId, code }, select: { id: true } })))
+      return code;
+  }
+  throw new ConflictError('A shift code could not be generated; give the shift another name.');
 }

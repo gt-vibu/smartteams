@@ -9,6 +9,13 @@ import { createAttendanceCorrection } from './attendance-correction-create';
 import { workDateInTimeZone } from './attendance-shared';
 import { missingCheckOutFrom } from './attendance-missing-checkout';
 import {
+  addLocalDays,
+  missedCheckOutDeadline,
+  readMissedCheckOutPolicy,
+  hasScheduledMissedCheckOutHistory,
+  hasScheduledMissedCheckOutPolicy,
+} from './attendance-missed-checkout-policy';
+import {
   autoCloseSnapshot,
   instantAtLocalTime,
   wallClock,
@@ -21,6 +28,7 @@ export type AutoCloseOutcome = {
   /** Days left alone, and why. */
   skippedNightShift: number;
   skippedAlreadyPending: number;
+  skippedNoShift: number;
   failed: number;
 };
 
@@ -28,6 +36,7 @@ const EMPTY: AutoCloseOutcome = {
   closed: 0,
   skippedNightShift: 0,
   skippedAlreadyPending: 0,
+  skippedNoShift: 0,
   failed: 0,
 };
 
@@ -35,7 +44,7 @@ const EMPTY: AutoCloseOutcome = {
 const BATCH = 200;
 
 /** How far back a sweep looks, so a worker that was stopped overnight still catches up. */
-const LOOK_BACK_DAYS = 3;
+const LOOK_BACK_DAYS = 40;
 
 /**
  * Closing days nobody checked out of, once the organization's day is over.
@@ -98,11 +107,15 @@ export class AttendanceAutoCheckOutService {
     const organization = await this.database.run(context, (tx) =>
       tx.organization.findUniqueOrThrow({
         where: { id: context.organizationId },
-        select: { timezone: true, settings: { select: { autoCheckOutMode: true } } },
+        select: {
+          timezone: true,
+          settings: { select: { autoCheckOutMode: true, metadata: true } },
+        },
       }),
     );
     const outcome =
-      organization.settings?.autoCheckOutMode === 'REVIEW_REQUIRED'
+      organization.settings?.autoCheckOutMode === 'REVIEW_REQUIRED' ||
+      hasScheduledMissedCheckOutHistory(organization.settings?.metadata)
         ? await this.closeOrganization(
             systemContext(context.organizationId),
             organization.timezone,
@@ -132,50 +145,90 @@ export class AttendanceAutoCheckOutService {
     const settings = await this.database.run(context, (tx) =>
       tx.organizationSettings.findUniqueOrThrow({
         where: { organizationId: context.organizationId },
-        select: { autoCheckOutMode: true, autoCheckOutAt: true },
+        select: {
+          autoCheckOutMode: true,
+          autoCheckOutAt: true,
+          metadata: true,
+          payrollDayOfMonth: true,
+        },
       }),
     );
-    if (settings.autoCheckOutMode !== 'REVIEW_REQUIRED') return { ...EMPTY };
-
+    const currentPolicy = readMissedCheckOutPolicy(
+      settings.metadata,
+      settings.autoCheckOutMode,
+      settings.autoCheckOutAt,
+    );
+    if (
+      !hasScheduledMissedCheckOutPolicy(currentPolicy) &&
+      !hasScheduledMissedCheckOutHistory(settings.metadata)
+    )
+      return { ...EMPTY };
     // Days are closed after their own cutoff, not the current one: the sweep that runs at five
     // past midnight is closing yesterday. The look-back also lets a stopped worker catch up.
     const today = workDateInTimeZone(now, timeZone);
     const from = new Date(`${today}T00:00:00.000Z`);
     from.setUTCDate(from.getUTCDate() - LOOK_BACK_DAYS);
-    const cutoff = wallClock(settings.autoCheckOutAt);
-
-    const open = await this.database.run(context, (tx) =>
-      tx.attendanceRecord.findMany({
-        where: {
-          organizationId: context.organizationId,
-          workDate: { gte: from, lte: new Date(`${today}T00:00:00.000Z`) },
-          status: AttendanceStatus.OPEN,
-        },
-        include: {
-          punches: { orderBy: { occurredAt: 'asc' } },
-          employee: { include: { manager: { select: { userId: true } } } },
-        },
-        orderBy: { workDate: 'asc' },
-        take: BATCH,
-      }),
-    );
-
+    let after: { workDate: Date; id: string } | undefined;
     let outcome = { ...EMPTY };
-    for (const record of open) {
-      const workDateKey = record.workDate.toISOString().slice(0, 10);
-      const closeAt = instantAtLocalTime(workDateKey, cutoff, timeZone);
-      // Before its own cutoff the employee may still be at work, and may yet check out themselves.
-      if (now < closeAt) continue;
-      try {
-        // Each day in its own transaction: one that cannot be routed does not roll back the rest.
-        const result = await this.database.run(context, (tx) =>
-          this.closeDay(tx, context, record, closeAt, workDateKey),
+    for (;;) {
+      const open = await this.database.run(context, (tx) =>
+        tx.attendanceRecord.findMany({
+          where: {
+            organizationId: context.organizationId,
+            workDate: { gte: from, lte: new Date(`${today}T00:00:00.000Z`) },
+            status: AttendanceStatus.OPEN,
+            ...(after
+              ? {
+                  AND: [
+                    {
+                      OR: [
+                        { workDate: { gt: after.workDate } },
+                        { workDate: after.workDate, id: { gt: after.id } },
+                      ],
+                    },
+                  ],
+                }
+              : {}),
+          },
+          include: {
+            punches: { orderBy: { occurredAt: 'asc' } },
+            employee: { include: { manager: { select: { userId: true } } } },
+          },
+          orderBy: [{ workDate: 'asc' }, { id: 'asc' }],
+          take: BATCH,
+        }),
+      );
+      if (open.length === 0) break;
+      const last = open[open.length - 1]!;
+      after = { workDate: last.workDate, id: last.id };
+      for (const record of open) {
+        const workDateKey = record.workDate.toISOString().slice(0, 10);
+        const recordPolicy = readMissedCheckOutPolicy(
+          settings.metadata,
+          settings.autoCheckOutMode,
+          settings.autoCheckOutAt,
+          workDateKey,
         );
-        outcome = add(outcome, result);
-      } catch (caught) {
-        this.logger.warn(`Automatic check-out skipped for day ${record.id}: ${message(caught)}`);
-        outcome = add(outcome, { ...EMPTY, failed: 1 });
+        if (!hasScheduledMissedCheckOutPolicy(recordPolicy)) continue;
+        const deadline = missedCheckOutDeadline(
+          workDateKey,
+          timeZone,
+          recordPolicy,
+          settings.payrollDayOfMonth,
+        );
+        if (now < deadline) continue;
+        try {
+          // Each day in its own transaction: one that cannot be routed does not roll back the rest.
+          const result = await this.database.run(context, (tx) =>
+            this.closeDay(tx, context, record, workDateKey, recordPolicy, timeZone, deadline, now),
+          );
+          outcome = add(outcome, result);
+        } catch (caught) {
+          this.logger.warn(`Automatic check-out skipped for day ${record.id}: ${message(caught)}`);
+          outcome = add(outcome, { ...EMPTY, failed: 1 });
+        }
       }
+      if (open.length < BATCH) break;
     }
     return outcome;
   }
@@ -184,24 +237,47 @@ export class AttendanceAutoCheckOutService {
     tx: Prisma.TransactionClient,
     context: DomainContext,
     record: OpenDay,
-    closeAt: Date,
     workDateKey: string,
+    policy: ReturnType<typeof readMissedCheckOutPolicy>,
+    timeZone: string,
+    deadline: Date,
+    now: Date,
   ): Promise<AutoCloseOutcome> {
     // A day that is not simply "checked in and never out" is left alone.
     const lastPunch = record.punches.at(-1);
     if (!lastPunch || lastPunch.punchType !== 'IN') return { ...EMPTY };
 
-    const nightShift = await tx.employeeShiftAssignment.findFirst({
+    const assignment = await tx.employeeShiftAssignment.findFirst({
       where: {
         organizationId: context.organizationId,
         employeeId: record.employeeId,
         startsOn: { lte: new Date(`${workDateKey}T00:00:00.000Z`) },
         OR: [{ endsOn: null }, { endsOn: { gte: new Date(`${workDateKey}T00:00:00.000Z`) } }],
-        shift: { crossesMidnight: true },
       },
-      select: { id: true },
+      select: {
+        id: true,
+        shift: { select: { endsAt: true, crossesMidnight: true, daysOfWeek: true } },
+      },
     });
-    if (nightShift) return { ...EMPTY, skippedNightShift: 1 };
+    const weekday = record.workDate.getUTCDay() || 7;
+    const shift = assignment?.shift?.daysOfWeek.includes(weekday) ? assignment.shift : undefined;
+    if (policy.closeTimeSource === 'SHIFT_END' && !shift) return { ...EMPTY, skippedNoShift: 1 };
+    const shiftEndAt = shift
+      ? instantAtLocalTime(
+          shift.crossesMidnight ? addLocalDays(workDateKey, 1) : workDateKey,
+          wallClock(shift.endsAt),
+          timeZone,
+        )
+      : undefined;
+    if (shiftEndAt && now < shiftEndAt)
+      return { ...EMPTY, skippedNightShift: shift?.crossesMidnight ? 1 : 0 };
+    if (now < deadline) return { ...EMPTY };
+    const closeAt =
+      policy.closeTimeSource === 'SHIFT_END'
+        ? shiftEndAt!
+        : instantAtLocalTime(workDateKey, policy.configuredTime, timeZone);
+    if (closeAt <= lastPunch.occurredAt)
+      return { ...EMPTY, skippedNightShift: shift?.crossesMidnight ? 1 : 0 };
 
     const pending = await tx.attendanceCorrection.findMany({
       where: { attendanceRecordId: record.id, status: 'PENDING' },
@@ -218,7 +294,7 @@ export class AttendanceAutoCheckOutService {
       context,
       record,
       AUTO_CLOSE_REASON,
-      autoCloseSnapshot(jsonSnapshot(record), closeAt),
+      autoCloseSnapshot(jsonSnapshot(record), closeAt, policy),
     );
     return { ...EMPTY, closed: 1 };
   }
@@ -256,6 +332,7 @@ function add(left: AutoCloseOutcome, right: AutoCloseOutcome): AutoCloseOutcome 
     closed: left.closed + right.closed,
     skippedNightShift: left.skippedNightShift + right.skippedNightShift,
     skippedAlreadyPending: left.skippedAlreadyPending + right.skippedAlreadyPending,
+    skippedNoShift: left.skippedNoShift + right.skippedNoShift,
     failed: left.failed + right.failed,
   };
 }

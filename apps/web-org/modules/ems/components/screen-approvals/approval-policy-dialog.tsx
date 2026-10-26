@@ -1,6 +1,14 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import {
+  LIMITS,
+  approvalAutomationSchema,
+  approvalDomainLabel,
+  codeProblem,
+  textProblem,
+  type ApprovalDomain,
+  type ApprovalPolicy,
+} from '@smarteam/contracts';
 import {
   Button,
   Dialog,
@@ -14,23 +22,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@smarteam/ui';
-import { approvalDomainLabel, type ApprovalDomain, type ApprovalPolicy } from '@smarteam/contracts';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { ApprovalPolicyState } from '../../hooks/use-approval-policies';
+import { preserveDialogForPicker } from '../../lib/search-picker-escape';
 import { useRoles } from '../../hooks/use-roles';
+import { ApprovalAutomationFields } from './approval-automation-fields';
+import {
+  ApprovalStepRow,
+  draftsFrom,
+  emptyStep,
+  stepsFrom,
+  type StepDraft,
+} from './approval-step-editor';
 
 /**
- * Creates or edits one approval policy.
+ * Creates or edits one approval policy: the chain of people a request passes through, in order.
  *
- * A step routes either to a role or to the requester's reporting manager. Manager routing is fully
- * resolved server-side — `assertResolvableApprovers` follows the requester's `managerEmployeeId`
- * to the manager's active user account and refuses self-approval — so it is offered here.
- *
- * (An earlier pass omitted manager steps on the assumption that user-to-employee linkage was
- * missing. `Employee.userId` is a unique column and the resolution already existed; the omission
- * was wrong and is corrected here.)
- *
- * `USER` steps are not offered: they name a specific approver account, which needs a user picker
- * this module does not have.
+ * Each step is the requester's reporting manager (with a backup role for anyone who has none),
+ * anyone holding a role, or one named person. Editing a policy that has already routed requests
+ * starts a new version on the server; the requests already waiting finish on the old steps.
  */
 export function ApprovalPolicyDialog({
   policies,
@@ -44,13 +54,16 @@ export function ApprovalPolicyDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const roles = useRoles();
+
+  const roleId = (code: string) => roles.roles.find((role) => role.code === code)?.id ?? '';
+  const adminRoleId = roleId('ORG_ADMIN');
+
   const [domain, setDomain] = useState<ApprovalDomain>('LEAVE');
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [isDefault, setIsDefault] = useState(true);
-  // A step is either a role id or the literal manager routing marker.
-  const MANAGER_STEP = 'MANAGER';
-  const [roleIds, setRoleIds] = useState<string[]>(['']);
+  const [steps, setSteps] = useState<StepDraft[]>([emptyStep()]);
+  const [automation, setAutomation] = useState(() => approvalAutomationSchema.parse({}));
 
   useEffect(() => {
     if (!open) return;
@@ -58,47 +71,86 @@ export function ApprovalPolicyDialog({
     setCode(policy?.code ?? '');
     setName(policy?.name ?? '');
     setIsDefault(policy?.isDefault ?? true);
-    setRoleIds(
-      policy && policy.steps.length > 0
-        ? policy.steps.map((step) =>
-            step.approverType === 'MANAGER' ? MANAGER_STEP : (step.roleId ?? ''),
-          )
-        : [''],
-    );
-  }, [open, policy]);
+    setSteps(draftsFrom(policy, adminRoleId));
+    setAutomation(approvalAutomationSchema.parse(policy?.automation ?? {}));
+  }, [open, policy, adminRoleId]);
+
+  // Common chains in one click; each is only offered when the roles it needs exist.
+  const presets = useMemo(() => {
+    const admin = roleId('ORG_ADMIN');
+    const hr = roleId('HR_ADMIN');
+    const list: Array<{ label: string; steps: StepDraft[] }> = [];
+    if (admin)
+      list.push({
+        label: 'Reporting manager',
+        steps: [{ kind: 'MANAGER', roleId: admin, userId: '' }],
+      });
+    if (admin && hr)
+      list.push({
+        label: 'Manager, then HR',
+        steps: [
+          { kind: 'MANAGER', roleId: admin, userId: '' },
+          { kind: 'ROLE', roleId: hr, userId: '' },
+        ],
+      });
+    if (hr) list.push({ label: 'HR only', steps: [{ kind: 'ROLE', roleId: hr, userId: '' }] });
+    if (admin)
+      list.push({ label: 'Admin only', steps: [{ kind: 'ROLE', roleId: admin, userId: '' }] });
+    return list;
+  }, [roles.roles]);
+
+  const ready = stepsFrom(steps);
+  const move = (index: number, by: -1 | 1) => {
+    const next = [...steps];
+    const [moved] = next.splice(index, 1);
+    next.splice(index + by, 0, moved!);
+    setSteps(next);
+  };
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const steps = roleIds
-      .filter((entry) => entry)
-      .map((entry, index) =>
-        entry === MANAGER_STEP
-          ? { stepNumber: index + 1, approverType: 'MANAGER' as const }
-          : { stepNumber: index + 1, approverType: 'ROLE' as const, roleId: entry },
-      );
-    if (!code.trim() || !name.trim() || steps.length === 0) return;
-    const input = { domain, code: code.trim(), name: name.trim(), isDefault, steps };
+    if (!code.trim() || !name.trim() || !ready) return;
     const ok = policy
       ? await policies.updatePolicy(policy.id, {
-          code: input.code,
-          name: input.name,
+          code: code.trim(),
+          name: name.trim(),
           isDefault,
-          steps,
+          steps: ready,
+          automation,
         })
-      : await policies.createPolicy(input);
+      : await policies.createPolicy({
+          domain,
+          code: code.trim(),
+          name: name.trim(),
+          isDefault,
+          steps: ready,
+          automation,
+        });
     if (ok) onOpenChange(false);
   };
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent
+        onEscapeKeyDown={preserveDialogForPicker}
+        className="max-h-[90vh] overflow-y-auto sm:max-w-xl"
+      >
         <DialogTitle>{policy ? 'Edit approval policy' : 'New approval policy'}</DialogTitle>
-        <form className="mt-4 space-y-3" onSubmit={submit}>
+        <form className="mt-4 space-y-4" onSubmit={submit}>
+          <ApprovalAutomationFields
+            domain={policy?.domain ?? domain}
+            value={automation}
+            onChange={setAutomation}
+            disabled={policies.saving}
+          />
           {!policy && (
             <div>
-              <Label className="mb-1 block">Domain</Label>
+              <Label className="mb-1 block">Applies to</Label>
               <SelectMenu
-                onValueChange={(value) => setDomain(value as ApprovalDomain)}
+                onValueChange={(value) => {
+                  setDomain(value as ApprovalDomain);
+                  setAutomation(approvalAutomationSchema.parse({}));
+                }}
                 value={domain}
               >
                 <SelectTrigger>
@@ -117,77 +169,89 @@ export function ApprovalPolicyDialog({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <Label className="mb-1 block" htmlFor="policy-code">
-                Code
-              </Label>
-              <Input
-                disabled={policies.saving}
-                id="policy-code"
-                onChange={(event) => setCode(event.target.value)}
-                value={code}
-              />
-            </div>
-            <div>
               <Label className="mb-1 block" htmlFor="policy-name">
                 Name
               </Label>
               <Input
+                maxLength={LIMITS.title}
+                problem={textProblem(name, 'Name', LIMITS.title, 2)}
                 disabled={policies.saving}
                 id="policy-name"
                 onChange={(event) => setName(event.target.value)}
+                placeholder="Leave approval"
                 value={name}
+              />
+            </div>
+            <div>
+              <Label className="mb-1 block" htmlFor="policy-code">
+                Code
+              </Label>
+              <Input
+                maxLength={LIMITS.code}
+                problem={codeProblem(code, 'Code', LIMITS.code)}
+                disabled={policies.saving}
+                id="policy-code"
+                onChange={(event) => setCode(event.target.value)}
+                placeholder="LEAVE_STANDARD"
+                value={code}
               />
             </div>
           </div>
 
           <fieldset className="space-y-2">
-            <legend className="text-xs font-semibold text-foreground">Approval steps</legend>
-            {roles.forbidden && (
+            <legend className="text-xs font-semibold text-foreground">
+              Who approves, in order
+            </legend>
+            {roles.forbidden ? (
               <p className="text-[11px] text-muted-foreground">
                 Roles cannot be listed with your permissions, so steps cannot be chosen.
               </p>
+            ) : (
+              presets.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="text-[11px] text-muted-foreground">Start from:</span>
+                  {presets.map((preset) => (
+                    <Button
+                      disabled={policies.saving}
+                      key={preset.label}
+                      onClick={() => setSteps(preset.steps)}
+                      size="sm"
+                      type="button"
+                      variant="outline"
+                    >
+                      {preset.label}
+                    </Button>
+                  ))}
+                </div>
+              )
             )}
-            {roleIds.map((roleId, index) => (
-              <div className="flex items-center gap-2" key={index}>
-                <span className="w-5 text-[11px] text-muted-foreground">{index + 1}.</span>
-                <SelectMenu
-                  onValueChange={(value) =>
-                    setRoleIds(roleIds.map((entry, i) => (i === index ? value : entry)))
-                  }
-                  value={roleId}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose an approver" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={MANAGER_STEP}>The requester&apos;s manager</SelectItem>
-                    {roles.roles.map((role) => (
-                      <SelectItem key={role.id} value={role.id}>
-                        {role.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </SelectMenu>
-                {roleIds.length > 1 && (
-                  <Button
-                    onClick={() => setRoleIds(roleIds.filter((_, i) => i !== index))}
-                    size="sm"
-                    type="button"
-                    variant="ghost"
-                  >
-                    Remove
-                  </Button>
-                )}
-              </div>
+            {steps.map((step, index) => (
+              <ApprovalStepRow
+                count={steps.length}
+                disabled={policies.saving}
+                index={index}
+                key={index}
+                onChange={(next) => setSteps(steps.map((s, i) => (i === index ? next : s)))}
+                onMove={(by) => move(index, by)}
+                onRemove={() => setSteps(steps.filter((_, i) => i !== index))}
+                roles={roles.roles}
+                step={step}
+              />
             ))}
             <Button
-              onClick={() => setRoleIds([...roleIds, ''])}
+              disabled={policies.saving || steps.length >= 5}
+              onClick={() => setSteps([...steps, { ...emptyStep(), kind: 'ROLE' }])}
               size="sm"
               type="button"
               variant="outline"
             >
-              Add step
+              Add a step
             </Button>
+            <p className="text-[11px] text-muted-foreground">
+              A request moves to the next step once the current one approves it; a rejection at any
+              step ends it.
+              {policy && ' Requests already waiting keep the steps they started with.'}
+            </p>
           </fieldset>
 
           <label className="flex items-center gap-2 text-xs text-foreground">
@@ -197,7 +261,7 @@ export function ApprovalPolicyDialog({
               onChange={(event) => setIsDefault(event.target.checked)}
               type="checkbox"
             />
-            Use as the default policy for this domain
+            Use for every new {approvalDomainLabel[policy?.domain ?? domain].toLowerCase()} request
           </label>
 
           {policies.saveError && (
@@ -215,7 +279,10 @@ export function ApprovalPolicyDialog({
             >
               Cancel
             </Button>
-            <Button disabled={policies.saving} type="submit">
+            <Button
+              disabled={policies.saving || !ready || !code.trim() || !name.trim()}
+              type="submit"
+            >
               {policies.saving ? 'Saving...' : 'Save'}
             </Button>
           </div>

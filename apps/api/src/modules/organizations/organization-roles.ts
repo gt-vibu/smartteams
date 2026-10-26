@@ -1,30 +1,7 @@
 import type { Prisma } from '../../generated/prisma/client';
+import { EMPLOYEE_BASELINE_PERMISSION_KEYS } from '@smarteam/contracts';
 
-export const EMPLOYEE_SELF_SERVICE_PERMISSIONS = [
-  'organizations.read',
-  'employees.read',
-  'attendance.read',
-  'attendance.write',
-  'attendance.corrections.write',
-  'attendance.preferences.read',
-  'leave.types.read',
-  'leave.requests.read',
-  'leave.requests.write',
-  'leave.balances.read',
-  'timesheets.read',
-  'timesheets.write',
-  'timesheets.submit',
-  'payroll.payslips.read',
-  'payroll.employee-profile.read',
-  'payroll.preview.read',
-  'payroll.advances.read',
-  'payroll.advances.request',
-  'files.read',
-  'files.write',
-  'teams.read',
-  'projects.read',
-  'shifts.read',
-] as const;
+export const EMPLOYEE_SELF_SERVICE_PERMISSIONS = EMPLOYEE_BASELINE_PERMISSION_KEYS;
 
 /**
  * A line manager: their own records, plus the ability to decide what their reports send them.
@@ -55,6 +32,12 @@ export const HR_ADMIN_PERMISSIONS = [
   'employees.read.all',
   'employees.write',
   'employees.branches.write',
+  'employees.personal_details.read',
+  'employees.personal_details.write',
+  'employees.bank_details.read',
+  'employees.bank_details.write',
+  'employees.documents.read',
+  'employees.documents.write',
   'attendance.read.all',
   'leave.requests.read.all',
   'leave.balances.read.all',
@@ -62,6 +45,8 @@ export const HR_ADMIN_PERMISSIONS = [
   'leave.types.write',
   'timesheets.read.all',
   'files.read.all',
+  'files.organization.manage',
+  'files.share',
   'branches.read',
   'shifts.write',
   'members.read',
@@ -70,13 +55,15 @@ export const HR_ADMIN_PERMISSIONS = [
 ] as const;
 
 /**
- * The three non-administrator roles every organization needs, seeded at creation.
+ * The standard non-administrator access profiles every organization needs, seeded at creation.
  *
  * Shared because it was not. Platform onboarding seeded these; self-service registration created
  * only `ORG_ADMIN`. A tenant that signed itself up therefore had exactly one role — the wildcard
  * one — so the onboarding form could not find an `EMPLOYEE` role to give a new joiner, reported
  * that it "could not read the Employee role", and quietly created employees with no login at all.
- * Two ways to make a tenant must not produce two different tenants.
+ * Two ways to make a tenant must not produce two different tenants. Manager remains a standard
+ * profile because organizations need a ready-made approver role; job title/team lead status alone
+ * still does not grant access.
  *
  * `ORG_ADMIN` stays with each caller: onboarding upserts it against an existing organization,
  * registration creates it fresh, and the wildcard permission it carries is handled differently in
@@ -106,7 +93,12 @@ export async function seedStandardRoles(
       'Self-service access to your own records',
       EMPLOYEE_SELF_SERVICE_PERMISSIONS,
     ],
-    ['MANAGER', 'Manager', 'Approves what their reports submit', MANAGER_PERMISSIONS],
+    [
+      'MANAGER',
+      'Manager',
+      'Employee self-service plus approval access for reports',
+      MANAGER_PERMISSIONS,
+    ],
     ['HR_ADMIN', 'HR Admin', 'People operations across the organization', HR_ADMIN_PERMISSIONS],
   ] as const) {
     const role = await tx.role.create({
@@ -159,14 +151,56 @@ export async function seedLeaveDefaults(
     });
   }
 
-  // Routed to the administrator role rather than to a person: the tenant's first administrator
-  // may later be replaced, and a policy pointing at a departed user approves nothing.
+  await createAdminApprovalPolicy(tx, organizationId, 'LEAVE', approverRoleId);
+}
+
+/**
+ * The default approvers for everything else an employee submits: timesheets, and attendance
+ * corrections — which also carry missed check-outs, check-ins on an optional holiday and days the
+ * automatic close sent for review.
+ *
+ * A tenant created without these could not submit a timesheet or correct a day at all: each is
+ * refused until an approval policy exists, and nothing in the product said so. Like leave, they
+ * go to the administrator until the organization chooses someone else on the Approvals screen,
+ * where these are ordinary policies to edit or replace.
+ */
+export async function seedApprovalDefaults(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  approverRoleId: string,
+): Promise<void> {
+  await createAdminApprovalPolicy(tx, organizationId, 'TIMESHEET', approverRoleId);
+  await createAdminApprovalPolicy(tx, organizationId, 'ATTENDANCE_CORRECTION', approverRoleId);
+}
+
+const DEFAULT_POLICIES = {
+  LEAVE: { code: 'LEAVE_DEFAULT', name: 'Leave approval' },
+  TIMESHEET: { code: 'TIMESHEET_DEFAULT', name: 'Timesheet approval' },
+  ATTENDANCE_CORRECTION: {
+    code: 'ATTENDANCE_CORRECTION_DEFAULT',
+    name: 'Attendance correction approval',
+  },
+} as const;
+
+/**
+ * A single-step policy approved by whoever holds the administrator role.
+ *
+ * Routed to the role rather than to a person: the tenant's first administrator may later be
+ * replaced, and a policy pointing at a departed user approves nothing. An administrator's own
+ * request goes to another administrator; the role step never lets anyone approve themselves.
+ */
+async function createAdminApprovalPolicy(
+  tx: Prisma.TransactionClient,
+  organizationId: string,
+  domain: keyof typeof DEFAULT_POLICIES,
+  approverRoleId: string,
+) {
   const policy = await tx.approvalPolicy.create({
     data: {
       organizationId,
-      domain: 'LEAVE',
-      code: 'LEAVE_DEFAULT',
-      name: 'Leave approval',
+      domain,
+      code: DEFAULT_POLICIES[domain].code,
+      name: DEFAULT_POLICIES[domain].name,
       isDefault: true,
       isActive: true,
     },

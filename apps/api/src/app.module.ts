@@ -5,6 +5,12 @@ import { ConfigService } from '@nestjs/config';
 import { AppConfigModule } from './common/config/config.module';
 import { CommonModule } from './common/common.module';
 import { RequestContextMiddleware } from './common/context/request-context';
+import {
+  sensitiveLogPaths,
+  serializeHttpError,
+  serializeHttpRequest,
+  serializeHttpResponse,
+} from './common/http/logging-safety';
 import { CsrfMiddleware } from './common/security/csrf.middleware';
 import { SecurityHeadersMiddleware } from './common/security/security-headers.middleware';
 import { RequestRateLimitInterceptor } from './common/security/request-rate-limit.interceptor';
@@ -13,6 +19,7 @@ import { HealthModule } from './common/health/health.module';
 import { MetricsModule } from './common/metrics/metrics.module';
 import { DatabaseModule } from './infrastructure/database/database.module';
 import { QueueModule } from './infrastructure/queue/queue.module';
+import { MailModule } from './infrastructure/mail/mail.module';
 import { RedisModule } from './infrastructure/redis/redis.module';
 import { StorageModule } from './infrastructure/storage/storage.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
@@ -29,6 +36,8 @@ import { PlatformModule } from './modules/platform/platform.module';
 import { RbacModule } from './modules/rbac/rbac.module';
 import { ShiftsModule } from './modules/shifts/shifts.module';
 import { HolidaysModule } from './modules/holidays/holidays.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { ReportsModule } from './modules/reports/reports.module';
 import { TimesheetsModule } from './modules/timesheets/timesheets.module';
 import { UsersModule } from './modules/users/users.module';
 
@@ -40,22 +49,14 @@ import { UsersModule } from './modules/users/users.module';
       useFactory: (config: ConfigService) => ({
         pinoHttp: {
           level: config.getOrThrow<string>('LOG_LEVEL'),
-          // pino-http's default serializer logs the whole header set, which would write every
-          // bearer token and session cookie to the application log. Remove them outright
-          // rather than masking, along with any credential that reaches a request body.
           redact: {
-            paths: [
-              'req.headers.authorization',
-              'req.headers.cookie',
-              'req.headers["x-csrf-token"]',
-              'res.headers["set-cookie"]',
-              'req.body.password',
-              'req.body.token',
-              'req.body.refreshToken',
-              'req.body.clientSecret',
-              'req.body.temporaryPassword',
-            ],
+            paths: sensitiveLogPaths,
             remove: true,
+          },
+          serializers: {
+            err: serializeHttpError,
+            req: serializeHttpRequest,
+            res: serializeHttpResponse,
           },
         },
       }),
@@ -65,6 +66,7 @@ import { UsersModule } from './modules/users/users.module';
     DatabaseModule,
     RedisModule,
     QueueModule,
+    MailModule,
     StorageModule,
     HealthModule,
     MetricsModule,
@@ -80,6 +82,8 @@ import { UsersModule } from './modules/users/users.module';
     TimesheetsModule,
     ShiftsModule,
     HolidaysModule,
+    NotificationsModule,
+    ReportsModule,
     PayrollModule,
     FederationModule,
     AuditModule,

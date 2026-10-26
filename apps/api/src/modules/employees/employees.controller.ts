@@ -16,20 +16,26 @@ import { DomainContextFactory } from '../../common/context/domain-context.factor
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   AccessCodeIssueDto,
-  BranchAssignmentDto,
-  CompensationDto,
   CreateEmployeeDto,
-  EmergencyContactDto,
   EmployeeDeactivationDto,
-  EmploymentRecordDto,
+  EmployeeReferenceDto,
   ManagerAssignmentDto,
   EmployeeListQueryDto,
   UserLinkDto,
   UpdateEmployeeDto,
 } from './employees.dto';
+import {
+  NativeCompensationDto,
+  NativeEmergencyContactDto,
+  NativeEmployeeBankAccountDto,
+  NativeEmployeePersonalProfileDto,
+  NativeEmployeeReferencesDto,
+  NativeEmploymentRecordDto,
+} from './employees-native.dto';
 import { ConflictError } from '../../common/errors/domain-error';
 import { EmployeesService } from './employees.service';
 import { EmployeeDetailService } from './employee-detail.service';
+import { EmployeeRecordsService } from './employee-records.service';
 import { EmployeeAccessCodeService } from './employee-access-code.service';
 
 @Controller('v1/organizations/:organizationId/employees')
@@ -39,6 +45,7 @@ export class EmployeesController {
     private readonly employees: EmployeesService,
     private readonly employeeDetail: EmployeeDetailService,
     private readonly accessCodes: EmployeeAccessCodeService,
+    private readonly records: EmployeeRecordsService,
     private readonly contexts: DomainContextFactory,
   ) {}
 
@@ -61,6 +68,14 @@ export class EmployeesController {
    * The directory projection. Declared before `:employeeId` so the literal path is not captured
    * as an employee id.
    */
+  @Get('summary') summary(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId)
+      .then((context) => this.employeeDetail.summary(context));
+  }
+
   @Get('directory') directory(
     @Param('organizationId') organizationId: string,
     @Query() query: EmployeeListQueryDto,
@@ -111,16 +126,6 @@ export class EmployeesController {
       .native(request.user.userId, organizationId)
       .then((context) => this.employees.updateNative(context, employeeId, version, body));
   }
-  @Post(':employeeId/branches') assignBranch(
-    @Param('organizationId') organizationId: string,
-    @Param('employeeId') employeeId: string,
-    @Body() body: BranchAssignmentDto,
-    @Req() request: Request & { user: NativeRequestUser },
-  ) {
-    return this.contexts
-      .native(request.user.userId, organizationId)
-      .then((context) => this.employees.assignBranch(context, employeeId, body));
-  }
   @Post(':employeeId/deactivate') deactivate(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
@@ -143,13 +148,100 @@ export class EmployeesController {
   @Post(':employeeId/emergency-contacts') addContact(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
-    @Body() body: EmergencyContactDto,
+    @Body() body: NativeEmergencyContactDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.employees.addEmergencyContact(context, employeeId, body));
   }
+  @Get(':employeeId/personal-profile') personalProfile(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.getPersonalProfile(context, employeeId));
+  }
+
+  @Put(':employeeId/personal-profile') updatePersonalProfile(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: NativeEmployeePersonalProfileDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts.native(request.user.userId, organizationId).then((context) =>
+      this.records.upsertPersonalProfile(context, employeeId, body, {
+        enforceIdentityRules: true,
+      }),
+    );
+  }
+
+  @Get(':employeeId/bank-accounts') bankAccounts(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.listBankAccounts(context, employeeId));
+  }
+
+  @Post(':employeeId/bank-accounts') addBankAccount(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: NativeEmployeeBankAccountDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.addBankAccount(context, employeeId, body));
+  }
+
+  @Put(':employeeId/bank-accounts/primary') replacePrimaryBankAccount(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: NativeEmployeeBankAccountDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.replacePrimaryBankAccount(context, employeeId, body));
+  }
+
+  @Get(':employeeId/references') references(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.listReferences(context, employeeId));
+  }
+
+  @Post(':employeeId/references') addReference(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: EmployeeReferenceDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.addReference(context, employeeId, body));
+  }
+
+  @Put(':employeeId/references') replaceReferences(
+    @Param('organizationId') organizationId: string,
+    @Param('employeeId') employeeId: string,
+    @Body() body: NativeEmployeeReferencesDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.records.replaceReferences(context, employeeId, body.references));
+  }
+
   @Get(':employeeId/employment-records') employmentRecords(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
@@ -162,7 +254,7 @@ export class EmployeesController {
   @Post(':employeeId/employment-records') employment(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
-    @Body() body: EmploymentRecordDto,
+    @Body() body: NativeEmploymentRecordDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts
@@ -172,7 +264,7 @@ export class EmployeesController {
   @Post(':employeeId/compensation') compensation(
     @Param('organizationId') organizationId: string,
     @Param('employeeId') employeeId: string,
-    @Body() body: CompensationDto,
+    @Body() body: NativeCompensationDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.contexts

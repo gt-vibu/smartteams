@@ -1,9 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useAuth } from '../../hooks/use-auth';
 import { adminNavItems } from './navigation-admin-items';
 import { employeeNavItems } from './navigation-employee-items';
+import { useUnreadByModule } from '../../hooks/use-notifications';
+import { UnreadDot } from './unread-dot';
+import { useAutoHideScrollbar } from '../../hooks/use-auto-hide-scrollbar';
 
 interface EmsLeftRailProps {
   activeModule: string;
@@ -11,76 +15,130 @@ interface EmsLeftRailProps {
   activeSpace?: string;
 }
 
+const ADMIN_GROUPS = [
+  { label: 'People', ids: ['home', 'employees', 'onboarding', 'org-setup'] },
+  {
+    label: 'Time & attendance',
+    ids: ['time-off', 'attendance', 'shifts', 'holidays', 'timesheet'],
+  },
+  { label: 'Work', ids: ['teams', 'projects'] },
+  { label: 'Pay & approvals', ids: ['payroll', 'approvals'] },
+  { label: 'Files & reports', ids: ['files', 'reports'] },
+] as const;
+
+const EMPLOYEE_GROUPS = [
+  { label: 'My work', ids: ['home', 'projects'] },
+  { label: 'Time & attendance', ids: ['time-off', 'holidays', 'timesheet', 'attendance'] },
+  { label: 'Pay & requests', ids: ['payroll', 'approvals', 'files'] },
+] as const;
+
 export function EmsLeftRail({
   activeModule,
   onSelectModule,
   activeSpace = 'My Space',
 }: EmsLeftRailProps) {
   const { canAccessModule } = useAuth();
+  const unreadByModule = useUnreadByModule();
   const isOrgSpace = activeSpace === 'Organization';
-
-  // Employee workspace items
-
   const candidateItems = isOrgSpace ? adminNavItems : employeeNavItems;
   const visibleItems = candidateItems.filter((item) => canAccessModule(item.id));
+  const groups = isOrgSpace ? ADMIN_GROUPS : EMPLOYEE_GROUPS;
+  const [expanded, setExpanded] = useState(true);
+  const navigationRef = useAutoHideScrollbar<HTMLElement>();
 
   return (
-    <aside className="w-[76px] h-full bg-sidebar dark:bg-background text-sidebar-foreground flex flex-col justify-between py-2.5 shrink-0 z-20 border-r border-sidebar-border dark:border-border select-none">
-      <div className="space-y-1.5 overflow-y-auto no-scrollbar px-1.5">
-        {visibleItems.map((item) => {
-          const isActive = activeModule === item.id;
-          return (
-            <button
-              type="button"
-              key={item.id}
-              onClick={() => onSelectModule(item.id)}
-              title={item.label}
-              aria-current={isActive ? 'page' : undefined}
-              className={`w-full flex flex-col items-center justify-center py-2 px-1 rounded-[8px] transition-all relative cursor-pointer group ${
-                isActive
-                  ? 'bg-sidebar-accent/30 text-white font-bold ring-1 ring-sidebar-accent/40'
-                  : 'hover:bg-sidebar-accent/15 text-sidebar-foreground/85 hover:text-white'
-              }`}
-            >
-              <div
-                className={`mb-1 transition-transform group-hover:scale-105 ${isActive ? 'text-white' : 'text-sidebar-foreground/80 group-hover:text-white'}`}
-              >
-                {item.icon('h-4 w-4')}
-              </div>
-              <span
-                className={`text-[9.5px] leading-tight font-medium text-center px-0.5 break-normal tracking-tight max-w-[66px] ${isActive ? 'text-white font-bold' : 'text-sidebar-foreground/80 group-hover:text-white'}`}
-              >
-                {item.label}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Bottom Rail Controls */}
-      <div className="flex flex-col items-center space-y-2 pb-2 text-sidebar-foreground/80">
+    <aside
+      aria-label="Workspace navigation"
+      className={`flex h-full shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-200 dark:border-border dark:bg-background ${expanded ? 'w-56' : 'w-[68px]'}`}
+    >
+      <div
+        className={`flex h-12 shrink-0 items-center border-b border-sidebar-border/70 dark:border-border ${expanded ? 'justify-between px-4' : 'justify-center'}`}
+      >
+        {expanded && (
+          <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sidebar-foreground/60">
+            Workspace
+          </span>
+        )}
         <button
           type="button"
-          onClick={() => onSelectModule('files')}
-          className="p-1.5 hover:text-white hover:bg-sidebar-accent/20 dark:hover:bg-sidebar-accent/20 rounded transition-colors cursor-pointer"
-          title="Files & Documents"
-          aria-label="Files and documents"
+          aria-label={expanded ? 'Collapse navigation' : 'Expand navigation'}
+          aria-expanded={expanded}
+          title={expanded ? 'Collapse navigation' : 'Expand navigation'}
+          onClick={() => setExpanded((value) => !value)}
+          className="grid size-9 place-items-center rounded-md text-sidebar-foreground/75 transition-colors hover:bg-sidebar-accent/20 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-            />
-          </svg>
+          {expanded ? (
+            <PanelLeftClose aria-hidden="true" className="size-4" />
+          ) : (
+            <PanelLeftOpen aria-hidden="true" className="size-4" />
+          )}
         </button>
       </div>
+
+      <nav
+        aria-label={`${activeSpace} modules`}
+        ref={navigationRef}
+        className="scrollbar-auto-hide min-h-0 flex-1 space-y-5 overflow-y-auto px-2 py-3"
+      >
+        {groups.map((group) => {
+          const items = visibleItems.filter((item) =>
+            (group.ids as readonly string[]).includes(item.id),
+          );
+          if (items.length === 0) return null;
+
+          return (
+            <section key={group.label} aria-label={group.label}>
+              {expanded && (
+                <h2 className="mb-2.5 block whitespace-nowrap px-2 text-[10px] font-semibold leading-5 text-sidebar-foreground/55">
+                  {group.label}
+                </h2>
+              )}
+              <div className="space-y-0.5">
+                {items.map((item) => {
+                  const isActive = activeModule === item.id;
+                  const unread = unreadByModule[item.id] ?? 0;
+                  return (
+                    <button
+                      type="button"
+                      key={item.id}
+                      onClick={() => onSelectModule(item.id)}
+                      title={expanded ? undefined : item.label}
+                      aria-label={item.label}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`relative flex h-10 min-h-10 w-full shrink-0 items-center rounded-md px-2.5 text-left leading-none transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${expanded ? 'gap-3' : 'justify-center'} ${
+                        isActive
+                          ? 'bg-sidebar-accent/25 font-semibold text-white ring-1 ring-sidebar-accent/35'
+                          : 'text-sidebar-foreground/80 hover:bg-sidebar-accent/15 hover:text-white'
+                      }`}
+                    >
+                      <span className="grid size-5 shrink-0 place-items-center">
+                        {item.icon('h-[18px] w-[18px]')}
+                      </span>
+                      {expanded && (
+                        <span className="min-w-0 flex-1 truncate text-[13px]">{item.label}</span>
+                      )}
+                      {unread > 0 &&
+                        (expanded ? (
+                          <span
+                            className="min-w-5 rounded-full bg-primary/15 px-1.5 py-0.5 text-center text-[10px] font-semibold tabular-nums text-primary"
+                            aria-label={`${unread} unread`}
+                          >
+                            {unread > 99 ? '99+' : unread}
+                          </span>
+                        ) : (
+                          <UnreadDot
+                            className="right-2 top-2"
+                            ring="ring-sidebar dark:ring-background"
+                          />
+                        ))}
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
+      </nav>
     </aside>
   );
 }

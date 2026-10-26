@@ -1,7 +1,7 @@
 # EMS BACKEND — RBAC, MULTI-TENANCY & RESOURCE AUTHORIZATION AUDIT REPORT
 
-**Audit Date:** August 25, 2026  
-**Target Codebase:** `smarteam` / `apps/api`  
+**Audit Date:** August 25, 2026
+**Target Codebase:** `smarteam` / `apps/api`
 **Scope:** Multi-tenancy, RBAC, Resource Ownership, Approval Workflows, IDOR/Isolation Verification, Team & Project Cardinality
 
 ---

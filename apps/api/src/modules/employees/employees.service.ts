@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { EmployeeStatus, EmploymentType } from '../../generated/prisma/enums';
 import { type DomainContext } from '../../common/context/domain-context';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
@@ -32,10 +33,17 @@ export class EmployeesService {
     outbox: OutboxService,
     sessions: AuthSessionService,
     private readonly records: EmployeeRecordsService,
+    config: ConfigService,
   ) {
     this.federationAccess = new EmployeeFederationAccessService(database, audit, sessions);
-    this.federationSync = new EmployeeFederationSyncService(database, audit, outbox, sessions);
-    this.native = new EmployeeNativeService(database, audit, outbox, sessions);
+    this.federationSync = new EmployeeFederationSyncService(
+      database,
+      audit,
+      outbox,
+      sessions,
+      records,
+    );
+    this.native = new EmployeeNativeService(database, audit, outbox, sessions, config);
   }
 
   // --- employees this tenant owns --------------------------------------------------------------
@@ -54,10 +62,6 @@ export class EmployeesService {
 
   updateNative(...args: Parameters<EmployeeNativeService['updateNative']>) {
     return this.native.updateNative(...args);
-  }
-
-  assignBranch(...args: Parameters<EmployeeNativeService['assignBranch']>) {
-    return this.native.assignBranch(...args);
   }
 
   deactivate(...args: Parameters<EmployeeNativeService['deactivate']>) {

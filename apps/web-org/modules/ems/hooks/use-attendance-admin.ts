@@ -8,14 +8,16 @@ import {
 } from '@smarteam/contracts';
 import { useSession } from './auth-context';
 import { attendanceRepository } from '../repositories/attendance.repository';
-import { workforceRepository } from '../repositories/workforce.repository';
 import { useAsyncResource } from './use-async-resource';
 import { localDateKey } from './use-attendance';
+import { useCursorPages } from './use-cursor-pages';
+import { useDataChanged } from '../lib/data-events';
 
 type Loaded = {
   records: AttendanceRecord[];
   corrections: AttendanceCorrection[];
   inbox: AttendanceCorrection[];
+  nextCursor?: string;
 };
 
 /**
@@ -24,37 +26,90 @@ type Loaded = {
  * The correction list and approval inbox come from service methods that were already written and
  * reachable over federation, but had no native HTTP route until this module was reconciled.
  */
-export function useAttendanceAdmin(from: string, to: string) {
+export function useAttendanceAdmin(
+  from: string,
+  to: string,
+  search = '',
+  section = 'records',
+  correctionStatus = 'ALL',
+  departmentId = '',
+  dayStatus = 'ALL',
+) {
   const { session, persona } = useSession();
   const organizationId = session?.organizationId || null;
   const permissions = useMemo(() => persona?.permissions ?? [], [persona]);
 
   const canRead = hasPermission(permissions, 'attendance.read');
   const canDecide = hasPermission(permissions, 'attendance.corrections.decide');
-  const canReadEmployees = hasPermission(permissions, 'employees.read');
 
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const paging = useCursorPages(
+    JSON.stringify([
+      organizationId,
+      from,
+      to,
+      search,
+      section,
+      correctionStatus,
+      departmentId,
+      dayStatus,
+    ]),
+  );
 
   const resource = useAsyncResource<Loaded>(
     async () => {
       const [page, corrections, inbox] = await Promise.all([
-        attendanceRepository.list(organizationId!, { from, to, limit: 500 }),
-        attendanceRepository.listCorrections(organizationId!, { limit: 200 }),
+        section === 'records'
+          ? attendanceRepository.list(organizationId!, {
+              from,
+              to,
+              search: search || undefined,
+              departmentId: departmentId || undefined,
+              dayStatus: dayStatus === 'ALL' ? undefined : dayStatus,
+              cursor: paging.cursor,
+              limit: 10,
+            })
+          : Promise.resolve({ records: [] as AttendanceRecord[], nextCursor: undefined }),
+        section === 'corrections'
+          ? attendanceRepository.listCorrectionPage(organizationId!, {
+              limit: 10,
+              cursor: paging.cursor,
+              search,
+              status: correctionStatus === 'ALL' ? undefined : correctionStatus,
+            })
+          : Promise.resolve({ corrections: [] as AttendanceCorrection[], nextCursor: undefined }),
         // The inbox is personal to the approver; without decide rights it is simply empty.
-        canDecide ? attendanceRepository.correctionInbox(organizationId!) : Promise.resolve([]),
+        canDecide && section === 'corrections'
+          ? attendanceRepository.correctionInbox(organizationId!)
+          : Promise.resolve([]),
       ]);
-      return { records: page.records, corrections, inbox };
+      return {
+        records: page.records,
+        nextCursor: section === 'corrections' ? corrections.nextCursor : page.nextCursor,
+        corrections: corrections.corrections,
+        inbox,
+      };
     },
-    [organizationId, from, to, canDecide],
-    { enabled: Boolean(organizationId) && canRead },
+    [
+      organizationId,
+      from,
+      to,
+      search,
+      paging.cursor,
+      section,
+      canDecide,
+      correctionStatus,
+      departmentId,
+      dayStatus,
+    ],
+    {
+      enabled: Boolean(organizationId) && canRead && section !== 'policy',
+      preservePreviousDataKey: organizationId ? `${organizationId}:${section}` : null,
+    },
   );
 
-  const employeesResource = useAsyncResource(
-    () => workforceRepository.listEmployees(organizationId!),
-    [organizationId],
-    { enabled: Boolean(organizationId) && canReadEmployees },
-  );
+  useDataChanged(['attendance'], resource.refetch);
 
   const decide = useCallback(
     async (correctionId: string, status: 'APPROVED' | 'REJECTED', comment: string) => {
@@ -79,10 +134,12 @@ export function useAttendanceAdmin(from: string, to: string) {
   );
 
   return {
+    paging,
+    nextCursor: resource.data?.nextCursor,
     records: resource.data?.records ?? [],
     corrections: resource.data?.corrections ?? [],
     inbox: resource.data?.inbox ?? [],
-    employees: employeesResource.data ?? [],
+    employees: [],
     loading: resource.loading,
     refreshing: resource.refreshing,
     error: resource.error,
@@ -96,7 +153,7 @@ export function useAttendanceAdmin(from: string, to: string) {
   };
 }
 
-/** Default admin range: the current month to date. */
+/** Default admin range: this month through today, so future leave is not presented as attendance. */
 export function currentMonthRange(): { from: string; to: string } {
   const now = new Date();
   const first = new Date(now.getFullYear(), now.getMonth(), 1);

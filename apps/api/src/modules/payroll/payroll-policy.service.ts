@@ -37,6 +37,10 @@ export class PayrollPolicyService {
     return this.settings.getPolicy(...args);
   }
 
+  listPolicies(...args: Parameters<PayrollPolicySettingsService['listPolicies']>) {
+    return this.settings.listPolicies(...args);
+  }
+
   savePolicy(...args: Parameters<PayrollPolicySettingsService['savePolicy']>) {
     return this.settings.savePolicy(...args);
   }
@@ -77,6 +81,10 @@ export class PayrollPolicyService {
 
   requestAdvance(...args: Parameters<PayrollAdvancesService['requestAdvance']>) {
     return this.advances.requestAdvance(...args);
+  }
+
+  advanceAllowance(...args: Parameters<PayrollAdvancesService['allowance']>) {
+    return this.advances.allowance(...args);
   }
 
   decideAdvance(...args: Parameters<PayrollAdvancesService['decideAdvance']>) {

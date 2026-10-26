@@ -6,6 +6,7 @@ import { useSession } from './auth-context';
 import { apiRequest } from '../lib/api-client';
 import { orgPath } from '../repositories/api-helpers';
 import { workforceRepository } from '../repositories/workforce.repository';
+import { shiftsRepository } from '../repositories/shifts.repository';
 
 /**
  * Bringing a new employee into the organization.
@@ -22,7 +23,11 @@ import { workforceRepository } from '../repositories/workforce.repository';
  */
 
 export type OnboardingInput = {
-  employeeNumber: string;
+  /** Left out when the department's number series assigns it. */
+  employeeNumber?: string;
+  departmentId?: string;
+  /** Required by the API: 12 digits, spaces allowed. */
+  aadhaarNumber: string;
   firstName: string;
   lastName: string;
   workEmail?: string;
@@ -34,11 +39,13 @@ export type OnboardingInput = {
   jobTitle?: string;
   department?: string;
   managerEmployeeId?: string;
+  /** The shift they work, from their joining date and open-ended: their permanent shift. */
+  shiftId?: string;
   /** When set, a login is created with the EMPLOYEE role and linked to the new employee. */
   account?: { email: string; displayName: string; roleId: string };
 };
 
-export type OnboardingStep = 'employee' | 'employment' | 'manager' | 'account' | 'link';
+export type OnboardingStep = 'employee' | 'employment' | 'manager' | 'shift' | 'account' | 'link';
 
 export type OnboardingResult = {
   employee: Employee | null;
@@ -47,6 +54,8 @@ export type OnboardingResult = {
   failure: { step: OnboardingStep; message: string } | null;
   /** Returned once, for the administrator to pass on. Never stored. */
   temporaryPassword: string | null;
+  /** The login's invitation email — address, temporary password, set-password link — was queued. */
+  invitationEmailed: boolean;
   /** The address the new login signs in with. Needed alongside the password to be any use. */
   accountEmail: string | null;
 };
@@ -73,10 +82,18 @@ export function useEmployeeOnboarding() {
       const completed: OnboardingStep[] = [];
       let employee: Employee | null = null;
       let temporaryPassword: string | null = null;
+      let invitationEmailed = false;
       let accountEmail: string | null = null;
 
       const finish = (failure: OnboardingResult['failure']): OnboardingResult => {
-        const value = { employee, completed, failure, temporaryPassword, accountEmail };
+        const value = {
+          employee,
+          completed,
+          failure,
+          temporaryPassword,
+          invitationEmailed,
+          accountEmail,
+        };
         setResult(value);
         setBusy(false);
         return value;
@@ -87,7 +104,11 @@ export function useEmployeeOnboarding() {
 
       try {
         employee = await workforceRepository.createEmployee(organizationId, {
-          employeeNumber: input.employeeNumber.trim(),
+          ...(input.employeeNumber?.trim() ? { employeeNumber: input.employeeNumber.trim() } : {}),
+          ...(input.departmentId ? { departmentId: input.departmentId } : {}),
+          aadhaarNumber: input.aadhaarNumber,
+          // A login follows: the API refuses a taken address before writing anything.
+          ...(input.account ? { createLogin: true } : {}),
           firstName: input.firstName.trim(),
           lastName: input.lastName.trim(),
           employmentType: input.employmentType,
@@ -144,6 +165,22 @@ export function useEmployeeOnboarding() {
         }
       }
 
+      if (input.shiftId) {
+        try {
+          await shiftsRepository.assign(organizationId, employee.id, {
+            shiftId: input.shiftId,
+            startsOn: input.dateOfJoining,
+            ...(input.primaryBranchId ? { branchId: input.primaryBranchId } : {}),
+          });
+          completed.push('shift');
+        } catch (caught) {
+          return finish({
+            step: 'shift',
+            message: messageOf(caught, 'The shift could not be assigned.'),
+          });
+        }
+      }
+
       if (input.account) {
         let userId: string;
         try {
@@ -155,11 +192,16 @@ export function useEmployeeOnboarding() {
               roleIds: [input.account.roleId],
               reason: `Onboarding ${input.firstName.trim()} ${input.lastName.trim()}`,
             },
-          })) as { userId?: string; temporaryPassword?: string | null };
+          })) as {
+            userId?: string;
+            temporaryPassword?: string | null;
+            invitation?: { queued?: boolean } | null;
+          };
           if (typeof created.userId !== 'string')
             throw new Error('The account was created but no user id came back.');
           userId = created.userId;
           temporaryPassword = created.temporaryPassword ?? null;
+          invitationEmailed = created.invitation?.queued === true;
           accountEmail = input.account.email.trim();
           completed.push('account');
         } catch (caught) {

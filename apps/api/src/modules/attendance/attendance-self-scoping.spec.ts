@@ -47,6 +47,28 @@ const recordFilter = (tx: ReturnType<typeof setup>['tx']) =>
   firstWhere(tx.attendanceRecord.findMany.mock.calls);
 
 describe('AttendanceService.list self-scoping', () => {
+  it('honors an explicit native branch filter', async () => {
+    const { tx, service } = setup();
+    await service.list(context(['attendance.read']), { branchId: 'branch' });
+    expect(recordFilter(tx)).toMatchObject({ organizationId: ORG, branchId: 'branch' });
+  });
+
+  it('does not allow a filter to escape the active branch', async () => {
+    const { tx, service } = setup();
+    await expect(
+      service.list(context(['attendance.read'], { branchId: 'branch' }), { branchId: 'other' }),
+    ).rejects.toThrow('active branch');
+    expect(tx.attendanceRecord.findMany).not.toHaveBeenCalled();
+  });
+
+  it('uses the resolved internal federation branch rather than the external query identifier', async () => {
+    const { tx, service } = setup();
+    await service.list(
+      context(['attendance.read'], { accessMode: 'FEDERATION', branchId: 'internal' }),
+      { branchId: 'external' },
+    );
+    expect(recordFilter(tx)).toMatchObject({ branchId: 'internal' });
+  });
   it('allows an employee to read their own attendance by id', async () => {
     const { tx, service } = setup();
     await service.list(context(['attendance.read']), { employeeId: EMPLOYEE_A });

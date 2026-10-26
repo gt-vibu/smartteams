@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 import { Button, Label, Textarea } from '@smarteam/ui';
 import {
   ATTENDANCE_CORRECTION_REASON_MAX_LENGTH,
-  ATTENDANCE_CORRECTION_REASON_MIN_LENGTH,
+  ATTENDANCE_HOLIDAY_REVIEW_REASON_MIN_LENGTH,
 } from '@smarteam/contracts';
 import { HOLIDAY_CHECK_IN_REASON_SUGGESTIONS } from '../../services/holiday-conflict-view';
 
 interface HolidayCheckInFormProps {
   holidayName: string;
   /** Resolves when the server recorded the explanation; rejects with the reason to show. */
-  onSubmit: (reason: string, comment: string) => Promise<unknown>;
+  onSubmit: (reason: string) => Promise<unknown>;
   /** Called after an accepted explanation, so the caller can close. */
   onSubmitted?: () => void;
 }
@@ -28,18 +28,17 @@ export function HolidayCheckInForm({
   onSubmitted,
 }: HolidayCheckInFormProps) {
   const [reason, setReason] = useState('');
-  const [comment, setComment] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
-  const ready = reason.trim().length >= ATTENDANCE_CORRECTION_REASON_MIN_LENGTH;
+  const ready = reason.trim().length >= ATTENDANCE_HOLIDAY_REVIEW_REASON_MIN_LENGTH;
 
   const submit = async () => {
     if (!ready || saving) return;
     setSaving(true);
     setError(null);
     try {
-      await onSubmit(reason.trim(), comment.trim());
+      await onSubmit(reason.trim());
       setSent(true);
       onSubmitted?.();
     } catch (caught) {
@@ -81,21 +80,7 @@ export function HolidayCheckInForm({
           value={reason}
           maxLength={ATTENDANCE_CORRECTION_REASON_MAX_LENGTH}
           onChange={(event) => setReason(event.target.value)}
-          placeholder={`Reason (at least ${ATTENDANCE_CORRECTION_REASON_MIN_LENGTH} characters)`}
-          disabled={saving}
-        />
-      </div>
-      <div>
-        <Label htmlFor="holiday-check-in-comment" className="mb-1 block text-[11px]">
-          Comment (optional)
-        </Label>
-        <Textarea
-          id="holiday-check-in-comment"
-          rows={2}
-          value={comment}
-          maxLength={500}
-          onChange={(event) => setComment(event.target.value)}
-          placeholder="Anything your manager should know"
+          placeholder="Reason for working on this holiday"
           disabled={saving}
         />
       </div>

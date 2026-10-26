@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
@@ -20,6 +20,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     BullModule.registerQueue({ name: 'outbox-dispatch' }),
     BullModule.registerQueue({ name: 'file-lifecycle' }),
     BullModule.registerQueue({ name: 'attendance-auto-check-out' }),
+    BullModule.registerQueue({ name: 'employee-branch-transfer' }),
+    BullModule.registerQueue({ name: 'mail-delivery' }),
+    BullModule.registerQueue({ name: 'leave-accrual' }),
+    BullModule.registerQueue({ name: 'notification-mail' }),
+    BullModule.registerQueue({ name: 'employee-exits' }),
+    BullModule.registerQueue({ name: 'approval-reminders' }),
+    BullModule.registerQueue({ name: 'approval-batches' }),
+    BullModule.registerQueue({ name: 'workforce-assignments' }),
+    BullModule.registerQueue({ name: 'payroll-compliance-watch' }),
   ],
   exports: [BullModule],
 })

@@ -24,6 +24,8 @@ export type OrganizationUpdate = {
   name?: string;
   timezone?: string;
   currencyCode?: string;
+  logoFileId?: string | null;
+  coverFileId?: string | null;
 };
 
 export type BranchInput = {
@@ -31,6 +33,24 @@ export type BranchInput = {
   code: string;
   externalId?: string;
   address?: Record<string, unknown>;
+  /** IANA name; empty clears it and the branch follows the organization. */
+  timezone?: string;
+  /** Optional location captured when a new branch is created. */
+  workLocation?: { latitude: number; longitude: number };
+};
+
+/** One branch as its settings panel shows it. */
+export type BranchOverview = Branch & {
+  geofenceMode: string | null;
+  biometricVerificationMode: string | null;
+  employeeCount: number;
+  workLocations: Array<{
+    id: string;
+    name: string;
+    latitude: number;
+    longitude: number;
+    radiusMeters: number;
+  }>;
 };
 
 /** `workforce.ts` publishes the list parser; a single-row parse is derived from the same schema. */
@@ -48,10 +68,18 @@ export const organizationRepository = {
   },
 
   /** Name, timezone and currency are the only fields the API accepts. */
-  async update(organizationId: string, input: OrganizationUpdate): Promise<Organization> {
+  async update(
+    organizationId: string,
+    input: OrganizationUpdate,
+    version: number,
+  ): Promise<Organization> {
     return expectShape(
       parseOrganization(
-        await apiRequest(orgPath(organizationId), { method: 'PATCH', body: input }),
+        await apiRequest(orgPath(organizationId), {
+          method: 'PATCH',
+          body: input,
+          headers: { 'if-match-version': String(version) },
+        }),
       ),
       'organization',
     );
@@ -62,6 +90,29 @@ export const organizationRepository = {
       parseBranchList(await apiRequest(orgPath(organizationId, '/branches'), { method: 'GET' })),
       'branch list',
     );
+  },
+
+  /** The main branch: the one chosen, or the oldest active one until someone chooses. */
+  async getPrimaryBranch(
+    organizationId: string,
+  ): Promise<{ branchId: string; name: string; chosen: boolean } | null> {
+    return (await apiRequest(orgPath(organizationId, '/branches/primary'), {
+      method: 'GET',
+    })) as { branchId: string; name: string; chosen: boolean } | null;
+  },
+
+  async setPrimaryBranch(organizationId: string, branchId: string): Promise<unknown> {
+    return apiRequest(orgPath(organizationId, '/branches/primary'), {
+      method: 'PUT',
+      body: { branchId },
+    });
+  },
+
+  async getBranchOverview(organizationId: string, branchId: string): Promise<BranchOverview> {
+    return (await apiRequest(
+      orgPath(organizationId, `/branches/${encodeURIComponent(branchId)}/overview`),
+      { method: 'GET' },
+    )) as BranchOverview;
   },
 
   async createBranch(organizationId: string, input: BranchInput): Promise<Branch> {

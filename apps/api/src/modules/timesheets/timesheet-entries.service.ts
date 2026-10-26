@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { TimesheetEntrySource, TimesheetStatus } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError } from '../../common/errors/domain-error';
+import { TimesheetEntrySource, TimesheetStatus } from '../../generated/prisma/enums';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { AuditService, jsonSnapshot } from '../audit/audit.service';
 import { assertMayActForEmployee } from '../employees/employee-scope';
 
 import { toProjectDto } from '../platform/workforce-mappers';
+import { WorkingDayService } from '../shifts/working-day.service';
 import {
   dateOnly,
   decodeEntry,
-  encodeEntryDescription,
   DEFAULT_JOB_TYPES,
   derivePeriodBounds,
+  encodeEntryDescription,
 } from './timesheet-shared';
 import type { ManualEntryDto } from './timesheets.dto';
 
@@ -26,10 +27,14 @@ const MINUTES_PER_DAY = 24 * 60;
  */
 @Injectable()
 export class TimesheetEntriesService {
+  private readonly workingDays: WorkingDayService;
+
   constructor(
     private readonly database: TenantDatabaseService,
     private readonly audit: AuditService,
-  ) {}
+  ) {
+    this.workingDays = new WorkingDayService(database);
+  }
 
   async listJobTypes(context: DomainContext) {
     requirePermission(context, 'timesheets.read');
@@ -89,7 +94,7 @@ export class TimesheetEntriesService {
           context,
           {
             entityType: 'JOB_TYPE',
-            entityId: cleanName,
+            entityId: context.organizationId,
             action: 'JOB_TYPE_CREATED',
             afterState: jsonSnapshot({ name: cleanName }),
           },
@@ -128,6 +133,13 @@ export class TimesheetEntriesService {
       ) {
         code = `${codeBase}-${counter++}`;
       }
+      // A project belongs to a branch. This form has no branch field — it is a quick add from
+      // Log Time — so it takes the creator's own branch rather than leaving the project without
+      // one, which the project screen refuses to create.
+      const employee = await tx.employee.findFirst({
+        where: { organizationId: context.organizationId, userId: context.actor.userId },
+        select: { id: true, primaryBranchId: true },
+      });
       const project = await tx.project.create({
         data: {
           organizationId: context.organizationId,
@@ -135,12 +147,8 @@ export class TimesheetEntriesService {
           name: cleanName,
           description: description?.trim() || undefined,
           status: 'ACTIVE',
+          ...(employee?.primaryBranchId ? { branchId: employee.primaryBranchId } : {}),
         },
-      });
-
-      const employee = await tx.employee.findFirst({
-        where: { organizationId: context.organizationId, userId: context.actor.userId },
-        select: { id: true },
       });
       if (employee) {
         await tx.projectMember.create({
@@ -177,6 +185,10 @@ export class TimesheetEntriesService {
     if (input.minutes <= 0 || (input.overtimeMinutes ?? 0) > input.minutes)
       throw new ConflictError('Timesheet minutes are invalid');
     const workDateObj = dateOnly(input.workDate);
+    // Time is logged for work already done. A day's grace covers timezones ahead of UTC.
+    // Native only: the federation contract is frozen.
+    if (context.accessMode === 'NATIVE' && workDateObj.getTime() > Date.now() + 86_400_000)
+      throw new ConflictError('Time cannot be logged for a day that has not happened yet.');
 
     return this.database.run(context, async (tx) => {
       let targetTimesheetId = timesheetId || input.timesheetId;
@@ -265,6 +277,52 @@ export class TimesheetEntriesService {
       // The branch above provisions the caller's own sheet, but a supplied `timesheetId` reaches
       // any sheet in the tenant — including a colleague's. Ownership is read off the row.
       await assertMayActForEmployee(tx, context, timesheet.employeeId, 'timesheets.read.all');
+      if (context.accessMode === 'NATIVE') {
+        // Time belongs to the days someone worked here, and to the sheet whose period holds it.
+        const [owner, period] = await Promise.all([
+          tx.employee.findFirst({
+            where: { id: timesheet.employeeId, organizationId: context.organizationId },
+            select: { dateOfJoining: true, dateOfLeaving: true },
+          }),
+          tx.timesheetPeriod.findFirst({
+            where: { id: timesheet.timesheetPeriodId, organizationId: context.organizationId },
+            select: { periodStart: true, periodEnd: true },
+          }),
+        ]);
+        const day = (value: Date) => value.toISOString().slice(0, 10);
+        if (owner?.dateOfJoining && workDateObj < owner.dateOfJoining)
+          throw new ConflictError(
+            `Time cannot be logged before the joining date (${day(owner.dateOfJoining)}).`,
+          );
+        if (owner?.dateOfLeaving && workDateObj > owner.dateOfLeaving)
+          throw new ConflictError(
+            `Time cannot be logged after the leaving date (${day(owner.dateOfLeaving)}).`,
+          );
+        if (period && (workDateObj < period.periodStart || workDateObj > period.periodEnd))
+          throw new ConflictError(
+            `${day(workDateObj)} is outside this timesheet (${day(period.periodStart)} to ${day(period.periodEnd)}).`,
+          );
+
+        const dayEval = await this.workingDays.evaluateDay(
+          tx,
+          context.organizationId,
+          timesheet.employeeId,
+          workDateObj,
+        );
+        if (dayEval.reason === 'BEFORE_JOINING' || dayEval.reason === 'AFTER_LEAVING') {
+          throw new ConflictError(
+            dayEval.detail ?? 'Time cannot be logged outside employment period.',
+          );
+        }
+        if (!dayEval.isWorkingDay) {
+          const explanation = (input.description ?? '').trim();
+          if (explanation.length < 2) {
+            throw new ConflictError(
+              `Logging time on a non-working day (${dayEval.detail || dayEval.reason}) requires an explanation in the description.`,
+            );
+          }
+        }
+      }
       // Minutes are the caller's own figure, and approved sheets are what hourly pay is computed
       // from. Nothing bounded them: one entry of 100,000 minutes on a single day was accepted. A
       // day still has 24 hours, so the day's recorded time — attendance-derived entries included —

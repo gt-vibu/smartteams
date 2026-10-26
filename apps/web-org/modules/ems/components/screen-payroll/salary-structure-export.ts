@@ -1,4 +1,5 @@
-import { formatMoney, type Employee, type SalaryProfile } from '@smarteam/contracts';
+import type { Employee, SalaryProfile } from '@smarteam/contracts';
+import { localDateKey } from '../../lib/local-date';
 
 export interface SalaryStructureExportOptions {
   orgName?: string;
@@ -9,23 +10,39 @@ export interface SalaryStructureExportOptions {
   profile: SalaryProfile;
 }
 
+const formatPdfMoney = (amount: number) => {
+  return `INR ${Number(amount).toLocaleString('en-IN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+};
+
+/** Printed wherever a value was never recorded, instead of a plausible-looking invented one. */
+const NOT_RECORDED = 'Not recorded';
+
 /**
- * Generates an official, printable Compensation & Salary Structure Annexure (PDF / Print view).
+ * Directly downloads the official Compensation & Salary Structure Annexure as a PDF file,
+ * without any print preview or popup windows.
+ *
+ * jsPDF is loaded on first use, so the payroll screen does not carry a PDF library for people
+ * who never download one. Anything the record does not hold prints as "Not recorded": this is an
+ * official document, and a made-up company, branch or employee number on it would be a false one.
  */
-export function openSalaryStructurePrintView(options: SalaryStructureExportOptions) {
-  const { orgName, organizationName, branchName = 'Corporate HQ', employee, profile } = options;
-  const resolvedOrgName = orgName || organizationName || 'SmarTeam Technologies';
+export async function downloadSalaryStructurePdf(options: SalaryStructureExportOptions) {
+  const { jsPDF } = await import('jspdf');
+  const { orgName, organizationName, branchName, employee, profile } = options;
+  const resolvedOrgName = orgName || organizationName || NOT_RECORDED;
   const { salaryBreakdown, compensation, employeePolicy } = profile;
 
   const employeeName = employee ? `${employee.firstName} ${employee.lastName}`.trim() : 'Employee';
-  const employeeId = employee?.employeeNumber || '—';
+  const employeeId = employee?.employeeNumber || NOT_RECORDED;
   const email = employee?.workEmail || '—';
   const designation = employee?.employmentType
     ? employee.employmentType.replace(/_/g, ' ')
-    : 'Full Time Employee';
+    : NOT_RECORDED;
   const effectiveDate = compensation?.effectiveFrom
     ? compensation.effectiveFrom.slice(0, 10)
-    : new Date().toISOString().slice(0, 10);
+    : localDateKey();
   const generationDate = new Date().toLocaleDateString('en-IN', {
     year: 'numeric',
     month: 'long',
@@ -39,215 +56,232 @@ export function openSalaryStructurePrintView(options: SalaryStructureExportOptio
   const monthlyDeductions = salaryBreakdown.totalDeductions;
   const netTakeHome = salaryBreakdown.netPay;
 
-  const earningsRows = salaryBreakdown.earnings
-    .map(
-      (e) => `
-      <tr>
-        <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${e.name}</td>
-        <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-family: monospace;">${formatMoney(e.amount)}</td>
-        <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-family: monospace;">${formatMoney(e.amount * 12)}</td>
-      </tr>
-    `,
-    )
-    .join('');
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  let y = 38;
 
-  const deductionRows = salaryBreakdown.deductions
-    .map(
-      (d) => `
-      <tr>
-        <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${d.name} ${d.eligible === false && d.reason ? `<span style="font-size: 10px; color: #64748b;">(${d.reason})</span>` : ''}</td>
-        <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-family: monospace; color: #b91c1c;">-${formatMoney(d.amount)}</td>
-        <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-family: monospace; color: #b91c1c;">-${formatMoney(d.amount * 12)}</td>
-      </tr>
-    `,
-    )
-    .join('');
+  // 1. Top Header
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.setTextColor(15, 23, 42);
+  doc.text(resolvedOrgName.toUpperCase(), 40, y);
 
-  const employerRows = salaryBreakdown.employerBenefits
-    .map(
-      (b) => `
-      <tr>
-        <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0;">${b.name}</td>
-        <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-family: monospace;">${formatMoney(b.amount)}</td>
-        <td style="padding: 8px 12px; border-bottom: 1px solid #e2e8f0; text-align: right; font-family: monospace;">${formatMoney(b.amount * 12)}</td>
-      </tr>
-    `,
-    )
-    .join('');
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8.5);
+  doc.setTextColor(71, 85, 105);
+  doc.text('COMPENSATION & SALARY STRUCTURE ANNEXURE', 40, y + 14);
+  doc.text(`Date: ${generationDate}`, 555, y, { align: 'right' });
+  doc.text(
+    `Branch: ${branchName || NOT_RECORDED} · Jurisdiction: ${employeePolicy?.statutoryJurisdiction || NOT_RECORDED}`,
+    555,
+    y + 12,
+    { align: 'right' },
+  );
+  y += 24;
 
-  const htmlContent = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Salary Structure - ${employeeName} (${employeeId})</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a; margin: 0; padding: 24px; background: #fff; line-height: 1.4; }
-    .container { max-width: 800px; margin: 0 auto; border: 1px solid #cbd5e1; border-radius: 8px; padding: 32px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 16px; margin-bottom: 24px; }
-    .org-title { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; }
-    .doc-title { font-size: 13px; font-weight: 700; color: #475569; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
-    .meta-grid { display: grid; grid-template-cols: 1fr 1fr; grid-gap: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 14px 18px; margin-bottom: 24px; font-size: 12px; }
-    .kpi-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
-    .kpi-card { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; text-align: center; }
-    .kpi-title { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 4px; }
-    .kpi-value { font-size: 14px; font-weight: 800; font-family: monospace; color: #0f172a; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px; }
-    th { background: #f1f5f9; padding: 8px 12px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #475569; border-bottom: 2px solid #cbd5e1; }
-    .section-title { font-size: 13px; font-weight: 700; color: #0f172a; margin: 16px 0 8px 0; display: flex; justify-content: space-between; align-items: center; }
-    .total-row { background: #f8fafc; font-weight: 700; border-top: 2px solid #cbd5e1; }
-    .footer { margin-top: 32px; padding-top: 16px; border-top: 1px dashed #cbd5e1; font-size: 10px; color: #64748b; display: flex; justify-content: space-between; }
-    @media print {
-      body { padding: 0; }
-      .container { border: none; box-shadow: none; padding: 0; }
-      .no-print { display: none !important; }
+  doc.setDrawColor(15, 23, 42);
+  doc.setLineWidth(1.5);
+  doc.line(40, y, 555, y);
+  y += 12;
+
+  // 2. Employee Metadata Box
+  doc.setFillColor(248, 250, 252);
+  doc.setDrawColor(226, 232, 240);
+  doc.setLineWidth(0.75);
+  doc.roundedRect(40, y, 515, 46, 4, 4, 'FD');
+
+  doc.setFontSize(8.5);
+  doc.setTextColor(30, 41, 59);
+  doc.text(`Employee Name: ${employeeName}`, 50, y + 14);
+  doc.text(`Employee ID: ${employeeId}`, 50, y + 27);
+  doc.text(`Email: ${email}`, 50, y + 40);
+
+  doc.text(`Employment Type: ${designation}`, 310, y + 14);
+  doc.text(`Effective From: ${effectiveDate}`, 310, y + 27);
+  doc.text('Currency: INR (₹)', 310, y + 40);
+  y += 56;
+
+  // 3. KPI Summary Cards (Annual CTC, Monthly CTC, Monthly Gross, Net Take-Home)
+  const kpis = [
+    {
+      label: 'ANNUAL CTC',
+      val: formatPdfMoney(annualCtc),
+      bg: [239, 246, 255] as const,
+      border: [191, 219, 254] as const,
+      txt: [30, 64, 175] as const,
+    },
+    {
+      label: 'MONTHLY CTC',
+      val: formatPdfMoney(monthlyCtc),
+      bg: [241, 245, 249] as const,
+      border: [203, 213, 225] as const,
+      txt: [15, 23, 42] as const,
+    },
+    {
+      label: 'MONTHLY GROSS',
+      val: formatPdfMoney(monthlyGross),
+      bg: [241, 245, 249] as const,
+      border: [203, 213, 225] as const,
+      txt: [15, 23, 42] as const,
+    },
+    {
+      label: 'NET TAKE-HOME',
+      val: formatPdfMoney(netTakeHome),
+      bg: [236, 253, 245] as const,
+      border: [167, 243, 208] as const,
+      txt: [6, 95, 70] as const,
+    },
+  ];
+  const cardW = (515 - 3 * 8) / 4;
+  kpis.forEach((kpi, i) => {
+    const x = 40 + i * (cardW + 8);
+    doc.setFillColor(kpi.bg[0], kpi.bg[1], kpi.bg[2]);
+    doc.setDrawColor(kpi.border[0], kpi.border[1], kpi.border[2]);
+    doc.roundedRect(x, y, cardW, 34, 4, 4, 'FD');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7);
+    doc.setTextColor(kpi.txt[0], kpi.txt[1], kpi.txt[2]);
+    doc.text(kpi.label, x + cardW / 2, y + 11, { align: 'center' });
+    doc.setFontSize(8.5);
+    doc.setTextColor(15, 23, 42);
+    doc.text(kpi.val, x + cardW / 2, y + 25, { align: 'center' });
+  });
+  y += 44;
+
+  // Helper to render tabular breakdown
+  const renderTableSection = (
+    title: string,
+    items: Array<{ name: string; amount: number; reason?: string | null }>,
+    totalLabel: string,
+    totalMonthly: number,
+    totalAnnual: number,
+    isDeduction = false,
+  ) => {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.setTextColor(15, 23, 42);
+    doc.text(title, 40, y);
+    y += 5;
+
+    // Header
+    doc.setFillColor(241, 245, 249);
+    doc.setDrawColor(203, 213, 225);
+    doc.setLineWidth(0.5);
+    doc.rect(40, y, 515, 16, 'FD');
+    doc.setFontSize(7.5);
+    doc.setTextColor(71, 85, 105);
+    doc.text('COMPONENT NAME', 48, y + 11);
+    doc.text('MONTHLY', 420, y + 11, { align: 'right' });
+    doc.text('ANNUAL', 545, y + 11, { align: 'right' });
+    y += 16;
+
+    // Rows
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    if (items.length === 0) {
+      doc.setDrawColor(226, 232, 240);
+      doc.line(40, y + 15, 555, y + 15);
+      doc.setTextColor(100, 116, 139);
+      doc.text('None applicable.', 48, y + 11);
+      y += 15;
+    } else {
+      items.forEach((item) => {
+        doc.setDrawColor(226, 232, 240);
+        doc.line(40, y + 15, 555, y + 15);
+        doc.setTextColor(30, 41, 59);
+        const nameText = item.reason ? `${item.name} (${item.reason})` : item.name;
+        doc.text(nameText, 48, y + 11);
+        doc.setTextColor(isDeduction ? 185 : 30, isDeduction ? 28 : 41, isDeduction ? 28 : 59);
+        const prefix = isDeduction ? '-' : '';
+        doc.text(`${prefix}${formatPdfMoney(item.amount)}`, 420, y + 11, { align: 'right' });
+        doc.text(`${prefix}${formatPdfMoney(item.amount * 12)}`, 545, y + 11, { align: 'right' });
+        y += 15;
+      });
     }
-  </style>
-</head>
-<body>
-  <div class="no-print" style="max-width: 800px; margin: 0 auto 16px auto; display: flex; justify-content: flex-end; gap: 8px;">
-    <button onclick="window.print()" style="background: #0f172a; color: #fff; border: none; padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer;">Print / Save as PDF</button>
-    <button onclick="window.close()" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; padding: 8px 16px; font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer;">Close</button>
-  </div>
 
-  <div class="container">
-    <div class="header">
-      <div>
-        <h1 class="org-title">${resolvedOrgName}</h1>
-        <div class="doc-title">Compensation & Salary Structure Annexure</div>
-      </div>
-      <div style="text-align: right; font-size: 11px; color: #64748b;">
-        <div>Branch: <strong>${branchName}</strong></div>
-        <div>Date Generated: <strong>${generationDate}</strong></div>
-        <div>Jurisdiction: <strong>${employeePolicy?.statutoryJurisdiction || 'India'}</strong></div>
-      </div>
-    </div>
+    // Total Row
+    doc.setFillColor(248, 250, 252);
+    doc.setDrawColor(203, 213, 225);
+    doc.rect(40, y, 515, 16, 'FD');
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(isDeduction ? 185 : 15, isDeduction ? 28 : 23, isDeduction ? 28 : 42);
+    doc.text(totalLabel, 48, y + 11);
+    const totalPrefix = isDeduction ? '-' : '';
+    doc.text(`${totalPrefix}${formatPdfMoney(totalMonthly)}`, 420, y + 11, { align: 'right' });
+    doc.text(`${totalPrefix}${formatPdfMoney(totalAnnual)}`, 545, y + 11, { align: 'right' });
+    y += 24;
+  };
 
-    <div class="meta-grid">
-      <div>
-        <div>Employee Name: <strong>${employeeName}</strong></div>
-        <div>Employee ID: <strong>${employeeId}</strong></div>
-        <div>Email: <strong>${email}</strong></div>
-      </div>
-      <div>
-        <div>Employment Type: <strong style="text-transform: capitalize;">${designation}</strong></div>
-        <div>Effective From: <strong>${effectiveDate}</strong></div>
-        <div>Currency: <strong>INR (₹)</strong></div>
-      </div>
-    </div>
+  // Section 1: Earnings Components
+  renderTableSection(
+    '1. Earnings Components',
+    salaryBreakdown.earnings,
+    'Total Gross Earnings (A)',
+    monthlyGross,
+    monthlyGross * 12,
+  );
 
-    <div class="kpi-cards">
-      <div class="kpi-card" style="background: #eff6ff; border-color: #bfdbfe;">
-        <div class="kpi-title" style="color: #1e40af;">Annual CTC</div>
-        <div class="kpi-value" style="color: #1e3a8a;">${formatMoney(annualCtc)}</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Monthly CTC</div>
-        <div class="kpi-value">${formatMoney(monthlyCtc)}</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-title">Monthly Gross</div>
-        <div class="kpi-value">${formatMoney(monthlyGross)}</div>
-      </div>
-      <div class="kpi-card" style="background: #ecfdf5; border-color: #a7f3d0;">
-        <div class="kpi-title" style="color: #065f46;">Net Take-Home</div>
-        <div class="kpi-value" style="color: #064e3b;">${formatMoney(netTakeHome)}</div>
-      </div>
-    </div>
+  // Section 2: Employee Deductions
+  renderTableSection(
+    '2. Employee Statutory Deductions',
+    salaryBreakdown.deductions.map((d) => ({
+      name: d.name,
+      amount: d.amount,
+      reason: d.eligible === false ? d.reason : null,
+    })),
+    'Total Deductions (B)',
+    monthlyDeductions,
+    monthlyDeductions * 12,
+    true,
+  );
 
-    <!-- 1. Earnings Breakdown -->
-    <div class="section-title">
-      <span>1. Earnings Components</span>
-      <span style="font-size: 11px; font-family: monospace;">Monthly: ${formatMoney(monthlyGross)} | Annual: ${formatMoney(monthlyGross * 12)}</span>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Component Name</th>
-          <th style="text-align: right;">Monthly (₹)</th>
-          <th style="text-align: right;">Annual (₹)</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${earningsRows}
-        <tr class="total-row">
-          <td style="padding: 8px 12px;">Total Gross Earnings (A)</td>
-          <td style="padding: 8px 12px; text-align: right; font-family: monospace;">${formatMoney(monthlyGross)}</td>
-          <td style="padding: 8px 12px; text-align: right; font-family: monospace;">${formatMoney(monthlyGross * 12)}</td>
-        </tr>
-      </tbody>
-    </table>
+  // Section 3: Employer Contributions & Retirals
+  renderTableSection(
+    '3. Employer Contributions & Retirals',
+    salaryBreakdown.employerBenefits,
+    'Total Employer Contributions (C)',
+    monthlyBenefits,
+    monthlyBenefits * 12,
+  );
 
-    <!-- 2. Employee Deductions -->
-    <div class="section-title">
-      <span>2. Employee Statutory Deductions</span>
-      <span style="font-size: 11px; font-family: monospace; color: #b91c1c;">Monthly: -${formatMoney(monthlyDeductions)} | Annual: -${formatMoney(monthlyDeductions * 12)}</span>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Deduction Item</th>
-          <th style="text-align: right;">Monthly (₹)</th>
-          <th style="text-align: right;">Annual (₹)</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${deductionRows || '<tr><td colspan="3" style="padding: 8px 12px; color: #64748b;">No employee deductions applicable.</td></tr>'}
-        <tr class="total-row">
-          <td style="padding: 8px 12px;">Total Deductions (B)</td>
-          <td style="padding: 8px 12px; text-align: right; font-family: monospace; color: #b91c1c;">-${formatMoney(monthlyDeductions)}</td>
-          <td style="padding: 8px 12px; text-align: right; font-family: monospace; color: #b91c1c;">-${formatMoney(monthlyDeductions * 12)}</td>
-        </tr>
-      </tbody>
-    </table>
+  // Net Take-Home Highlight
+  doc.setFillColor(248, 250, 252);
+  doc.setDrawColor(15, 23, 42);
+  doc.setLineWidth(1);
+  doc.roundedRect(40, y, 515, 32, 4, 4, 'FD');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8.5);
+  doc.setTextColor(15, 23, 42);
+  doc.text('NET MONTHLY IN-HAND / TAKE-HOME PAY (A - B)', 50, y + 13);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7);
+  doc.setTextColor(100, 116, 139);
+  doc.text('Subject to applicable income tax (TDS) and individual declarations', 50, y + 24);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(15, 23, 42);
+  doc.text(formatPdfMoney(netTakeHome), 545, y + 20, { align: 'right' });
+  y += 42;
 
-    <!-- 3. Employer Benefits & CTC -->
-    <div class="section-title">
-      <span>3. Employer Contributions & Retirals (CTC Components)</span>
-      <span style="font-size: 11px; font-family: monospace;">Monthly: ${formatMoney(monthlyBenefits)} | Annual: ${formatMoney(monthlyBenefits * 12)}</span>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th>Employer Contribution</th>
-          <th style="text-align: right;">Monthly (₹)</th>
-          <th style="text-align: right;">Annual (₹)</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${employerRows || '<tr><td colspan="3" style="padding: 8px 12px; color: #64748b;">No employer contributions applicable.</td></tr>'}
-        <tr class="total-row">
-          <td style="padding: 8px 12px;">Total Employer Contributions (C)</td>
-          <td style="padding: 8px 12px; text-align: right; font-family: monospace;">${formatMoney(monthlyBenefits)}</td>
-          <td style="padding: 8px 12px; text-align: right; font-family: monospace;">${formatMoney(monthlyBenefits * 12)}</td>
-        </tr>
-      </tbody>
-    </table>
+  // Footer
+  doc.setDrawColor(226, 232, 240);
+  doc.setLineWidth(0.5);
+  doc.line(40, y, 555, y);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7);
+  doc.setTextColor(148, 163, 184);
+  doc.text(
+    `This is an official system-generated compensation schedule issued by ${resolvedOrgName}. Confidential · Smarteam`,
+    40,
+    y + 10,
+  );
 
-    <!-- Net In-Hand Summary -->
-    <div style="background: #f8fafc; border: 2px solid #0f172a; border-radius: 6px; padding: 12px 16px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
-      <div>
-        <div style="font-size: 13px; font-weight: 800; text-transform: uppercase;">Net Monthly In-Hand / Take-Home Pay (A - B)</div>
-        <div style="font-size: 11px; color: #64748b;">Subject to applicable income tax (TDS) and individual investment declarations.</div>
-      </div>
-      <div style="font-size: 18px; font-weight: 900; font-family: monospace; color: #0f172a;">${formatMoney(netTakeHome)}</div>
-    </div>
-
-    <div class="footer">
-      <div>This is a system-generated compensation schedule issued by ${resolvedOrgName}.</div>
-      <div>Confidential · SmarTeam HRMS</div>
-    </div>
-  </div>
-</body>
-</html>
-  `;
-
-  const printWindow = window.open('', '_blank');
-  if (printWindow) {
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
-  }
+  // Direct download
+  const safeEmployeeName = employeeName.replace(/\s+/g, '_');
+  doc.save(`Salary_Structure_${employee?.employeeNumber || 'employee'}_${safeEmployeeName}.pdf`);
 }
+
+/** Legacy alias for backwards compatibility */
+export const openSalaryStructurePrintView = downloadSalaryStructurePdf;
 
 /**
  * Downloads a structured CSV spreadsheet of the complete salary structure.
@@ -257,7 +291,7 @@ export function downloadSalaryStructureCsv(options: SalaryStructureExportOptions
   const { salaryBreakdown } = profile;
 
   const employeeName = employee ? `${employee.firstName} ${employee.lastName}`.trim() : 'Employee';
-  const employeeId = employee?.employeeNumber || 'EMP';
+  const employeeId = employee?.employeeNumber || 'employee';
 
   const rows: string[][] = [
     ['Category', 'Component Code', 'Component Name', 'Monthly Amount (INR)', 'Annual Amount (INR)'],

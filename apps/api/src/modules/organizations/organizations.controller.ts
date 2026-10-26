@@ -1,14 +1,15 @@
-import { Body, Controller, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
 import type { Request } from 'express';
 import { DomainContextFactory } from '../../common/context/domain-context.factory';
 import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import { PlatformAuthGuard } from '../platform/platform-auth.guard';
 import {
   BranchDeactivationDto,
-  BranchDto,
+  PrimaryBranchDto,
   CreateOrganizationDto,
   OnboardOrganizationDto,
   SourceChangeDto,
+  NativeBranchDto,
   UpdateBranchDto,
   UpdateOrganizationDto,
 } from './organizations.dto';
@@ -43,12 +44,35 @@ export class OrganizationsController {
   @Post(':organizationId/branches')
   async createBranch(
     @Param('organizationId') organizationId: string,
-    @Body() body: BranchDto,
+    @Body() body: NativeBranchDto,
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.organizations.createBranch(
       await this.contexts.native(request.user.userId, organizationId),
       body,
+    );
+  }
+
+  /** Declared before `branches/:branchId`, so "primary" is never read as a branch id. */
+  @Get(':organizationId/branches/primary')
+  async primaryBranch(
+    @Param('organizationId') organizationId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.organizations.primaryBranch(
+      await this.contexts.native(request.user.userId, organizationId),
+    );
+  }
+
+  @Put(':organizationId/branches/primary')
+  async setPrimaryBranch(
+    @Param('organizationId') organizationId: string,
+    @Body() body: PrimaryBranchDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.organizations.setPrimaryBranch(
+      await this.contexts.native(request.user.userId, organizationId),
+      body.branchId,
     );
   }
 
@@ -59,6 +83,18 @@ export class OrganizationsController {
     @Req() request: Request & { user: NativeRequestUser },
   ) {
     return this.organizations.getBranch(
+      await this.contexts.native(request.user.userId, organizationId),
+      branchId,
+    );
+  }
+
+  @Get(':organizationId/branches/:branchId/overview')
+  async branchOverview(
+    @Param('organizationId') organizationId: string,
+    @Param('branchId') branchId: string,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.organizations.branchOverview(
       await this.contexts.native(request.user.userId, organizationId),
       branchId,
     );

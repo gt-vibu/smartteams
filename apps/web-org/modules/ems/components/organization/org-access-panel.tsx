@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import type { OrganizationMember, RoleWithPermissions } from '@smarteam/contracts';
-import { Button } from '@smarteam/ui';
+import { LoadingIndicator, Button } from '@smarteam/ui';
 import { useAccessControl } from '../../hooks/use-access-control';
 import { Unavailable } from './org-profile-panel';
 import { AccessAddMemberDialog } from './access-add-member-dialog';
 import { AccessCreateRoleDialog } from './access-create-role-dialog';
+import { AccessEditRoleDialog } from './access-edit-role-dialog';
 import { AccessManageDrawer } from './access-manage-drawer';
 import { AccessSelfEnrollDialog } from './access-self-enroll-dialog';
 import { useSession } from '../../hooks/auth-context';
@@ -25,8 +26,11 @@ export function OrgAccessPanel() {
   const [managing, setManaging] = useState<OrganizationMember | null>(null);
   const [addingMember, setAddingMember] = useState(false);
   const [creatingRole, setCreatingRole] = useState(false);
+  // Held by id, so a reloaded role list shows the dialog the role as the server now has it.
+  const [editingRoleId, setEditingRoleId] = useState<string | null>(null);
   const [enrollingSelf, setEnrollingSelf] = useState(false);
   const { persona } = useSession();
+  const profileCount = access.roles.length;
 
   if (!access.canReadMembers && !access.canReadRoles) {
     return (
@@ -65,7 +69,7 @@ export function OrgAccessPanel() {
             type="button"
             variant="ghost"
           >
-            Roles{access.roles.length ? ` (${access.roles.length})` : ''}
+            Access profiles{profileCount ? ` (${profileCount})` : ''}
           </Button>
         </div>
 
@@ -87,11 +91,17 @@ export function OrgAccessPanel() {
           )}
           {view === 'roles' && access.canManageAccess && (
             <Button onClick={() => setCreatingRole(true)} size="sm" type="button">
-              Create role
+              Create access profile
             </Button>
           )}
         </div>
       </div>
+
+      <p className="text-[11px] text-muted-foreground">
+        Access profiles control organization permissions. Employee provides baseline self-service
+        access; Manager adds approval access, HR Admin supports people operations, and Organization
+        Admin has full access. Job titles and team or project responsibilities remain separate.
+      </p>
 
       {access.lastTemporaryPassword && (
         <div className="flex items-start justify-between gap-3 rounded-md border border-amber-300 bg-amber-50 px-3 py-2.5 text-xs dark:border-amber-800 dark:bg-amber-950/40">
@@ -125,9 +135,7 @@ export function OrgAccessPanel() {
       )}
 
       {access.loading ? (
-        <p className="py-8 text-center text-xs text-muted-foreground" role="status">
-          Loading...
-        </p>
+        <LoadingIndicator variant="panel" label="Preparing content" className="py-8 text-center text-xs text-muted-foreground" />
       ) : view === 'people' ? (
         <PeopleTable
           canManage={access.canManageAccess}
@@ -136,7 +144,15 @@ export function OrgAccessPanel() {
           onManage={setManaging}
         />
       ) : (
-        <RolesTable canRead={access.canReadRoles} roles={access.roles} />
+        <RolesTable
+          canManage={access.canManageAccess}
+          canRead={access.canReadRoles}
+          onEdit={(role) => {
+            setEditingRoleId(role.id);
+          }}
+          roles={access.roles}
+          members={access.canReadMembers ? access.members : null}
+        />
       )}
 
       <AccessManageDrawer
@@ -163,6 +179,14 @@ export function OrgAccessPanel() {
         isOpen={enrollingSelf}
         onClose={() => setEnrollingSelf(false)}
         onEnroll={access.enrollSelfAsEmployee}
+        saveError={access.saveError}
+        saving={access.saving}
+      />
+      <AccessEditRoleDialog
+        onClose={() => setEditingRoleId(null)}
+        onSave={access.updateRolePermissions}
+        ownPermissions={access.ownPermissions}
+        role={access.roles.find((role) => role.id === editingRoleId) ?? null}
         saveError={access.saveError}
         saving={access.saving}
       />
@@ -229,7 +253,7 @@ function PeopleTable({
                     </span>
                   )}
                 </td>
-                <td data-label="Status" className="px-4 py-2.5">
+                <td data-cell="status" data-label="Status" className="px-4 py-2.5">
                   <span
                     className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${
                       member.isActive
@@ -262,15 +286,28 @@ function PeopleTable({
   );
 }
 
-function RolesTable({ canRead, roles }: { canRead: boolean; roles: RoleWithPermissions[] }) {
+function RolesTable({
+  canRead,
+  canManage,
+  onEdit,
+  roles,
+  members,
+}: {
+  canRead: boolean;
+  canManage: boolean;
+  onEdit: (role: RoleWithPermissions) => void;
+  roles: RoleWithPermissions[];
+  members: OrganizationMember[] | null;
+}) {
   if (!canRead)
     return <Unavailable detail="You do not have permission to view roles." title="Not available" />;
-  if (roles.length === 0)
+  const visibleRoles = roles;
+  if (visibleRoles.length === 0)
     return <Unavailable detail="No roles exist yet." title="Nothing here yet" />;
 
   return (
     <div className="grid gap-3 sm:grid-cols-2">
-      {roles.map((role) => (
+      {visibleRoles.map((role) => (
         <section className="rounded-xl border border-border bg-card p-4" key={role.id}>
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-xs font-bold text-foreground">{role.name}</h3>
@@ -287,9 +324,25 @@ function RolesTable({ canRead, roles }: { canRead: boolean; roles: RoleWithPermi
           {role.description && (
             <p className="mt-1 text-[11px] text-muted-foreground">{role.description}</p>
           )}
-          <p className="mt-2 text-[11px] text-muted-foreground">
-            {role.permissions.length} permission{role.permissions.length === 1 ? '' : 's'}
-          </p>
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-[11px] text-muted-foreground">
+              {role.code === 'ORG_ADMIN'
+                ? 'Full access to everything'
+                : `${role.permissions.length} permission${role.permissions.length === 1 ? '' : 's'}`}
+            </p>
+            <p className="text-[11px] text-muted-foreground">
+              {members === null
+                ? 'Assigned users unavailable'
+                : `${members.filter((member) => member.roles.some((assigned) => assigned.id === role.id)).length} assigned`}
+            </p>
+            {/* The administrator role holds everything and is the way back from any mistake, so
+                it is never edited; the API refuses it too. */}
+            {canManage && role.code !== 'ORG_ADMIN' && (
+              <Button onClick={() => onEdit(role)} size="sm" type="button" variant="outline">
+                Edit permissions
+              </Button>
+            )}
+          </div>
         </section>
       ))}
     </div>

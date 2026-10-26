@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Badge, Button, SegmentedTabs } from '@smarteam/ui';
-import { formatWorkMinutes } from '@smarteam/contracts';
+import { LoadingIndicator, Badge, Button, SelectContent, SelectItem, SelectMenu, SelectTrigger, SelectValue } from '@smarteam/ui';
+import { formatWorkMinutes, formatDate } from '@smarteam/contracts';
 import { useTimesheet } from '../../hooks/use-timesheet';
-import { toDayGroups } from '../../services/timesheet-view';
+import { periodLabel, summarize, toDayGroups } from '../../services/timesheet-view';
 import { LogTimeModal } from '../screen-6-logtime/logtime-modal';
 import { PageShell } from '../layout/page-shell';
-import { Briefcase, Clock, Plus } from 'lucide-react';
+import { Briefcase, CalendarDays, Clock, Plus } from 'lucide-react';
+import { statusLabel } from '../../lib/status-label';
 
 /**
  * The employee's own time log.
@@ -22,13 +23,12 @@ export function Screen5TimeTracker() {
   const [periodId, setPeriodId] = useState<string | null>(null);
 
   const selected = timesheet.timesheets.find((sheet) => sheet.id === periodId) ?? timesheet.current;
+  const selectedSummary = React.useMemo(() => summarize(selected ? [selected] : []), [selected]);
   const groups = React.useMemo(() => toDayGroups(selected), [selected]);
 
   const tabs = timesheet.timesheets.slice(0, 10).map((sheet) => {
     const period = sheet.period;
-    const label = period
-      ? `${period.periodStart.slice(0, 10)}${period.periodType !== 'WEEKLY' ? ` (${period.periodType.toLowerCase()})` : ''}`
-      : 'Period';
+    const label = period ? periodLabel(period) : 'Period';
     return {
       id: sheet.id,
       label,
@@ -42,23 +42,37 @@ export function Screen5TimeTracker() {
   });
 
   return (
-    <PageShell>
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-2">
+    <PageShell className="pb-28 md:pb-0">
+      {/* Periods on the left, actions on the right on every width: Log Time holds the top-right
+          corner, and the status actions wrap beneath it rather than under the periods. */}
+      <div className="flex items-center justify-between gap-2 border-b border-border pb-2">
         {tabs.length > 0 ? (
-          <SegmentedTabs
-            aria-label="Timesheet periods"
-            items={tabs}
-            onValueChange={setPeriodId}
-            value={selected?.id ?? ''}
-          />
+          <div className="min-w-0 flex-1 sm:max-w-xs">
+            <SelectMenu
+              aria-label="Timesheet month"
+              onValueChange={setPeriodId}
+              value={selected?.id ?? ''}
+            >
+              <SelectTrigger className="h-10 gap-2 text-sm">
+                <CalendarDays aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
+                <SelectValue placeholder="Choose a month" />
+              </SelectTrigger>
+              <SelectContent>
+                {tabs.map((period) => (
+                  <SelectItem key={period.id} value={period.id}>{period.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </SelectMenu>
+          </div>
         ) : (
           <div className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5 py-1">
             <Clock className="h-4 w-4" />
-            <span>Time Tracker</span>
+            <span>Timesheet</span>
           </div>
         )}
 
-        <div className="flex items-center gap-2">
+        {/* Reversed so the first action, Log Time, sits at the right end of the first line. */}
+        <div className="flex shrink-0 flex-row-reverse flex-wrap items-center gap-2">
           {timesheet.canWrite && (
             <Button
               onClick={() => setIsLogOpen(true)}
@@ -67,7 +81,7 @@ export function Screen5TimeTracker() {
               className="gap-1.5 text-xs font-semibold shadow-xs cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
-              <span>Log Time</span>
+              <span>Log time</span>
             </Button>
           )}
 
@@ -77,10 +91,11 @@ export function Screen5TimeTracker() {
               onClick={() => void timesheet.submit(selected.id)}
               size="sm"
               type="button"
-              variant="outline"
+              className="hidden sm:inline-flex"
+              variant="default"
               title={selected.totalMinutes <= 0 ? 'Log time entries before submitting' : undefined}
             >
-              {timesheet.saving ? 'Submitting...' : 'Submit'}
+              {timesheet.saving ? 'Submitting…' : 'Submit'}
             </Button>
           )}
 
@@ -94,7 +109,7 @@ export function Screen5TimeTracker() {
                 variant="ghost"
                 className="text-xs text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/50"
               >
-                Recall to Draft
+                Recall to draft
               </Button>
               <div className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-md border border-amber-200 dark:border-amber-800/60 font-medium">
                 <span>Submitted</span>
@@ -117,9 +132,7 @@ export function Screen5TimeTracker() {
       )}
 
       {timesheet.loading && (
-        <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-          Loading timesheets...
-        </p>
+        <LoadingIndicator variant="panel" label="Loading timesheets" className="py-10 text-center text-xs text-muted-foreground" />
       )}
 
       {!timesheet.loading && timesheet.forbidden && (
@@ -157,10 +170,10 @@ export function Screen5TimeTracker() {
         <>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              ['Total', timesheet.summary.totalLabel],
-              ['Submitted', timesheet.summary.submittedLabel],
-              ['Approved', timesheet.summary.approvedLabel],
-              ['Not submitted', timesheet.summary.notSubmittedLabel],
+              ['Total', selectedSummary.totalLabel],
+              ['Submitted', selectedSummary.submittedLabel],
+              ['Approved', selectedSummary.approvedLabel],
+              ['Not submitted', selectedSummary.notSubmittedLabel],
             ].map(([label, value]) => (
               <div className="rounded-lg border border-border bg-card p-3.5" key={label}>
                 <p className="text-[11px] text-muted-foreground">{label}</p>
@@ -178,7 +191,7 @@ export function Screen5TimeTracker() {
           {selected && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Badge variant={selected.status === 'APPROVED' ? 'secondary' : 'outline'}>
-                {selected.status}
+                {statusLabel(selected.status)}
               </Badge>
               <span>
                 {formatWorkMinutes(selected.regularMinutes)} regular ·{' '}
@@ -194,8 +207,8 @@ export function Screen5TimeTracker() {
               </div>
               <p className="text-sm font-semibold text-foreground">No time entries recorded yet</p>
               <p className="mt-1 text-xs text-muted-foreground max-w-sm">
-                Click <strong>Log Time</strong> above to log work against your assigned projects and
-                jobs.
+                Select <strong>Log time</strong> above to log work against your assigned projects
+                and jobs.
               </p>
             </div>
           ) : (
@@ -206,10 +219,10 @@ export function Screen5TimeTracker() {
                   key={group.workDate}
                 >
                   <div className="flex items-center justify-between bg-muted/40 px-4 py-2">
-                    <span className="font-mono text-xs font-semibold text-foreground">
-                      {group.workDate}
+                    <span className="text-xs font-semibold text-foreground">
+                      {formatDate(group.workDate)}
                     </span>
-                    <span className="text-xs font-mono font-medium tabular-nums text-muted-foreground">
+                    <span className="text-xs font-medium tabular-nums text-muted-foreground">
                       {group.totalLabel}
                     </span>
                   </div>
@@ -234,13 +247,13 @@ export function Screen5TimeTracker() {
                             </span>
                           )}
                           {entry.workItem && (
-                            <span className="text-[11px] font-mono text-muted-foreground">
+                            <span className="text-[11px] text-muted-foreground">
                               #{entry.workItem}
                             </span>
                           )}
                           {entry.billable === false && (
                             <Badge variant="secondary" className="text-[9px]">
-                              Non-Billable
+                              Non-billable
                             </Badge>
                           )}
                         </div>
@@ -252,11 +265,11 @@ export function Screen5TimeTracker() {
                       </div>
                       <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
                         {entry.startTime && entry.endTime && (
-                          <span className="text-[11px] font-mono text-muted-foreground">
+                          <span className="text-[11px] tabular-nums text-muted-foreground">
                             {entry.startTime} - {entry.endTime}
                           </span>
                         )}
-                        <span className="font-mono text-xs font-bold tabular-nums text-foreground bg-muted/30 px-2 py-1 rounded">
+                        <span className="text-xs font-semibold tabular-nums text-foreground bg-muted/30 px-2 py-1 rounded">
                           {entry.label}
                         </span>
                       </div>
@@ -269,20 +282,32 @@ export function Screen5TimeTracker() {
         </>
       )}
 
+      {timesheet.canWrite && selected?.status === 'DRAFT' && (
+        <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 border-t border-border bg-background/95 px-4 py-2 backdrop-blur sm:hidden">
+          <Button
+            className="w-full"
+            disabled={timesheet.saving || selected.totalMinutes <= 0}
+            onClick={() => void timesheet.submit(selected.id)}
+            type="button"
+          >
+            {timesheet.saving ? 'Submitting…' : 'Submit timesheet'}
+          </Button>
+        </div>
+      )}
+
       <LogTimeModal
         isOpen={isLogOpen}
         onClose={() => setIsLogOpen(false)}
-        onSubmit={(input) => timesheet.addEntry(input, selected?.id)}
+        // Filed by its date: the server finds or opens the period that holds it, so time can be
+        // logged for any day worked without an administrator opening a period first.
+        onSubmit={(input) => timesheet.addEntry(input)}
         projects={timesheet.projects}
         jobTypes={timesheet.jobTypes}
         // Each quick-add is offered only to someone the API will let use it: job types need
         // `timesheets.write`, projects the Projects module's `projects.write`.
         onCreateJobType={timesheet.canWrite ? timesheet.createJobType : undefined}
         onCreateProject={timesheet.canCreateProject ? timesheet.quickCreateProject : undefined}
-        periodStart={
-          selected?.period?.periodStart ? selected.period.periodStart.slice(0, 10) : undefined
-        }
-        periodEnd={selected?.period?.periodEnd ? selected.period.periodEnd.slice(0, 10) : undefined}
+        periodEnd={new Intl.DateTimeFormat('en-CA').format(new Date())}
         saveError={timesheet.saveError}
         saving={timesheet.saving}
       />

@@ -1,0 +1,28 @@
+/// Someone away hands their approvals to a colleague for a span of days. Once the colleague accepts
+/// (or at once, when an administrator sets it up), the delegate may decide whatever the delegator
+/// could while it runs; the delegator keeps that right too.
+model ApprovalDelegation {
+  id              String    @id @default(uuid()) @db.Uuid
+  organizationId  String    @map("organization_id") @db.Uuid
+  delegatorUserId String    @map("delegator_user_id") @db.Uuid
+  delegateUserId  String    @map("delegate_user_id") @db.Uuid
+  /// Calendar days, both included.
+  startsOn        DateTime  @map("starts_on") @db.Date
+  endsOn          DateTime  @map("ends_on") @db.Date
+  reason          String?
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  revokedAt       DateTime? @map("revoked_at") @db.Timestamptz(6)
+  /// Null until the person covering accepts. An administrator's handover is accepted when made.
+  acceptedAt      DateTime? @map("accepted_at") @db.Timestamptz(6)
+  declinedAt      DateTime? @map("declined_at") @db.Timestamptz(6)
+  /// Who set it up: the person away, or an administrator on their behalf.
+  createdByUserId String?   @map("created_by_user_id") @db.Uuid
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  delegator    User         @relation("DelegationsGiven", fields: [delegatorUserId], references: [id], onDelete: Restrict)
+  delegate     User         @relation("DelegationsReceived", fields: [delegateUserId], references: [id], onDelete: Restrict)
+
+  @@index([organizationId, delegateUserId, startsOn, endsOn])
+  @@index([organizationId, delegatorUserId, startsOn, endsOn])
+  @@map("approval_delegations")
+}

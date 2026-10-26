@@ -3,20 +3,28 @@ import { Prisma } from '../../generated/prisma/client';
 import { SalarySlipMode } from '../../generated/prisma/enums';
 import { requirePermission, type DomainContext } from '../../common/context/domain-context';
 import { ConflictError, NotFoundError } from '../../common/errors/domain-error';
+import { unmarkedDaysAreAbsent } from '../attendance/attendance-work-week.service';
 import { TenantDatabaseService } from '../../infrastructure/database/tenant-database.service';
 import { calculateSalaryStructure } from './payroll-salary-structure';
 import {
   countWorkingDays,
+  eligibleOptionalHolidayDates,
+  monthlyWorkdayUnits,
+  payrollPeriodCutoffs,
   summarizeAttendance,
   summarizeLeave,
   sumTimesheets,
   unemployedDays,
 } from './payroll-calculation';
 import { computePayrollLine } from './payroll-line-calculator';
+import { sumOvertimeByDayType } from './payroll-overtime-split';
+import { readOvertimeRates } from './payroll-overtime-rates';
 import { TimesheetStatus } from '../../generated/prisma/enums';
 import { dateOnly, type PreviewInput } from './payroll-policy.types';
 import { employeeScope, findPolicy, resolveEmployeeId } from './payroll-policy-access';
 import { DEFAULT_PAYROLL_POLICY } from './payroll-policy-defaults';
+import { readAdvanceRules, recoveryInstalment } from './payroll-advance-rules';
+import { effectivePolicyComponents, policyComponentDefaults } from './payroll-policy-components';
 
 @Injectable()
 export class PayrollPreviewService {
@@ -44,10 +52,11 @@ export class PayrollPreviewService {
           ...employeeScope(context),
         },
         include: {
+          holidayPolicy: { select: { allowanceOverride: true } },
           compensations: {
             where: {
               effectiveFrom: { lte: periodEnd },
-              OR: [{ effectiveTo: null }, { effectiveTo: { gte: periodStart } }],
+              OR: [{ effectiveTo: null }, { effectiveTo: { gte: periodEnd } }],
             },
             orderBy: { effectiveFrom: 'desc' },
             take: 1,
@@ -59,6 +68,9 @@ export class PayrollPreviewService {
             },
             orderBy: { effectiveFrom: 'desc' },
             take: 1,
+            include: {
+              payrollPolicy: { include: { components: { include: { payComponent: true } } } },
+            },
           },
           // Assembled exactly as the run assembles them: they are part of the pay.
           payComponents: {
@@ -72,15 +84,27 @@ export class PayrollPreviewService {
         },
       });
       if (!employee) throw new NotFoundError('Employee');
-      const policy =
-        (await findPolicy(tx, context.organizationId, periodStart)) ?? DEFAULT_PAYROLL_POLICY;
       const compensation = employee.compensations[0];
       if (!compensation) throw new ConflictError('Employee has no salary profile for this period');
       const employeePolicy = employee.payrollPolicies[0];
+      const organizationPolicy =
+        (await findPolicy(tx, context.organizationId, periodStart)) ?? DEFAULT_PAYROLL_POLICY;
+      const policy = employeePolicy?.payrollPolicyId
+        ? ((await findPolicy(
+            tx,
+            context.organizationId,
+            periodStart,
+            employeePolicy.payrollPolicyId,
+            employeePolicy.effectiveFrom,
+          )) ?? DEFAULT_PAYROLL_POLICY)
+        : context.accessMode === 'NATIVE'
+          ? organizationPolicy
+          : DEFAULT_PAYROLL_POLICY;
+      if (!(employeePolicy?.payrollEnabled ?? policy.payrollEnabledDefault))
+        throw new ConflictError('Payroll is disabled for this employee');
       const gross = compensation.grossSalary ?? compensation.baseAmount;
       const monthlyStructure = calculateSalaryStructure(gross, policy);
-      const today = dateOnly(new Date().toISOString());
-      const measuredEnd = today < periodEnd ? today : periodEnd;
+      const { measuredEnd, absenceEnd } = payrollPeriodCutoffs(periodStart, periodEnd);
       const [settings, holidays, employeeHolidaySelections, approvedTimesheets] = await Promise.all(
         [
           tx.organizationSettings.findUniqueOrThrow({
@@ -105,12 +129,22 @@ export class PayrollPreviewService {
               holiday: {
                 isActive: true,
                 isOptional: true,
-                holidayDate: { gte: periodStart, lte: periodEnd },
+                holidayDate:
+                  context.accessMode === 'NATIVE'
+                    ? {
+                        gte: new Date(Date.UTC(periodStart.getUTCFullYear(), 0, 1)),
+                        lt: new Date(Date.UTC(periodEnd.getUTCFullYear() + 1, 0, 1)),
+                      }
+                    : { gte: periodStart, lte: periodEnd },
               },
             },
             select: {
+              id: true,
+              year: true,
+              selectedAt: true,
               holiday: { select: { holidayDate: true } },
             },
+            orderBy: [{ year: 'asc' }, { selectedAt: 'asc' }, { id: 'asc' }],
           }),
           tx.timesheet.findMany({
             where: {
@@ -122,14 +156,19 @@ export class PayrollPreviewService {
           }),
         ],
       );
-      const [attendanceRecords, approvedLeaves] = await Promise.all([
+      const [attendanceRecords, approvedLeaves, acceptedLeaveOverlapReviews] = await Promise.all([
         tx.attendanceRecord.findMany({
           where: {
             organizationId: context.organizationId,
             employeeId,
             workDate: { gte: periodStart, lte: measuredEnd },
           },
-          select: { dayStatus: true },
+          select: {
+            dayStatus: true,
+            workDate: true,
+            overtimeMinutes: true,
+            overtimeDayType: true,
+          },
         }),
         tx.leaveRequest.findMany({
           where: {
@@ -140,27 +179,87 @@ export class PayrollPreviewService {
             endDate: { gte: periodStart },
           },
           select: {
+            id: true,
             startDate: true,
             endDate: true,
             requestedDays: true,
+            session: true,
+            chargedDates: true,
             leaveType: { select: { paid: true } },
           },
         }),
+        context.accessMode === 'NATIVE'
+          ? tx.attendanceLeaveOverlapReview.findMany({
+              where: {
+                organizationId: context.organizationId,
+                employeeId,
+                status: 'APPROVED',
+                workDate: { gte: periodStart, lte: periodEnd },
+              },
+              select: { leaveRequestId: true, leaveUnits: true },
+            })
+          : Promise.resolve([]),
       ]);
-      const attendance = summarizeAttendance(attendanceRecords);
-      const leave = summarizeLeave(approvedLeaves, periodStart, measuredEnd);
+      const acceptedOverlapUnitsByRequest = new Map<string, number>();
+      for (const review of acceptedLeaveOverlapReviews)
+        acceptedOverlapUnitsByRequest.set(
+          review.leaveRequestId,
+          (acceptedOverlapUnitsByRequest.get(review.leaveRequestId) ?? 0) +
+            Number(review.leaveUnits),
+        );
+      const employeeSelectedDates =
+        context.accessMode === 'NATIVE'
+          ? (eligibleOptionalHolidayDates(
+              employeeHolidaySelections.map((selection) => ({ ...selection, employeeId })),
+              () => employee.holidayPolicy?.allowanceOverride ?? settings.optionalHolidayAllowance,
+            ).get(employeeId) ?? [])
+          : employeeHolidaySelections.map((selection) =>
+              selection.holiday.holidayDate.toISOString().slice(0, 10),
+            );
+      const attendance = summarizeAttendance(
+        attendanceRecords.filter((record) => absenceEnd !== null && record.workDate <= absenceEnd),
+        !unmarkedDaysAreAbsent(settings.metadata) || absenceEnd === null
+          ? undefined
+          : {
+              periodStart,
+              periodEnd: absenceEnd,
+              workWeekDays: settings.workWeekDays,
+              holidays,
+              branchId: employee.primaryBranchId,
+              leaves: approvedLeaves,
+              employeeSelectedDates,
+              skipNonworkingDays: context.accessMode === 'NATIVE',
+              dateOfJoining: employee.dateOfJoining,
+              dateOfLeaving: employee.dateOfLeaving,
+            },
+      );
+      const leave = summarizeLeave(
+        approvedLeaves,
+        periodStart,
+        measuredEnd,
+        acceptedOverlapUnitsByRequest,
+      );
       // Preview measures the period only as far as today. That is the ONE deliberate difference
       // from a released run, and it is the reason a mid-month preview is smaller than the final
       // figure — every other input below is now read exactly as `calculate` reads it.
-      const notEmployedDays = unemployedDays(
-        periodStart,
-        measuredEnd,
-        employee.dateOfJoining,
-        employee.dateOfLeaving,
-      );
+      const notEmployedDays =
+        context.accessMode === 'NATIVE'
+          ? unemployedDays(
+              periodStart,
+              periodEnd,
+              employee.dateOfJoining,
+              employee.dateOfLeaving,
+              settings.workWeekDays,
+              holidays,
+              employee.primaryBranchId,
+              employeeSelectedDates,
+            )
+          : unemployedDays(periodStart, periodEnd, employee.dateOfJoining, employee.dateOfLeaving);
 
-      const jurisdiction = employeePolicy?.statutoryJurisdiction ?? policy.statutoryJurisdiction;
+      const jurisdiction =
+        employeePolicy?.statutoryJurisdiction ?? organizationPolicy.statutoryJurisdiction;
       const advanceCutoff = endOfDay(periodEnd);
+      const { recoveryMonths } = await readAdvanceRules(tx, context.organizationId);
       const [rules, advances, adjustments] = await Promise.all([
         jurisdiction
           ? tx.payrollStatutoryRule.findMany({
@@ -197,32 +296,65 @@ export class PayrollPreviewService {
         baseMinimum: new Prisma.Decimal(policy.baseMinimum),
         hraPercentage: new Prisma.Decimal(policy.hraPercentage),
       };
+      const components = effectivePolicyComponents(
+        policyComponentDefaults(policy),
+        employee.payComponents,
+      ).map((assignment) => ({
+        componentId: assignment.payComponentId,
+        amount: assignment.amount,
+        percentage: assignment.percentage,
+        component: assignment.payComponent,
+      }));
+      const scheduledDays = countWorkingDays(
+        periodStart,
+        periodEnd,
+        settings.workWeekDays,
+        holidays,
+        employee.primaryBranchId,
+        employeeSelectedDates,
+      );
+      const periodWorkingDays =
+        context.accessMode === 'NATIVE' ? scheduledDays : Math.max(1, scheduledDays);
       const item = {
         employeeId,
+        periodMonth: periodEnd.getUTCMonth() + 1,
         compensation,
         employeePolicy: employeePolicy ?? null,
         policy: enginePolicy,
         statutoryRules: rules,
-        components: employee.payComponents.map((assignment) => ({
-          componentId: assignment.payComponentId,
-          amount: assignment.amount,
-          percentage: assignment.percentage,
-          component: assignment.payComponent,
-        })),
+        components,
         timesheet: sumTimesheets(approvedTimesheets),
+        overtimeDays: sumOvertimeByDayType(attendanceRecords),
+        overtimeRates: readOvertimeRates(settings.metadata),
         leave,
         attendance,
         unemployedDays: notEmployedDays,
-        periodWorkingDays: countWorkingDays(
-          periodStart,
-          measuredEnd,
-          settings.workWeekDays,
-          holidays,
-          employee.primaryBranchId,
-          employeeHolidaySelections.map((s) => s.holiday.holidayDate.toISOString().slice(0, 10)),
-        ),
+        periodWorkingDays,
+        ...(context.accessMode === 'NATIVE'
+          ? {
+              periodSalaryUnits:
+                compensation?.payFrequency === 'MONTHLY'
+                  ? monthlyWorkdayUnits(
+                      periodStart,
+                      periodEnd,
+                      settings.workWeekDays,
+                      holidays,
+                      employee.primaryBranchId,
+                      employeeSelectedDates,
+                    )
+                  : 1,
+            }
+          : {}),
+        ...(context.accessMode === 'NATIVE' ? { useWorkCalendarBasis: true } : {}),
         adjustments,
-        advances,
+        // Spread the same way the run will spread it, so the preview matches the payslip.
+        advances: advances.map((advance) => ({
+          ...advance,
+          instalment:
+            recoveryMonths > 1 && advance.approvedAmount
+              ? recoveryInstalment(advance.approvedAmount, recoveryMonths)
+              : null,
+        })),
       };
 
       const computed = computePayrollLine(item, settings.standardDayMinutes);
@@ -231,7 +363,8 @@ export class PayrollPreviewService {
       // modelling "what if this many days were payable". It replaces the computed figure rather
       // than sitting alongside it, so the number shown is always the one the maths used.
       const payableDays = input.payableDays ?? computed.payableDays;
-      if (!Number.isFinite(payableDays) || payableDays < 0 || payableDays > policy.payrollDayBasis)
+      const dayBasis = context.accessMode === 'NATIVE' ? periodWorkingDays : policy.payrollDayBasis;
+      if (!Number.isFinite(payableDays) || payableDays < 0 || payableDays > dayBasis)
         throw new ConflictError('Preview payable days must be within the payroll day basis');
       const overridden =
         input.payableDays === undefined
@@ -241,7 +374,7 @@ export class PayrollPreviewService {
                 ...item,
                 leave: { paidDays: leave.paidDays, unpaidDays: 0 },
                 attendance: { absentDays: 0, halfDays: 0 },
-                unemployedDays: policy.payrollDayBasis - input.payableDays,
+                unemployedDays: dayBasis - input.payableDays,
               },
               settings.standardDayMinutes,
             );
@@ -260,7 +393,7 @@ export class PayrollPreviewService {
         periodStart: input.periodStart,
         periodEnd: input.periodEnd,
         payableDays,
-        dayBasis: policy.payrollDayBasis,
+        dayBasis,
         monthlyStructure,
         structure,
         statutory,

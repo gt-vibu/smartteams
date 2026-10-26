@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
+import { formatDate, formatDateRange } from '@smarteam/contracts';
 import {
+  LoadingIndicator,
   Badge,
   Button,
   Checkbox,
@@ -9,7 +11,6 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Input,
   Label,
 } from '@smarteam/ui';
 import type { Shift, ShiftAssignment } from '@smarteam/contracts';
@@ -60,7 +61,7 @@ export function ShiftAssignmentsDialog({
           Show ended assignments
         </label>
 
-        <div className="mt-3 max-h-[60vh] space-y-2 overflow-y-auto">
+        <div className="mt-3 sm:max-h-[60vh] space-y-2 overflow-y-auto">
           {assignments.error && (
             <p role="alert" className="text-xs text-destructive">
               {assignments.error}
@@ -88,8 +89,10 @@ export function ShiftAssignmentsDialog({
                       </span>
                     )}
                   </p>
-                  <p className="font-mono text-[11px] text-muted-foreground">
-                    {assignment.startsOn} → {assignment.endsOn ?? 'open-ended'}
+                  <p className="text-[11px] text-muted-foreground">
+                    {assignment.endsOn
+                      ? formatDateRange(assignment.startsOn, assignment.endsOn)
+                      : `From ${formatDate(assignment.startsOn)}, no end date`}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -121,9 +124,7 @@ export function ShiftAssignmentsDialog({
             </div>
           ))}
           {assignments.loading && (
-            <p role="status" className="py-2 text-center text-xs text-muted-foreground">
-              Loading…
-            </p>
+            <LoadingIndicator variant="panel" label="Preparing content" className="py-2 text-center text-xs text-muted-foreground" />
           )}
           {assignments.hasMore && !assignments.loading && (
             <Button
@@ -142,7 +143,7 @@ export function ShiftAssignmentsDialog({
   );
 }
 
-/** The last day on the shift and why; nothing is prefilled, because the date is the admin's call. */
+/** The last day on the shift; the change is recorded in assignment history. */
 function EndAssignmentForm({
   assignment,
   onSubmit,
@@ -153,17 +154,16 @@ function EndAssignmentForm({
   onCancel: () => void;
 }) {
   const [endsOn, setEndsOn] = useState('');
-  const [reason, setReason] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const ready = Boolean(endsOn) && reason.trim().length >= 3;
+  const ready = Boolean(endsOn);
 
   const submit = async () => {
     if (!ready || saving) return;
     setSaving(true);
     setError(null);
     try {
-      await onSubmit(endsOn, reason.trim());
+      await onSubmit(endsOn, 'Shift assignment ended');
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'The assignment could not be ended.');
     } finally {
@@ -183,19 +183,6 @@ function EndAssignmentForm({
           onChange={setEndsOn}
           min={assignment.startsOn}
           max={assignment.endsOn ?? undefined}
-          disabled={saving}
-        />
-      </div>
-      <div>
-        <Label className="mb-1 block text-[11px]" htmlFor={`end-reason-${assignment.id}`}>
-          Reason
-        </Label>
-        <Input
-          id={`end-reason-${assignment.id}`}
-          value={reason}
-          maxLength={500}
-          onChange={(event) => setReason(event.target.value)}
-          placeholder="e.g. Moving to the night shift"
           disabled={saving}
         />
       </div>

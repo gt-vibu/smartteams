@@ -29,6 +29,23 @@ afterEach(() => {
 });
 
 describe('apiRequest session refresh', () => {
+  it.each(['check-ins', 'check-outs'])(
+    'explains geofence rejection for %s without refreshing the session',
+    async (direction) => {
+      const fetchSpy = mockFetch(() => response(403, { code: 'OUTSIDE_GEOFENCE' }));
+      await expect(
+        apiRequest(`/v1/organizations/o/attendance/${direction}`, { method: 'POST', body: {} }),
+      ).rejects.toThrow('inside an allowed attendance location');
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it('keeps authorization errors generic outside the attendance location rejection', async () => {
+    mockFetch(() => response(403, { code: 'FORBIDDEN', detail: 'Internal permission details' }));
+    await expect(
+      apiRequest('/v1/organizations/o/attendance/check-ins', { method: 'POST', body: {} }),
+    ).rejects.toThrow('You are not authorized');
+  });
   it('refreshes and replays a request that expired mid-session', async () => {
     let employeeCalls = 0;
     const fetchSpy = mockFetch((url) => {
@@ -206,5 +223,25 @@ describe('in-flight read deduplication', () => {
     ]);
 
     expect(calls).toBe(2);
+  });
+});
+
+describe('CSV result downloads', () => {
+  it('returns plain text after refreshing an expired session', async () => {
+    let downloads = 0;
+    mockFetch((url) => {
+      if (url.endsWith('/v1/auth/refresh')) return response(200);
+      downloads++;
+      return downloads === 1
+        ? response(401)
+        : new Response('Employee,Outcome\r\nAlice,APPLIED', {
+            status: 200,
+            headers: { 'Content-Type': 'text/csv' },
+          });
+    });
+    expect(await apiRequest('/v1/results.csv', { method: 'GET', responseType: 'text' })).toContain(
+      'Alice,APPLIED',
+    );
+    expect(downloads).toBe(2);
   });
 });

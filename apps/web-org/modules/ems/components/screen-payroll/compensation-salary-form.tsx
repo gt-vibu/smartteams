@@ -1,46 +1,144 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { DatePicker, Input, Label } from '@smarteam/ui';
+import { Button, DatePicker, Input, Label } from '@smarteam/ui';
 import { type SalaryProfile } from '@smarteam/contracts';
-import { Sparkles } from 'lucide-react';
+import { Check, Save } from 'lucide-react';
 import type { CompensationState } from '../../hooks/use-compensation';
+import { useOvertimeRates } from '../../hooks/use-overtime-rates';
 
 interface CompensationSalaryFormProps {
   compensation: CompensationState;
   profile: SalaryProfile;
+  readOnly?: boolean;
   pfEnabled: boolean;
   ptEnabled: boolean;
   esiEnabled: boolean;
+  onTogglePf: () => void;
+  onTogglePt: () => void;
+  onToggleEsi: () => void;
+  /** Reports the salary as it is typed, so the figures beside it can preview it. */
+  onGrossChange?: (value: string) => void;
 }
 
+const today = () => new Date().toLocaleDateString('en-CA');
+
+function SchemeSwitch({
+  label,
+  on,
+  disabled,
+  onClick,
+}: {
+  label: string;
+  on: boolean;
+  disabled: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      aria-pressed={on}
+      className={`flex min-h-9 items-center gap-1.5 rounded-md border px-3 text-xs font-medium transition-colors ${
+        on
+          ? 'border-primary/40 bg-primary/10 text-foreground'
+          : 'border-border text-muted-foreground hover:text-foreground'
+      }`}
+      disabled={disabled}
+      onClick={onClick}
+      type="button"
+    >
+      <span
+        className={`flex h-4 w-4 items-center justify-center rounded border ${
+          on ? 'border-primary bg-primary text-primary-foreground' : 'border-border'
+        }`}
+      >
+        {on && <Check className="h-3 w-3" />}
+      </span>
+      {label}
+    </button>
+  );
+}
+
+/**
+ * Everything an administrator sets for a salary, in one card: the monthly gross, when it starts,
+ * which statutory schemes apply, and Save. These were spread over three cards, with Save at the
+ * bottom of a fourth.
+ */
 export function CompensationSalaryForm({
   compensation,
   profile,
+  readOnly = false,
   pfEnabled,
   ptEnabled,
   esiEnabled,
+  onTogglePf,
+  onTogglePt,
+  onToggleEsi,
+  onGrossChange,
 }: CompensationSalaryFormProps) {
   const current = profile.compensation;
   const policy = profile.employeePolicy;
+  const [monthlyGrossInput, setMonthlyGrossInput] = useState('');
+  // Salaries are usually agreed as so many lakh a year; the monthly gross follows from that.
+  const [unit, setUnit] = useState<'monthly' | 'annual'>('monthly');
+  const [lpaInput, setLpaInput] = useState('');
+  const setMonthly = (value: string) => {
+    setMonthlyGrossInput(value);
+    onGrossChange?.(value);
+  };
+  const fromLpa = (lpa: string) => {
+    setLpaInput(lpa);
+    const annual = Number(lpa) * 100_000;
+    setMonthly(
+      lpa !== '' && Number.isFinite(annual) && annual >= 0 ? String(Math.round(annual / 12)) : '',
+    );
+  };
+  const [effectiveFrom, setEffectiveFrom] = useState('');
+  // What this employee's overtime pays, as a multiple of their hourly rate. The company's
+  // standard rate is only the starting point for a new salary; this is what payroll pays.
+  const companyRates = useOvertimeRates();
+  const [overtimeInput, setOvertimeInput] = useState('');
+  const locked = compensation.saving || !compensation.can.saveSalary || readOnly;
 
-  const [monthlyGrossInput, setMonthlyGrossInput] = useState<string>('');
-  const [effectiveFrom, setEffectiveFrom] = useState<string>('');
-
-  // Synchronize state when selected employee profile loads
   useEffect(() => {
-    const gross = Number(current?.grossSalary ?? current?.baseAmount ?? 0);
+    const gross = Number(
+      current?.grossSalary ??
+        current?.baseAmount ??
+        compensation.organizationPolicy?.defaultGrossSalary ??
+        0,
+    );
     setMonthlyGrossInput(gross > 0 ? String(gross) : '');
-    setEffectiveFrom(current?.effectiveFrom ? current.effectiveFrom.slice(0, 10) : '');
-  }, [current]);
+    onGrossChange?.(gross > 0 ? String(gross) : '');
+    setLpaInput(gross > 0 ? String(Number(((gross * 12) / 100_000).toFixed(2))) : '');
+    // A change starts today unless the administrator picks another date, so editing a salary
+    // revises it from today rather than rewriting the months already paid at the old amount.
+    setEffectiveFrom(today());
+    setOvertimeInput(
+      current?.overtimeMultiplier === undefined ? '' : String(Number(current.overtimeMultiplier)),
+    );
+  }, [current, compensation.organizationPolicy?.defaultGrossSalary]);
+
+  // A first salary starts at the company's standard rate.
+  useEffect(() => {
+    if (!current && overtimeInput === '' && companyRates.rates)
+      setOvertimeInput(String(companyRates.rates.standard));
+  }, [companyRates.rates, current, overtimeInput]);
+
+  const grossSalary = Number(monthlyGrossInput);
+  const overtimeMultiplier = Number(overtimeInput);
+  const overtimeValid =
+    overtimeInput !== '' &&
+    Number.isFinite(overtimeMultiplier) &&
+    overtimeMultiplier >= 1 &&
+    overtimeMultiplier <= 5;
+  const valid =
+    monthlyGrossInput !== '' && Number.isFinite(grossSalary) && grossSalary >= 0 && overtimeValid;
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const grossSalary = Number(monthlyGrossInput);
-    if (!Number.isFinite(grossSalary) || grossSalary < 0 || !effectiveFrom) return;
+    if (!valid || !effectiveFrom || locked) return;
     await compensation.saveSalary({
       grossSalary,
-      overtimeMultiplier: Number(current?.overtimeMultiplier ?? 1.5),
+      overtimeMultiplier,
       effectiveFrom,
       payrollEnabled: policy?.payrollEnabled ?? true,
       salarySlipMode: policy?.salarySlipMode ?? 'ENABLED',
@@ -51,90 +149,172 @@ export function CompensationSalaryForm({
   };
 
   return (
-    <div className="w-full min-w-0 rounded-xl border border-border/70 bg-card p-3.5 sm:p-4 shadow-2xs">
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/70 pb-2.5">
+    <form
+      className="w-full min-w-0 space-y-4 rounded-xl border border-border/70 bg-card p-4 shadow-2xs"
+      onSubmit={submit}
+    >
+      <div>
+        <h3 className="text-sm font-bold text-foreground">Salary</h3>
+        <p className="text-xs text-muted-foreground">
+          Enter the monthly gross, or the annual gross in lakh (LPA). Basic, HRA, PF, PT and CTC
+          below update as you type.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3">
         <div>
-          <div className="flex items-center gap-2">
-            <h3 className="text-xs font-bold tracking-tight text-foreground uppercase">
-              Compensation Configuration
-            </h3>
-            <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.2 text-[9px] font-semibold text-emerald-600 dark:text-emerald-400">
-              <Sparkles className="h-2.5 w-2.5" />
-              Effective-Dated
-            </span>
+          <div className="mb-1.5 space-y-1.5">
+            <Label className="text-xs font-semibold" htmlFor="gross-salary">
+              {unit === 'monthly' ? 'Monthly gross salary' : 'Annual gross (LPA)'}
+            </Label>
+            <div
+              aria-label="Salary input period"
+              className="flex w-full rounded-md border border-border p-0.5 text-[11px]"
+              role="group"
+            >
+              {(
+                [
+                  ['monthly', 'Monthly'],
+                  ['annual', 'Annual (LPA)'],
+                ] as const
+              ).map(([id, label]) => (
+                <button
+                  aria-pressed={unit === id}
+                  className={`min-w-0 flex-1 whitespace-nowrap rounded px-2 py-1 font-semibold ${
+                    unit === id ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'
+                  }`}
+                  key={id}
+                  onClick={() => setUnit(id)}
+                  type="button"
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
-          <p className="mt-0.5 text-[11px] text-muted-foreground">
-            Monthly gross is the authoritative compensation basis. Annual CTC and breakdown are
-            derived by the backend payroll engine.
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+              ₹
+            </span>
+            {unit === 'monthly' ? (
+              <Input
+                className="h-10 pl-7 font-mono text-sm font-semibold"
+                disabled={locked}
+                id="gross-salary"
+                inputMode="decimal"
+                min={0}
+                onChange={(event) => {
+                  setMonthly(event.target.value);
+                  const annual = Number(event.target.value) * 12;
+                  setLpaInput(
+                    event.target.value === '' ? '' : String(Number((annual / 100_000).toFixed(2))),
+                  );
+                }}
+                placeholder="e.g. 50000"
+                type="number"
+                value={monthlyGrossInput}
+              />
+            ) : (
+              <Input
+                className="h-10 pl-7 pr-12 font-mono text-sm font-semibold"
+                disabled={locked}
+                id="gross-salary"
+                inputMode="decimal"
+                min={0}
+                onChange={(event) => fromLpa(event.target.value)}
+                placeholder="e.g. 6"
+                step="0.01"
+                type="number"
+                value={lpaInput}
+              />
+            )}
+            {unit === 'annual' && (
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                lakh
+              </span>
+            )}
+          </div>
+          {valid && grossSalary > 0 && (
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              {unit === 'monthly'
+                ? `₹${(grossSalary * 12).toLocaleString('en-IN')} a year (${Number(((grossSalary * 12) / 100_000).toFixed(2))} LPA)`
+                : `₹${grossSalary.toLocaleString('en-IN')} a month gross. CTC below adds the employer's PF and ESI.`}
+            </p>
+          )}
+        </div>
+        <div>
+          <Label className="mb-1 block text-xs font-semibold" htmlFor="salary-overtime">
+            Overtime rate
+          </Label>
+          <Input
+            className="h-10 font-mono text-sm font-semibold"
+            disabled={locked}
+            id="salary-overtime"
+            inputMode="decimal"
+            max={5}
+            min={1}
+            onChange={(event) => setOvertimeInput(event.target.value)}
+            placeholder="e.g. 1.5"
+            step="0.1"
+            type="number"
+            value={overtimeInput}
+          />
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Multiple of the hourly rate. Weekly offs and holidays can pay their own company rate.
+          </p>
+        </div>
+        <div>
+          <Label className="mb-1 block text-xs font-semibold" htmlFor="salary-effective-from">
+            Starts from
+          </Label>
+          <DatePicker
+            className="h-10 w-full text-sm"
+            disabled={locked}
+            id="salary-effective-from"
+            onChange={setEffectiveFrom}
+            value={effectiveFrom}
+          />
+          <p className="mt-1 text-[11px] text-muted-foreground">
+            Earlier salaries stay on record for past payrolls.
           </p>
         </div>
       </div>
 
-      <form id="compensation-salary-form" onSubmit={submit} className="mt-3">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Monthly Gross Input */}
-          <div>
-            <Label className="mb-1 block text-xs font-semibold" htmlFor="gross-salary">
-              Monthly Gross Salary (₹)
-            </Label>
-            <div className="relative">
-              <Input
-                className="h-8 pl-7 font-mono font-bold text-xs"
-                disabled={compensation.saving || !compensation.can.saveSalary}
-                id="gross-salary"
-                inputMode="decimal"
-                onChange={(e) => setMonthlyGrossInput(e.target.value)}
-                placeholder="e.g. 85000"
-                type="number"
-                value={monthlyGrossInput}
-              />
-              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-muted-foreground">
-                ₹
-              </span>
-            </div>
-            <p className="mt-1 text-[10px] text-muted-foreground leading-tight">
-              Authoritative base for earnings, deductions and statutory calculations.
-            </p>
-          </div>
-
-          {/* Effective From Date */}
-          <div>
-            <Label className="mb-1 block text-xs font-semibold" htmlFor="salary-effective-from">
-              Effective From
-            </Label>
-            <DatePicker
-              className="h-8 w-full text-xs"
-              disabled={compensation.saving || !compensation.can.saveSalary}
-              id="salary-effective-from"
-              onChange={setEffectiveFrom}
-              value={effectiveFrom}
-            />
-            <p className="mt-1 text-[10px] text-muted-foreground leading-tight">
-              Preserves historical compensation. Future periods take effect automatically.
-            </p>
-          </div>
-
-          {/* Version Date / Readout */}
-          <div className="hidden lg:block">
-            <Label className="mb-1 block text-xs font-semibold">Version date</Label>
-            <div className="flex h-8 items-center rounded-md border border-border bg-muted/30 px-3 font-mono text-xs text-muted-foreground">
-              {effectiveFrom || 'Current'}
-            </div>
-            <p className="mt-1 text-[10px] text-muted-foreground leading-tight">
-              Active compensation period version.
-            </p>
-          </div>
+      <div>
+        <p className="mb-1.5 text-xs font-semibold text-foreground">Statutory deductions</p>
+        <div className="flex flex-wrap gap-2">
+          <SchemeSwitch disabled={locked} label="PF" on={pfEnabled} onClick={onTogglePf} />
+          <SchemeSwitch disabled={locked} label="ESI" on={esiEnabled} onClick={onToggleEsi} />
+          <SchemeSwitch
+            disabled={locked}
+            label="Professional Tax"
+            on={ptEnabled}
+            onClick={onTogglePt}
+          />
         </div>
-      </form>
+      </div>
 
       {compensation.saveError && (
-        <div
-          className="mt-2.5 rounded-lg border border-destructive/30 bg-destructive/10 p-2.5 text-xs text-destructive"
+        <p
+          className="rounded-lg border border-destructive/30 bg-destructive/10 p-2.5 text-xs text-destructive"
           role="alert"
         >
           {compensation.saveError}
+        </p>
+      )}
+
+      {compensation.can.saveSalary && !readOnly && (
+        <div className="flex justify-end">
+          <Button
+            className="h-10 w-full gap-1.5 sm:w-auto"
+            disabled={compensation.saving || !valid || !effectiveFrom}
+            type="submit"
+          >
+            <Save className="h-4 w-4" />
+            {compensation.saving ? 'Saving…' : 'Save salary'}
+          </Button>
         </div>
       )}
-    </div>
+    </form>
   );
 }

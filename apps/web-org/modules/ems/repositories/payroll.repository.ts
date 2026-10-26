@@ -1,6 +1,7 @@
 import {
   parsePayComponent,
   parsePayComponentList,
+  parseOvertimeRates,
   parsePayrollPolicy,
   parsePayrollRun,
   parsePayrollRunList,
@@ -9,6 +10,7 @@ import {
   parseSalaryProfile,
   parseStatutoryRuleList,
   type PayComponentDefinition,
+  type OvertimeRates,
   type PayrollPolicy,
   type PayrollRun,
   type PayrollRunStatus,
@@ -19,6 +21,54 @@ import {
 } from '@smarteam/contracts';
 import { apiRequest } from '../lib/api-client';
 import { expectShape, orgPath, queryString } from './api-helpers';
+
+/** 0 means salary advances are turned off; recovery is in that many equal monthly shares. */
+export type AdvanceRules = { limitPercent: number; recoveryMonths: number };
+
+export type AdvanceAllowance = AdvanceRules & {
+  monthlySalary: number | null;
+  /** Null when the employee has no salary to measure against. */
+  limit: number | null;
+  outstanding: number;
+  /** Asked for and waiting on a decision. */
+  pending?: number;
+  /** Approved and not yet taken back from pay. */
+  repaying?: number;
+  available: number;
+};
+
+export type PayrollRuleUpdateProposal = {
+  id: string;
+  sourceKey: string;
+  schemeCode: string;
+  jurisdiction: string;
+  status: string;
+  changeSummary: string;
+  currentRule: Record<string, unknown> | null;
+  proposedRule: Record<string, unknown> | null;
+  impactPreview: Record<string, unknown> | null;
+  effectiveFrom: string | null;
+  createdAt: string;
+};
+
+export type PayrollRuleUpdates = {
+  sources: Array<{
+    key: string;
+    schemeCode: string;
+    jurisdiction: string;
+  }>;
+  checks: Array<{
+    sourceKey: string;
+    schemeCode: string;
+    jurisdiction: string;
+    checkedAt: string | null;
+    sourceChangedAt: string | null;
+    lastError: string | null;
+  }>;
+  proposals: PayrollRuleUpdateProposal[];
+  unsupportedJurisdictions: string[];
+  nextAutomaticCheck: string;
+};
 
 /**
  * Payroll data access.
@@ -54,6 +104,82 @@ export type PayrollAdjustmentInput = {
 };
 
 export const payrollRepository = {
+  async listRuleUpdates(organizationId: string): Promise<PayrollRuleUpdates> {
+    return (await apiRequest(`${base(organizationId)}/rule-updates`, {
+      method: 'GET',
+    })) as PayrollRuleUpdates;
+  },
+
+  async syncRuleSources(organizationId: string): Promise<{ queued: boolean; jobId: string }> {
+    return (await apiRequest(`${base(organizationId)}/rule-updates/sync`, { method: 'POST' })) as {
+      queued: boolean;
+      jobId: string;
+    };
+  },
+
+  async getRuleSyncStatus(
+    organizationId: string,
+    jobId: string,
+  ): Promise<{
+    state: string;
+    result: { checked: number; changed: number; failed: number } | null;
+    failedReason: string | null;
+  }> {
+    return (await apiRequest(
+      `${base(organizationId)}/rule-updates/sync/${encodeURIComponent(jobId)}`,
+      {
+        method: 'GET',
+      },
+    )) as {
+      state: string;
+      result: { checked: number; changed: number; failed: number } | null;
+      failedReason: string | null;
+    };
+  },
+
+  async prepareRuleUpdate(
+    organizationId: string,
+    proposalId: string,
+    input: {
+      schemeCode: string;
+      jurisdiction: string;
+      effectiveFrom: string;
+      effectiveTo?: string;
+      employeeRate?: number;
+      employerRate?: number;
+      wageCeiling?: number;
+      employeeThreshold?: number;
+      flatAmount?: number;
+      metadata?: Record<string, unknown>;
+      note?: string;
+    },
+  ) {
+    return apiRequest(`${base(organizationId)}/rule-updates/${encodeURIComponent(proposalId)}`, {
+      method: 'PUT',
+      body: input,
+    });
+  },
+
+  async acceptRuleUpdate(organizationId: string, proposalId: string, note?: string) {
+    return apiRequest(
+      `${base(organizationId)}/rule-updates/${encodeURIComponent(proposalId)}/accept`,
+      {
+        method: 'POST',
+        body: { note },
+      },
+    );
+  },
+
+  async rejectRuleUpdate(organizationId: string, proposalId: string, note?: string) {
+    return apiRequest(
+      `${base(organizationId)}/rule-updates/${encodeURIComponent(proposalId)}/reject`,
+      {
+        method: 'POST',
+        body: { note },
+      },
+    );
+  },
+
   /** Every run for the tenant, newest period first. Requires `payroll.runs.read`. */
   async listRuns(organizationId: string): Promise<PayrollRun[]> {
     return expectShape(
@@ -83,6 +209,28 @@ export const payrollRepository = {
    * The employee's salary structure with the backend's own breakdown: earnings, deductions
    * (statutory included, each with its eligibility and basis) and employer contributions.
    */
+  /** The profile worked out for a salary that is being typed. The server saves nothing. */
+  async previewSalaryProfile(
+    organizationId: string,
+    input: {
+      employeeId: string;
+      grossSalary: number;
+      pfEnabled: boolean;
+      esiEnabled: boolean;
+      ptEnabled: boolean;
+    },
+  ): Promise<SalaryProfile> {
+    return expectShape(
+      parseSalaryProfile(
+        await apiRequest(`${base(organizationId)}/profile/preview`, {
+          method: 'POST',
+          body: input,
+        }),
+      ),
+      'salary profile',
+    );
+  },
+
   async getSalaryProfile(organizationId: string, employeeId?: string): Promise<SalaryProfile> {
     return expectShape(
       parseSalaryProfile(
@@ -116,6 +264,27 @@ export const payrollRepository = {
     return advances;
   },
 
+  /** The organization's advance limit (a share of monthly salary) and repayment months. */
+  async getAdvanceRules(organizationId: string): Promise<AdvanceRules> {
+    return (await apiRequest(`${base(organizationId)}/advance-rules`, {
+      method: 'GET',
+    })) as AdvanceRules;
+  },
+
+  async saveAdvanceRules(organizationId: string, input: AdvanceRules): Promise<AdvanceRules> {
+    return (await apiRequest(`${base(organizationId)}/advance-rules`, {
+      method: 'PUT',
+      body: input,
+    })) as AdvanceRules;
+  },
+
+  /** How much more the signed-in employee may ask for, and why. */
+  async getAdvanceAllowance(organizationId: string): Promise<AdvanceAllowance> {
+    return (await apiRequest(`${base(organizationId)}/advances/allowance`, {
+      method: 'GET',
+    })) as AdvanceAllowance;
+  },
+
   async requestAdvance(
     organizationId: string,
     input: { employeeId: string; requestedAmount: number; reason: string },
@@ -125,6 +294,21 @@ export const payrollRepository = {
       body: input,
     });
     return expectShape(parseSalaryAdvanceList([payload])?.[0] ?? null, 'salary advance');
+  },
+
+  /** Approves (optionally for less than asked) or rejects an advance; recovered by payroll. */
+  async decideAdvance(
+    organizationId: string,
+    advanceId: string,
+    input: { status: 'APPROVED' | 'REJECTED'; comment: string; approvedAmount?: number },
+  ): Promise<unknown> {
+    return apiRequest(
+      `${base(organizationId)}/advances/${encodeURIComponent(advanceId)}/decision`,
+      {
+        method: 'POST',
+        body: input,
+      },
+    );
   },
 
   async createRun(organizationId: string, input: PayrollRunInput): Promise<PayrollRun> {
@@ -140,10 +324,17 @@ export const payrollRepository = {
    * Calculates a draft run, or recalculates one whose inputs changed after it was calculated.
    * The returned run is authoritative — the caller replaces its copy rather than assuming.
    */
-  async calculateRun(organizationId: string, runId: string): Promise<PayrollRun> {
+  async calculateRun(
+    organizationId: string,
+    runId: string,
+    deferAdvanceEmployeeIds: string[] = [],
+  ): Promise<PayrollRun> {
     return expectShape(
       parsePayrollRun(
-        await apiRequest(`${base(organizationId)}/runs/${runId}/calculate`, { method: 'POST' }),
+        await apiRequest(`${base(organizationId)}/runs/${runId}/calculate`, {
+          method: 'POST',
+          body: { deferAdvanceEmployeeIds },
+        }),
       ),
       'payroll run',
     );
@@ -163,7 +354,7 @@ export const payrollRepository = {
       parsePayrollRun(
         await apiRequest(`${base(organizationId)}/runs/${runId}/action`, {
           method: 'POST',
-          body: { target, comment },
+          body: { target, ...(comment.trim() ? { comment: comment.trim() } : {}) },
         }),
       ),
       'payroll run',
@@ -251,7 +442,7 @@ export const payrollRepository = {
     );
   },
 
-  /** Saves organization payroll policy settings (Base %, HRA %, Base Minimum, Rounding). */
+  /** Saves organization payroll policy settings and the default monthly gross salary. */
   async savePolicy(
     organizationId: string,
     input: {
@@ -263,6 +454,7 @@ export const payrollRepository = {
       basePercentage: number;
       baseMinimum: number;
       hraPercentage: number;
+      defaultGrossSalary: number | null;
       pfDefault: boolean;
       esiDefault: boolean;
       ptDefault: boolean;
@@ -278,6 +470,25 @@ export const payrollRepository = {
         }),
       ),
       'payroll policy',
+    );
+  },
+
+  /** What overtime pays, as multiples of the hourly rate. */
+  async getOvertimeRates(organizationId: string): Promise<OvertimeRates> {
+    return expectShape(
+      parseOvertimeRates(
+        await apiRequest(`${base(organizationId)}/overtime-rates`, { method: 'GET' }),
+      ),
+      'overtime rates',
+    );
+  },
+
+  async saveOvertimeRates(organizationId: string, input: OvertimeRates): Promise<OvertimeRates> {
+    return expectShape(
+      parseOvertimeRates(
+        await apiRequest(`${base(organizationId)}/overtime-rates`, { method: 'PUT', body: input }),
+      ),
+      'overtime rates',
     );
   },
 
@@ -297,6 +508,25 @@ export const payrollRepository = {
       ),
       'statutory rule list',
     );
+  },
+
+  async saveStatutoryRule(
+    organizationId: string,
+    input: Omit<StatutoryRule, 'id'>,
+    ruleId?: string,
+  ): Promise<StatutoryRule> {
+    const payload = await apiRequest(
+      `${base(organizationId)}/statutory-rules${ruleId ? `/${encodeURIComponent(ruleId)}` : ''}`,
+      { method: ruleId ? 'PUT' : 'POST', body: input },
+    );
+    const parsed = parseStatutoryRuleList([payload]);
+    return expectShape(parsed?.[0] ?? null, 'statutory rule');
+  },
+
+  async deleteStatutoryRule(organizationId: string, ruleId: string): Promise<void> {
+    await apiRequest(`${base(organizationId)}/statutory-rules/${encodeURIComponent(ruleId)}`, {
+      method: 'DELETE',
+    });
   },
 
   /** Adds an adjustment. On a calculated run this marks the calculation stale server-side. */

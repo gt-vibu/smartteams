@@ -4,11 +4,20 @@ import { useCallback, useMemo } from 'react';
 import { hasPermission, type Employee, type Timesheet } from '@smarteam/contracts';
 import { useSession } from './auth-context';
 import { timesheetRepository } from '../repositories/timesheet.repository';
-import { workforceRepository } from '../repositories/workforce.repository';
+import { employeeReadRepository } from '../repositories/employee-read.repository';
 import { useAsyncResource } from './use-async-resource';
 import { useMutationRunner } from './use-mutation-runner';
+import { useCursorPages } from './use-cursor-pages';
 
-type Loaded = { timesheets: Timesheet[]; employees: Employee[] };
+type Loaded = {
+  timesheets: Timesheet[];
+  employees: Employee[];
+  summary?: {
+    statusCounts: Record<string, { count: number; totalMinutes: number }>;
+    totalCount: number;
+    totalMinutes: number;
+  };
+};
 
 /**
  * Organization-wide timesheets, for the approval queue and period management.
@@ -17,7 +26,16 @@ type Loaded = { timesheets: Timesheet[]; employees: Employee[] };
  * the API returns just the caller's own, and the queue will show that honestly rather than
  * appearing empty for the wrong reason.
  */
-export function useTimesheetAdmin() {
+export function useTimesheetAdmin(
+  filters: {
+    status?: string;
+    departmentId?: string;
+    employeeId?: string;
+    from?: string;
+    to?: string;
+    search?: string;
+  } = {},
+) {
   const { session, persona } = useSession();
   const organizationId = session?.organizationId || null;
   const permissions = useMemo(() => persona?.permissions ?? [], [persona]);
@@ -30,16 +48,49 @@ export function useTimesheetAdmin() {
   // Opening a period re-derives every employee's sheet, so the API asks for breadth as well.
   const canManagePeriods = canWrite && canReadAll;
 
-  const resource = useAsyncResource<Loaded>(
+  const paging = useCursorPages(
+    JSON.stringify([
+      organizationId,
+      filters.status,
+      filters.departmentId,
+      filters.employeeId,
+      filters.from,
+      filters.to,
+      filters.search,
+    ]),
+  );
+  const resource = useAsyncResource<Loaded & { nextCursor?: string }>(
     async () => {
-      const [timesheets, employees] = await Promise.all([
-        timesheetRepository.list(organizationId!),
-        canReadEmployees ? workforceRepository.listEmployees(organizationId!) : Promise.resolve([]),
-      ]);
-      return { timesheets, employees };
+      const page = await timesheetRepository.listPage(organizationId!, {
+        ...filters,
+        status: filters.status === 'ALL' ? undefined : filters.status,
+        cursor: paging.cursor,
+        limit: 10,
+      });
+      const timesheets = page.timesheets;
+      const employees = canReadEmployees
+        ? await employeeReadRepository.identities(
+            organizationId!,
+            timesheets.map((sheet) => sheet.employeeId),
+          )
+        : [];
+      return { timesheets, employees, nextCursor: page.nextCursor, summary: page.summary };
     },
-    [organizationId, canReadEmployees],
-    { enabled: Boolean(organizationId) && canRead },
+    [
+      organizationId,
+      canReadEmployees,
+      paging.cursor,
+      filters.status,
+      filters.departmentId,
+      filters.employeeId,
+      filters.from,
+      filters.to,
+      filters.search,
+    ],
+    {
+      enabled: Boolean(organizationId) && canRead,
+      preservePreviousDataKey: organizationId,
+    },
   );
 
   const { saving, saveError, run } = useMutationRunner(resource.refetch);
@@ -91,6 +142,9 @@ export function useTimesheetAdmin() {
 
   return {
     timesheets: resource.data?.timesheets ?? [],
+    summary: resource.data?.summary,
+    nextCursor: resource.data?.nextCursor,
+    paging,
     employees: resource.data?.employees ?? [],
     loading: resource.loading,
     refreshing: resource.refreshing,

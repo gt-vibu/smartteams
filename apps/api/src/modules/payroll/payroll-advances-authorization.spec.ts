@@ -1,7 +1,8 @@
-import { PayrollAdvancesService } from './payroll-advances.service';
 import type { DomainContext } from '../../common/context/domain-context';
-import type { AccessMode } from '../../generated/prisma/enums';
 import { ForbiddenDomainError } from '../../common/errors/domain-error';
+import { Prisma } from '../../generated/prisma/client';
+import type { AccessMode } from '../../generated/prisma/enums';
+import { PayrollAdvancesService } from './payroll-advances.service';
 
 /**
  * Who may raise and decide a salary advance.
@@ -44,6 +45,8 @@ function decideSetup(requesterUserId: string | null) {
       update: jest.fn().mockResolvedValue({ id: ADVANCE }),
     },
     payrollRun: { updateMany: jest.fn().mockResolvedValue({ count: 0 }) },
+    // The requester is told of the decision.
+    notification: { createMany: jest.fn().mockResolvedValue({ count: 1 }) },
   };
   const database = {
     run: jest.fn((_ctx: unknown, cb: (client: unknown) => unknown) => Promise.resolve(cb(tx))),
@@ -82,6 +85,17 @@ describe('PayrollAdvancesService.decideAdvance', () => {
     await service.decideAdvance(context(['payroll.advances.approve']), ADVANCE, approve);
     expect(tx.salaryAdvance.update).toHaveBeenCalled();
   });
+
+  it('rejects an advance decision with REJECTED status if comment is missing', async () => {
+    const { tx, service } = decideSetup(COLLEAGUE_USER);
+    await expect(
+      service.decideAdvance(context(['payroll.advances.approve']), ADVANCE, {
+        status: 'REJECTED',
+        comment: '',
+      }),
+    ).rejects.toThrow('Advance rejections require a reason');
+    expect(tx.salaryAdvance.update).not.toHaveBeenCalled();
+  });
 });
 
 function createdFor(tx: ReturnType<typeof requestSetup>['tx']) {
@@ -92,6 +106,11 @@ function createdFor(tx: ReturnType<typeof requestSetup>['tx']) {
 function requestSetup() {
   const tx = {
     employee: {
+      findUnique: jest.fn().mockResolvedValue({
+        firstName: 'Asha',
+        lastName: 'Rao',
+        userId: CALLER_USER,
+      }),
       findFirst: jest.fn((args: { where: { id?: string; userId?: string } }) =>
         Promise.resolve(
           args.where.userId === CALLER_USER || args.where.id === CALLER_EMPLOYEE
@@ -102,7 +121,25 @@ function requestSetup() {
         ),
       ),
     },
-    salaryAdvance: { create: jest.fn().mockResolvedValue({ id: ADVANCE }) },
+    salaryAdvance: {
+      create: jest.fn().mockResolvedValue({ id: ADVANCE }),
+      // Nothing waiting or owed, so the whole allowance is free.
+      findMany: jest.fn().mockResolvedValue([]),
+    },
+    // The advance limit: the default rules, against a 40,000 monthly salary.
+    $executeRaw: jest.fn().mockResolvedValue(0),
+    // Approvers are told a request is waiting.
+    userRole: { findMany: jest.fn().mockResolvedValue([{ userId: COLLEAGUE_USER }]) },
+    notification: { createMany: jest.fn().mockResolvedValue({ count: 1 }) },
+    organizationSettings: { findUnique: jest.fn().mockResolvedValue(null) },
+    organization: { findUnique: jest.fn().mockResolvedValue({ timezone: 'Asia/Kolkata' }) },
+    employeeCompensation: {
+      findFirst: jest.fn().mockResolvedValue({
+        payType: 'SALARY',
+        grossSalary: new Prisma.Decimal(40000),
+        baseAmount: new Prisma.Decimal(40000),
+      }),
+    },
   };
   const database = {
     run: jest.fn((_ctx: unknown, cb: (client: unknown) => unknown) => Promise.resolve(cb(tx))),
@@ -153,5 +190,37 @@ describe('PayrollAdvancesService.requestAdvance', () => {
       request(COLLEAGUE_EMPLOYEE),
     );
     expect(tx.salaryAdvance.create).toHaveBeenCalled();
+  });
+});
+
+describe('advance notifications', () => {
+  it('tells whoever approves advances that one is waiting, but not the person asking', async () => {
+    const { tx, service } = requestSetup();
+    await service.requestAdvance(context(['payroll.advances.request']), request());
+    const [call] = tx.notification.createMany.mock.calls as [
+      { data: Array<{ recipientUserId: string; kind: string; module: string }> },
+    ][];
+    expect(call?.[0].data).toEqual([
+      expect.objectContaining({
+        recipientUserId: COLLEAGUE_USER,
+        kind: 'ADVANCE_PENDING',
+        module: 'approvals',
+      }),
+    ]);
+  });
+
+  it('tells the requester of the decision, on their payroll screen', async () => {
+    const { tx, service } = decideSetup(COLLEAGUE_USER);
+    await service.decideAdvance(context(['payroll.advances.approve']), ADVANCE, approve);
+    const [call] = tx.notification.createMany.mock.calls as [
+      { data: Array<{ recipientUserId: string; kind: string; module: string }> },
+    ][];
+    expect(call?.[0].data).toEqual([
+      expect.objectContaining({
+        recipientUserId: COLLEAGUE_USER,
+        kind: 'ADVANCE_DECIDED',
+        module: 'payroll',
+      }),
+    ]);
   });
 });

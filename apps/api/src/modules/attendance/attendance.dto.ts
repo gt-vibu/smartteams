@@ -22,6 +22,7 @@ import { AttendanceDayStatus } from '../../generated/prisma/enums';
 import {
   ATTENDANCE_CORRECTION_REASON_MAX_LENGTH,
   ATTENDANCE_CORRECTION_REASON_MIN_LENGTH,
+  ATTENDANCE_HOLIDAY_REVIEW_REASON_MIN_LENGTH,
 } from '@smarteam/contracts';
 export class PunchDto {
   @IsUUID() employeeId!: string;
@@ -61,13 +62,18 @@ export class AttendancePreferencesQueryDto {
 }
 
 export class AttendanceCorrectionDto {
-  // The same constants the drawer disables its submit button on, so the form cannot accept a
-  // reason this DTO will reject.
+  // The drawer and DTO share the same minimum. The service also trims and rejects whitespace-only
+  // reasons, which cannot satisfy the drawer's trimmed length check.
   @IsString()
   @MinLength(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH)
   @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
   reason!: string;
   @IsOptional() @IsObject() afterSnapshot?: Record<string, unknown>;
+}
+
+export class AttendanceDateCorrectionDto extends AttendanceCorrectionDto {
+  @IsUUID() employeeId!: string;
+  @IsDateString() workDate!: string;
 }
 
 /**
@@ -101,6 +107,17 @@ export class AttendanceDecisionDto {
   checkOutAt?: string;
 }
 
+/** Native web approval decisions do not ask the reviewer to write a comment. */
+export class NativeAttendanceDecisionDto {
+  @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
+  @IsOptional() @IsString() @MinLength(1) @MaxLength(255) decidedByExternalEmployeeId?: string;
+  @IsOptional()
+  @IsISO8601({ strict: true })
+  @Matches(/(Z|[+-]\d{2}:\d{2})$/, { message: 'checkOutAt must include a time zone offset' })
+  checkOutAt?: string;
+}
+
 /** The date range of the optional-holiday conflicts to list. */
 export class HolidayConflictQueryDto {
   @IsOptional() @IsUUID() employeeId?: string;
@@ -111,7 +128,7 @@ export class HolidayConflictQueryDto {
 /** The employee's explanation of a check-in on their optional holiday. */
 export class HolidayReviewRequestDto {
   @IsString()
-  @MinLength(ATTENDANCE_CORRECTION_REASON_MIN_LENGTH)
+  @MinLength(ATTENDANCE_HOLIDAY_REVIEW_REASON_MIN_LENGTH)
   @MaxLength(ATTENDANCE_CORRECTION_REASON_MAX_LENGTH)
   reason!: string;
   @IsOptional() @IsString() @MaxLength(500) comment?: string;
@@ -121,7 +138,16 @@ export class HolidayReviewRequestDto {
 export class HolidayReviewDecisionDto {
   @IsEnum(['KEEP_HOLIDAY', 'CONVERT_TO_WORKING_DAY']) outcome!:
     'KEEP_HOLIDAY' | 'CONVERT_TO_WORKING_DAY';
-  @IsString() @MinLength(2) @MaxLength(500) comment!: string;
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
+}
+
+export class LeaveOverlapDecisionDto {
+  @IsEnum(['APPROVED', 'REJECTED']) status!: 'APPROVED' | 'REJECTED';
+  @IsOptional() @IsString() @MaxLength(500) comment?: string;
+}
+
+export class LeaveOverlapAutoApprovalDto {
+  @IsBoolean() enabled!: boolean;
 }
 
 export class WorkLocationDto {
@@ -132,6 +158,7 @@ export class WorkLocationDto {
 }
 
 export class AttendancePreferencesDto {
+  @IsOptional() @IsBoolean() requireGps?: boolean | null;
   @IsOptional() @IsEnum(['DISABLED', 'FLAG_ONLY', 'REQUIRED']) geofenceMode?:
     'DISABLED' | 'FLAG_ONLY' | 'REQUIRED';
   @IsOptional() @IsEnum(['DISABLED', 'OPTIONAL', 'REQUIRED']) biometricVerificationMode?:

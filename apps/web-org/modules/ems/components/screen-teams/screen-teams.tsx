@@ -2,13 +2,16 @@
 
 import React, { useState } from 'react';
 import { useScreenTab } from '../../hooks/use-screen-tab';
-import { Button, Input } from '@smarteam/ui';
+import { LoadingIndicator, Button, Input } from '@smarteam/ui';
+import { ChevronRight, Crown, Plus, UserRoundCheck, UsersRound } from 'lucide-react';
 import { useTeamDirectory } from '../../hooks/use-team-directory';
 import type { TeamView } from '../../services/team-directory';
 import { CreateTeamModal } from './create-team-modal';
 import { TeamCard, TeamTable } from './team-views';
 import { TeamDetailDrawer } from './team-detail-drawer';
 import { PageShell } from '../layout/page-shell';
+import { ScreenHeader } from '../common/screen-header';
+import { useDebouncedValue } from '../../hooks/use-debounced-value';
 
 /**
  * Teams and squads, read from and written to the API.
@@ -24,12 +27,17 @@ export function ScreenTeams() {
   const [scope, setScope] = useScreenTab<'all' | 'mine'>('teamScope', ['all', 'mine'], 'all');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [search, setSearch] = useState('');
+  const [metricFilter, setMetricFilter] = useState<'all' | 'members' | 'leads'>('all');
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const source = scope === 'mine' ? directory.myTeams : directory.teams;
-  const query = search.trim().toLowerCase();
+  // Without the organization-wide permission the API sends only their own, and the "all"
+  // view would be the same list under a misleading name.
+  const source = scope === 'mine' || !directory.canReadAll ? directory.myTeams : directory.teams;
+  const query = useDebouncedValue(search.trim()).toLowerCase();
   const filtered = source.filter((view) => {
+    if (metricFilter === 'members' && view.activeMembers.length === 0) return false;
+    if (metricFilter === 'leads' && !view.lead) return false;
     if (!query) return true;
     return (
       view.team.name.toLowerCase().includes(query) ||
@@ -38,17 +46,36 @@ export function ScreenTeams() {
       (view.lead?.displayName ?? '').toLowerCase().includes(query)
     );
   });
+  const membershipCount = source.reduce((total, view) => total + view.activeMembers.length, 0);
+  const leadCount = new Set(source.flatMap((view) => view.lead?.employeeId ?? [])).size;
 
   // Read from the live list so the drawer follows a refetch instead of holding a stale copy.
   const selectedTeam: TeamView | null =
-    directory.teams.find((view) => view.team.id === selectedTeamId) ?? null;
+    source.find((view) => view.team.id === selectedTeamId) ??
+    directory.teams.find((view) => view.team.id === selectedTeamId) ??
+    directory.myTeams.find((view) => view.team.id === selectedTeamId) ??
+    null;
 
   return (
     <div className="relative flex w-full flex-col">
       <div className="sticky top-[var(--ems-context-bar-height)] z-20 border-b border-border bg-card/95 px-4 py-3 backdrop-blur sm:px-6">
+        <ScreenHeader
+          actions={
+            directory.canWrite && (
+              <Button onClick={() => setIsCreateOpen(true)}>
+                <Plus className="mr-1.5 size-4" />
+                New team
+              </Button>
+            )
+          }
+          icon={UsersRound}
+          description="Organize people around shared goals."
+          title="Teams"
+          tone="primary"
+        />
         <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center sm:gap-3">
           <div className="flex items-center gap-4">
-            {(['all', 'mine'] as const).map((value) => (
+            {(directory.canReadAll ? (['all', 'mine'] as const) : ([] as const)).map((value) => (
               <Button
                 className={`rounded-none pb-1 text-xs font-semibold ${
                   scope === value
@@ -64,12 +91,16 @@ export function ScreenTeams() {
                 {value === 'all' ? 'All teams' : 'My teams'}
               </Button>
             ))}
+            {!directory.canReadAll && (
+              <span className="pb-1 text-xs font-bold text-foreground">My teams</span>
+            )}
           </div>
 
           <div className="flex flex-shrink-0 items-center gap-2 sm:gap-3">
             <Input
               className="w-40 sm:w-52"
               onChange={(event) => setSearch(event.target.value)}
+              aria-label="Search teams"
               placeholder="Search teams"
               type="text"
               value={search}
@@ -94,20 +125,89 @@ export function ScreenTeams() {
                 Table
               </Button>
             </div>
-            {directory.canWrite && (
-              <Button onClick={() => setIsCreateOpen(true)} size="sm" type="button">
-                New team
-              </Button>
-            )}
           </div>
         </div>
       </div>
 
       <PageShell gap="none">
+        {!directory.loading && !directory.error && !directory.forbidden && (
+          <section aria-label="Team summary" className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            <button
+              className={`rounded-lg border bg-card px-3 py-2 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${metricFilter === 'all' ? 'border-primary/50 ring-1 ring-primary/15' : 'border-border'}`}
+              onClick={() => setMetricFilter('all')}
+              type="button"
+              aria-pressed={metricFilter === 'all'}
+            >
+              <span className="flex items-center gap-2">
+                <span className="grid size-7 place-items-center rounded-md bg-emerald-500/10 text-emerald-700">
+                  <UsersRound className="size-4" />
+                </span>
+                <span className="text-xs font-medium text-foreground">Teams</span>
+                <ChevronRight className="ml-auto size-3.5 text-muted-foreground" />
+              </span>
+              <span className="mt-1.5 flex items-baseline justify-between gap-2">
+                <span className="text-xl font-semibold leading-none tabular-nums">
+                  {source.length}
+                </span>
+                <span className="truncate text-[10px] text-muted-foreground">
+                  {scope === 'mine' || !directory.canReadAll
+                    ? 'Teams you can access'
+                    : 'Active teams'}
+                </span>
+              </span>
+            </button>
+            <button
+              className={`rounded-lg border bg-card px-3 py-2 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${metricFilter === 'members' ? 'border-primary/50 ring-1 ring-primary/15' : 'border-border'}`}
+              onClick={() => setMetricFilter(metricFilter === 'members' ? 'all' : 'members')}
+              type="button"
+              aria-pressed={metricFilter === 'members'}
+            >
+              <span className="flex items-center gap-2">
+                <span className="grid size-7 place-items-center rounded-md bg-sky-500/10 text-sky-700">
+                  <UserRoundCheck className="size-4" />
+                </span>
+                <span className="truncate text-xs font-medium text-foreground">
+                  Active memberships
+                </span>
+                <ChevronRight className="ml-auto size-3.5 shrink-0 text-muted-foreground" />
+              </span>
+              <span className="mt-1.5 flex items-baseline justify-between gap-2">
+                <span className="text-xl font-semibold leading-none tabular-nums">
+                  {membershipCount}
+                </span>
+                <span className="truncate text-[10px] text-muted-foreground">
+                  Across listed teams · click to filter
+                </span>
+              </span>
+            </button>
+            <button
+              className={`rounded-lg border bg-card px-3 py-2 text-left transition hover:border-primary/40 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${metricFilter === 'leads' ? 'border-primary/50 ring-1 ring-primary/15' : 'border-border'}`}
+              onClick={() => setMetricFilter(metricFilter === 'leads' ? 'all' : 'leads')}
+              type="button"
+              aria-pressed={metricFilter === 'leads'}
+            >
+              <span className="flex items-center gap-2">
+                <span className="grid size-7 place-items-center rounded-md bg-amber-500/10 text-amber-700">
+                  <Crown className="size-4" />
+                </span>
+                <span className="text-xs font-medium text-foreground">Team leads</span>
+                <ChevronRight className="ml-auto size-3.5 text-muted-foreground" />
+              </span>
+              <span className="mt-1.5 flex items-baseline justify-between gap-2">
+                <span className="text-xl font-semibold leading-none tabular-nums">{leadCount}</span>
+                <span className="truncate text-[10px] text-muted-foreground">
+                  Unique assigned leads · click to filter
+                </span>
+              </span>
+            </button>
+          </section>
+        )}
         {directory.loading && (
-          <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-            Loading teams...
-          </p>
+          <LoadingIndicator
+            variant="panel"
+            label="Loading teams"
+            className="py-10 text-center text-xs text-muted-foreground"
+          />
         )}
 
         {!directory.loading && directory.forbidden && (
@@ -184,6 +284,7 @@ export function ScreenTeams() {
 
       <CreateTeamModal
         branches={directory.branches}
+        existingNames={directory.teams.map((view) => view.team.name)}
         employees={directory.employees}
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}

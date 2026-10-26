@@ -48,15 +48,27 @@ export class SessionRepository {
     }
   }
 
-  /** Current session, or null when there is no valid session cookie. */
-  async restore(): Promise<AuthenticatedSession | null> {
-    try {
-      return await this.fetch();
-    } catch (error) {
-      if (error instanceof ApiError && (error.status === 401 || error.status === 403)) {
-        return null;
+  /**
+   * The current session, or null when there is no valid session cookie.
+   *
+   * Only 401 and 403 mean "not signed in". A rate limit, a server error or a dropped connection
+   * says nothing about the session, and treating them as signed out put people with a valid
+   * session back on the sign-in page. Those are retried a few times, then thrown.
+   */
+  async restore(wait: (ms: number) => Promise<void> = sleep): Promise<AuthenticatedSession | null> {
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        return await this.fetch();
+      } catch (error) {
+        // Read by its status rather than its class, so an HTTP error is recognised wherever
+        // it was constructed; anything without a status is a network failure.
+        const status = (error as { status?: unknown }).status;
+        const http = typeof status === 'number' ? status : null;
+        if (http === 401 || http === 403) return null;
+        const transient = http === null || http === 429 || http >= 500;
+        if (!transient || attempt >= RESTORE_RETRY_DELAYS.length) throw error;
+        await wait(RESTORE_RETRY_DELAYS[attempt]!);
       }
-      throw error;
     }
   }
 
@@ -69,3 +81,7 @@ export class SessionRepository {
 }
 
 export const sessionRepository = new SessionRepository();
+
+/** Waits before each retry of a session check that failed for a reason other than the session. */
+const RESTORE_RETRY_DELAYS = [800, 2000, 4000];
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));

@@ -34,6 +34,27 @@ export const timesheetEntrySchema = z.object({
   endTime: z.string().nullable().optional(),
 });
 
+/**
+ * The note an employee actually typed on an entry.
+ *
+ * Entries store their project, job type and work item encoded into `description` as JSON, which
+ * the API unpacks. If an entry ever reaches a screen still encoded, this keeps that machinery off
+ * the page: an approver sees the note or nothing, never a blob of stored fields.
+ */
+export function entryNotes(entry: { description?: string | null }): string {
+  const text = (entry.description ?? '').trim();
+  if (text.startsWith('{') && text.endsWith('}')) {
+    try {
+      const parsed: unknown = JSON.parse(text);
+      const notes = (parsed as { notes?: unknown }).notes;
+      return typeof notes === 'string' ? notes.trim() : '';
+    } catch {
+      return '';
+    }
+  }
+  return text;
+}
+
 export const timesheetSchema = z.object({
   id: z.string().uuid(),
   employeeId: z.string().uuid(),
@@ -45,6 +66,23 @@ export const timesheetSchema = z.object({
   overtimeMinutes: z.number(),
   version: z.number().optional(),
   entries: z.array(timesheetEntrySchema).optional(),
+});
+export const timesheetPageSchema = z.object({
+  timesheets: z.array(timesheetSchema),
+  nextCursor: z.string().optional(),
+  summary: z
+    .object({
+      statusCounts: z.object({
+        DRAFT: z.object({ count: z.number(), totalMinutes: z.number() }).optional(),
+        SUBMITTED: z.object({ count: z.number(), totalMinutes: z.number() }).optional(),
+        APPROVED: z.object({ count: z.number(), totalMinutes: z.number() }).optional(),
+        REJECTED: z.object({ count: z.number(), totalMinutes: z.number() }).optional(),
+        LOCKED: z.object({ count: z.number(), totalMinutes: z.number() }).optional(),
+      }),
+      totalCount: z.number(),
+      totalMinutes: z.number(),
+    })
+    .optional(),
 });
 
 export const jobTypeSchema = z.object({
@@ -67,7 +105,29 @@ function parseList<T>(schema: z.ZodType<T>, payload: unknown): T[] | null {
 }
 
 export const parseTimesheetList = (payload: unknown) => parseList(timesheetSchema, payload);
+export const parseTimesheetPage = (payload: unknown) => {
+  const result = timesheetPageSchema.safeParse(payload);
+  return result.success ? result.data : null;
+};
 export const parseJobTypeList = (payload: unknown) => parseList(jobTypeSchema, payload);
+
+/**
+ * What adding a time entry answers: the entry, and the sheet it landed on.
+ *
+ * The server has always replied `{ timesheet, entry }`, with the sheet as its stored row rather than
+ * the list shape — so reading the reply as a bare timesheet failed every time, and Log Time said
+ * "the response was not valid" about an entry it had in fact saved. Only the sheet's id is read.
+ */
+export const timesheetEntryResultSchema = z.object({
+  timesheet: z.object({ id: z.string().uuid() }).passthrough(),
+  entry: timesheetEntrySchema,
+});
+export type TimesheetEntryResult = z.infer<typeof timesheetEntryResultSchema>;
+
+export function parseTimesheetEntryResult(payload: unknown): TimesheetEntryResult | null {
+  const result = timesheetEntryResultSchema.safeParse(payload);
+  return result.success ? result.data : null;
+}
 
 export function parseTimesheet(payload: unknown): Timesheet | null {
   const result = timesheetSchema.safeParse(payload);

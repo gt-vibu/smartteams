@@ -2,8 +2,8 @@ import { readFileSync } from 'node:fs';
 import type { Prisma } from '../../generated/prisma/client';
 import {
   EMPLOYEE_SELF_SERVICE_PERMISSIONS,
-  HR_ADMIN_PERMISSIONS,
   MANAGER_PERMISSIONS,
+  HR_ADMIN_PERMISSIONS,
   seedStandardRoles,
 } from './organization-roles';
 
@@ -16,7 +16,8 @@ import {
  * Employee role and created employees who could never sign in — while every test kept passing,
  * because they all built their tenant through the platform path.
  *
- * These pin the seeding itself. The two call sites are asserted separately below.
+ * These pin the seeding itself. The two call sites are asserted separately below. Manager is an
+ * optional access profile; reporting relationships still determine whose approvals they receive.
  */
 
 type Captured = { data: Record<string, unknown> };
@@ -55,7 +56,7 @@ function fakeTx() {
 }
 
 describe('seedStandardRoles', () => {
-  it('creates the three non-administrator roles', async () => {
+  it('creates Employee, Manager and HR Admin standard profiles', async () => {
     const { tx, roles } = fakeTx();
     await seedStandardRoles(tx, 'org-1');
 

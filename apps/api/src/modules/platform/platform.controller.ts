@@ -5,6 +5,7 @@ import { NativeJwtGuard, type NativeRequestUser } from '../auth/jwt.guard';
 import {
   EndProjectMemberDto,
   EndTeamMemberDto,
+  UpdateTeamMemberDto,
   ProjectDeactivationDto,
   ProjectDto,
   ProjectMemberDto,
@@ -83,6 +84,17 @@ export class PlatformController {
     return this.contexts
       .native(request.user.userId, organizationId)
       .then((context) => this.membership.endTeamMembership(context, teamId, memberId, body));
+  }
+  @Patch('teams/:teamId/members/:memberId') updateTeamMember(
+    @Param('organizationId') organizationId: string,
+    @Param('teamId') teamId: string,
+    @Param('memberId') memberId: string,
+    @Body() body: UpdateTeamMemberDto,
+    @Req() request: Request & { user: NativeRequestUser },
+  ) {
+    return this.contexts
+      .native(request.user.userId, organizationId)
+      .then((context) => this.membership.updateTeamMember(context, teamId, memberId, body));
   }
   @Get('projects') projects(
     @Param('organizationId') organizationId: string,

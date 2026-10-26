@@ -1,9 +1,21 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import type { DailyAttendanceItem } from '../../types/attendance.types';
+import React from 'react';
+import { formatMinutes } from '@smarteam/contracts';
 import type { ShiftInfo } from '../../types/shift.types';
-import { formatMinutesToDuration } from '../../utils/format.utils';
+import { dayStatusLabel, type ResolvedDayStatus } from '../../services/day-status';
+
+/** One day of the week on the Home schedule, already resolved to what it was. */
+export type ScheduleDay = {
+  dateKey: string;
+  dayOfWeek: string;
+  dayNumber: number;
+  status: ResolvedDayStatus;
+  workedMinutes: number;
+  isToday: boolean;
+  leaveName?: string | null;
+  holidayName?: string | null;
+};
 
 interface WorkScheduleCardProps {
   /** Today's assigned shift; null when none is assigned or it has not loaded yet. */
@@ -12,8 +24,33 @@ interface WorkScheduleCardProps {
   shiftStatus?: 'loading' | 'unassigned' | 'unavailable';
   startDate: string;
   endDate: string;
-  attendanceDays: DailyAttendanceItem[];
+  /** This week, Monday to Sunday, oldest first. */
+  attendanceDays: ScheduleDay[];
 }
+
+const DOT: Record<ResolvedDayStatus, string> = {
+  PRESENT: 'bg-emerald-500',
+  HALF_DAY: 'bg-emerald-300',
+  LEAVE: 'bg-violet-500',
+  HOLIDAY: 'bg-cyan-500',
+  WEEKEND: 'bg-amber-400',
+  ABSENT: 'bg-rose-500',
+  TODAY: 'bg-primary',
+  UPCOMING: 'bg-slate-200 dark:bg-slate-700',
+  EMPTY: 'bg-slate-300 dark:bg-slate-600',
+};
+
+const WORD: Record<ResolvedDayStatus, string> = {
+  PRESENT: 'text-emerald-700 dark:text-emerald-400',
+  HALF_DAY: 'text-emerald-700 dark:text-emerald-400',
+  LEAVE: 'text-violet-700 dark:text-violet-300',
+  HOLIDAY: 'text-cyan-700 dark:text-cyan-400',
+  WEEKEND: 'text-amber-600 dark:text-amber-400',
+  ABSENT: 'text-rose-600 dark:text-rose-400',
+  TODAY: 'text-foreground',
+  UPCOMING: 'text-muted-foreground',
+  EMPTY: 'text-muted-foreground',
+};
 
 export function WorkScheduleCard({
   shift,
@@ -22,18 +59,12 @@ export function WorkScheduleCard({
   endDate,
   attendanceDays,
 }: WorkScheduleCardProps) {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   return (
     <div className="bg-white dark:bg-card rounded-lg border border-slate-200/90 dark:border-border p-4 sm:p-5 shadow-xs w-full min-w-0 max-w-full overflow-hidden">
-      {/* Header */}
       <div className="flex items-center gap-2.5 mb-4">
         <div className="h-7 w-7 rounded-full bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-400 flex items-center justify-center border border-sky-100 dark:border-sky-800 shrink-0">
           <svg
+            aria-hidden="true"
             className="h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -49,10 +80,10 @@ export function WorkScheduleCard({
         </div>
         <div className="min-w-0 flex-1">
           <h2 className="text-xs font-bold text-slate-900 dark:text-white m-0 truncate">
-            Work Schedule
+            Work schedule
           </h2>
           <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
-            {startDate} · {endDate}
+            {endDate ? `${startDate} – ${endDate}` : startDate}
           </div>
         </div>
       </div>
@@ -64,7 +95,7 @@ export function WorkScheduleCard({
           <div className="truncate text-xs font-semibold text-sky-900 dark:text-sky-200">
             {shift.name}
           </div>
-          <div className="shrink-0 font-mono text-[11px] font-medium text-sky-700 dark:text-sky-300">
+          <div className="shrink-0 text-[11px] font-medium tabular-nums text-sky-700 dark:text-sky-300">
             {shift.startsAt} - {shift.endsAt}
           </div>
         </div>
@@ -78,83 +109,51 @@ export function WorkScheduleCard({
         </div>
       )}
 
-      {/* 7-Day Timeline Ruler. No minimum width and no hidden scroller: on a phone each day is
-          about 36px, so the status word gives way to the coloured dot below `sm` rather than
-          spilling into the next day's column. */}
+      {/* The week left to right, one column a day. On a phone each column is about 36px, so the
+          status word gives way to the coloured dot below `sm` rather than spilling over. */}
       <div className="relative pt-2 pb-1 w-full">
-        <div className="relative">
-          {/* Horizontal Connector Line */}
-          <div className="absolute top-[24px] left-6 right-6 h-0.5 bg-slate-200/80 dark:bg-slate-700 -z-0" />
-
-          <div className="grid grid-cols-7 gap-1 sm:gap-2 relative z-10 text-center">
-            {attendanceDays.map((item) => {
-              const durationStr = isMounted ? formatMinutesToDuration(item.workedMinutes) : '';
-
-              return (
-                <div key={item.id} className="flex min-w-0 flex-col items-center">
-                  {/* 1. Date Hierarchy: Day of Week + Day Number */}
-                  <div className="flex flex-col items-center mb-2">
-                    <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-400 mb-0.5">
-                      {item.dayOfWeek}
-                    </span>
-                    {item.isToday ? (
-                      <span className="h-5 px-1.5 rounded-full bg-primary text-white text-[11px] font-bold flex items-center justify-center shadow-xs">
-                        {item.dayNumber}
-                      </span>
-                    ) : (
-                      <span className="text-xs font-bold text-slate-800 dark:text-slate-100">
-                        {item.dayNumber}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Status Dot */}
-                  <div
-                    className={`h-2.5 w-2.5 rounded-full border-2 border-white dark:border-slate-800 mb-2 shadow-xs ${
-                      item.dayStatus === 'PRESENT'
-                        ? 'bg-emerald-500'
-                        : item.dayStatus === 'HOLIDAY'
-                          ? 'bg-cyan-500'
-                          : item.dayStatus === 'WEEKEND'
-                            ? 'bg-amber-400'
-                            : 'bg-slate-300 dark:bg-slate-600'
-                    }`}
-                  />
-
-                  {/* 2. Status Hierarchy */}
-                  <div className="min-h-[16px] hidden items-center justify-center sm:flex">
-                    {item.dayStatus === 'PRESENT' && (
-                      <span className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400">
-                        Present
-                      </span>
-                    )}
-                    {item.dayStatus === 'WEEKEND' && (
-                      <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400">
-                        Weekend
-                      </span>
-                    )}
-                    {item.dayStatus === 'HOLIDAY' && (
-                      <span className="text-[11px] font-semibold text-cyan-700 dark:text-cyan-400">
-                        Holiday
-                      </span>
-                    )}
-                  </div>
-
-                  {/* 3. Worked Hours Hierarchy */}
-                  <div className="min-h-[16px] flex items-center justify-center mt-0.5">
-                    {durationStr ? (
-                      <span className="whitespace-nowrap text-[9px] font-mono font-medium tracking-tight text-slate-500 dark:text-slate-400 sm:text-[10px] sm:tracking-normal">
-                        {durationStr}
-                      </span>
-                    ) : (
-                      <span className="text-[10px] text-transparent select-none">-</span>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <div className="absolute top-[32px] left-6 right-6 h-0.5 bg-slate-200/80 dark:bg-slate-700" />
+        <ol className="relative z-10 grid grid-cols-7 gap-1 sm:gap-2 text-center">
+          {attendanceDays.map((day) => {
+            const label = dayStatusLabel(day.status, day);
+            const hours =
+              day.workedMinutes > 0 && (day.status === 'PRESENT' || day.status === 'HALF_DAY')
+                ? formatMinutes(day.workedMinutes)
+                : '';
+            return (
+              <li
+                key={day.dateKey}
+                aria-label={[day.dayOfWeek, day.dayNumber, label, hours].filter(Boolean).join(' ')}
+                className="flex min-w-0 flex-col items-center"
+              >
+                <span className="text-[10px] font-semibold tracking-wide text-slate-400 mb-0.5">
+                  {day.dayOfWeek}
+                </span>
+                {day.isToday ? (
+                  <span className="h-5 min-w-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[11px] font-bold flex items-center justify-center">
+                    {day.dayNumber}
+                  </span>
+                ) : (
+                  <span className="h-5 text-xs font-bold text-slate-800 dark:text-slate-100 flex items-center">
+                    {day.dayNumber}
+                  </span>
+                )}
+                <span
+                  className={`mt-2 mb-2 h-2.5 w-2.5 rounded-full border-2 border-white dark:border-card ${DOT[day.status]}`}
+                />
+                <span
+                  className={`hidden min-h-[16px] max-w-full truncate px-0.5 text-[11px] font-semibold sm:block ${WORD[day.status]}`}
+                  title={label}
+                >
+                  {label}
+                </span>
+                <span className="min-h-[16px] whitespace-nowrap text-[10px] font-medium tabular-nums text-slate-500 dark:text-slate-400">
+                  {hours}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
       </div>
     </div>
   );

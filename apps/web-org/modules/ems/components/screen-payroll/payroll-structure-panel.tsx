@@ -3,11 +3,8 @@
 import React from 'react';
 import { formatMoney, type Employee, type SalaryProfile } from '@smarteam/contracts';
 import { Button } from '@smarteam/ui';
-import { FileSpreadsheet, Printer } from 'lucide-react';
-import {
-  downloadSalaryStructureCsv,
-  openSalaryStructurePrintView,
-} from './salary-structure-export';
+import { Download, FileSpreadsheet } from 'lucide-react';
+import { downloadSalaryStructureCsv, downloadSalaryStructurePdf } from './salary-structure-export';
 
 /**
  * The employee's salary structure, exactly as the backend derives it.
@@ -93,8 +90,8 @@ export function PayrollStructurePanel({
   const { salaryBreakdown } = profile;
   const totalEarnings = salaryBreakdown.earnings.reduce((sum, item) => sum + item.amount, 0);
 
-  const handlePrint = () => {
-    openSalaryStructurePrintView({ profile, employee, orgName });
+  const handleDownloadPdf = () => {
+    void downloadSalaryStructurePdf({ profile, employee, orgName });
   };
 
   const handleCsv = () => {
@@ -105,18 +102,16 @@ export function PayrollStructurePanel({
     <div className="space-y-4">
       {/* Header bar with download options */}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs text-muted-foreground">
-          Your configured compensation structure and statutory allowances.
-        </p>
+        <span />
         <div className="flex items-center gap-2">
           <Button
             size="sm"
             variant="outline"
-            className="h-7 text-xs font-medium gap-1.5 border-primary/30 text-primary hover:bg-primary/5 shadow-2xs"
-            onClick={handlePrint}
-            title="Download official Salary Annexure as PDF / Printable format"
+            className="h-7 text-xs font-medium gap-1.5 border-primary/30 text-primary hover:bg-primary/5 shadow-2xs cursor-pointer"
+            onClick={handleDownloadPdf}
+            title="Download official Salary Annexure as PDF"
           >
-            <Printer className="h-3.5 w-3.5" />
+            <Download className="h-3.5 w-3.5" />
             <span>Download Annexure (PDF)</span>
           </Button>
           <Button
@@ -181,12 +176,6 @@ export function PayrollStructurePanel({
           ))}
         </Section>
       )}
-
-      <p className="text-[11px] leading-relaxed text-muted-foreground">
-        Figures are calculated by payroll from your organisation&apos;s policy and statutory rules.
-        Income tax, gratuity and annual cost to company are not calculated by the system and are
-        therefore not shown.
-      </p>
     </div>
   );
 }

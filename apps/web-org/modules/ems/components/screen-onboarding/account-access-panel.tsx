@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import type { EmployeeAccessCodeState } from '@smarteam/contracts';
 import { Button } from '@smarteam/ui';
-import { hasPermission } from '@smarteam/contracts';
+import { hasPermission, formatDateTime } from '@smarteam/contracts';
 import { useSession } from '../../hooks/auth-context';
 import { accessCodeRepository } from '../../repositories/access-code.repository';
 
@@ -192,10 +192,5 @@ const DETAIL: Record<EmployeeAccessCodeState, string> = {
 function formatExpiry(value: string): string {
   const at = new Date(value);
   if (Number.isNaN(at.getTime())) return 'its expiry';
-  return at.toLocaleString(undefined, {
-    day: 'numeric',
-    month: 'short',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
+  return formatDateTime(at);
 }

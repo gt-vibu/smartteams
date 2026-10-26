@@ -1,4 +1,6 @@
 import {
+  ArrayMaxSize,
+  ArrayMinSize,
   IsArray,
   IsBoolean,
   IsIn,
@@ -15,6 +17,8 @@ import {
   MinLength,
   ValidateNested,
 } from 'class-validator';
+import { LIMITS } from '@smarteam/contracts';
+import { IsClockTime, IsCode, IsText, IsWholeNumber } from '../../common/validation/field-rules';
 import { Type } from 'class-transformer';
 
 export class BreakRuleDto {
@@ -24,6 +28,7 @@ export class BreakRuleDto {
   @IsNumber() @Min(1) sequence!: number;
 }
 export class ShiftDto {
+  /** Federation supplies its own; the app generates one from the name. */
   @IsString() code!: string;
   @IsString() name!: string;
   @IsOptional() @IsUUID() branchId?: string;
@@ -41,6 +46,28 @@ export class ShiftDto {
   @Type(() => BreakRuleDto)
   breakRules?: BreakRuleDto[];
 }
+
+/** A shift created in the app: a name is enough, and the code is generated from it. */
+export class NativeShiftDto {
+  @IsOptional() @IsCode('Shift code') code?: string;
+  @IsText('Shift name', LIMITS.title, 2) name!: string;
+  @IsOptional() @IsUUID() branchId?: string;
+  @IsArray()
+  @IsNumber({}, { each: true })
+  @Min(1, { each: true })
+  @Max(7, { each: true })
+  daysOfWeek!: number[];
+  @IsClockTime('Start time') startsAt!: string;
+  @IsClockTime('End time') endsAt!: string;
+  @IsBoolean() crossesMidnight!: boolean;
+  @IsWholeNumber('Break', 0, 720) breakMinutes!: number;
+  @IsOptional()
+  @ArrayMaxSize(10)
+  @ValidateNested({ each: true })
+  @Type(() => BreakRuleDto)
+  breakRules?: BreakRuleDto[];
+}
+
 export class UpdateShiftDto {
   @IsOptional() @IsString() code?: string;
   @IsOptional() @IsString() name?: string;
@@ -90,4 +117,17 @@ export class ShiftAssignmentListQueryDto {
 export class EndShiftAssignmentDto {
   @Matches(DATE_ONLY) endsOn!: string;
   @IsString() @MinLength(3) @MaxLength(500) reason!: string;
+}
+
+export class ShiftRotationDto {
+  @IsArray()
+  @ArrayMinSize(1)
+  @ArrayMaxSize(500)
+  @IsUUID('4', { each: true })
+  employeeIds!: string[];
+  @IsArray() @ArrayMinSize(2) @ArrayMaxSize(6) @IsUUID('4', { each: true }) shiftIds!: string[];
+  @IsInt() @Min(1) @Max(12) weeksPerShift!: number;
+  @IsDateString() startsOn!: string;
+  @IsInt() @Min(1) @Max(26) totalWeeks!: number;
+  @IsOptional() @IsBoolean() stagger?: boolean;
 }

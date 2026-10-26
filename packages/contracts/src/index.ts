@@ -1,4 +1,5 @@
 import { z } from 'zod';
+export { employeeOnboardingDetailsSchema, type EmployeeOnboardingDetails } from './federation';
 
 export const correlationIdSchema = z.string().trim().min(1).max(128);
 export const idempotencyKeySchema = z.string().trim().min(16).max(255);
@@ -49,6 +50,7 @@ export type ProblemDetails = z.infer<typeof problemDetailsSchema>;
 
 export * from './auth';
 export * from './workforce';
+export * from './branch-memberships';
 export * from './attendance';
 export * from './attendance-holiday-conflicts';
 export * from './leave';
@@ -58,5 +60,18 @@ export * from './approvals';
 export * from './shifts';
 export * from './organization';
 export * from './files';
+export * from './documents';
+export * from './departments';
+export * from './aadhaar';
 export * from './holidays';
 export * from './rbac';
+export * from './notifications';
+export * from './dates';
+export * from './identifiers';
+export * from './passwords';
+export * from './field-rules';
+
+export * from './leave-workflows';
+export * from './product-operations';
+
+export * from './workforce-operations';

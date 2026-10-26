@@ -2,13 +2,20 @@
 
 import React, { useState } from 'react';
 import { Badge, Button } from '@smarteam/ui';
-import { formatMoney, isCalculationStale, type PayrollRun } from '@smarteam/contracts';
+import {
+  formatDate,
+  formatDateRange,
+  isCalculationStale,
+  type PayrollRun,
+} from '@smarteam/contracts';
 import type { PayrollAdminState } from '../../hooks/use-payroll-admin';
 import {
   AddAdjustmentDialog,
   CreatePayrollRunDialog,
   PayrollRunActions,
 } from './payroll-run-actions';
+import { PayrollRunExports } from './payroll-run-exports';
+import { PayrollRunReview } from './payroll-run-review';
 
 /**
  * Payroll runs for the organisation.
@@ -26,7 +33,13 @@ const statusTone = (run: PayrollRun) => {
   return 'secondary' as const;
 };
 
-export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
+export function PayrollRunsPanel({
+  admin,
+  onNavigateModule,
+}: {
+  admin: PayrollAdminState;
+  onNavigateModule: (module: string, subView?: string) => void;
+}) {
   const [creating, setCreating] = useState(false);
   const [adjustingRunId, setAdjustingRunId] = useState<string | null>(null);
 
@@ -47,10 +60,7 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground">
-          Figures come from attendance, leave, approved timesheets, salary structure and statutory
-          rules.
-        </p>
+        <span />
         {admin.can.write && (
           <Button onClick={() => setCreating(true)} size="sm" type="button">
             Start a run
@@ -58,14 +68,38 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
         )}
       </div>
 
-      {admin.saveError && (
-        <p
-          className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive"
-          role="alert"
-        >
-          {admin.saveError}
-        </p>
-      )}
+      {admin.saveError &&
+        (admin.saveError.toLowerCase().includes('payroll can consume only approved timesheets') ? (
+          <div
+            className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-3"
+            role="alert"
+          >
+            <div>
+              <p className="text-xs font-semibold text-foreground">
+                Timesheets need approval before payroll can be calculated
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Review and approve the outstanding timesheets for this pay period, then return and
+                calculate the run again.
+              </p>
+            </div>
+            <Button
+              onClick={() => onNavigateModule('timesheet')}
+              size="sm"
+              type="button"
+              variant="outline"
+            >
+              Open timesheets
+            </Button>
+          </div>
+        ) : (
+          <p
+            className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive"
+            role="alert"
+          >
+            {admin.saveError}
+          </p>
+        ))}
 
       {admin.loading && (
         <p className="py-10 text-center text-xs text-muted-foreground" role="status">
@@ -106,24 +140,16 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
         admin.runs.map((run) => {
           const slips = admin.payslipsForRun(run.id);
           const released = run.status === 'RELEASED' || run.status === 'LOCKED';
-          const totals = slips.reduce(
-            (sum, slip) => ({
-              gross: sum.gross + slip.totals.grossAmount,
-              deduction: sum.deduction + slip.totals.deductionAmount,
-              net: sum.net + slip.totals.netAmount,
-            }),
-            { gross: 0, deduction: 0, net: 0 },
-          );
           return (
             <div className="rounded-lg border border-border bg-card" key={run.id}>
               <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
                 <div>
                   <p className="text-xs font-bold text-foreground">
-                    {run.periodStart.slice(0, 10)} to {run.periodEnd.slice(0, 10)}
+                    {formatDateRange(run.periodStart, run.periodEnd)}
                   </p>
                   <p className="mt-0.5 text-[10px] text-muted-foreground">
                     {run.calculatedAt
-                      ? `Calculated ${run.calculatedAt.slice(0, 10)}`
+                      ? `Calculated ${formatDate(run.calculatedAt)}`
                       : 'Not calculated yet'}
                   </p>
                 </div>
@@ -153,23 +179,15 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
               )}
 
               {released && !admin.payslipsUnavailable && (
-                <dl className="grid grid-cols-2 gap-px border-t border-border bg-border sm:grid-cols-4">
-                  {[
-                    { label: 'Employees paid', value: String(slips.length) },
-                    { label: 'Gross', value: formatMoney(totals.gross) },
-                    { label: 'Deductions', value: formatMoney(totals.deduction) },
-                    { label: 'Net', value: formatMoney(totals.net) },
-                  ].map((tile) => (
-                    <div className="bg-card px-4 py-2.5" key={tile.label}>
-                      <dt className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                        {tile.label}
-                      </dt>
-                      <dd className="mt-0.5 font-mono text-xs font-bold text-foreground">
-                        {tile.value}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
+                <>
+                  <PayrollRunReview
+                    calculatedAt={run.calculatedAt!}
+                    released
+                    runId={run.id}
+                    slips={slips}
+                  />
+                  <PayrollRunExports canPay={admin.can.pay} runId={run.id} />
+                </>
               )}
 
               {released && admin.payslipsUnavailable && (
@@ -178,10 +196,8 @@ export function PayrollRunsPanel({ admin }: { admin: PayrollAdminState }) {
                 </p>
               )}
 
-              {!released && run.status !== 'DRAFT' && (
-                <p className="border-t border-border px-4 py-2.5 text-[11px] text-muted-foreground">
-                  Per-employee figures become available once the run is released.
-                </p>
+              {!released && run.calculatedAt && !admin.payslipsUnavailable && (
+                <PayrollRunReview calculatedAt={run.calculatedAt} runId={run.id} />
               )}
             </div>
           );

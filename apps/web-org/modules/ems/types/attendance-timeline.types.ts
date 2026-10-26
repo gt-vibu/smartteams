@@ -16,24 +16,30 @@ export interface TimelineDayRecord {
   inProgressMinutes?: number;
   /** A past day that ended on a check-in: no check-out was ever recorded, so no time counts. */
   checkOutMissing?: boolean;
-  status: 'PRESENT' | 'WEEKEND' | 'HOLIDAY' | 'LEAVE' | 'EMPTY';
+  /**
+   * ABSENT is a working day gone by with nothing recorded, where the organization counts that as
+   * absent; UPCOMING a day still to come; EMPTY anything else with nothing to show.
+   */
+  status: 'PRESENT' | 'WEEKEND' | 'HOLIDAY' | 'LEAVE' | 'ABSENT' | 'UPCOMING' | 'EMPTY';
   holidayName?: string;
+  /** The approved leave covering the day, by leave type name. */
+  leaveName?: string;
   isRestrictedHoliday?: boolean;
   /**
    * A check-in on the employee's approved optional holiday: the row shows this label and colour
    * instead of an ordinary present day.
    */
   holidayConflict?: { label: string; detail: string; tone: 'attention' | 'holiday' | 'working' };
-  // Visual bar span (percent of 10 AM - 6 PM scale)
+  // Where the punches fall, as a percentage of the whole 24-hour day.
   spanStartPercent?: number;
   spanEndPercent?: number;
 }
 
 export interface AttendanceSummaryStats {
-  payableDays: number;
   presentDays: number;
-  onDutyDays: number;
-  paidLeaveDays: number;
+  leaveDays: number;
   holidayDays: number;
   weekendDays: number;
+  /** Minutes worked across the days shown, from closed check-in/check-out pairs. */
+  workedMinutes: number;
 }

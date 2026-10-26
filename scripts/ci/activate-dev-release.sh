@@ -101,7 +101,9 @@ run_as_service_user() {
 
 if [ "$SERVICE" = api ]; then
   echo "Running Prisma database migrations..."
-  run_as_service_user "cd '$SERVICE_RELEASE_DIR' && DATABASE_URL=\"\$(sed -n 's/^DATABASE_URL=//p' '$SHARED_DIR/.env')\" '$SERVICE_RELEASE_DIR/node_modules/.bin/prisma' migrate deploy --config prisma.config.ts"
+  # Load the same protected secret file as the API, including the separate schema-owner URL.
+  # Do not let inherited shell credentials override release secrets or migrate as the runtime role.
+  run_as_service_user "cd '$SERVICE_RELEASE_DIR' && env -i HOME=/home/$DEPLOY_USER PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin node --env-file='$SHARED_DIR/.env' '$SERVICE_RELEASE_DIR/node_modules/prisma/build/index.js' migrate deploy --config prisma.config.ts"
 fi
 
 save_pm2_state() {

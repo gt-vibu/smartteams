@@ -1,5 +1,6 @@
 'use client';
 
+import { formatDate } from '@smarteam/contracts';
 import React from 'react';
 import { useTimesheet } from '../../hooks/use-timesheet';
 import { TimesheetStatusCard } from './timesheet-status-card';
@@ -43,7 +44,7 @@ export function OverviewTimesheetPreviewTab() {
             >
               <div className="flex items-center justify-between bg-muted/40 px-4 py-2">
                 <span className="font-mono text-xs font-semibold text-foreground">
-                  {group.workDate}
+                  {formatDate(group.workDate)}
                 </span>
                 <span className="text-xs tabular-nums text-muted-foreground">
                   {group.totalLabel}

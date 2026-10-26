@@ -1,9 +1,18 @@
-import React, { useRef, useState } from 'react';
-import { Button, Textarea, useFocusTrap } from '@smarteam/ui';
-import { ATTENDANCE_CORRECTION_REASON_MIN_LENGTH } from '@smarteam/contracts';
+import React, { useRef } from 'react';
+import { Button, useFocusTrap } from '@smarteam/ui';
 import type { AttendanceTableRow } from '../../types/attendance-table.types';
 import { MissingCheckOutForm } from '../common/missing-check-out-form';
 import { HolidayConflictSection } from '../common/holiday-conflict-section';
+import { CorrectionForm, type CorrectionTimes } from './correction-form';
+import { statusLabel } from '../../lib/status-label';
+
+/** Where a punch came from, in words: the internal source codes mean nothing to an employee. */
+const PUNCH_SOURCE: Record<string, string> = {
+  NATIVE: 'Self',
+  FEDERATION: 'Integration',
+  ADMIN_CORRECTION: 'Corrected',
+  IMPORT: 'Imported',
+};
 
 interface AttendanceDetailDrawerProps {
   row: AttendanceTableRow | null;
@@ -13,7 +22,11 @@ interface AttendanceDetailDrawerProps {
    * Sends the correction. Resolving means the server accepted it; rejecting carries the reason to
    * show. Returning `void` is what let the drawer treat a rejected request as a success.
    */
-  onSubmitRegularization?: (recordId: string, reason: string) => Promise<unknown>;
+  onSubmitRegularization?: (
+    recordId: string,
+    reason: string,
+    times?: CorrectionTimes,
+  ) => Promise<unknown>;
   /** Asks for a missing check-out to be added; same resolve/reject contract as above. */
   onSubmitMissingCheckOut?: (
     recordId: string,
@@ -21,7 +34,7 @@ interface AttendanceDetailDrawerProps {
     reason: string,
   ) => Promise<unknown>;
   /** Explains a check-in on an approved optional holiday; same contract. */
-  onExplainHolidayCheckIn?: (recordId: string, reason: string, comment: string) => Promise<unknown>;
+  onExplainHolidayCheckIn?: (recordId: string, reason: string) => Promise<unknown>;
 }
 
 export function AttendanceDetailDrawer({
@@ -32,40 +45,10 @@ export function AttendanceDetailDrawer({
   onSubmitMissingCheckOut,
   onExplainHolidayCheckIn,
 }: AttendanceDetailDrawerProps) {
-  const [reason, setReason] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   useFocusTrap(isOpen, panelRef, onClose);
 
   if (!isOpen || !row) return null;
-
-  /**
-   * Submits the correction and reports what actually happened.
-   *
-   * This used to fire the callback, set `submitted`, and close after a second — without waiting
-   * for the request. A rejected correction was indistinguishable from an accepted one, and the
-   * employee's reason was discarded along with the drawer.
-   */
-  const handleSubmitRegularization = async () => {
-    if (!onSubmitRegularization || saving) return;
-    setSaving(true);
-    setError(null);
-    try {
-      await onSubmitRegularization(row.id, reason);
-      setSubmitted(true);
-      setTimeout(() => {
-        setSubmitted(false);
-        onClose();
-      }, 1000);
-    } catch (caught) {
-      // The drawer stays open with the text intact, so the reason can be corrected and resent.
-      setError(caught instanceof Error ? caught.message : 'The correction could not be submitted.');
-    } finally {
-      setSaving(false);
-    }
-  };
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden" aria-modal="true">
@@ -127,19 +110,20 @@ export function AttendanceDetailDrawer({
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground font-medium">Status</span>
-                <span className="font-semibold text-foreground">{row.status}</span>
+                <span className="font-semibold text-foreground">{statusLabel(row.status)}</span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground font-medium">Total Worked</span>
                 <span className="font-mono font-bold text-foreground">
-                  {row.totalHours !== '-' ? `${row.totalHours} Hrs` : '-'}
+                  {/* The same "9h 10m" form as the payable hours beside it, not "09:10 Hrs". */}
+                  {row.totalHours && row.totalHours !== '-'
+                    ? row.totalHours.replace(/^0?(\d+):0?(\d+)$/, '$1h $2m')
+                    : '-'}
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground font-medium">Payable Hours</span>
-                <span className="font-mono font-semibold text-foreground">
-                  {row.payableHours !== '-' ? `${row.payableHours} Hrs` : '-'}
-                </span>
+                <span className="font-mono font-semibold text-foreground">{row.payableHours}</span>
               </div>
             </div>
 
@@ -168,7 +152,7 @@ export function AttendanceDetailDrawer({
                       <div className="flex items-center gap-2 text-muted-foreground font-mono">
                         <span>{p.time}</span>
                         <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded font-sans text-muted-foreground">
-                          {p.source}
+                          {PUNCH_SOURCE[p.source] ?? p.source}
                         </span>
                       </div>
                     </div>
@@ -207,42 +191,25 @@ export function AttendanceDetailDrawer({
             ) : (
               <div className="pt-2 border-t border-border">
                 <div className="text-xs font-bold text-foreground mb-1.5">
-                  Correct an existing punch
+                  Regularize attendance
                 </div>
                 <p className="text-[11px] text-muted-foreground mb-2.5">
-                  Submit an attendance correction request for your reporting manager to review.
+                  Ask for this day to be regularized. Your approver reviews the request.
                 </p>
-                {submitted ? (
-                  <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs rounded font-medium">
-                    ✓ Regularization request submitted successfully (Pending approval).
-                  </div>
-                ) : (
-                  <div className="space-y-2.5">
-                    <Textarea
-                      rows={3}
-                      value={reason}
-                      onChange={(e) => setReason(e.target.value)}
-                      placeholder="Reason for regularization (min 10 characters)..."
-                      className="bg-muted/40 focus:bg-card"
-                    />
-                    {error && (
-                      <p role="alert" className="text-[11px] font-medium text-destructive">
-                        {error}
-                      </p>
-                    )}
-                    <Button
-                      type="button"
-                      variant="default"
-                      disabled={
-                        saving || reason.trim().length < ATTENDANCE_CORRECTION_REASON_MIN_LENGTH
-                      }
-                      onClick={() => void handleSubmitRegularization()}
-                      className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 text-xs shadow-xs"
-                    >
-                      {saving ? 'Submitting…' : 'Submit Correction Request'}
-                    </Button>
-                  </div>
-                )}
+                {onSubmitRegularization ? (
+                  <CorrectionForm
+                    checkInAt={row.checkInAt}
+                    checkOutAt={row.checkOutAt}
+                    key={row.id}
+                    onDone={onClose}
+                    onSubmit={(reason, times) =>
+                      times
+                        ? onSubmitRegularization(row.id, reason, times)
+                        : onSubmitRegularization(row.id, reason)
+                    }
+                    workDate={row.workDate}
+                  />
+                ) : null}
               </div>
             )}
           </div>

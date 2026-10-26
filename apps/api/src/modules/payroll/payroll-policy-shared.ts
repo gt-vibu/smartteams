@@ -16,9 +16,28 @@ export async function saveEmployeePolicyInTransaction(
   input: EmployeePolicyInput,
 ) {
   const effectiveFrom = dateOnly(input.effectiveFrom);
-  const effectiveTo = input.effectiveTo ? dateOnly(input.effectiveTo) : null;
+  let effectiveTo = input.effectiveTo ? dateOnly(input.effectiveTo) : null;
   if (effectiveTo && effectiveTo < effectiveFrom)
     throw new ConflictError('Employee policy end must not precede its start');
+  // A revision: the settings running when the new ones start end the day before them, and new
+  // open-ended settings stop the day before a revision already booked after them.
+  const dayBefore = (date: Date) => new Date(date.getTime() - 86_400_000);
+  const scope = { organizationId: context.organizationId, employeeId: input.employeeId };
+  await tx.employeePayrollPolicy.updateMany({
+    where: {
+      ...scope,
+      effectiveFrom: { lt: effectiveFrom },
+      OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveFrom } }],
+    },
+    data: { effectiveTo: dayBefore(effectiveFrom) },
+  });
+  if (!effectiveTo) {
+    const next = await tx.employeePayrollPolicy.findFirst({
+      where: { ...scope, effectiveFrom: { gt: effectiveFrom } },
+      orderBy: { effectiveFrom: 'asc' },
+    });
+    if (next) effectiveTo = dayBefore(next.effectiveFrom);
+  }
   const existing = await tx.employeePayrollPolicy.findUnique({
     where: {
       organizationId_employeeId_effectiveFrom: {
@@ -28,6 +47,22 @@ export async function saveEmployeePolicyInTransaction(
       },
     },
   });
+  const payrollPolicyId = input.payrollEnabled
+    ? (input.payrollPolicyId ?? existing?.payrollPolicyId ?? undefined)
+    : undefined;
+  if (payrollPolicyId) {
+    const selected = await tx.payrollPolicy.findFirst({
+      where: {
+        id: payrollPolicyId,
+        organizationId: context.organizationId,
+        effectiveFrom: { lte: effectiveFrom },
+        OR: [{ effectiveTo: null }, { effectiveTo: { gte: effectiveFrom } }],
+      },
+      select: { id: true },
+    });
+    if (!selected)
+      throw new ConflictError('Selected payroll policy is unavailable for the effective date');
+  }
   const overlap = await tx.employeePayrollPolicy.findFirst({
     where: {
       organizationId: context.organizationId,
@@ -41,14 +76,14 @@ export async function saveEmployeePolicyInTransaction(
   return existing
     ? tx.employeePayrollPolicy.update({
         where: { id: existing.id },
-        data: toEmployeePolicyData(input, effectiveTo),
+        data: toEmployeePolicyData({ ...input, payrollPolicyId }, effectiveTo),
       })
     : tx.employeePayrollPolicy.create({
         data: {
           organizationId: context.organizationId,
           employeeId: input.employeeId,
           effectiveFrom,
-          ...toEmployeePolicyData(input, effectiveTo),
+          ...toEmployeePolicyData({ ...input, payrollPolicyId }, effectiveTo),
         },
       });
 }

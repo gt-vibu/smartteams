@@ -1,6 +1,8 @@
 'use client';
 
 import { currentStatutoryProfile, type StatutoryProfile } from '@smarteam/contracts';
+import { Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
 
 /** Schemes the drawer surfaces, in the order an Indian payroll reviewer expects them. */
 const SCHEMES: { code: string; label: string; identifierLabel: string }[] = [
@@ -8,6 +10,14 @@ const SCHEMES: { code: string; label: string; identifierLabel: string }[] = [
   { code: 'ESI', label: 'State Insurance', identifierLabel: 'ESI Number' },
   { code: 'PT', label: 'Professional Tax', identifierLabel: 'PT Registration' },
 ];
+
+function maskIdentifier(val: string | null | undefined): string {
+  if (!val) return 'Not recorded';
+  const clean = val.trim();
+  if (clean.length <= 4) return clean;
+  const visible = clean.slice(-4);
+  return `${'•'.repeat(Math.min(clean.length - 4, 8))}${visible}`;
+}
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
@@ -19,11 +29,7 @@ function Row({ label, value }: { label: string; value: string }) {
 }
 
 /**
- * Statutory identity, from the compliance API.
- *
- * PAN, tax regime and TDS rate are deliberately absent: none is modelled anywhere in the
- * schema, so the previous hardcoded values (`AAAPM0192L`, "New Regime", "10% Statutory") were
- * the same fabricated string for every employee.
+ * Statutory identity, from the compliance API with sensitive numbers masked by default.
  */
 export function EmployeeStatutorySection({
   profiles,
@@ -32,6 +38,12 @@ export function EmployeeStatutorySection({
   profiles: StatutoryProfile[];
   canRead: boolean;
 }) {
+  const [revealed, setRevealed] = useState<Record<string, boolean>>({});
+
+  const toggleReveal = (code: string) => {
+    setRevealed((prev) => ({ ...prev, [code]: !prev[code] }));
+  };
+
   return (
     <div className="space-y-2 border-t border-border pt-2">
       <span className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
@@ -49,9 +61,34 @@ export function EmployeeStatutorySection({
           SCHEMES.map(({ code, label, identifierLabel }) => {
             const profile = currentStatutoryProfile(profiles, code);
             if (!profile) return null;
+            const isRevealed = Boolean(revealed[code]);
+            const rawValue = profile.registrationNumber;
+            const displayValue = isRevealed
+              ? (rawValue ?? 'Not recorded')
+              : maskIdentifier(rawValue);
+
             return (
               <div className="space-y-1" key={code}>
-                <Row label={identifierLabel} value={profile.registrationNumber ?? 'Not recorded'} />
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-sans text-muted-foreground">{identifierLabel}:</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="truncate font-bold text-foreground">{displayValue}</span>
+                    {rawValue && (
+                      <button
+                        aria-label={isRevealed ? 'Hide number' : 'Show number'}
+                        className="text-muted-foreground hover:text-foreground"
+                        onClick={() => toggleReveal(code)}
+                        type="button"
+                      >
+                        {isRevealed ? (
+                          <EyeOff aria-hidden="true" className="h-3.5 w-3.5" />
+                        ) : (
+                          <Eye aria-hidden="true" className="h-3.5 w-3.5" />
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </div>
                 {profile.employeeRate !== null && profile.employeeRate !== undefined && (
                   <Row label={`${label} — employee`} value={`${profile.employeeRate}%`} />
                 )}

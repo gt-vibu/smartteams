@@ -1,15 +1,17 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { CalendarDays, Settings2, Users } from 'lucide-react';
+import { formatDate, formatDateRange } from '@smarteam/contracts';
+import { CalendarDays, Layers3, Plus, Settings2, Users } from 'lucide-react';
 import { ScreenHeader } from '../common/screen-header';
-import { Badge, Button, Input, SegmentedTabs } from '@smarteam/ui';
+import { LoadingIndicator, Badge, Button, Dialog, DialogContent, DialogTitle, Input, SegmentedTabs } from '@smarteam/ui';
 import { useHolidays } from '../../hooks/use-holidays';
 import {
   HolidayDialog,
   RetireHolidayDialog,
   AllowanceDialog,
   HolidaySelectionsDialog,
+  HolidayBulkQuickAddDialog,
   type HolidayAdminGroup,
 } from './holiday-dialogs';
 import { EmployeeSelectionsTable } from './employee-selections-table';
@@ -24,7 +26,7 @@ import { PageShell } from '../layout/page-shell';
 export function ScreenHolidays() {
   const holidays = useHolidays();
   const [editingGroup, setEditingGroup] = useState<HolidayAdminGroup | null>(null);
-  const [creating, setCreating] = useState(false);
+  const [creationMode, setCreationMode] = useState<'choose' | 'single' | 'multiple' | null>(null);
   const [retiringGroup, setRetiringGroup] = useState<HolidayAdminGroup | null>(null);
   const [inspectingGroup, setInspectingGroup] = useState<HolidayAdminGroup | null>(null);
   const [configuringAllowance, setConfiguringAllowance] = useState(false);
@@ -96,17 +98,10 @@ export function ScreenHolidays() {
   const optionalGroupCount = activeGroups.filter((g) => g.isOptional).length;
   const mandatoryGroupCount = activeGroups.filter((g) => !g.isOptional).length;
 
-  const totalOptionalDays = activeGroups
-    .filter((g) => g.isOptional)
-    .reduce((sum, g) => sum + g.totalDays, 0);
-  const totalMandatoryDays = activeGroups
-    .filter((g) => !g.isOptional)
-    .reduce((sum, g) => sum + g.totalDays, 0);
-
   const tabs = [
-    { id: 'ALL', label: 'All Holidays', count: holidayGroups.length },
-    { id: 'OPTIONAL', label: 'Optional Pool', count: optionalGroupCount },
-    { id: 'SELECTIONS', label: 'Employee Selections', count: holidays.selections.length },
+    { id: 'ALL', label: 'All holidays', count: holidayGroups.length },
+    { id: 'OPTIONAL', label: 'Restricted holidays', count: optionalGroupCount },
+    { id: 'SELECTIONS', label: 'Employee choices', count: holidays.selections.length },
   ];
 
   const displayedGroups =
@@ -116,13 +111,16 @@ export function ScreenHolidays() {
     <PageShell>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <ScreenHeader
-          description={`${mandatoryGroupCount} mandatory (${totalMandatoryDays}d) · ${optionalGroupCount} optional pool (${totalOptionalDays}d) in ${holidays.year}`}
+          description={`${mandatoryGroupCount} public${optionalGroupCount ? ` · ${optionalGroupCount} optional` : ''} in ${holidays.year}`}
           icon={CalendarDays}
           title="Holiday calendar"
           tone="success"
         />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-end sm:self-auto">
           <Input
+            min={2000}
+            max={2100}
+            step={1}
             aria-label="Year"
             className="w-24"
             inputMode="numeric"
@@ -139,14 +137,13 @@ export function ScreenHolidays() {
                 variant="outline"
               >
                 <Settings2 className="mr-1.5 h-3.5 w-3.5" />
-                Allowance ({holidays.settings.optionalHolidayAllowance}d
+                Restricted holidays allowed: {holidays.settings.optionalHolidayAllowance}
                 {holidays.employeePolicies.length > 0
-                  ? ` · ${holidays.employeePolicies.length} override${holidays.employeePolicies.length === 1 ? '' : 's'}`
+                  ? ` · ${holidays.employeePolicies.length} exception${holidays.employeePolicies.length === 1 ? '' : 's'}`
                   : ''}
-                )
               </Button>
-              <Button onClick={() => setCreating(true)} size="sm" type="button">
-                Add holiday
+              <Button onClick={() => setCreationMode('choose')} size="sm" type="button">
+                <Plus className="mr-1.5 size-3.5" /> Add holiday
               </Button>
             </>
           )}
@@ -173,9 +170,7 @@ export function ScreenHolidays() {
       </div>
 
       {holidays.loading && (
-        <p className="py-10 text-center text-xs text-muted-foreground" role="status">
-          Loading holidays...
-        </p>
+        <LoadingIndicator variant="panel" label="Loading holidays" className="py-10 text-center text-xs text-muted-foreground" />
       )}
 
       {!holidays.loading && holidays.error && (
@@ -222,11 +217,11 @@ export function ScreenHolidays() {
                 <thead className="border-b border-border bg-table-header">
                   <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     <th className="px-4 py-2.5 font-bold">Date Range</th>
-                    <th className="px-4 py-2.5 font-bold">Holiday Plan</th>
+                    <th className="px-4 py-2.5 font-bold">Holiday</th>
                     <th className="px-4 py-2.5 font-bold">Type</th>
                     <th className="px-4 py-2.5 font-bold">Scope</th>
                     <th className="px-4 py-2.5 font-bold">Status</th>
-                    <th className="px-4 py-2.5 font-bold">Employee Selections</th>
+                    <th className="px-4 py-2.5 font-bold">Employee choices</th>
                     <th className="px-4 py-2.5 text-right font-bold">Actions</th>
                   </tr>
                 </thead>
@@ -244,12 +239,16 @@ export function ScreenHolidays() {
                         key={`${group.name}-${group.startDate}-${group.isOptional}`}
                       >
                         {/* Date column (From → To format in one line) */}
-                        <td data-label="Date Range" className="px-4 py-3 font-mono text-foreground">
+                        <td
+                          data-bare=""
+                          data-label="Date Range"
+                          className="px-4 py-3 font-mono text-foreground"
+                        >
                           <div className="flex items-center gap-2">
                             <span>
                               {isMultiDay
-                                ? `${group.startDate} → ${group.endDate}`
-                                : group.startDate}
+                                ? formatDateRange(group.startDate, group.endDate)
+                                : formatDate(group.startDate)}
                             </span>
                             {isMultiDay ? (
                               <Badge
@@ -272,13 +271,13 @@ export function ScreenHolidays() {
                         </td>
 
                         {/* Type */}
-                        <td data-label="Type" className="px-4 py-3">
+                        <td data-bare="" data-label="Type" className="px-4 py-3">
                           {group.isOptional ? (
                             <Badge
                               variant="outline"
                               className="border-amber-400/50 bg-amber-500/10 text-amber-700 dark:text-amber-400 font-medium"
                             >
-                              Optional Pool
+                              Restricted
                             </Badge>
                           ) : (
                             <Badge variant="secondary" className="font-medium">
@@ -288,19 +287,23 @@ export function ScreenHolidays() {
                         </td>
 
                         {/* Scope */}
-                        <td data-label="Scope" className="px-4 py-3 text-muted-foreground">
+                        <td
+                          data-bare=""
+                          data-label="Scope"
+                          className="px-4 py-3 text-muted-foreground"
+                        >
                           {group.branchId ? 'One branch' : 'Whole organization'}
                         </td>
 
                         {/* Status */}
-                        <td data-label="Status" className="px-4 py-3">
+                        <td data-cell="status" data-label="Status" className="px-4 py-3">
                           <Badge variant={group.isActive ? 'success' : 'secondary'}>
-                            {group.isActive ? 'Active' : 'Retired'}
+                            {group.isActive ? 'Active' : 'Inactive'}
                           </Badge>
                         </td>
 
                         {/* Employee Selections */}
-                        <td data-label="Employee Selections" className="px-4 py-3">
+                        <td data-bare="" data-label="Employee Selections" className="px-4 py-3">
                           {group.isOptional ? (
                             <button
                               type="button"
@@ -312,9 +315,7 @@ export function ScreenHolidays() {
                               <span>{groupSelectionCount} selected</span>
                             </button>
                           ) : (
-                            <span className="text-muted-foreground text-[11px]">
-                              All employees (Mandatory)
-                            </span>
+                            <span className="text-muted-foreground text-[11px]">—</span>
                           )}
                         </td>
 
@@ -340,7 +341,7 @@ export function ScreenHolidays() {
                                 variant="outline"
                                 className="h-7 text-xs"
                               >
-                                Rename
+                                Edit
                               </Button>
                               <Button
                                 onClick={() => setRetiringGroup(group)}
@@ -349,7 +350,7 @@ export function ScreenHolidays() {
                                 variant="ghost"
                                 className="h-7 text-xs text-destructive hover:bg-destructive/10"
                               >
-                                Retire
+                                Deactivate
                               </Button>
                             </div>
                           )}
@@ -362,26 +363,60 @@ export function ScreenHolidays() {
             </div>
           )}
 
-          <p className="text-[11px] leading-relaxed text-muted-foreground">
-            Mandatory holidays automatically apply to all employees. Optional holidays are available
-            in an eligible pool and apply only when selected by an employee up to the annual
-            allowance ({holidays.settings.optionalHolidayAllowance} days). Multi-day holiday plans
-            appear consolidated in a single line with their full from–to date range.
-          </p>
+          {optionalGroupCount > 0 && (
+            <p className="text-[11px] text-muted-foreground">
+              Each employee may pick up to {holidays.settings.optionalHolidayAllowance} optional
+              days a year.
+            </p>
+          )}
         </>
       )}
 
       {/* Holiday Dialog for adding or renaming grouped plans */}
+      <Dialog
+        open={creationMode === 'choose'}
+        onOpenChange={(open) => !open && setCreationMode(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogTitle>Add holidays</DialogTitle>
+          <p className="text-xs text-muted-foreground">Choose how you want to enter holidays.</p>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            <button
+              className="rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/50 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={() => setCreationMode('single')}
+              type="button"
+            >
+              <CalendarDays className="mb-3 size-5 text-primary" />
+              <span className="block text-sm font-semibold">Add one</span>
+              <span className="mt-1 block text-xs text-muted-foreground">Enter one holiday or a date range.</span>
+            </button>
+            <button
+              className="rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/50 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={() => setCreationMode('multiple')}
+              type="button"
+            >
+              <Layers3 className="mb-3 size-5 text-primary" />
+              <span className="block text-sm font-semibold">Quick add multiple</span>
+              <span className="mt-1 block text-xs text-muted-foreground">Enter several names and dates together.</span>
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
       <HolidayDialog
         holidayGroup={editingGroup}
         holidays={holidays}
         onOpenChange={(open) => {
           if (!open) {
-            setCreating(false);
+          setCreationMode(null);
             setEditingGroup(null);
           }
         }}
-        open={creating || editingGroup !== null}
+        open={creationMode === 'single' || editingGroup !== null}
+      />
+      <HolidayBulkQuickAddDialog
+        holidays={holidays}
+        onOpenChange={(open) => !open && setCreationMode(null)}
+        open={creationMode === 'multiple'}
       />
 
       {/* Retire Holiday Dialog */}
